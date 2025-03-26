@@ -134,5 +134,17 @@ namespace Utp
 				UtpLog.Error($"Failed to join Relay server.");
 			});
 		}
+		/// <summary>
+        /// Tämä metodi spawnaa jokaiselle clientille oman Unitin ja tekee siitä heidän ohjattavan yksikkönsä.
+        /// </summary>
+        public override void OnServerAddPlayer(NetworkConnectionToClient conn)
+        {
+            Transform startPos = GetStartPosition(); // Spawn position (valinnainen)
+            Vector3 spawnPosition = startPos != null ? startPos.position : Vector3.zero;
+
+            GameObject player = Instantiate(playerPrefab, spawnPosition, Quaternion.identity);
+
+            NetworkServer.AddPlayerForConnection(conn, player); // antaa authorityn clientille
+        }
 	}
 }
