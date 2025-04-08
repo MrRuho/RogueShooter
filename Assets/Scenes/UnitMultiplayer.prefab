@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 6975569018376594166}
   - component: {fileID: -7554651146962723815}
   m_Layer: 0
-  m_Name: Unit
+  m_Name: UnitMultiplayer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
