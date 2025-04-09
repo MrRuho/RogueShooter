@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Create Clean ZIP
         run: |
@@ -26,7 +26,7 @@ jobs:
             -x "**/*.zip"
 
       - name: Upload ZIP to GitHub Release
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v1.1.0
         with:
           name: Clean Export ${{ github.run_number }}
           tag_name: clean-export-${{ github.run_number }}
