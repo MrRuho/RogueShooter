@@ -7,7 +7,7 @@ on:
 
 permissions:
   contents: write
-  
+
 jobs:
   export-clean:
     runs-on: ubuntu-latest
@@ -15,18 +15,14 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Create Clean ZIP
+      - name: Create Clean ZIP (Only Scripts and Docs)
         run: |
-          zip -r RogueShooter.zip . \
-            -x "**/Library/**" \
-            -x "**/Temp/**" \
-            -x "**/Build/**" \
-            -x "**/Logs/**" \
-            -x "**/obj/**" \
-            -x "**/.git/**" \
-            -x "**/.vscode/**" \
-            -x "**/.github/**" \
-            -x "**/*.zip"
+          mkdir CleanExport
+          cp -r Assets/Scripts CleanExport/Scripts
+          cp -r Dokumentaatio CleanExport/Dokumentaatio
+          cd CleanExport
+          zip -r ../RogueShooter.zip .
+          cd ..
 
       - name: Upload ZIP to GitHub Release
         uses: softprops/action-gh-release@v1
@@ -36,5 +32,6 @@ jobs:
           files: RogueShooter.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
 
 
