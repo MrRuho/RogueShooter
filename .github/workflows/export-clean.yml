@@ -25,11 +25,3 @@ jobs:
             -x "**/.github/**" \
             -x "**/*.zip"
 
-      - name: Upload ZIP to GitHub Release
-        uses: softprops/action-gh-release@v1.1.0
-        with:
-          name: Clean Export ${{ github.run_number }}
-          tag_name: clean-export-${{ github.run_number }}
-          files: RogueShooter.zip
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
