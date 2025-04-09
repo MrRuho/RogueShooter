@@ -1,0 +1,35 @@
+name: Export Clean Project
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  export-clean:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Create Clean ZIP
+        run: |
+          zip -r RogueShooter.zip . \
+            -x "**/Library/**" \
+            -x "**/Temp/**" \
+            -x "**/Build/**" \
+            -x "**/Logs/**" \
+            -x "**/obj/**" \
+            -x "**/.git/**" \
+            -x "**/.vscode/**" \
+            -x "**/.github/**" \
+            -x "**/*.zip"
+
+      - name: Upload ZIP to GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          name: Clean Export ${{ github.run_number }}
+          tag_name: clean-export-${{ github.run_number }}
+          files: RogueShooter.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
