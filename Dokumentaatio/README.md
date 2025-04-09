@@ -52,4 +52,12 @@ Freedom needs you!
 - Kamppanja
 - Visuaalisuus, äänet ja animaatio
 
+
+## Uusin versio (.zip)
+
+Tämä projekti exportataan automaattisesti GitHub Releasesiin aina kun `main` päivittyy.
+
+[https://github.com/MrRuho/RogueShooter/releases/latest](https://github.com/MrRuho/RogueShooter/releases/latest)
+
+
   
