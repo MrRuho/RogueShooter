@@ -101,6 +101,7 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
+  unitAnimator: {fileID: 0}
 --- !u!1001 &8717459905249702790
 PrefabInstance:
   m_ObjectHideFlags: 0
