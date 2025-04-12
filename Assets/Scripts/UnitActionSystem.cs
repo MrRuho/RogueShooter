@@ -15,10 +15,11 @@ public class UnitActionSystem : MonoBehaviour
 
     private void Awake()
     {
+        selectedUnit = null;
         // Ensure that there is only one instance of UnitActionSystem in the scene
         if (Instance != null)
         {
-            Debug.LogError("More than one UnitActionSystem in the scene!" + transform + " " + Instance);
+            Debug.LogError("UnitActionSystem: More than one UnitActionSystem in the scene!" + transform + " " + Instance);
             Destroy(gameObject);
             return;
         }

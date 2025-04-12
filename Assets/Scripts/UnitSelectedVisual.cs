@@ -10,6 +10,7 @@ public class UnitSelectedVisual : MonoBehaviour
     private void Awake()
     {
         meshRenderer = GetComponent<MeshRenderer>();
+        meshRenderer.enabled = false; // Piilotetaan oletuksena
     }
 
     private void Start()
