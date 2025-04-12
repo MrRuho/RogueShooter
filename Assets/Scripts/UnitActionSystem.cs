@@ -1,10 +1,29 @@
+using System;
 using UnityEngine;
 
+// summary>
+// This script handles the unit action system, allowing the player to select a unit and move it to a target position in the game world.
 public class UnitActionSystem : MonoBehaviour
 {
-    [SerializeField] private LayerMask unitLayerMask;
-    private Unit selectedUnit;
+    public static UnitActionSystem Instance { get; private set; } // Singleton instance of the UnitActionSystem
+    public event EventHandler OnSelectedUnitChanged; // Event triggered when the selected unit changes
 
+    // The layer mask to use for detecting units in the game world
+    // This allows the script to only interact with objects on the specified layer
+    [SerializeField] private LayerMask unitLayerMask;
+    [SerializeField] private Unit selectedUnit;
+
+    private void Awake()
+    {
+        // Ensure that there is only one instance of UnitActionSystem in the scene
+        if (Instance != null)
+        {
+            Debug.LogError("More than one UnitActionSystem in the scene!" + transform + " " + Instance);
+            Destroy(gameObject);
+            return;
+        }
+        Instance = this; // Set the singleton instance to this object
+    }
     private void Update()
     {
         // Check if the left mouse button is clicked
@@ -13,7 +32,7 @@ public class UnitActionSystem : MonoBehaviour
             // Check if the mouse is over a unit
             // If so, select the unit and return
             // If not, move the selected unit to the mouse position
-            if (UnitSelection()) return;
+            if (TryHandleUnitSelection()) return;
             if (selectedUnit != null)
             {
                 selectedUnit.Move(MouseWorld.GetMouseWorldPosition());
@@ -24,21 +43,29 @@ public class UnitActionSystem : MonoBehaviour
 
     /// Select a unit if the mouse is over it
     /// <returns>True if a unit was selected, false otherwise</returns>
-    private bool UnitSelection()
+    private bool TryHandleUnitSelection()
     {
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         if (Physics.Raycast(ray, out RaycastHit hit, float.MaxValue, unitLayerMask))
         {
             if (hit.transform.TryGetComponent<Unit>(out Unit unit))
             {
-                selectedUnit = unit;
+                SetSelectedUnit(unit); // Set the selected unit to the one that was clicked on
+                // If the clicked unit is already selected, deselect it
                 return true;
             }
         }
         return false;
     }
+
+    private void SetSelectedUnit(Unit unit)
+    {
+        selectedUnit = unit;
+        OnSelectedUnitChanged?.Invoke(this, EventArgs.Empty); // Trigger the event when the selected unit changes
+    }
+
+    public Unit GetSelectedUnit()
+    {
+        return selectedUnit; // Return the currently selected unit
+    }
 }
-// This script handles the unit action system, allowing the player to select a unit and move it to a target position in the game world.
-// It uses the MouseWorld class to get the mouse position in world coordinates and calls the Move method on the selected unit.
-// The script also handles unit selection by checking if the mouse is over a unit when the left mouse button is clicked. If a unit is selected, it updates the selectedUnit variable and returns true. If no unit is selected, it returns false.
-// The script uses a LayerMask to filter the raycast to only hit units, ensuring that only units can be selected and moved.

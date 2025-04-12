@@ -6,6 +6,12 @@ public class Unit : NetworkBehaviour
     [SerializeField] private Animator unitAnimator;
     private Vector3 targetPosition;
 
+    private void Awake() 
+    {
+        // Initialize the target position to the current position of the unit
+        targetPosition = transform.position;
+    }
+
     private void Update()
     {   
     
@@ -36,3 +42,6 @@ public class Unit : NetworkBehaviour
         targetPosition = newTargetPosition;
     }
 }
+
+// This script is responsible for controlling the unit's movement and animation. It uses Mirror for networking functionality.
+// The unit moves towards a target position and plays the running animation when moving. The target position can be updated using the Move method.

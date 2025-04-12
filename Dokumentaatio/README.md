@@ -42,11 +42,12 @@ Freedom needs you!
 ## Valmis
 - 
 ## Työnalla (17.3.25?)
-- Simple Player vs AI (ProtoGame)
-- Player vs Player (ProtoGame)
+- Simple Player vs AI (ProtoGame) + fixed map
+- Player vs Player (ProtoGame) + fixed maps
 
 ## Mitä seuraavaksi?
-- Random battle map generator
+- Random battle map generator (ProtoGame release for bublic testing)
+- Tuhoutuvat ympäristöt
 - Hahmojen kehitys ja taidot
 - Varusteita
 - Kamppanja
