@@ -1,3 +1,4 @@
+using Mirror;
 using System;
 using UnityEngine;
 
@@ -51,6 +52,7 @@ public class UnitActionSystem : MonoBehaviour
         {
             if (hit.transform.TryGetComponent<Unit>(out Unit unit))
             {
+                if(AuthorityHelper.HasLocalControl(unit)) return false;
                 SetSelectedUnit(unit); // Set the selected unit to the one that was clicked on
                 // If the clicked unit is already selected, deselect it
                 return true;

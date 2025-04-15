@@ -1,20 +1,37 @@
 using Mirror;
 using UnityEngine;
 
+// This script is responsible for controlling the unit's movement and animation. It uses Mirror for networking functionality.
+// The unit moves towards a target position and plays the running animation when moving. The target position can be updated using the Move method.
+
 public class Unit : NetworkBehaviour
 {
+    //private NetworkAnimator networkAnimator;
     [SerializeField] private Animator unitAnimator;
     private Vector3 targetPosition;
+    private GridPosition gridPosition;
+
 
     private void Awake() 
     {
+       // networkAnimator = GetComponent<NetworkAnimator>();
         // Initialize the target position to the current position of the unit
         targetPosition = transform.position;
     }
 
+    private void Start()
+    {
+        gridPosition = LevelGrid.Instance.GetGridPosition(transform.position);
+        LevelGrid.Instance.AddUnitAtGridPosition(gridPosition, this);
+    }
+
     private void Update()
     {   
-    
+        // Check if the unit is controlled by the local player
+        // If not, return and do not update the unit's position or animation
+        if(AuthorityHelper.HasLocalControl(this)) return;
+
+       
         float stoppingDistance = 0.2f;
         if (Vector3.Distance(transform.position, targetPosition) > stoppingDistance)
         {
@@ -30,9 +47,17 @@ public class Unit : NetworkBehaviour
             transform.forward = Vector3.Lerp(transform.forward, moveDirection, Time.deltaTime * rotationSpeed);
 
             unitAnimator.SetBool("IsRunning", true);
+
         } else 
         {
             unitAnimator.SetBool("IsRunning", false);
+        }
+
+        GridPosition newGridPosition = LevelGrid.Instance.GetGridPosition(transform.position);
+        if (newGridPosition != gridPosition)
+        {
+            LevelGrid.Instance.UnitMoveToGridPosition(gridPosition, newGridPosition, this);
+            gridPosition = newGridPosition;
         }
     }
 
@@ -42,6 +67,3 @@ public class Unit : NetworkBehaviour
         targetPosition = newTargetPosition;
     }
 }
-
-// This script is responsible for controlling the unit's movement and animation. It uses Mirror for networking functionality.
-// The unit moves towards a target position and plays the running animation when moving. The target position can be updated using the Move method.
