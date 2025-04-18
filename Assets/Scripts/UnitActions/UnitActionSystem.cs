@@ -6,7 +6,7 @@ using UnityEngine;
 // This script handles the unit action system, allowing the player to select a unit and move it to a target position in the game world.
 public class UnitActionSystem : MonoBehaviour
 {
-    public static UnitActionSystem Instance { get; private set; } // Singleton instance of the UnitActionSystem
+    public static UnitActionSystem Instance { get; private set; }
     public event EventHandler OnSelectedUnitChanged; // Event triggered when the selected unit changes
 
     // The layer mask to use for detecting units in the game world
@@ -28,7 +28,7 @@ public class UnitActionSystem : MonoBehaviour
     }
     private void Update()
     {
-        // Check if the left mouse button is clicked
+
         if (Input.GetMouseButtonDown(0))
         {
             // Check if the mouse is over a unit
@@ -42,8 +42,12 @@ public class UnitActionSystem : MonoBehaviour
                 {
                     selectedUnit.GetMoveAction().Move(mouseGridPosition);
                 }
-            }
-            
+            }      
+        }
+
+        if (Input.GetMouseButtonDown(1))
+        {
+            selectedUnit.GetSpinAction().Spin();
         }
     }
 
@@ -57,8 +61,7 @@ public class UnitActionSystem : MonoBehaviour
             if (hit.transform.TryGetComponent<Unit>(out Unit unit))
             {
                 if(AuthorityHelper.HasLocalControl(unit)) return false;
-                SetSelectedUnit(unit); // Set the selected unit to the one that was clicked on
-                // If the clicked unit is already selected, deselect it
+                SetSelectedUnit(unit);
                 return true;
             }
         }

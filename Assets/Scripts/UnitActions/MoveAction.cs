@@ -7,31 +7,30 @@ using UnityEngine;
 /// It allows the unit to move to a target position, and it calculates valid move grid positions based on the unit's current position.
 /// </summary>
 
-public class MoveAction : NetworkBehaviour
+public class MoveAction : BaseAction
 {
     [SerializeField] private Animator unitAnimator;
     [SerializeField] private int maxMoveDistance = 4;
     private Vector3 targetPosition;
-    private Unit unit;
-    private void Awake() 
+
+    protected override void Awake() 
     {
-        unit = GetComponent<Unit>();
-        // Initialize the target position to the current position of the unit
+        base.Awake();
         targetPosition = transform.position;
     }
 
     private void Update()
     {
         if(AuthorityHelper.HasLocalControl(this)) return;
-
+        if(!isActive) return;
+        Vector3 moveDirection = (targetPosition - transform.position).normalized;
        
         float stoppingDistance = 0.2f;
         if (Vector3.Distance(transform.position, targetPosition) > stoppingDistance)
         {
 
             // Move towards the target position
-            // Calculate the direction to the target position and normalize it
-            Vector3 moveDirection = (targetPosition - transform.position).normalized;
+            // Vector3 moveDirection = (targetPosition - transform.position).normalized;
             float moveSpeed = 4f;
             transform.position += moveSpeed * Time.deltaTime * moveDirection;
 
@@ -44,12 +43,14 @@ public class MoveAction : NetworkBehaviour
         } else 
         {
             unitAnimator.SetBool("IsRunning", false);
+            isActive = false;
         }
     }
 
     public void Move(GridPosition gridPosition)
     {
         targetPosition = LevelGrid.Instance.GetWorldPosition(gridPosition);
+        isActive = true;
     }
 
     public bool IsValidGridPosition(GridPosition gridPosition)
