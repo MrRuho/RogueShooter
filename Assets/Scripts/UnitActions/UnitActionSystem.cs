@@ -14,6 +14,9 @@ public class UnitActionSystem : MonoBehaviour
     [SerializeField] private LayerMask unitLayerMask;
     [SerializeField] private Unit selectedUnit;
 
+    // Prevents the player from performing multiple actions at the same time
+    private bool isBusy; 
+
     private void Awake()
     {
         selectedUnit = null;
@@ -28,7 +31,8 @@ public class UnitActionSystem : MonoBehaviour
     }
     private void Update()
     {
-
+        if (isBusy) return;
+        // Check if the player is trying to select a unit or move the selected unit
         if (Input.GetMouseButtonDown(0))
         {
             // Check if the mouse is over a unit
@@ -40,15 +44,28 @@ public class UnitActionSystem : MonoBehaviour
                 GridPosition mouseGridPosition = LevelGrid.Instance.GetGridPosition(MouseWorld.GetMouseWorldPosition());
                 if( selectedUnit.GetMoveAction().IsValidGridPosition(mouseGridPosition))
                 {
-                    selectedUnit.GetMoveAction().Move(mouseGridPosition);
+                    SetBusy();
+                    selectedUnit.GetMoveAction().Move(mouseGridPosition, ClearBusy);
                 }
             }      
         }
 
         if (Input.GetMouseButtonDown(1))
         {
-            selectedUnit.GetSpinAction().Spin();
+            SetBusy();
+            selectedUnit.GetSpinAction().Spin(ClearBusy);
         }
+    }
+
+    // SetBusy: Prevents the player from performing multiple actions at the same time
+    private void SetBusy()
+    {
+        isBusy = true;
+    }
+
+    private void ClearBusy()
+    {
+        isBusy = false;
     }
 
     /// Select a unit if the mouse is over it

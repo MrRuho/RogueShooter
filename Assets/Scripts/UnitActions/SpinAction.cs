@@ -1,8 +1,12 @@
+using System;
 using UnityEngine;
 
 public class SpinAction : BaseAction
 {
 
+   // public delegate void SpinCompleteDelegate();
+
+  //  private Action onSpinComplete;
     private float totalSpinAmount = 0f;
     private void Update()
     {
@@ -16,14 +20,19 @@ public class SpinAction : BaseAction
         {
             isActive = false;
             totalSpinAmount = 0f;
-            Debug.Log("Spin complete!");
+            onActionComplete();
         }
        
     }
-    public void Spin()
+    public void Spin(Action onActionComplete)
     {
+        this.onActionComplete = onActionComplete;
         isActive = true;
         totalSpinAmount = 0f;
-        Debug.Log("Spinning!");
+    }
+
+    public override string GetActionName()
+    {
+        return "Spin";
     }
 }

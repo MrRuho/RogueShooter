@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Mirror;
 using UnityEngine;
@@ -44,11 +45,13 @@ public class MoveAction : BaseAction
         {
             unitAnimator.SetBool("IsRunning", false);
             isActive = false;
+            onActionComplete();
         }
     }
 
-    public void Move(GridPosition gridPosition)
+    public void Move(GridPosition gridPosition, Action onActionComplete )
     {
+        this.onActionComplete = onActionComplete;
         targetPosition = LevelGrid.Instance.GetWorldPosition(gridPosition);
         isActive = true;
     }
@@ -78,12 +81,17 @@ public class MoveAction : BaseAction
                 LevelGrid.Instance.HasAnyUnitOnGridPosition(testGridPosition)) continue;
 
                 validGridPositionList.Add(testGridPosition);
-                Debug.Log($"Testing grid position: {testGridPosition}");
+               // Debug.Log($"Testing grid position: {testGridPosition}");
 
             }
 
         }
         
         return validGridPositionList;
+    }
+
+    public  override string GetActionName()
+    {
+        return "Move";
     }
 }
