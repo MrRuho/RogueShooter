@@ -1,0 +1,5 @@
+<map id="LevelGrid.RemoveUnitAtGridPosition" name="LevelGrid.RemoveUnitAtGridPosition">
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,5,196,48"/>
+<area shape="rect" id="Node000002" href="$class_grid_object.html#a0baed355a4a3bc3901e819831c471fa5" title=" " alt="" coords="244,13,404,40"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="196,24,228,24,228,29,196,29"/>
+</map>

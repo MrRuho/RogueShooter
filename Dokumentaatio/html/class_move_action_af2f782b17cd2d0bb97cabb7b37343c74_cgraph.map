@@ -1,0 +1,9 @@
+<map id="MoveAction.GetValidGridPositionList" name="MoveAction.GetValidGridPositionList">
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,43,241,69"/>
+<area shape="rect" id="Node000002" href="$class_level_grid.html#ae37c0843b9a37392fee852c36dab849f" title=" " alt="" coords="289,5,481,48"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="241,40,272,37,273,42,241,45"/>
+<area shape="rect" id="Node000004" href="$class_level_grid.html#a44154127c6c78b958c7e84a3d8427192" title=" " alt="" coords="290,72,480,99"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="241,67,274,70,274,76,241,72"/>
+<area shape="rect" id="Node000003" href="$class_grid_object.html#a7bb2690dc0e3d48d1c3d68b9fbfbaae9" title=" " alt="" coords="529,13,687,40"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="481,24,514,24,514,29,481,29"/>
+</map>

@@ -1,0 +1,7 @@
+<map id="LevelGrid.GetWidth" name="LevelGrid.GetWidth">
+<area shape="rect" id="Node000001" title=" " alt="" coords="461,13,596,40"/>
+<area shape="rect" id="Node000002" href="$class_grid_system_visual.html#a22125f6cf8b6c195df4bc2da06902beb" title=" " alt="" coords="241,5,413,48"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="445,29,414,29,414,24,445,24"/>
+<area shape="rect" id="Node000003" href="$class_grid_system_visual.html#a27f4b93612585a300b0ab32895766cd0" title=" " alt="" coords="5,5,193,48"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="225,29,193,29,193,24,225,24"/>
+</map>

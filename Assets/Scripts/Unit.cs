@@ -2,6 +2,7 @@ using Mirror;
 using UnityEngine;
 
 /// <summary>
+/// 21.4.2025
 /// This class represents a unit in the game. 
 /// Actions can be called on the unit to perform various actions like moving or spinning.
 /// The class inherits from NetworkBehaviour to support multiplayer functionality.

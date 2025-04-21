@@ -1,0 +1,11 @@
+<map id="MoveAction.IsValidGridPosition" name="MoveAction.IsValidGridPosition">
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,43,210,69"/>
+<area shape="rect" id="Node000002" href="$class_move_action.html#af2f782b17cd2d0bb97cabb7b37343c74" title=" " alt="" coords="258,43,493,69"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="210,53,242,53,242,59,210,59"/>
+<area shape="rect" id="Node000003" href="$class_level_grid.html#ae37c0843b9a37392fee852c36dab849f" title=" " alt="" coords="541,5,733,48"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="493,40,525,37,525,42,494,45"/>
+<area shape="rect" id="Node000005" href="$class_level_grid.html#a44154127c6c78b958c7e84a3d8427192" title=" " alt="" coords="542,72,732,99"/>
+<area shape="poly" id="edge4_Node000002_Node000005" title=" " alt="" coords="494,67,527,70,526,76,493,72"/>
+<area shape="rect" id="Node000004" href="$class_grid_object.html#a7bb2690dc0e3d48d1c3d68b9fbfbaae9" title=" " alt="" coords="781,13,940,40"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="733,24,766,24,766,29,733,29"/>
+</map>
