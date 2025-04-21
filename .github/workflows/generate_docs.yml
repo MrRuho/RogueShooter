@@ -3,22 +3,26 @@ name: Generate Doxygen Docs
 on:
   push:
     branches:
-      - main  # tai mikä tahansa haara johon haluat sidoksen
+      - main
 
 jobs:
   docs:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Install Doxygen
-        run: sudo apt-get install doxygen graphviz
+      - name: Install Doxygen and Graphviz
+        run: sudo apt-get update && sudo apt-get install -y doxygen graphviz
+
+      - name: Clean old documentation
+        run: rm -rf Dokumentaatio/html
 
       - name: Generate Doxygen documentation
         run: doxygen Dokumentaatio/Doxyfile
 
-      - name: Upload documentation artifact
+      - name: Upload Doxygen HTML as artifact
         uses: actions/upload-artifact@v4
         with:
           name: doxygen-docs
