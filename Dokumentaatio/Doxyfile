@@ -1,12 +1,12 @@
 # Doxygenin perusasetukset
 PROJECT_NAME           = RogueShooter
 OUTPUT_DIRECTORY       = ./html
-INPUT                  = ../Assets/scripts
+INPUT                  = ../Assets/Scripts
 FILE_PATTERNS          = *.cs
 RECURSIVE              = YES
 EXCLUDE                = 
 EXCLUDE_SYMLINKS       = NO
-STRIP_FROM_PATH        = ../Assets/scripts
+STRIP_FROM_PATH        = ../Assets/Scripts
 
 # Kieliasetukset
 OPTIMIZE_OUTPUT_FOR_CSHARP = YES
