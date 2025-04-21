@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Install Doxygen
         run: sudo apt-get install doxygen graphviz
@@ -19,7 +19,7 @@ jobs:
         run: doxygen Dokumentaatio/Doxyfile
 
       - name: Upload documentation artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: doxygen-docs
           path: Dokumentaatio/html
