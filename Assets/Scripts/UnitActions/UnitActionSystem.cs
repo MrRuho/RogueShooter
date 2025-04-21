@@ -1,10 +1,13 @@
 using Mirror;
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 /// <summary>
 ///     This script handles the unit action system in the game.
-///     It allows the player to select units and perform actions on them, such as moving or spinning.
+///     It allows the player to select units and perform actions on them, such as moving or shooting.
 /// </summary>
 
 public class UnitActionSystem : MonoBehaviour
@@ -15,6 +18,8 @@ public class UnitActionSystem : MonoBehaviour
     // This allows the script to only interact with objects on the specified layer
     [SerializeField] private LayerMask unitLayerMask;
     [SerializeField] private Unit selectedUnit;
+
+    private BaseAction selectedAction;
 
     // Prevents the player from performing multiple actions at the same time
     private bool isBusy; 
@@ -31,33 +36,36 @@ public class UnitActionSystem : MonoBehaviour
         }
         Instance = this;
     }
+
+    private void Start()
+    {
+      //  SetSelectedUnit(selectedUnit);
+    }
     private void Update()
     {
-        // // Prevents the player from performing multiple actions at the same time
+        // Prevents the player from performing multiple actions at the same time
         if (isBusy) return;
 
+        // Ignore input if the mouse is over a UI element
+        if(EventSystem.current.IsPointerOverGameObject()) return;
+   
         // Check if the player is trying to select a unit or move the selected unit
+        if (TryHandleUnitSelection()) return;
+
+        HandleSelectedAction();
+    }
+
+    private void HandleSelectedAction()
+    {
         if (Input.GetMouseButtonDown(0))
         {
-            // Check if the mouse is over a unit
-            // If so, select the unit and return
-            // If not, move the selected unit to the mouse position
-            if (TryHandleUnitSelection()) return;
-            if (selectedUnit != null)
-            {
-                GridPosition mouseGridPosition = LevelGrid.Instance.GetGridPosition(MouseWorld.GetMouseWorldPosition());
-                if( selectedUnit.GetMoveAction().IsValidGridPosition(mouseGridPosition))
-                {
-                    SetBusy();
-                    selectedUnit.GetMoveAction().Move(mouseGridPosition, ClearBusy);
-                }
-            }      
-        }
+            GridPosition mouseGridPosition = LevelGrid.Instance.GetGridPosition(MouseWorld.GetMouseWorldPosition());
 
-        if (Input.GetMouseButtonDown(1))
-        {
-            SetBusy();
-            selectedUnit.GetSpinAction().Spin(ClearBusy);
+            if (selectedAction.IsValidGridPosition(mouseGridPosition))
+            {
+                SetBusy();
+                selectedAction.TakeAction(mouseGridPosition, ClearBusy);
+            }       
         }
     }
 
@@ -72,30 +80,52 @@ public class UnitActionSystem : MonoBehaviour
         isBusy = false;
     }
 
-    /// Select a unit if the mouse is over it
+    /// Check if the mouse is over a unit
+    /// If so, select the unit and return
+    /// If not, move the selected unit to the mouse position
     private bool TryHandleUnitSelection()
     {
-        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        if (Physics.Raycast(ray, out RaycastHit hit, float.MaxValue, unitLayerMask))
+        if(Input.GetMouseButtonDown(0))
         {
-            if (hit.transform.TryGetComponent<Unit>(out Unit unit))
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            if (Physics.Raycast(ray, out RaycastHit hit, float.MaxValue, unitLayerMask))
             {
-                if(AuthorityHelper.HasLocalControl(unit)) return false;
-                SetSelectedUnit(unit);
-                return true;
-            }
+                if (hit.transform.TryGetComponent<Unit>(out Unit unit))
+                {
+                    if(AuthorityHelper.HasLocalControl(unit) || unit == selectedUnit) return false;
+                    SetSelectedUnit(unit);
+                    return true;
+                }
+            }       
         }
+
         return false;
     }
 
+    /// <summary>
+    ///     Sets the selected unit and triggers the OnSelectedUnitChanged event.
+    ///     By defaults set the selected action to the unit's move action. The most common action.
+    /// </summary>
     private void SetSelectedUnit(Unit unit)
     {
         selectedUnit = unit;
-        OnSelectedUnitChanged?.Invoke(this, EventArgs.Empty); // Trigger the event when the selected unit changes
+        SetSelectedAction(unit.GetMoveAction());
+        OnSelectedUnitChanged?.Invoke(this, EventArgs.Empty);
+    }
+
+   
+    public void SetSelectedAction(BaseAction baseAction)
+    {
+        selectedAction = baseAction;
     }
 
     public Unit GetSelectedUnit()
     {
         return selectedUnit;
+    }
+
+    public BaseAction GetSelectedAction()
+    {
+        return selectedAction;
     }
 }

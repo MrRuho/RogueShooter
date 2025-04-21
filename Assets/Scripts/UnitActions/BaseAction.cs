@@ -1,6 +1,7 @@
 using UnityEngine;
 using Mirror;
 using System;
+using System.Collections.Generic;
 
 /// <summary>
 /// Base class for all unit actions in the game.
@@ -18,4 +19,14 @@ public abstract class BaseAction : NetworkBehaviour
     }
 
     public abstract string GetActionName();
+
+    public abstract void TakeAction(GridPosition gridPosition, Action onActionComplete);
+
+    public virtual bool IsValidGridPosition(GridPosition gridPosition)
+    {
+        List<GridPosition> validGridPositionsList = GetValidGridPositionList();
+        return validGridPositionsList.Contains(gridPosition);
+    }
+
+    public abstract List<GridPosition> GetValidGridPositionList();
 }

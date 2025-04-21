@@ -4,6 +4,7 @@ using TMPro;
 
 /// <summary>
 ///     This class is responsible for displaying the action button TXT in the UI
+/// 
 /// </summary>
 
 public class UnitActionButtonUI : MonoBehaviour
@@ -15,5 +16,12 @@ public class UnitActionButtonUI : MonoBehaviour
     public void SetBaseAction(BaseAction baseAction)
     {
         textMeshPro.text = baseAction.GetActionName().ToUpper();
+
+        actionButton.onClick.AddListener(() =>
+        {
+            UnitActionSystem.Instance.SetSelectedAction(baseAction);
+        } );
+        
     }
+
 }
