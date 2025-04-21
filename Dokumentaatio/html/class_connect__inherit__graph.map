@@ -1,0 +1,5 @@
+<map id="Connect" name="Connect">
+<area shape="rect" id="Node000001" title="This class is responsible for connecting to the Unity Relay service. It provides methods to host a ga..." alt="" coords="26,80,96,107"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="5,5,117,32"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="64,48,64,80,58,80,58,48"/>
+</map>

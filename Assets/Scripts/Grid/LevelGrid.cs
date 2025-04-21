@@ -1,22 +1,27 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// This class is responsible for managing the grid system in the game.
+/// It creates a grid of grid objects and provides methods to interact with the grid.
+/// </summary>
+
 public class LevelGrid : MonoBehaviour
 {
-    public static LevelGrid Instance { get; private set; } // Singleton instance of the LevelGrid
+    public static LevelGrid Instance { get; private set; }
     [SerializeField] private Transform debugPrefab;
     private GridSystem gridSystem;
     private void Awake()
     {
 
-        // Ensure that there is only one instance of UnitActionSystem in the scene
+        // Ensure that there is only one instance in the scene
         if (Instance != null)
         {
             Debug.LogError("LevelGrid: More than one LevelGrid in the scene!" + transform + " " + Instance);
             Destroy(gameObject);
             return;
         }
-        Instance = this; // Set the singleton instance to this object
+        Instance = this;
 
         gridSystem = new GridSystem(10, 10, 2f);
         gridSystem.CreateDebugObjects(debugPrefab);

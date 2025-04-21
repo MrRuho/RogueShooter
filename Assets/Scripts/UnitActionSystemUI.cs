@@ -2,6 +2,10 @@ using System;
 using UnityEngine;
 using UnityEngine.UI;
 
+/// <summary>
+///     This class is responsible for displaying the action buttons for the selected unit in the UI.
+///     It creates and destroys action buttons based on the selected unit's actions.
+/// </summary>
 
 public class UnitActionSystemUI : MonoBehaviour
 {

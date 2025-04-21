@@ -3,9 +3,14 @@ using Unity.Services.Authentication;
 using Unity.Services.Core;
 using UnityEngine;
 
+/// <summary>
+/// This class is responsible for handling the authentication process using Unity Services.
+/// It initializes the Unity Services and signs in the user anonymously.
+/// </summary>
+
 public class Authentication : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+
     async void Start()
     {
         try

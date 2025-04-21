@@ -1,6 +1,11 @@
 using UnityEngine;
 using Unity.Cinemachine;
 
+// <summary>
+// This script controls the camera movement, rotation, and zoom in a Unity game using the Cinemachine package.
+// It allows the player to move the camera using WASD keys, rotate it using Q and E keys, and zoom in and out using the mouse scroll wheel.
+// The camera follows a target object with a specified offset, and the zoom level is clamped to a minimum and maximum value.
+// </summary>
 public class CameraController : MonoBehaviour
 {
     private const float MIN_FOLLOW_Y_OFFSET = 2f;

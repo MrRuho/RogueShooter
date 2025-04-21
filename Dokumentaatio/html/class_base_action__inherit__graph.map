@@ -1,0 +1,9 @@
+<map id="BaseAction" name="BaseAction">
+<area shape="rect" id="Node000001" title="Base class for all unit actions in the game. This class inherits from NetworkBehaviour and provides c..." alt="" coords="62,80,151,107"/>
+<area shape="rect" id="Node000003" href="$class_move_action.html" title="The MoveAction class is responsible for handling the movement of a unit in the game...." alt="" coords="5,155,96,181"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="90,121,62,156,58,153,85,117"/>
+<area shape="rect" id="Node000004" href="$class_spin_action.html" title="This class is responsible for spinning a unit around its Y&#45;axis." alt="" coords="120,155,205,181"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="128,117,155,153,151,156,123,121"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="42,5,171,32"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="109,48,109,80,104,80,104,48"/>
+</map>

@@ -1,8 +1,10 @@
 using Mirror;
 using UnityEngine;
 
-// This script is responsible for managing the game modes and spawning units in the game.
-// It checks if the game is being played online or offline and spawns the player units accordingly.
+/// <summary>
+/// This class is responsible for managing the game mode and spawning units in the game.
+/// It checks if the game is being played online or offline and spawns units accordingly.
+/// </summary>
 
 public class GameModeManager : MonoBehaviour
 {

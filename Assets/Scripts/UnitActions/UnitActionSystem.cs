@@ -2,14 +2,16 @@ using Mirror;
 using System;
 using UnityEngine;
 
-// summary>
-// This script handles the unit action system, allowing the player to select a unit and move it to a target position in the game world.
+/// <summary>
+///     This script handles the unit action system in the game.
+///     It allows the player to select units and perform actions on them, such as moving or spinning.
+/// </summary>
+
 public class UnitActionSystem : MonoBehaviour
 {
     public static UnitActionSystem Instance { get; private set; }
-    public event EventHandler OnSelectedUnitChanged; // Event triggered when the selected unit changes
+    public event EventHandler OnSelectedUnitChanged;
 
-    // The layer mask to use for detecting units in the game world
     // This allows the script to only interact with objects on the specified layer
     [SerializeField] private LayerMask unitLayerMask;
     [SerializeField] private Unit selectedUnit;
@@ -20,18 +22,20 @@ public class UnitActionSystem : MonoBehaviour
     private void Awake()
     {
         selectedUnit = null;
-        // Ensure that there is only one instance of UnitActionSystem in the scene
+        // Ensure that there is only one instance in the scene
         if (Instance != null)
         {
             Debug.LogError("UnitActionSystem: More than one UnitActionSystem in the scene!" + transform + " " + Instance);
             Destroy(gameObject);
             return;
         }
-        Instance = this; // Set the singleton instance to this object
+        Instance = this;
     }
     private void Update()
     {
+        // // Prevents the player from performing multiple actions at the same time
         if (isBusy) return;
+
         // Check if the player is trying to select a unit or move the selected unit
         if (Input.GetMouseButtonDown(0))
         {
@@ -57,7 +61,7 @@ public class UnitActionSystem : MonoBehaviour
         }
     }
 
-    // SetBusy: Prevents the player from performing multiple actions at the same time
+    // Prevents the player from performing multiple actions at the same time
     private void SetBusy()
     {
         isBusy = true;
@@ -69,7 +73,6 @@ public class UnitActionSystem : MonoBehaviour
     }
 
     /// Select a unit if the mouse is over it
-    /// <returns>True if a unit was selected, false otherwise</returns>
     private bool TryHandleUnitSelection()
     {
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
@@ -93,6 +96,6 @@ public class UnitActionSystem : MonoBehaviour
 
     public Unit GetSelectedUnit()
     {
-        return selectedUnit; // Return the currently selected unit
+        return selectedUnit;
     }
 }

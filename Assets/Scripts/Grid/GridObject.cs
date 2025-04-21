@@ -1,6 +1,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+// <summary>
+// This class represents a grid object in the grid system.
+// It contains a list of units that are present in the grid position.
+// It also contains a reference to the grid system and the grid position.
+// </summary>
+
 public class GridObject
 {
     private GridSystem gridSystem;

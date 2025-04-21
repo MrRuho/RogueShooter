@@ -1,6 +1,13 @@
 using System;
 using UnityEngine;
 
+/// <summary>
+///     This class is responsible for spinning a unit around its Y-axis.
+/// </summary>
+/// remarks>
+///     Change to turn towards the direction the mouse is pointing
+/// </remarks>
+
 public class SpinAction : BaseAction
 {
 

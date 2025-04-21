@@ -1,6 +1,10 @@
 using System;
 using UnityEngine;
 
+/// <summary>
+/// This class is responsible for displaying a visual indicator when a unit is selected in the game.
+/// It uses a MeshRenderer component to show or hide the visual representation of the selected unit.
+/// </summary>
 public class UnitSelectedVisual : MonoBehaviour
 {
     [SerializeField] private Unit unit;
@@ -10,7 +14,7 @@ public class UnitSelectedVisual : MonoBehaviour
     private void Awake()
     {
         meshRenderer = GetComponent<MeshRenderer>();
-        meshRenderer.enabled = false; // Piilotetaan oletuksena
+        meshRenderer.enabled = false;
     }
 
     private void Start()
@@ -28,11 +32,11 @@ public class UnitSelectedVisual : MonoBehaviour
     {
         if (unit == UnitActionSystem.Instance.GetSelectedUnit())
         {
-            meshRenderer.enabled = true; // Show the visual if this unit is selected
+            meshRenderer.enabled = true;
         }
         else
         {
-            meshRenderer.enabled = false; // Hide the visual if this unit is not selected
+            meshRenderer.enabled = false;
         }
     }
 }

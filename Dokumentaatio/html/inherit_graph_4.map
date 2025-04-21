@@ -1,0 +1,11 @@
+<map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
+<area shape="rect" id="Node000000" title=" " alt="" coords="5,56,134,83"/>
+<area shape="rect" id="Node000001" href="$class_base_action.html" title="Base class for all unit actions in the game. This class inherits from NetworkBehaviour and provides c..." alt="" coords="182,31,270,57"/>
+<area shape="poly" id="edge16_Node000000_Node000001" title=" " alt="" coords="149,54,181,48,182,54,150,59"/>
+<area shape="rect" id="Node000004" href="$class_unit.html" title="This class represents a unit in the game. Actions can be called on the unit to perform various action..." alt="" coords="203,81,248,108"/>
+<area shape="poly" id="edge19_Node000000_Node000004" title=" " alt="" coords="150,80,203,88,202,94,149,85"/>
+<area shape="rect" id="Node000002" href="$class_move_action.html" title="The MoveAction class is responsible for handling the movement of a unit in the game...." alt="" coords="318,5,408,32"/>
+<area shape="poly" id="edge17_Node000001_Node000002" title=" " alt="" coords="285,30,317,24,318,30,286,36"/>
+<area shape="rect" id="Node000003" href="$class_spin_action.html" title="This class is responsible for spinning a unit around its Y&#45;axis." alt="" coords="321,56,405,83"/>
+<area shape="poly" id="edge18_Node000001_Node000003" title=" " alt="" coords="286,52,321,59,320,64,285,58"/>
+</map>

@@ -1,0 +1,5 @@
+<map id="UnitActionSystem" name="UnitActionSystem">
+<area shape="rect" id="Node000001" title="This script handles the unit action system in the game. It allows the player to select units and perf..." alt="" coords="5,80,133,107"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="13,5,125,32"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="72,48,72,80,66,80,66,48"/>
+</map>

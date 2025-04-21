@@ -1,5 +1,10 @@
 using UnityEngine;
 
+/// <summary>
+/// This class is responsible for handling mouse interactions in the game world.
+/// It provides a method to get the mouse position in the world space based on the camera's perspective.
+/// </summary>
+
 public class MouseWorld : MonoBehaviour
 {
     private static MouseWorld instance;
@@ -10,7 +15,6 @@ public class MouseWorld : MonoBehaviour
         instance = this;
     }
     
-// Get the mouse position in the world
     public static Vector3 GetMouseWorldPosition()
     {
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
