@@ -1,45 +1,8 @@
-# Doxygenin perusasetukset
 PROJECT_NAME           = RogueShooter
-OUTPUT_DIRECTORY       = ./html
-INPUT                  = ../Assets/Scripts
+OUTPUT_DIRECTORY       = Dokumentaatio/html
+INPUT                  = ..Assets/Scripts
 FILE_PATTERNS          = *.cs
 RECURSIVE              = YES
-EXCLUDE                = 
-EXCLUDE_SYMLINKS       = NO
-STRIP_FROM_PATH        = ../Assets/Scripts
-
-# Kieliasetukset
-OPTIMIZE_OUTPUT_FOR_CSHARP = YES
-EXTENSION_MAPPING      = cs=CSharp
-
-# Dokumentaation tyyppi
-GENERATE_HTML          = YES
-GENERATE_LATEX         = NO
-GENERATE_XML           = NO
-GENERATE_MAN           = NO
-GENERATE_RTF           = NO
-
-# Mitä otetaan mukaan
 EXTRACT_ALL            = YES
-EXTRACT_PRIVATE        = YES
-EXTRACT_STATIC         = YES
-EXTRACT_LOCAL_CLASSES  = YES
-EXTRACT_LOCAL_METHODS  = YES
-HIDE_UNDOC_MEMBERS     = NO
-HIDE_UNDOC_CLASSES     = NO
+GENERATE_HTML          = YES
 
-# Kaaviot
-HAVE_DOT               = YES
-CLASS_DIAGRAMS         = YES
-CALL_GRAPH             = YES
-CALLER_GRAPH           = YES
-COLLABORATION_GRAPH    = YES
-INCLUDE_GRAPH          = YES
-INCLUDED_BY_GRAPH      = YES
-DOT_IMAGE_FORMAT       = png
-INTERACTIVE_SVG        = NO
-
-# Outputin ulkoasu
-HTML_OUTPUT            = html
-GENERATE_TREEVIEW      = YES
-FULL_PATH_NAMES        = NO
