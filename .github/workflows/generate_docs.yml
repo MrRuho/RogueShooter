@@ -22,8 +22,11 @@ jobs:
       - name: Generate Doxygen documentation
         run: doxygen Dokumentaatio/Doxyfile
 
+      - name: List generated HTML files
+        run: ls -R Dokumentaatio/html || echo "No files generated"
+
       - name: Upload Doxygen HTML as artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v3
         with:
           name: doxygen-docs
           path: Dokumentaatio/html
