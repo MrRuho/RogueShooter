@@ -1,0 +1,7 @@
+<map id="GridObject.HasAnyUnit" name="GridObject.HasAnyUnit">
+<area shape="rect" id="Node000001" title=" " alt="" coords="529,13,687,40"/>
+<area shape="rect" id="Node000002" href="$class_level_grid.html#ae37c0843b9a37392fee852c36dab849f" title=" " alt="" coords="289,5,481,48"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="513,29,481,29,481,24,513,24"/>
+<area shape="rect" id="Node000003" href="$class_move_action.html#af000a3860682e4609d37bd287bc14d86" title=" " alt="" coords="5,13,241,40"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="273,29,241,29,241,24,273,24"/>
+</map>

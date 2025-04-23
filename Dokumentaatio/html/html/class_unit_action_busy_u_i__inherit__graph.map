@@ -1,0 +1,5 @@
+<map id="UnitActionBusyUI" name="UnitActionBusyUI">
+<area shape="rect" id="Node000001" title="This class is responsible for displaying the busy UI when the unit action system is busy." alt="" coords="5,80,132,107"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="13,5,124,32"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="71,48,71,80,66,80,66,48"/>
+</map>

@@ -1,0 +1,39 @@
+<map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
+<area shape="rect" id="Node000000" title=" " alt="" coords="5,436,117,463"/>
+<area shape="rect" id="Node000001" href="$class_authentication.html" title="This class is responsible for handling the authentication process using Unity Services...." alt="" coords="194,5,298,32"/>
+<area shape="poly" id="edge2_Node000000_Node000001" title=" " alt="" coords="63,420,76,334,97,222,126,114,143,72,163,42,176,31,192,24,194,29,179,36,167,46,148,74,131,116,102,223,81,335,69,421"/>
+<area shape="rect" id="Node000002" href="$class_camera_controller.html" title=" " alt="" coords="184,56,308,83"/>
+<area shape="poly" id="edge3_Node000000_Node000002" title=" " alt="" coords="59,420,63,354,77,267,90,220,108,174,132,131,163,93,182,79,185,84,166,97,137,134,113,176,95,222,83,268,68,355,65,421"/>
+<area shape="rect" id="Node000003" href="$class_connect.html" title="This class is responsible for connecting to the Unity Relay service. It provides methods to host a ga..." alt="" coords="211,107,281,133"/>
+<area shape="poly" id="edge4_Node000000_Node000003" title=" " alt="" coords="61,420,68,363,84,289,97,249,114,211,136,175,163,143,185,129,209,121,211,126,187,134,166,147,140,178,119,214,102,251,89,290,73,364,66,421"/>
+<area shape="rect" id="Node000004" href="$class_enemy_a_i.html" title=" " alt="" coords="208,157,284,184"/>
+<area shape="poly" id="edge5_Node000000_Node000004" title=" " alt="" coords="63,420,73,371,91,311,120,248,140,220,163,194,184,181,207,173,209,178,186,185,166,198,144,223,125,251,96,313,78,373,69,421"/>
+<area shape="rect" id="Node000005" href="$class_game_mode_manager.html" title="This class is responsible for managing the game mode and spawning units in the game...." alt="" coords="177,208,315,235"/>
+<area shape="poly" id="edge6_Node000000_Node000005" title=" " alt="" coords="66,420,79,381,98,334,126,286,163,245,182,233,184,237,166,249,130,289,103,336,84,383,72,422"/>
+<area shape="rect" id="Node000006" href="$class_grid_debug_object.html" title=" " alt="" coords="185,259,306,285"/>
+<area shape="poly" id="edge7_Node000000_Node000006" title=" " alt="" coords="72,421,106,358,132,324,163,295,183,284,186,288,166,299,136,328,111,361,76,423"/>
+<area shape="rect" id="Node000007" href="$class_grid_system_visual.html" title="This class is responsible for visualizing the grid system in the game. It creates a grid of visual ob..." alt="" coords="183,309,309,336"/>
+<area shape="poly" id="edge8_Node000000_Node000007" title=" " alt="" coords="80,422,116,383,163,346,188,334,190,339,166,350,120,387,84,426"/>
+<area shape="rect" id="Node000008" href="$class_grid_system_visual_single.html" title="This class is responsible for visualizing a single grid position in the game. It contains a MeshRende..." alt="" coords="165,360,327,387"/>
+<area shape="poly" id="edge9_Node000000_Node000008" title=" " alt="" coords="100,426,164,396,195,385,197,390,166,401,102,431"/>
+<area shape="rect" id="Node000009" href="$class_level_grid.html" title="This class is responsible for managing the grid system in the game. It creates a grid of grid objects..." alt="" coords="208,411,284,437"/>
+<area shape="poly" id="edge10_Node000000_Node000009" title=" " alt="" coords="132,437,207,427,208,432,132,442"/>
+<area shape="rect" id="Node000010" href="$class_mouse_world.html" title="This class is responsible for handling mouse interactions in the game world. It provides a method to ..." alt="" coords="199,461,292,488"/>
+<area shape="poly" id="edge11_Node000000_Node000010" title=" " alt="" coords="133,456,199,466,199,471,132,462"/>
+<area shape="rect" id="Node000011" href="$class_testing.html" title="This class is responsible for testing the grid system and unit actions in the game...." alt="" coords="214,512,278,539"/>
+<area shape="poly" id="edge12_Node000000_Node000011" title=" " alt="" coords="102,468,166,498,215,514,213,519,164,502,100,473"/>
+<area shape="rect" id="Node000012" href="$class_turn_system.html" title=" " alt="" coords="200,563,292,589"/>
+<area shape="poly" id="edge13_Node000000_Node000012" title=" " alt="" coords="84,473,120,512,166,548,200,563,198,568,163,553,116,516,80,477"/>
+<area shape="rect" id="Node000013" href="$class_turn_system_u_i.html" title=" " alt="" coords="193,613,299,640"/>
+<area shape="poly" id="edge14_Node000000_Node000013" title=" " alt="" coords="76,475,111,538,136,571,166,599,193,613,191,618,163,604,132,575,106,541,72,478"/>
+<area shape="rect" id="Node000014" href="$class_unit_action_busy_u_i.html" title="This class is responsible for displaying the busy UI when the unit action system is busy." alt="" coords="183,664,309,691"/>
+<area shape="poly" id="edge15_Node000000_Node000014" title=" " alt="" coords="72,477,84,516,103,562,130,610,166,650,184,661,182,666,163,654,126,613,98,565,79,518,66,478"/>
+<area shape="rect" id="Node000015" href="$class_unit_action_button_u_i.html" title="This class is responsible for displaying the action button TXT in the UI." alt="" coords="179,715,313,741"/>
+<area shape="poly" id="edge16_Node000000_Node000015" title=" " alt="" coords="69,478,78,526,96,586,125,648,144,676,166,701,183,712,180,716,163,705,140,679,120,650,91,588,73,527,63,479"/>
+<area shape="rect" id="Node000016" href="$class_unit_action_system.html" title="This script handles the unit action system in the game. It allows the player to select units and perf..." alt="" coords="182,765,310,792"/>
+<area shape="poly" id="edge17_Node000000_Node000016" title=" " alt="" coords="66,478,73,535,89,609,102,647,119,685,140,720,166,751,183,763,180,768,163,755,136,723,114,688,97,649,84,610,68,536,61,478"/>
+<area shape="rect" id="Node000017" href="$class_unit_action_system_u_i.html" title="This class is responsible for displaying the action buttons for the selected unit in the UI...." alt="" coords="175,816,316,843"/>
+<area shape="poly" id="edge18_Node000000_Node000017" title=" " alt="" coords="65,478,68,544,83,631,95,677,113,722,137,765,167,802,182,813,179,818,163,806,132,768,108,725,90,679,77,632,63,545,59,478"/>
+<area shape="rect" id="Node000018" href="$class_unit_selected_visual.html" title="This class is responsible for displaying a visual indicator when a unit is selected in the game...." alt="" coords="180,867,312,893"/>
+<area shape="poly" id="edge19_Node000000_Node000018" title=" " alt="" coords="69,478,81,564,102,676,131,783,148,825,167,853,181,864,178,868,163,856,143,827,126,785,97,677,76,564,63,478"/>
+</map>

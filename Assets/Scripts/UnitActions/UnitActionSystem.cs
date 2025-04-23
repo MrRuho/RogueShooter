@@ -13,7 +13,11 @@ using UnityEngine.EventSystems;
 public class UnitActionSystem : MonoBehaviour
 {
     public static UnitActionSystem Instance { get; private set; }
+
     public event EventHandler OnSelectedUnitChanged;
+    public event EventHandler OnSelectedActionChanged;
+    public event EventHandler <bool> OnBusyChanged;
+    public event EventHandler OnActionStarted;
 
     // This allows the script to only interact with objects on the specified layer
     [SerializeField] private LayerMask unitLayerMask;
@@ -39,12 +43,15 @@ public class UnitActionSystem : MonoBehaviour
 
     private void Start()
     {
-      //  SetSelectedUnit(selectedUnit);
+
     }
     private void Update()
     {
         // Prevents the player from performing multiple actions at the same time
         if (isBusy) return;
+
+        // if is not the player's turn, ignore input
+        if(!TurnSystem.Instance.IsPlayerTurn()) return;
 
         // Ignore input if the mouse is over a UI element
         if(EventSystem.current.IsPointerOverGameObject()) return;
@@ -61,28 +68,42 @@ public class UnitActionSystem : MonoBehaviour
         {
             GridPosition mouseGridPosition = LevelGrid.Instance.GetGridPosition(MouseWorld.GetMouseWorldPosition());
 
-            if (selectedAction.IsValidGridPosition(mouseGridPosition))
+            if (!selectedAction.IsValidGridPosition(mouseGridPosition)
+            || !selectedUnit.TrySpendActionPointsToTakeAction(selectedAction))
             {
-                SetBusy();
-                selectedAction.TakeAction(mouseGridPosition, ClearBusy);
-            }       
+                return;       
+            }
+            SetBusy();
+            selectedAction.TakeAction(mouseGridPosition, ClearBusy);
+
+            OnActionStarted?.Invoke(this, EventArgs.Empty); 
         }
     }
 
-    // Prevents the player from performing multiple actions at the same time
+    /// <summary>
+    //      Prevents the player from performing multiple actions at the same time
+    /// </summary>
     private void SetBusy()
     {
         isBusy = true;
+        OnBusyChanged?.Invoke(this, isBusy);
     }
 
+    /// <summary>
+    ///     This method is called when the action is completed.
+    /// </summary>
     private void ClearBusy()
     {
         isBusy = false;
+        OnBusyChanged?.Invoke(this, isBusy);
     }
 
-    /// Check if the mouse is over a unit
-    /// If so, select the unit and return
-    /// If not, move the selected unit to the mouse position
+    /// <summary>
+    ///     This method is called when the player clicks on a unit in the game world.
+    ///     Check if the mouse is over a unit
+    ///     If so, select the unit and return
+    ///     If not, move the selected unit to the mouse position
+    /// </summary>
     private bool TryHandleUnitSelection()
     {
         if(Input.GetMouseButtonDown(0))
@@ -108,15 +129,19 @@ public class UnitActionSystem : MonoBehaviour
     /// </summary>
     private void SetSelectedUnit(Unit unit)
     {
+        if(unit.IsEnemy()) return;
         selectedUnit = unit;
         SetSelectedAction(unit.GetMoveAction());
         OnSelectedUnitChanged?.Invoke(this, EventArgs.Empty);
     }
 
-   
+   /// <summary>
+   ///     Sets the selected action and triggers the OnSelectedActionChanged event.
+   ///  </summary>
     public void SetSelectedAction(BaseAction baseAction)
     {
         selectedAction = baseAction;
+        OnSelectedActionChanged?.Invoke(this, EventArgs.Empty);
     }
 
     public Unit GetSelectedUnit()

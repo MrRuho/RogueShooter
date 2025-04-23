@@ -1,0 +1,8 @@
+<map id="BaseAction.GetActionPointsCost" name="BaseAction.GetActionPointsCost">
+<area shape="rect" id="Node000001" title=" " alt="" coords="465,43,680,69"/>
+<area shape="rect" id="Node000002" href="$class_unit.html#acb7946d692a60a71aa9db3bab5b7fd52" title=" " alt="" coords="233,5,417,48"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="449,44,417,40,418,35,450,39"/>
+<area shape="rect" id="Node000003" href="$class_unit.html#afd8995267e93ddb4b652dd3dfead1fd4" title=" " alt="" coords="5,35,185,77"/>
+<area shape="poly" id="edge3_Node000001_Node000003" title=" " alt="" coords="450,62,417,63,233,63,185,62,185,56,233,57,417,57,450,57"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="218,43,186,47,185,42,217,38"/>
+</map>

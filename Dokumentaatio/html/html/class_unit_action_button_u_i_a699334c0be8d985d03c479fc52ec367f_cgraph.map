@@ -1,0 +1,5 @@
+<map id="UnitActionButtonUI.UpdateSelectedVisual" name="UnitActionButtonUI.UpdateSelectedVisual">
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,5,186,48"/>
+<area shape="rect" id="Node000002" href="$class_unit_action_system.html#a2339ff8deb76ac574641c36067f7d4b5" title=" " alt="" coords="234,5,437,48"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="186,24,218,24,218,29,186,29"/>
+</map>

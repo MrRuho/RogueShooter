@@ -1,0 +1,8 @@
+<map id="Unit.TrySpendActionPointsToTakeAction" name="Unit.TrySpendActionPointsToTakeAction">
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,35,185,77"/>
+<area shape="rect" id="Node000002" href="$class_unit.html#acb7946d692a60a71aa9db3bab5b7fd52" title=" " alt="" coords="233,5,417,48"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="184,42,217,38,217,43,185,47"/>
+<area shape="rect" id="Node000003" href="$class_base_action.html#a20cc796d15b41abbe6ea0da8604692fa" title=" " alt="" coords="465,43,680,69"/>
+<area shape="poly" id="edge3_Node000001_Node000003" title=" " alt="" coords="185,56,233,57,417,57,450,57,450,62,417,63,233,63,185,62"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="418,35,450,39,449,44,417,40"/>
+</map>

@@ -1,5 +1,0 @@
-<map id="LevelGrid.GetWorldPosition" name="LevelGrid.GetWorldPosition">
-<area shape="rect" id="Node000001" title=" " alt="" coords="180,5,361,32"/>
-<area shape="rect" id="Node000002" href="$class_move_action.html#a8eb0b780389a71eb506dc999b8d06ba8" title=" " alt="" coords="5,5,132,32"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="164,21,132,21,132,16,164,16"/>
-</map>

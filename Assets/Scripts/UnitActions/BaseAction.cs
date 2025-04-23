@@ -29,4 +29,9 @@ public abstract class BaseAction : NetworkBehaviour
     }
 
     public abstract List<GridPosition> GetValidGridPositionList();
+
+    public virtual int GetActionPointsCost()
+    {
+        return 1;
+    }
 }

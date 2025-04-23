@@ -10,6 +10,8 @@ public class GameModeManager : MonoBehaviour
 {
     public GameObject playerPrefab;
 
+    public GameObject enemyPrefab;
+
     void Start()
     {
         
@@ -21,9 +23,13 @@ public class GameModeManager : MonoBehaviour
         {
             Debug.Log("Game is offline, spawning units.");
             SpawnUnits();
+            SpawnEnemyUnits();
         }
     }
-
+    // <summary>
+    /// This method is responsible for spawning units in the game.
+    /// In online the host will spawn this units.
+    /// </summary>
     private void SpawnUnits()
     {
         // Create units in the scene
@@ -31,6 +37,18 @@ public class GameModeManager : MonoBehaviour
         Instantiate(playerPrefab, new Vector3(0, 0, 0), Quaternion.identity);
 
         Instantiate(playerPrefab, new Vector3(2, 0, 0), Quaternion.identity);
+    }
+    /// <summary>
+    /// This method is responsible for spawning enemy units in the game.
+    /// In online the client will spawn this units.
+    /// </summary>
+    private void SpawnEnemyUnits()
+    {
+        // Create enemy units in the scene
+        // Instantiate the enemy prefab at the specified position and rotation
+        Instantiate(enemyPrefab, new Vector3(4, 0, 6), Quaternion.identity);
+
+        Instantiate(enemyPrefab, new Vector3(6, 0, 6), Quaternion.identity);
     }
 
 }

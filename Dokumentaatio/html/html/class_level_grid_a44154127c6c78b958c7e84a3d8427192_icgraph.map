@@ -1,0 +1,5 @@
+<map id="LevelGrid.IsValidGridPosition" name="LevelGrid.IsValidGridPosition">
+<area shape="rect" id="Node000001" title=" " alt="" coords="289,5,479,32"/>
+<area shape="rect" id="Node000002" href="$class_move_action.html#af000a3860682e4609d37bd287bc14d86" title=" " alt="" coords="5,5,241,32"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="273,21,241,21,241,16,273,16"/>
+</map>
