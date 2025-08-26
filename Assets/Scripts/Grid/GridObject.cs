@@ -14,7 +14,7 @@ public class GridObject
 
     private List<Unit> unitList;
 
-    public GridObject( GridSystem gridSystem, GridPosition gridPosition )
+    public GridObject(GridSystem gridSystem, GridPosition gridPosition)
     {
         this.gridSystem = gridSystem;
         this.gridPosition = gridPosition;
@@ -31,12 +31,12 @@ public class GridObject
         return gridPosition.ToString() + "\n" + unitListString;
     }
 
-    public void AddUnit (Unit unit)
+    public void AddUnit(Unit unit)
     {
         unitList.Add(unit);
     }
 
-    public void RemoveUnit (Unit unit)
+    public void RemoveUnit(Unit unit)
     {
         unitList.Remove(unit);
     }
@@ -49,5 +49,16 @@ public class GridObject
     public bool HasAnyUnit()
     {
         return unitList.Count > 0;
+    }
+    
+    public Unit GetUnit()
+    {
+        if (HasAnyUnit())
+        {
+            return unitList[0];
+        } else
+        {
+            return null;
+        }
     }
 }

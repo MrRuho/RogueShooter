@@ -35,25 +35,27 @@ public class MoveAction : BaseAction
             float moveSpeed = 4f;
             transform.position += moveSpeed * Time.deltaTime * moveDirection;
 
-             // Rotate towards the target position
+            // Rotate towards the target position
             float rotationSpeed = 10f;
             transform.forward = Vector3.Lerp(transform.forward, moveDirection, Time.deltaTime * rotationSpeed);
 
             unitAnimator.SetBool("IsRunning", true);
 
-        } else 
+        }
+        else
         {
             unitAnimator.SetBool("IsRunning", false);
-            isActive = false;
-            onActionComplete();
+            ActionComplete();
+            
         }
     }
 
     public override void TakeAction(GridPosition gridPosition, Action onActionComplete )
     {
-        this.onActionComplete = onActionComplete;
+        ActionStart(onActionComplete);
+       
         targetPosition = LevelGrid.Instance.GetWorldPosition(gridPosition);
-        isActive = true;
+   
     }
 
 

@@ -13,7 +13,7 @@ public class Unit : NetworkBehaviour
     private const int ACTION_POINTS_MAX = 2;
 
     public static event EventHandler OnAnyActionPointsChanged;
-    
+
     [SerializeField] private bool isEnemy;
 
     private GridPosition gridPosition;
@@ -40,8 +40,8 @@ public class Unit : NetworkBehaviour
     }
 
     private void Update()
-    {   
-       
+    {
+
         GridPosition newGridPosition = LevelGrid.Instance.GetGridPosition(transform.position);
         if (newGridPosition != gridPosition)
         {
@@ -65,6 +65,11 @@ public class Unit : NetworkBehaviour
         return gridPosition;
     }
 
+    public Vector3 GetWorldPosition()
+    {
+        return transform.position;
+    }
+
     public BaseAction[] GetBaseActionsArray()
     {
         return baseActionsArray;
@@ -81,10 +86,10 @@ public class Unit : NetworkBehaviour
     }
 
     public bool CanSpendActionPointsToTakeAction(BaseAction baseAction)
-    { 
+    {
         if (actionPoints >= baseAction.GetActionPointsCost())
         {
-           // actionPoints -= baseAction.GetActionPointsCost();
+            // actionPoints -= baseAction.GetActionPointsCost();
             return true;
         }
         return false;
@@ -101,14 +106,14 @@ public class Unit : NetworkBehaviour
     {
         return actionPoints;
     }
-    
+
     /// <summary>
     ///     This method is called when the turn changes. It resets the action points to the maximum value.
     /// </summary>
     private void TurnSystem_OnTurnChanged(object sender, EventArgs e)
     {
-        if((isEnemy && !TurnSystem.Instance.IsPlayerTurn())||
-        (!isEnemy && TurnSystem.Instance.IsPlayerTurn())) 
+        if ((isEnemy && !TurnSystem.Instance.IsPlayerTurn()) ||
+        (!isEnemy && TurnSystem.Instance.IsPlayerTurn()))
         {
             actionPoints = ACTION_POINTS_MAX;
             OnAnyActionPointsChanged?.Invoke(this, EventArgs.Empty);
@@ -118,5 +123,10 @@ public class Unit : NetworkBehaviour
     public bool IsEnemy()
     {
         return isEnemy;
+    }
+
+    public void Damage()
+    { 
+        Debug.Log(transform + " took damage");
     }
 }

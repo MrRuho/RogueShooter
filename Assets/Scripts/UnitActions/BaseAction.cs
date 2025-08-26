@@ -34,4 +34,16 @@ public abstract class BaseAction : NetworkBehaviour
     {
         return 1;
     }
+
+    protected void ActionStart(Action onActionComplete)
+    {
+        isActive = true;
+        this.onActionComplete = onActionComplete;
+    }
+
+    protected void ActionComplete()
+    {
+        isActive = false;
+        onActionComplete();
+    }
 }
