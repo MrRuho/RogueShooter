@@ -91,4 +91,29 @@ public class LevelGrid : MonoBehaviour
         return gridObject.GetUnit();
     }
 
+    public void ClearAllOccupancy()
+    {
+        for (int x = 0; x < gridSystem.GetWidth(); x++)
+        {
+            for (int z = 0; z < gridSystem.GetHeight(); z++)
+            {
+                var gridPosition = new GridPosition(x, z);
+                var gridObject = gridSystem.GetGridObject(gridPosition);
+                var list = gridObject.GetUnitList();
+                list?.Clear();
+            }
+        }
+    }
+
+    public void RebuildOccupancyFromScene()
+    {
+        ClearAllOccupancy();
+        var units = Object.FindObjectsByType<Unit>(FindObjectsSortMode.None);
+        foreach (var u in units)
+        {
+            var gp = GetGridPosition(u.transform.position);
+            AddUnitAtGridPosition(gp, u);
+        }
+    }
+
 }

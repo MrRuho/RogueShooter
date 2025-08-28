@@ -33,8 +33,11 @@ public class Unit : NetworkBehaviour
 
     private void Start()
     {
-        gridPosition = LevelGrid.Instance.GetGridPosition(transform.position);
-        LevelGrid.Instance.AddUnitAtGridPosition(gridPosition, this);
+        if (LevelGrid.Instance != null)
+        {
+            gridPosition = LevelGrid.Instance.GetGridPosition(transform.position);
+            LevelGrid.Instance.AddUnitAtGridPosition(gridPosition, this);
+        }
 
         TurnSystem.Instance.OnTurnChanged += TurnSystem_OnTurnChanged;
     }
@@ -126,7 +129,16 @@ public class Unit : NetworkBehaviour
     }
 
     public void Damage()
-    { 
+    {
         Debug.Log(transform + " took damage");
+    }
+
+    void OnDestroy()
+    {
+        if (LevelGrid.Instance != null)
+        {
+            gridPosition = LevelGrid.Instance.GetGridPosition(transform.position);
+            LevelGrid.Instance.RemoveUnitAtGridPosition(gridPosition, this);
+        }
     }
 }

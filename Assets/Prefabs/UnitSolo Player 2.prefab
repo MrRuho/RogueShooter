@@ -117,9 +117,9 @@ GameObject:
   - component: {fileID: -8676646097946852038}
   - component: {fileID: 1061650688474466407}
   - component: {fileID: 6634297939630033100}
-  - component: {fileID: 4511270037338635811}
+  - component: {fileID: 4794243202522207667}
   m_Layer: 7
-  m_Name: UnitSolo
+  m_Name: UnitSolo Player 2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -155,7 +155,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   sceneId: 0
-  _assetId: 3441013790
+  _assetId: 4123442265
   serverOnly: 0
   visibility: 0
   hasSpawned: 0
@@ -294,7 +294,7 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
---- !u!114 &4511270037338635811
+--- !u!114 &4794243202522207667
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -695,6 +695,10 @@ PrefabInstance:
       propertyPath: m_ApplyRootMotion
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 137720934533220950, guid: 2f3e27eecb190e44a9af50723c394274, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 673443bdcb7bf2f47be93ce60e68966f, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects:
