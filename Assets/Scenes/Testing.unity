@@ -1924,7 +1924,7 @@ MonoBehaviour:
   enemySpawnPositions:
   - {x: 4, y: 0, z: 8}
   - {x: 6, y: 0, z: 8}
-  relayJoinCode: BP9RHR
+  relayJoinCode: T6FB68
 --- !u!4 &753069689
 Transform:
   m_ObjectHideFlags: 0

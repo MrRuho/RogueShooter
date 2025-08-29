@@ -74,9 +74,12 @@ namespace Utp
 		{
 			base.OnStartServer();
 			enemiesSpawned = false;
+			Debug.Log("[NM] OnStartServer() called. Mode=" + GameModeManager.SelectedMode);
 
 			if (GameModeManager.SelectedMode == GameMode.CoOp)
+			{ 
 				ServerSpawnEnemies();
+			}
 		}
 
 		/// <summary>
@@ -253,7 +256,8 @@ namespace Utp
 			}
 
 			if (GameModeManager.SelectedMode == GameMode.CoOp && !enemiesSpawned)
-			{ 
+			{ 	
+				Debug.Log("Spawning enemies for Co-op.");
 				ServerSpawnEnemies();
 			}
 
@@ -262,6 +266,7 @@ namespace Utp
 		[Server]
 		void ServerSpawnEnemies()
 		{
+			Debug.Log("[NM] ServerSpawnEnemies() called.");
 			if (!enemyPrefab || enemySpawnPositions == null || enemySpawnPositions.Length == 0)
 			{
 				Debug.LogWarning("[NM] EnemyPrefab/positions puuttuu");

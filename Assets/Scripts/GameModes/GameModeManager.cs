@@ -10,6 +10,10 @@ public class GameModeManager : MonoBehaviour
 {
     public static GameMode SelectedMode { get; private set; } = GameMode.SinglePlayer;
 
+    public static void SetSinglePlayer() => SelectedMode = GameMode.SinglePlayer;
+    public static void SetCoOp()         => SelectedMode = GameMode.CoOp;
+    public static void SetVersus()       => SelectedMode = GameMode.Versus;
+
 
     [Header("Prefabs (all must have NetworkIdentity if used online)")]
     public GameObject playerPrefab;
@@ -55,8 +59,8 @@ public class GameModeManager : MonoBehaviour
     }
     public void OnClickCoOp()
     {
-        Debug.Log("Co-op mode selected.");    
         SelectedMode = GameMode.CoOp;
+        Debug.Log("SelectedMode set to CoOp. Now start host or client.");
         // Tässä voit näyttää ConnectCanvasin, tai käynnistää suoraan host/clientin:
         // NetworkManager.singleton.StartHost(); // host napille
         // NetworkManager.singleton.StartClient(); // client napille
