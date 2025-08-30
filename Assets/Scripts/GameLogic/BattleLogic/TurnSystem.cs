@@ -11,7 +11,7 @@ public class TurnSystem : MonoBehaviour
 
     private void Awake()
     {
-       
+
         // Ensure that there is only one instance in the scene
         if (Instance != null)
         {
@@ -24,11 +24,27 @@ public class TurnSystem : MonoBehaviour
 
     public void NextTurn()
     {
-        turnNumber++;
-        isPlayerTurn = !isPlayerTurn;
-        
-        OnTurnChanged?.Invoke(this, EventArgs.Empty);
-        
+        // Tarkista pelimoodi
+        if (GameModeManager.SelectedMode == GameMode.SinglePlayer)
+        {
+            Debug.Log("Single Player mode: Proceeding to the next turn.");
+            turnNumber++;
+            isPlayerTurn = !isPlayerTurn;
+
+            OnTurnChanged?.Invoke(this, EventArgs.Empty);
+        }
+        else if (GameModeManager.SelectedMode == GameMode.CoOp)
+        {
+            Debug.Log("Co-Op mode: Proceeding to the next turn.");
+            // Tee jotain erityistä CoOp-tilassa
+        }
+        else if (GameModeManager.SelectedMode == GameMode.Versus)
+        {
+            Debug.Log("Versus mode: Proceeding to the next turn.");
+            // Tee jotain erityistä Versus-tilassa
+        }
+
+
     }
 
     public int GetTurnNumber()
@@ -40,4 +56,5 @@ public class TurnSystem : MonoBehaviour
     {
         return isPlayerTurn;
     }
+    
 }

@@ -77,7 +77,7 @@ namespace Utp
 			Debug.Log("[NM] OnStartServer() called. Mode=" + GameModeManager.SelectedMode);
 
 			if (GameModeManager.SelectedMode == GameMode.CoOp)
-			{ 
+			{
 				ServerSpawnEnemies();
 			}
 		}
@@ -231,7 +231,7 @@ namespace Utp
 				return;
 			}
 			base.OnServerAddPlayer(conn);
-
+		
 			// 2) päätä host vs client
 			bool isHost = conn.connectionId == 0;
 
@@ -256,10 +256,13 @@ namespace Utp
 			}
 
 			if (GameModeManager.SelectedMode == GameMode.CoOp && !enemiesSpawned)
-			{ 	
+			{
 				Debug.Log("Spawning enemies for Co-op.");
 				ServerSpawnEnemies();
 			}
+			var coord = CoopTurnCoordinator.Instance;
+			if (coord != null)
+				coord.ServerUpdateRequiredCount(NetworkServer.connections.Count);
 
 		}
 
@@ -281,6 +284,15 @@ namespace Utp
 			}
 
 			enemiesSpawned = true;
+		}
+		
+		public override void OnServerDisconnect(NetworkConnectionToClient conn)
+		{
+			base.OnServerDisconnect(conn);
+			// päivitä pelaajamäärä koordinaattorille
+			var coord = CoopTurnCoordinator.Instance;
+			if (coord != null)
+				coord.ServerUpdateRequiredCount(NetworkServer.connections.Count);
 		}
 	}
 }

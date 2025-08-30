@@ -73,8 +73,9 @@ public class GameModeSelectUI : MonoBehaviour
 
     private System.Collections.IEnumerator ResetGridNextFrame()
     {
-        yield return new WaitForEndOfFrame(); // varmistaa että OnDestroy-koukut ehtivät juosta
-        LevelGrid.Instance?.RebuildOccupancyFromScene();
+        yield return new WaitForEndOfFrame();
+        var lg = LevelGrid.Instance;
+        if (lg != null) lg.RebuildOccupancyFromScene();
     }
     
 }

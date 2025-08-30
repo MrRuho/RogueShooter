@@ -99,12 +99,15 @@ namespace Utp
 
 			UtpLog.Info("UTPTransport initialized!");
 		}
+		
+		private bool _warnedClientNoHandler = false;
+		private bool _warnedServerNoHandler = false;
 
 		private void SetupDefaultCallbacks()
 		{
 			if (OnServerConnectedWithAddress == null)
 			{
-				OnServerConnectedWithAddress = (connId, address) => 
+				OnServerConnectedWithAddress = (connId, address) =>
 					UtpLog.Warning($"OnServerConnectedWithAddress called with no handler. Connection ID: {connId}, Address: {address}");
 			}
 			/*
@@ -118,7 +121,17 @@ namespace Utp
 			}
 			if (OnServerDataReceived == null)
 			{
-				OnServerDataReceived = (connId, data, channel) => UtpLog.Warning("OnServerDataReceived called with no handler");
+				OnServerDataReceived = (connId, data, channel) =>
+				{
+					if (!_warnedServerNoHandler)
+					{
+						_warnedServerNoHandler = true;
+						Debug.LogWarning(
+							$"OnServerDataReceived received data but no handler is assigned. " +
+							$"First occurrence (Connection ID: {connId}, size: {data.Count} bytes). Further messages will be suppressed.");
+					}
+					// pudota paketit ääneti
+				};
 			}
 			if (OnClientConnected == null)
 			{
@@ -130,10 +143,18 @@ namespace Utp
 			}
 			if (OnClientDataReceived == null)
 			{
-				OnClientDataReceived = (data, channel) => 
-					Debug.LogWarning($"OnClientDataReceived received data but no handler is assigned. Size: {data.Count} bytes.");
-			
-				//OnClientDataReceived = (data, channel) => UtpLog.Warning("OnClientDataReceived called with no handler");
+
+				OnClientDataReceived = (data, channel) =>
+				{
+					if (!_warnedClientNoHandler)
+					{
+						_warnedClientNoHandler = true;
+						Debug.LogWarning(
+							$"OnClientDataReceived received data but no handler is assigned. " +
+							$"First occurrence (size: {data.Count} bytes). Further messages will be suppressed.");
+					}
+					// pudota paketit ääneti
+				};
 			}
 		}
 

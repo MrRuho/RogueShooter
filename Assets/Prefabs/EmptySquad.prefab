@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 6566568845489158970}
   - component: {fileID: 5889926238710660759}
   - component: {fileID: -3630091242664463749}
+  - component: {fileID: 5657379893922711786}
   m_Layer: 0
   m_Name: EmptySquad
   m_TagString: Untagged
@@ -97,3 +98,19 @@ MonoBehaviour:
   positionSensitivity: 0.01
   rotationSensitivity: 0.01
   scaleSensitivity: 0.01
+--- !u!114 &5657379893922711786
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7637091775685802694}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1a9f7223fdc429a42a872025396aecca, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  hasEndedThisTurn: 0
