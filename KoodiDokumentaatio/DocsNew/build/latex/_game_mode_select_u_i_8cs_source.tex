@@ -1,0 +1,87 @@
+\doxysection{Game\+Mode\+Select\+UI.\+cs}
+\hypertarget{_game_mode_select_u_i_8cs_source}{}\label{_game_mode_select_u_i_8cs_source}\index{D:/Unity/RogueShooter/RogueShooter/Assets/Scripts/Menu/GameModeSelectUI.cs@{D:/Unity/RogueShooter/RogueShooter/Assets/Scripts/Menu/GameModeSelectUI.cs}}
+\mbox{\hyperlink{_game_mode_select_u_i_8cs}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\Hypertarget{_game_mode_select_u_i_8cs_source_l00001}00001\ \textcolor{keyword}{using\ }UnityEngine;}
+\DoxyCodeLine{\Hypertarget{_game_mode_select_u_i_8cs_source_l00002}00002\ \textcolor{keyword}{using\ }UnityEngine.UI;}
+\DoxyCodeLine{\Hypertarget{_game_mode_select_u_i_8cs_source_l00003}00003\ }
+\DoxyCodeLine{\Hypertarget{_game_mode_select_u_i_8cs_source_l00004}\mbox{\hyperlink{class_game_mode_select_u_i}{00004}}\ \textcolor{keyword}{public}\ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_game_mode_select_u_i}{GameModeSelectUI}}\ :\ MonoBehaviour}
+\DoxyCodeLine{\Hypertarget{_game_mode_select_u_i_8cs_source_l00005}00005\ \{}
+\DoxyCodeLine{\Hypertarget{_game_mode_select_u_i_8cs_source_l00006}00006\ \ \ \ \ \textcolor{comment}{//\ Serialized\ fields}}
+\DoxyCodeLine{\Hypertarget{_game_mode_select_u_i_8cs_source_l00007}00007\ \ \ \ \ [Header(\textcolor{stringliteral}{"{}Canvas\ References"{}})]}
+\DoxyCodeLine{\Hypertarget{_game_mode_select_u_i_8cs_source_l00008}\mbox{\hyperlink{class_game_mode_select_u_i_a334110681c18c6b53d1d3ec186145292}{00008}}\ \ \ \ \ [SerializeField]\ \textcolor{keyword}{private}\ GameObject\ \mbox{\hyperlink{class_game_mode_select_u_i_a334110681c18c6b53d1d3ec186145292}{gameModeSelectCanvas}};\ \textcolor{comment}{//\ this\ (self)}}
+\DoxyCodeLine{\Hypertarget{_game_mode_select_u_i_8cs_source_l00009}\mbox{\hyperlink{class_game_mode_select_u_i_a5cc1eebf65f9fb9f9b8ec842b996dcec}{00009}}\ \ \ \ \ [SerializeField]\ \textcolor{keyword}{private}\ GameObject\ \mbox{\hyperlink{class_game_mode_select_u_i_a5cc1eebf65f9fb9f9b8ec842b996dcec}{connectCanvas}};\ \ \ \ \ \ \ \ \textcolor{comment}{//\ Hiden\ on\ start}}
+\DoxyCodeLine{\Hypertarget{_game_mode_select_u_i_8cs_source_l00010}00010\ }
+\DoxyCodeLine{\Hypertarget{_game_mode_select_u_i_8cs_source_l00011}00011\ \ \ \ \ \textcolor{comment}{//\ UI\ Elements}}
+\DoxyCodeLine{\Hypertarget{_game_mode_select_u_i_8cs_source_l00012}00012\ \ \ \ \ [Header(\textcolor{stringliteral}{"{}Buttons"{}})]}
+\DoxyCodeLine{\Hypertarget{_game_mode_select_u_i_8cs_source_l00013}\mbox{\hyperlink{class_game_mode_select_u_i_aa31d536b7ad8e0e48bb2bd5ceb9fb7fd}{00013}}\ \ \ \ \ [SerializeField]\ \textcolor{keyword}{private}\ Button\ \mbox{\hyperlink{class_game_mode_select_u_i_aa31d536b7ad8e0e48bb2bd5ceb9fb7fd}{coopButton}};}
+\DoxyCodeLine{\Hypertarget{_game_mode_select_u_i_8cs_source_l00014}\mbox{\hyperlink{class_game_mode_select_u_i_a5a09bb50a3de68c3e59602e269d50652}{00014}}\ \ \ \ \ [SerializeField]\ \textcolor{keyword}{private}\ Button\ \mbox{\hyperlink{class_game_mode_select_u_i_a5a09bb50a3de68c3e59602e269d50652}{pvpButton}};}
+\DoxyCodeLine{\Hypertarget{_game_mode_select_u_i_8cs_source_l00015}00015\ }
+\DoxyCodeLine{\Hypertarget{_game_mode_select_u_i_8cs_source_l00016}\mbox{\hyperlink{class_game_mode_select_u_i_a65c12020ff74e1b8a84caa11cd2beb55}{00016}}\ \ \ \ \ \textcolor{keyword}{private}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_game_mode_select_u_i_a65c12020ff74e1b8a84caa11cd2beb55}{Awake}}()}
+\DoxyCodeLine{\Hypertarget{_game_mode_select_u_i_8cs_source_l00017}00017\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_game_mode_select_u_i_8cs_source_l00018}00018\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Ensure\ the\ game\ mode\ select\ canvas\ is\ active\ and\ connect\ canvas\ is\ inactive\ at\ start}}
+\DoxyCodeLine{\Hypertarget{_game_mode_select_u_i_8cs_source_l00019}00019\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_game_mode_select_u_i_a334110681c18c6b53d1d3ec186145292}{gameModeSelectCanvas}}.SetActive(\textcolor{keyword}{true});}
+\DoxyCodeLine{\Hypertarget{_game_mode_select_u_i_8cs_source_l00020}00020\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_game_mode_select_u_i_a5cc1eebf65f9fb9f9b8ec842b996dcec}{connectCanvas}}.SetActive(\textcolor{keyword}{false});}
+\DoxyCodeLine{\Hypertarget{_game_mode_select_u_i_8cs_source_l00021}00021\ }
+\DoxyCodeLine{\Hypertarget{_game_mode_select_u_i_8cs_source_l00022}00022\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Add\ button\ listeners}}
+\DoxyCodeLine{\Hypertarget{_game_mode_select_u_i_8cs_source_l00023}00023\ \ \ \ \ \ \ \ \textcolor{comment}{//\ coopButton.onClick.AddListener(()\ =>\ OnModeSelected("{}Co-\/op"{}));}}
+\DoxyCodeLine{\Hypertarget{_game_mode_select_u_i_8cs_source_l00024}00024\ \ \ \ \ \ \ \ \textcolor{comment}{//\ pvpButton.onClick.AddListener(()\ =>\ OnModeSelected("{}PvP"{}));}}
+\DoxyCodeLine{\Hypertarget{_game_mode_select_u_i_8cs_source_l00025}00025\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_game_mode_select_u_i_aa31d536b7ad8e0e48bb2bd5ceb9fb7fd}{coopButton}}.onClick.AddListener(\mbox{\hyperlink{class_game_mode_select_u_i_ae11fdca98cefbbbd3252106c7182614c}{OnClickCoOp}});}
+\DoxyCodeLine{\Hypertarget{_game_mode_select_u_i_8cs_source_l00026}00026\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_game_mode_select_u_i_a5a09bb50a3de68c3e59602e269d50652}{pvpButton}}.onClick.AddListener(\mbox{\hyperlink{class_game_mode_select_u_i_aa2b367e4c7b467a8b440eff7b9e82412}{OnClickPvP}});}
+\DoxyCodeLine{\Hypertarget{_game_mode_select_u_i_8cs_source_l00027}00027\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_game_mode_select_u_i_8cs_source_l00028}00028\ }
+\DoxyCodeLine{\Hypertarget{_game_mode_select_u_i_8cs_source_l00029}\mbox{\hyperlink{class_game_mode_select_u_i_af780c7ac9803b90fdf1e8a23553bdb44}{00029}}\ \ \ \ \ \textcolor{keyword}{private}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_game_mode_select_u_i_af780c7ac9803b90fdf1e8a23553bdb44}{OnModeSelected}}(\textcolor{keywordtype}{string}\ mode)}
+\DoxyCodeLine{\Hypertarget{_game_mode_select_u_i_8cs_source_l00030}00030\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_game_mode_select_u_i_8cs_source_l00031}00031\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Clear\ the\ field\ of\ existing\ units}}
+\DoxyCodeLine{\Hypertarget{_game_mode_select_u_i_8cs_source_l00032}00032\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_field_cleaner}{FieldCleaner}}.\mbox{\hyperlink{class_field_cleaner_a8e9cb4d829d6b6b64009594ae087014d}{ClearAll}}();}
+\DoxyCodeLine{\Hypertarget{_game_mode_select_u_i_8cs_source_l00033}00033\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ UnitActionSystem.Instance?.SetSelectedUnit(null);}}
+\DoxyCodeLine{\Hypertarget{_game_mode_select_u_i_8cs_source_l00034}00034\ \ \ \ \ \ \ \ \ StartCoroutine(\mbox{\hyperlink{class_game_mode_select_u_i_a659b72ce04def9201a8db7433eb03043}{ResetGridNextFrame}}());}
+\DoxyCodeLine{\Hypertarget{_game_mode_select_u_i_8cs_source_l00035}00035\ }
+\DoxyCodeLine{\Hypertarget{_game_mode_select_u_i_8cs_source_l00036}00036\ \ \ \ \ \ \ \ \ Debug.Log(\$\textcolor{stringliteral}{"{}\{mode\}\ mode\ selected."{}});}
+\DoxyCodeLine{\Hypertarget{_game_mode_select_u_i_8cs_source_l00037}00037\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Hide\ the\ game\ mode\ select\ canvas\ and\ show\ the\ connect\ canvas}}
+\DoxyCodeLine{\Hypertarget{_game_mode_select_u_i_8cs_source_l00038}00038\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_game_mode_select_u_i_a334110681c18c6b53d1d3ec186145292}{gameModeSelectCanvas}}.SetActive(\textcolor{keyword}{false});}
+\DoxyCodeLine{\Hypertarget{_game_mode_select_u_i_8cs_source_l00039}00039\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_game_mode_select_u_i_a5cc1eebf65f9fb9f9b8ec842b996dcec}{connectCanvas}}.SetActive(\textcolor{keyword}{true});}
+\DoxyCodeLine{\Hypertarget{_game_mode_select_u_i_8cs_source_l00040}00040\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Additional\ logic\ for\ handling\ mode\ selection\ can\ be\ added\ here}}
+\DoxyCodeLine{\Hypertarget{_game_mode_select_u_i_8cs_source_l00041}00041\ }
+\DoxyCodeLine{\Hypertarget{_game_mode_select_u_i_8cs_source_l00042}00042\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Set\ the\ selected\ game\ mode\ in\ GameModeManager}}
+\DoxyCodeLine{\Hypertarget{_game_mode_select_u_i_8cs_source_l00043}00043\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (mode\ ==\ \textcolor{stringliteral}{"{}Co-\/op"{}})}
+\DoxyCodeLine{\Hypertarget{_game_mode_select_u_i_8cs_source_l00044}00044\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_game_mode_select_u_i_8cs_source_l00045}00045\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_game_mode_manager}{GameModeManager}}.\mbox{\hyperlink{class_game_mode_manager_a5461e35c3020cdd7d9c1304ad59f950c}{SetCoOp}}();}
+\DoxyCodeLine{\Hypertarget{_game_mode_select_u_i_8cs_source_l00046}00046\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_game_mode_select_u_i_8cs_source_l00047}00047\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{\Hypertarget{_game_mode_select_u_i_8cs_source_l00048}00048\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_game_mode_select_u_i_8cs_source_l00049}00049\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_game_mode_manager}{GameModeManager}}.\mbox{\hyperlink{class_game_mode_manager_a8f80b6ca9129fbec47b18df9dc0d18b6}{SetVersus}}();}
+\DoxyCodeLine{\Hypertarget{_game_mode_select_u_i_8cs_source_l00050}00050\ \ \ \ \ \ \ \ \ \}\ }
+\DoxyCodeLine{\Hypertarget{_game_mode_select_u_i_8cs_source_l00051}00051\ }
+\DoxyCodeLine{\Hypertarget{_game_mode_select_u_i_8cs_source_l00052}00052\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_game_mode_select_u_i_8cs_source_l00053}00053\ }
+\DoxyCodeLine{\Hypertarget{_game_mode_select_u_i_8cs_source_l00054}\mbox{\hyperlink{class_game_mode_select_u_i_ae11fdca98cefbbbd3252106c7182614c}{00054}}\ \ \ \ \ \textcolor{keyword}{public}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_game_mode_select_u_i_ae11fdca98cefbbbd3252106c7182614c}{OnClickCoOp}}()}
+\DoxyCodeLine{\Hypertarget{_game_mode_select_u_i_8cs_source_l00055}00055\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_game_mode_select_u_i_8cs_source_l00056}00056\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_game_mode_manager}{GameModeManager}}.\mbox{\hyperlink{class_game_mode_manager_a5461e35c3020cdd7d9c1304ad59f950c}{SetCoOp}}();}
+\DoxyCodeLine{\Hypertarget{_game_mode_select_u_i_8cs_source_l00057}00057\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_game_mode_select_u_i_ae9ba58e57bc131c7022dac494a67efa0}{OnSelected}}();}
+\DoxyCodeLine{\Hypertarget{_game_mode_select_u_i_8cs_source_l00058}00058\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_game_mode_select_u_i_8cs_source_l00059}00059\ }
+\DoxyCodeLine{\Hypertarget{_game_mode_select_u_i_8cs_source_l00060}\mbox{\hyperlink{class_game_mode_select_u_i_aa2b367e4c7b467a8b440eff7b9e82412}{00060}}\ \ \ \ \ \textcolor{keyword}{public}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_game_mode_select_u_i_aa2b367e4c7b467a8b440eff7b9e82412}{OnClickPvP}}()}
+\DoxyCodeLine{\Hypertarget{_game_mode_select_u_i_8cs_source_l00061}00061\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_game_mode_select_u_i_8cs_source_l00062}00062\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_game_mode_manager}{GameModeManager}}.\mbox{\hyperlink{class_game_mode_manager_a8f80b6ca9129fbec47b18df9dc0d18b6}{SetVersus}}();}
+\DoxyCodeLine{\Hypertarget{_game_mode_select_u_i_8cs_source_l00063}00063\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_game_mode_select_u_i_ae9ba58e57bc131c7022dac494a67efa0}{OnSelected}}();}
+\DoxyCodeLine{\Hypertarget{_game_mode_select_u_i_8cs_source_l00064}00064\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_game_mode_select_u_i_8cs_source_l00065}00065\ }
+\DoxyCodeLine{\Hypertarget{_game_mode_select_u_i_8cs_source_l00066}\mbox{\hyperlink{class_game_mode_select_u_i_ae9ba58e57bc131c7022dac494a67efa0}{00066}}\ \ \ \ \ \textcolor{keyword}{public}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_game_mode_select_u_i_ae9ba58e57bc131c7022dac494a67efa0}{OnSelected}}()}
+\DoxyCodeLine{\Hypertarget{_game_mode_select_u_i_8cs_source_l00067}00067\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_game_mode_select_u_i_8cs_source_l00068}00068\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_field_cleaner}{FieldCleaner}}.\mbox{\hyperlink{class_field_cleaner_a8e9cb4d829d6b6b64009594ae087014d}{ClearAll}}();}
+\DoxyCodeLine{\Hypertarget{_game_mode_select_u_i_8cs_source_l00069}00069\ \ \ \ \ \ \ \ \ StartCoroutine(\mbox{\hyperlink{class_game_mode_select_u_i_a659b72ce04def9201a8db7433eb03043}{ResetGridNextFrame}}());}
+\DoxyCodeLine{\Hypertarget{_game_mode_select_u_i_8cs_source_l00070}00070\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_game_mode_select_u_i_a334110681c18c6b53d1d3ec186145292}{gameModeSelectCanvas}}.SetActive(\textcolor{keyword}{false});}
+\DoxyCodeLine{\Hypertarget{_game_mode_select_u_i_8cs_source_l00071}00071\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_game_mode_select_u_i_a5cc1eebf65f9fb9f9b8ec842b996dcec}{connectCanvas}}.SetActive(\textcolor{keyword}{true});}
+\DoxyCodeLine{\Hypertarget{_game_mode_select_u_i_8cs_source_l00072}00072\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_game_mode_select_u_i_8cs_source_l00073}00073\ }
+\DoxyCodeLine{\Hypertarget{_game_mode_select_u_i_8cs_source_l00074}\mbox{\hyperlink{class_game_mode_select_u_i_a659b72ce04def9201a8db7433eb03043}{00074}}\ \ \ \ \ \textcolor{keyword}{private}\ System.Collections.IEnumerator\ \mbox{\hyperlink{class_game_mode_select_u_i_a659b72ce04def9201a8db7433eb03043}{ResetGridNextFrame}}()}
+\DoxyCodeLine{\Hypertarget{_game_mode_select_u_i_8cs_source_l00075}00075\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_game_mode_select_u_i_8cs_source_l00076}00076\ \ \ \ \ \ \ \ \ yield\ \textcolor{keywordflow}{return}\ \textcolor{keyword}{new}\ WaitForEndOfFrame();}
+\DoxyCodeLine{\Hypertarget{_game_mode_select_u_i_8cs_source_l00077}00077\ \ \ \ \ \ \ \ \ var\ lg\ =\ \mbox{\hyperlink{class_level_grid}{LevelGrid}}.\mbox{\hyperlink{class_level_grid_a2289e5f589c75631e3a0348a0992b7d5}{Instance}};}
+\DoxyCodeLine{\Hypertarget{_game_mode_select_u_i_8cs_source_l00078}00078\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (lg\ !=\ \textcolor{keyword}{null})\ lg.\mbox{\hyperlink{class_level_grid_a1fbeb14df5ca95020f2cf67037d14e50}{RebuildOccupancyFromScene}}();}
+\DoxyCodeLine{\Hypertarget{_game_mode_select_u_i_8cs_source_l00079}00079\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_game_mode_select_u_i_8cs_source_l00080}00080\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{_game_mode_select_u_i_8cs_source_l00081}00081\ \}}
+
+\end{DoxyCode}

@@ -1,0 +1,121 @@
+\doxysection{Unit\+Action\+Busy\+UI Class Reference}
+\hypertarget{class_unit_action_busy_u_i}{}\label{class_unit_action_busy_u_i}\index{UnitActionBusyUI@{UnitActionBusyUI}}
+
+
+This class is responsible for displaying the busy UI when the unit action system is busy.  
+
+
+Inheritance diagram for Unit\+Action\+Busy\+UI\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{class_unit_action_busy_u_i}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Private Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{class_unit_action_busy_u_i_a21d5d6b823bd2e5aa5f20929804e6424}{Start}} ()
+\item 
+void \mbox{\hyperlink{class_unit_action_busy_u_i_a723e5926dda26282f6ee3f51a0432052}{Show}} ()
+\item 
+void \mbox{\hyperlink{class_unit_action_busy_u_i_ae16fce9f52cdeb54828ba6c9b3473ed9}{Hide}} ()
+\item 
+void \mbox{\hyperlink{class_unit_action_busy_u_i_ae984698daae034f5da39939f8f08284e}{Unit\+Action\+System\+\_\+\+On\+Busy\+Changed}} (object sender, bool is\+Busy)
+\begin{DoxyCompactList}\small\item\em This method is called when the unit action system is busy or not busy. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+This class is responsible for displaying the busy UI when the unit action system is busy. 
+
+Definition at line \mbox{\hyperlink{_unit_action_busy_u_i_8cs_source_l00006}{6}} of file \mbox{\hyperlink{_unit_action_busy_u_i_8cs_source}{Unit\+Action\+Busy\+UI.\+cs}}.
+
+
+
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_unit_action_busy_u_i_ae16fce9f52cdeb54828ba6c9b3473ed9}\index{UnitActionBusyUI@{UnitActionBusyUI}!Hide@{Hide}}
+\index{Hide@{Hide}!UnitActionBusyUI@{UnitActionBusyUI}}
+\doxysubsubsection{\texorpdfstring{Hide()}{Hide()}}
+{\footnotesize\ttfamily \label{class_unit_action_busy_u_i_ae16fce9f52cdeb54828ba6c9b3473ed9} 
+void Unit\+Action\+Busy\+UI.\+Hide (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_unit_action_busy_u_i_8cs_source_l00019}{19}} of file \mbox{\hyperlink{_unit_action_busy_u_i_8cs_source}{Unit\+Action\+Busy\+UI.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00020\ \ \ \ \ \{}
+\DoxyCodeLine{00021\ \ \ \ \ \ \ \ \ gameObject.SetActive(\textcolor{keyword}{false});}
+\DoxyCodeLine{00022\ \ \ \ \ \}}
+
+\end{DoxyCode}
+\Hypertarget{class_unit_action_busy_u_i_a723e5926dda26282f6ee3f51a0432052}\index{UnitActionBusyUI@{UnitActionBusyUI}!Show@{Show}}
+\index{Show@{Show}!UnitActionBusyUI@{UnitActionBusyUI}}
+\doxysubsubsection{\texorpdfstring{Show()}{Show()}}
+{\footnotesize\ttfamily \label{class_unit_action_busy_u_i_a723e5926dda26282f6ee3f51a0432052} 
+void Unit\+Action\+Busy\+UI.\+Show (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_unit_action_busy_u_i_8cs_source_l00015}{15}} of file \mbox{\hyperlink{_unit_action_busy_u_i_8cs_source}{Unit\+Action\+Busy\+UI.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00016\ \ \ \ \ \{}
+\DoxyCodeLine{00017\ \ \ \ \ \ \ \ \ gameObject.SetActive(\textcolor{keyword}{true});}
+\DoxyCodeLine{00018\ \ \ \ \ \}}
+
+\end{DoxyCode}
+\Hypertarget{class_unit_action_busy_u_i_a21d5d6b823bd2e5aa5f20929804e6424}\index{UnitActionBusyUI@{UnitActionBusyUI}!Start@{Start}}
+\index{Start@{Start}!UnitActionBusyUI@{UnitActionBusyUI}}
+\doxysubsubsection{\texorpdfstring{Start()}{Start()}}
+{\footnotesize\ttfamily \label{class_unit_action_busy_u_i_a21d5d6b823bd2e5aa5f20929804e6424} 
+void Unit\+Action\+Busy\+UI.\+Start (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_unit_action_busy_u_i_8cs_source_l00008}{8}} of file \mbox{\hyperlink{_unit_action_busy_u_i_8cs_source}{Unit\+Action\+Busy\+UI.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00009\ \ \ \ \ \{}
+\DoxyCodeLine{00010\ \ \ \ \ \ \ \ \ UnitActionSystem.Instance.OnBusyChanged\ +=\ \mbox{\hyperlink{class_unit_action_busy_u_i_ae984698daae034f5da39939f8f08284e}{UnitActionSystem\_OnBusyChanged}};}
+\DoxyCodeLine{00011\ }
+\DoxyCodeLine{00012\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_unit_action_busy_u_i_ae16fce9f52cdeb54828ba6c9b3473ed9}{Hide}}();}
+\DoxyCodeLine{00013\ }
+\DoxyCodeLine{00014\ \ \ \ \ \}}
+
+\end{DoxyCode}
+\Hypertarget{class_unit_action_busy_u_i_ae984698daae034f5da39939f8f08284e}\index{UnitActionBusyUI@{UnitActionBusyUI}!UnitActionSystem\_OnBusyChanged@{UnitActionSystem\_OnBusyChanged}}
+\index{UnitActionSystem\_OnBusyChanged@{UnitActionSystem\_OnBusyChanged}!UnitActionBusyUI@{UnitActionBusyUI}}
+\doxysubsubsection{\texorpdfstring{UnitActionSystem\_OnBusyChanged()}{UnitActionSystem\_OnBusyChanged()}}
+{\footnotesize\ttfamily \label{class_unit_action_busy_u_i_ae984698daae034f5da39939f8f08284e} 
+void Unit\+Action\+Busy\+UI.\+Unit\+Action\+System\+\_\+\+On\+Busy\+Changed (\begin{DoxyParamCaption}\item[{object}]{sender}{, }\item[{bool}]{is\+Busy}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [private]}}
+
+
+
+This method is called when the unit action system is busy or not busy. 
+
+
+
+Definition at line \mbox{\hyperlink{_unit_action_busy_u_i_8cs_source_l00026}{26}} of file \mbox{\hyperlink{_unit_action_busy_u_i_8cs_source}{Unit\+Action\+Busy\+UI.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00027\ \ \ \ \ \{}
+\DoxyCodeLine{00028\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (isBusy)}
+\DoxyCodeLine{00029\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00030\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_unit_action_busy_u_i_a723e5926dda26282f6ee3f51a0432052}{Show}}();}
+\DoxyCodeLine{00031\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00032\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00033\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00034\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_unit_action_busy_u_i_ae16fce9f52cdeb54828ba6c9b3473ed9}{Hide}}();}
+\DoxyCodeLine{00035\ \ \ \ \ \ \ \ \ \}\ }
+\DoxyCodeLine{00036\ \ \ \ \ \}}
+
+\end{DoxyCode}
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+D\+:/\+Unity/\+Rogue\+Shooter/\+Rogue\+Shooter/\+Assets/\+Scripts/\+Player\+Units/\+Units\+Control\+UI/\mbox{\hyperlink{_unit_action_busy_u_i_8cs}{Unit\+Action\+Busy\+UI.\+cs}}\end{DoxyCompactItemize}

@@ -1,0 +1,86 @@
+\doxysection{Grid\+System\+Visual.\+cs}
+\hypertarget{_grid_system_visual_8cs_source}{}\label{_grid_system_visual_8cs_source}\index{D:/Unity/RogueShooter/RogueShooter/Assets/Scripts/Grid/GridSystemVisual.cs@{D:/Unity/RogueShooter/RogueShooter/Assets/Scripts/Grid/GridSystemVisual.cs}}
+\mbox{\hyperlink{_grid_system_visual_8cs}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\Hypertarget{_grid_system_visual_8cs_source_l00001}00001\ \textcolor{keyword}{using\ }System.Collections.Generic;}
+\DoxyCodeLine{\Hypertarget{_grid_system_visual_8cs_source_l00002}00002\ \textcolor{keyword}{using\ }Unity.VisualScripting;}
+\DoxyCodeLine{\Hypertarget{_grid_system_visual_8cs_source_l00003}00003\ \textcolor{keyword}{using\ }UnityEngine;}
+\DoxyCodeLine{\Hypertarget{_grid_system_visual_8cs_source_l00004}00004\ }
+\DoxyCodeLine{\Hypertarget{_grid_system_visual_8cs_source_l00009}00009\ }
+\DoxyCodeLine{\Hypertarget{_grid_system_visual_8cs_source_l00010}\mbox{\hyperlink{class_grid_system_visual}{00010}}\ \textcolor{keyword}{public}\ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_grid_system_visual}{GridSystemVisual}}\ :\ MonoBehaviour}
+\DoxyCodeLine{\Hypertarget{_grid_system_visual_8cs_source_l00011}00011\ \{}
+\DoxyCodeLine{\Hypertarget{_grid_system_visual_8cs_source_l00012}00012\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{_grid_system_visual_8cs_source_l00013}\mbox{\hyperlink{class_grid_system_visual_a443690ce7764c5fb451969e1d980c750}{00013}}\ \ \ \ \ \textcolor{keyword}{public}\ \textcolor{keyword}{static}\ \mbox{\hyperlink{class_grid_system_visual}{GridSystemVisual}}\ \mbox{\hyperlink{class_grid_system_visual_a443690ce7764c5fb451969e1d980c750}{Instance}}\ \{\ \textcolor{keyword}{get};\ \textcolor{keyword}{private}\ \textcolor{keyword}{set};\ \}}
+\DoxyCodeLine{\Hypertarget{_grid_system_visual_8cs_source_l00014}00014\ }
+\DoxyCodeLine{\Hypertarget{_grid_system_visual_8cs_source_l00016}\mbox{\hyperlink{class_grid_system_visual_af93c8c2b29d3556c2eb9bddc363633b6}{00016}}\ \ \ \ \ [SerializeField]\ \textcolor{keyword}{private}\ Transform\ \mbox{\hyperlink{class_grid_system_visual_af93c8c2b29d3556c2eb9bddc363633b6}{gridSystemVisualSinglePrefab}};}
+\DoxyCodeLine{\Hypertarget{_grid_system_visual_8cs_source_l00017}00017\ }
+\DoxyCodeLine{\Hypertarget{_grid_system_visual_8cs_source_l00019}\mbox{\hyperlink{class_grid_system_visual_a027ea9f44810a3293ca4ce5ec3210dc9}{00019}}\ \ \ \ \ \textcolor{keyword}{private}\ \mbox{\hyperlink{class_grid_system_visual_single}{GridSystemVisualSingle}}\ [,]\ \mbox{\hyperlink{class_grid_system_visual_a027ea9f44810a3293ca4ce5ec3210dc9}{gridSystemVisualSingleArray}};}
+\DoxyCodeLine{\Hypertarget{_grid_system_visual_8cs_source_l00020}00020\ }
+\DoxyCodeLine{\Hypertarget{_grid_system_visual_8cs_source_l00021}\mbox{\hyperlink{class_grid_system_visual_a4b36091c66985087a8f8a2219479edac}{00021}}\ \ \ \ \ \textcolor{keyword}{private}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_grid_system_visual_a4b36091c66985087a8f8a2219479edac}{Awake}}()}
+\DoxyCodeLine{\Hypertarget{_grid_system_visual_8cs_source_l00022}00022\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_grid_system_visual_8cs_source_l00023}00023\ }
+\DoxyCodeLine{\Hypertarget{_grid_system_visual_8cs_source_l00025}00025\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{class_grid_system_visual_a443690ce7764c5fb451969e1d980c750}{Instance}}\ !=\ \textcolor{keyword}{null})}
+\DoxyCodeLine{\Hypertarget{_grid_system_visual_8cs_source_l00026}00026\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_grid_system_visual_8cs_source_l00027}00027\ \ \ \ \ \ \ \ \ \ \ \ \ Debug.LogError(\textcolor{stringliteral}{"{}More\ than\ one\ GridSystemVisual\ in\ the\ scene!"{}}\ +\ transform\ +\ \textcolor{stringliteral}{"{}\ "{}}\ +\ \mbox{\hyperlink{class_grid_system_visual_a443690ce7764c5fb451969e1d980c750}{Instance}});}
+\DoxyCodeLine{\Hypertarget{_grid_system_visual_8cs_source_l00028}00028\ \ \ \ \ \ \ \ \ \ \ \ \ Destroy(gameObject);}
+\DoxyCodeLine{\Hypertarget{_grid_system_visual_8cs_source_l00029}00029\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{\Hypertarget{_grid_system_visual_8cs_source_l00030}00030\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_grid_system_visual_8cs_source_l00031}00031\ }
+\DoxyCodeLine{\Hypertarget{_grid_system_visual_8cs_source_l00032}00032\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_grid_system_visual_a443690ce7764c5fb451969e1d980c750}{Instance}}\ \ =\ \textcolor{keyword}{this};}
+\DoxyCodeLine{\Hypertarget{_grid_system_visual_8cs_source_l00033}00033\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_grid_system_visual_8cs_source_l00034}00034\ }
+\DoxyCodeLine{\Hypertarget{_grid_system_visual_8cs_source_l00035}\mbox{\hyperlink{class_grid_system_visual_a08a8bf62be873055ddf3aa86f38d7c3d}{00035}}\ \ \ \ \ \textcolor{keyword}{private}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_grid_system_visual_a08a8bf62be873055ddf3aa86f38d7c3d}{Start}}()}
+\DoxyCodeLine{\Hypertarget{_grid_system_visual_8cs_source_l00036}00036\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_grid_system_visual_8cs_source_l00037}00037\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_grid_system_visual_a027ea9f44810a3293ca4ce5ec3210dc9}{gridSystemVisualSingleArray}}\ =\ \textcolor{keyword}{new}\ \mbox{\hyperlink{class_grid_system_visual_single}{GridSystemVisualSingle}}[\mbox{\hyperlink{class_level_grid}{LevelGrid}}.\mbox{\hyperlink{class_level_grid_a2289e5f589c75631e3a0348a0992b7d5}{Instance}}.\mbox{\hyperlink{class_level_grid_a8b94a0a920113c353802b9d920fea43a}{GetWidth}}(),\ \mbox{\hyperlink{class_level_grid}{LevelGrid}}.\mbox{\hyperlink{class_level_grid_a2289e5f589c75631e3a0348a0992b7d5}{Instance}}.\mbox{\hyperlink{class_level_grid_aae9fb6f8bfcc0f2e09db8c11b471bda9}{GetHeight}}()];}
+\DoxyCodeLine{\Hypertarget{_grid_system_visual_8cs_source_l00038}00038\ }
+\DoxyCodeLine{\Hypertarget{_grid_system_visual_8cs_source_l00041}00041\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ x\ =\ 0\ ;x\ <\ \mbox{\hyperlink{class_level_grid}{LevelGrid}}.\mbox{\hyperlink{class_level_grid_a2289e5f589c75631e3a0348a0992b7d5}{Instance}}.\mbox{\hyperlink{class_level_grid_a8b94a0a920113c353802b9d920fea43a}{GetWidth}}();\ x++)}
+\DoxyCodeLine{\Hypertarget{_grid_system_visual_8cs_source_l00042}00042\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_grid_system_visual_8cs_source_l00043}00043\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ z\ =\ 0;\ z\ <\ \mbox{\hyperlink{class_level_grid}{LevelGrid}}.\mbox{\hyperlink{class_level_grid_a2289e5f589c75631e3a0348a0992b7d5}{Instance}}.\mbox{\hyperlink{class_level_grid_aae9fb6f8bfcc0f2e09db8c11b471bda9}{GetHeight}}();\ z++)}
+\DoxyCodeLine{\Hypertarget{_grid_system_visual_8cs_source_l00044}00044\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_grid_system_visual_8cs_source_l00045}00045\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_grid_position}{GridPosition}}\ gridPosition\ =\ \textcolor{keyword}{new}(x,\ z);}
+\DoxyCodeLine{\Hypertarget{_grid_system_visual_8cs_source_l00046}00046\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Transform\ gridSystemVisualSingleTransform\ =\ Instantiate(\mbox{\hyperlink{class_grid_system_visual_af93c8c2b29d3556c2eb9bddc363633b6}{gridSystemVisualSinglePrefab}},\ \mbox{\hyperlink{class_level_grid}{LevelGrid}}.\mbox{\hyperlink{class_level_grid_a2289e5f589c75631e3a0348a0992b7d5}{Instance}}.\mbox{\hyperlink{class_level_grid_a0c9229e022b654040de6b7b2d7a5b73f}{GetWorldPosition}}(gridPosition),\ Quaternion.identity);}
+\DoxyCodeLine{\Hypertarget{_grid_system_visual_8cs_source_l00047}00047\ }
+\DoxyCodeLine{\Hypertarget{_grid_system_visual_8cs_source_l00048}00048\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_grid_system_visual_a027ea9f44810a3293ca4ce5ec3210dc9}{gridSystemVisualSingleArray}}[x,\ z]\ =\ gridSystemVisualSingleTransform.GetComponent<\mbox{\hyperlink{class_grid_system_visual_single}{GridSystemVisualSingle}}>();}
+\DoxyCodeLine{\Hypertarget{_grid_system_visual_8cs_source_l00049}00049\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_grid_system_visual_8cs_source_l00050}00050\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_grid_system_visual_8cs_source_l00051}00051\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_grid_system_visual_8cs_source_l00052}00052\ }
+\DoxyCodeLine{\Hypertarget{_grid_system_visual_8cs_source_l00053}\mbox{\hyperlink{class_grid_system_visual_a84d8794afebfb3678610804ef8d93a57}{00053}}\ \ \ \ \ \textcolor{keyword}{private}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_grid_system_visual_a84d8794afebfb3678610804ef8d93a57}{Update}}()}
+\DoxyCodeLine{\Hypertarget{_grid_system_visual_8cs_source_l00054}00054\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_grid_system_visual_8cs_source_l00055}00055\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_grid_system_visual_ab13b6c36bf568718afcbb4e917f361bd}{UpdateGridVisuals}}();}
+\DoxyCodeLine{\Hypertarget{_grid_system_visual_8cs_source_l00056}00056\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_grid_system_visual_8cs_source_l00057}00057\ }
+\DoxyCodeLine{\Hypertarget{_grid_system_visual_8cs_source_l00058}\mbox{\hyperlink{class_grid_system_visual_a22125f6cf8b6c195df4bc2da06902beb}{00058}}\ \ \ \ \ \textcolor{keyword}{public}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_grid_system_visual_a22125f6cf8b6c195df4bc2da06902beb}{HideAllGridPositions}}()}
+\DoxyCodeLine{\Hypertarget{_grid_system_visual_8cs_source_l00059}00059\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_grid_system_visual_8cs_source_l00060}00060\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ x\ =\ 0\ ;x\ <\ \mbox{\hyperlink{class_level_grid}{LevelGrid}}.\mbox{\hyperlink{class_level_grid_a2289e5f589c75631e3a0348a0992b7d5}{Instance}}.\mbox{\hyperlink{class_level_grid_a8b94a0a920113c353802b9d920fea43a}{GetWidth}}();\ x++)}
+\DoxyCodeLine{\Hypertarget{_grid_system_visual_8cs_source_l00061}00061\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_grid_system_visual_8cs_source_l00062}00062\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ z\ =\ 0;\ z\ <\ \mbox{\hyperlink{class_level_grid}{LevelGrid}}.\mbox{\hyperlink{class_level_grid_a2289e5f589c75631e3a0348a0992b7d5}{Instance}}.\mbox{\hyperlink{class_level_grid_aae9fb6f8bfcc0f2e09db8c11b471bda9}{GetHeight}}();\ z++)}
+\DoxyCodeLine{\Hypertarget{_grid_system_visual_8cs_source_l00063}00063\ \ \ \ \ \ \ \ \ \ \ \ \ \{\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{_grid_system_visual_8cs_source_l00064}00064\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_grid_system_visual_a027ea9f44810a3293ca4ce5ec3210dc9}{gridSystemVisualSingleArray}}[x,\ z].Hide();\ }
+\DoxyCodeLine{\Hypertarget{_grid_system_visual_8cs_source_l00065}00065\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_grid_system_visual_8cs_source_l00066}00066\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_grid_system_visual_8cs_source_l00067}00067\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_grid_system_visual_8cs_source_l00068}00068\ }
+\DoxyCodeLine{\Hypertarget{_grid_system_visual_8cs_source_l00069}\mbox{\hyperlink{class_grid_system_visual_a27f4b93612585a300b0ab32895766cd0}{00069}}\ \ \ \ \ \textcolor{keyword}{public}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_grid_system_visual_a27f4b93612585a300b0ab32895766cd0}{ShowGridPositionList}}(List<\ GridPosition>\ gridPositionList)}
+\DoxyCodeLine{\Hypertarget{_grid_system_visual_8cs_source_l00070}00070\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_grid_system_visual_8cs_source_l00071}00071\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_grid_system_visual_a22125f6cf8b6c195df4bc2da06902beb}{HideAllGridPositions}}();}
+\DoxyCodeLine{\Hypertarget{_grid_system_visual_8cs_source_l00072}00072\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{foreach}\ (\mbox{\hyperlink{struct_grid_position}{GridPosition}}\ gridPosition\ \textcolor{keywordflow}{in}\ gridPositionList)}
+\DoxyCodeLine{\Hypertarget{_grid_system_visual_8cs_source_l00073}00073\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_grid_system_visual_8cs_source_l00074}00074\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_grid_system_visual_a027ea9f44810a3293ca4ce5ec3210dc9}{gridSystemVisualSingleArray}}[gridPosition.\mbox{\hyperlink{struct_grid_position_aef898922000b94ac0e4e999a033c39db}{x}},\ gridPosition.\mbox{\hyperlink{struct_grid_position_a5a9176b933a89d37a0d5ff44091ee22b}{z}}].Show();}
+\DoxyCodeLine{\Hypertarget{_grid_system_visual_8cs_source_l00075}00075\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_grid_system_visual_8cs_source_l00076}00076\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_grid_system_visual_8cs_source_l00077}00077\ }
+\DoxyCodeLine{\Hypertarget{_grid_system_visual_8cs_source_l00078}\mbox{\hyperlink{class_grid_system_visual_ab13b6c36bf568718afcbb4e917f361bd}{00078}}\ \ \ \ \ \textcolor{keyword}{private}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_grid_system_visual_ab13b6c36bf568718afcbb4e917f361bd}{UpdateGridVisuals}}()}
+\DoxyCodeLine{\Hypertarget{_grid_system_visual_8cs_source_l00079}00079\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_grid_system_visual_8cs_source_l00080}00080\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_grid_system_visual_a22125f6cf8b6c195df4bc2da06902beb}{HideAllGridPositions}}();}
+\DoxyCodeLine{\Hypertarget{_grid_system_visual_8cs_source_l00081}00081\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_unit}{Unit}}\ selectedUnit\ =\ \mbox{\hyperlink{class_unit_action_system}{UnitActionSystem}}.\mbox{\hyperlink{class_unit_action_system_aade075caf30c86ba81a057352a0f0a55}{Instance}}.\mbox{\hyperlink{class_unit_action_system_a03b257e8f1ff89c63d59860c00b2b12d}{GetSelectedUnit}}();}
+\DoxyCodeLine{\Hypertarget{_grid_system_visual_8cs_source_l00082}00082\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (selectedUnit\ ==\ \textcolor{keyword}{null})\ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{\Hypertarget{_grid_system_visual_8cs_source_l00083}00083\ }
+\DoxyCodeLine{\Hypertarget{_grid_system_visual_8cs_source_l00084}00084\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_base_action}{BaseAction}}\ selectedAction\ =\ \mbox{\hyperlink{class_unit_action_system}{UnitActionSystem}}.\mbox{\hyperlink{class_unit_action_system_aade075caf30c86ba81a057352a0f0a55}{Instance}}.\mbox{\hyperlink{class_unit_action_system_a2339ff8deb76ac574641c36067f7d4b5}{GetSelectedAction}}();}
+\DoxyCodeLine{\Hypertarget{_grid_system_visual_8cs_source_l00085}00085\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_grid_system_visual_a27f4b93612585a300b0ab32895766cd0}{ShowGridPositionList}}(}
+\DoxyCodeLine{\Hypertarget{_grid_system_visual_8cs_source_l00086}00086\ \ \ \ \ \ \ \ \ \ \ \ \ selectedAction.\mbox{\hyperlink{class_base_action_a8328209505521544f18c0cba00e38a69}{GetValidGridPositionList}}());}
+\DoxyCodeLine{\Hypertarget{_grid_system_visual_8cs_source_l00087}00087\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{_grid_system_visual_8cs_source_l00088}00088\ \ \ \ \ \}\ \ \ }
+\DoxyCodeLine{\Hypertarget{_grid_system_visual_8cs_source_l00089}00089\ \}}
+
+\end{DoxyCode}

@@ -1,0 +1,5 @@
+Aja juuressa
+D:\Unity\RogueShooter\RogueShooter> dotnet run --project Tools/ScriptsPdf -- Assets/scripts Docs/AllScripts.pdf
+
+Kaikki Scriptit kattava PDF löytyy
+D:\Unity\RogueShooter\RogueShooter\Docs

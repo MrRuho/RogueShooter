@@ -1,0 +1,62 @@
+\doxysection{Unit\+Selected\+Visual.\+cs}
+\hypertarget{_unit_selected_visual_8cs_source}{}\label{_unit_selected_visual_8cs_source}\index{D:/Unity/RogueShooter/RogueShooter/Assets/Scripts/PlayerUnits/UnitSelectedVisual.cs@{D:/Unity/RogueShooter/RogueShooter/Assets/Scripts/PlayerUnits/UnitSelectedVisual.cs}}
+\mbox{\hyperlink{_unit_selected_visual_8cs}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\Hypertarget{_unit_selected_visual_8cs_source_l00001}00001\ \textcolor{keyword}{using\ }System;}
+\DoxyCodeLine{\Hypertarget{_unit_selected_visual_8cs_source_l00002}00002\ \textcolor{keyword}{using\ }UnityEngine;}
+\DoxyCodeLine{\Hypertarget{_unit_selected_visual_8cs_source_l00003}00003\ }
+\DoxyCodeLine{\Hypertarget{_unit_selected_visual_8cs_source_l00008}\mbox{\hyperlink{class_unit_selected_visual}{00008}}\ \textcolor{keyword}{public}\ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_unit_selected_visual}{UnitSelectedVisual}}\ :\ MonoBehaviour}
+\DoxyCodeLine{\Hypertarget{_unit_selected_visual_8cs_source_l00009}00009\ \{}
+\DoxyCodeLine{\Hypertarget{_unit_selected_visual_8cs_source_l00010}\mbox{\hyperlink{class_unit_selected_visual_a970848de0afdafe4600f3d071a6347df}{00010}}\ \ \ \ \ [SerializeField]\ \textcolor{keyword}{private}\ \mbox{\hyperlink{class_unit}{Unit}}\ \mbox{\hyperlink{class_unit_selected_visual_a970848de0afdafe4600f3d071a6347df}{unit}};}
+\DoxyCodeLine{\Hypertarget{_unit_selected_visual_8cs_source_l00011}\mbox{\hyperlink{class_unit_selected_visual_a74d97845f584cd838c797c3e354f614c}{00011}}\ \ \ \ \ [SerializeField]\ \textcolor{keyword}{private}\ MeshRenderer\ \mbox{\hyperlink{class_unit_selected_visual_a74d97845f584cd838c797c3e354f614c}{meshRenderer}};}
+\DoxyCodeLine{\Hypertarget{_unit_selected_visual_8cs_source_l00012}00012\ }
+\DoxyCodeLine{\Hypertarget{_unit_selected_visual_8cs_source_l00013}00013\ \ \ \ \ \textcolor{comment}{//private\ MeshRenderer\ meshRenderer;}}
+\DoxyCodeLine{\Hypertarget{_unit_selected_visual_8cs_source_l00014}00014\ }
+\DoxyCodeLine{\Hypertarget{_unit_selected_visual_8cs_source_l00015}\mbox{\hyperlink{class_unit_selected_visual_aefe556a59b42ab2dace2aee047b071a2}{00015}}\ \ \ \ \ \textcolor{keyword}{private}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_unit_selected_visual_aefe556a59b42ab2dace2aee047b071a2}{Awake}}()}
+\DoxyCodeLine{\Hypertarget{_unit_selected_visual_8cs_source_l00016}00016\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_unit_selected_visual_8cs_source_l00017}00017\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ meshRenderer\ =\ GetComponent<MeshRenderer>();}}
+\DoxyCodeLine{\Hypertarget{_unit_selected_visual_8cs_source_l00018}00018\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ meshRenderer.enabled\ =\ false;}}
+\DoxyCodeLine{\Hypertarget{_unit_selected_visual_8cs_source_l00019}00019\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!\mbox{\hyperlink{class_unit_selected_visual_a74d97845f584cd838c797c3e354f614c}{meshRenderer}})\ \mbox{\hyperlink{class_unit_selected_visual_a74d97845f584cd838c797c3e354f614c}{meshRenderer}}\ =\ GetComponentInChildren<MeshRenderer>(\textcolor{keyword}{true});}
+\DoxyCodeLine{\Hypertarget{_unit_selected_visual_8cs_source_l00020}00020\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{class_unit_selected_visual_a74d97845f584cd838c797c3e354f614c}{meshRenderer}})\ meshRenderer.enabled\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{\Hypertarget{_unit_selected_visual_8cs_source_l00021}00021\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_unit_selected_visual_8cs_source_l00022}00022\ }
+\DoxyCodeLine{\Hypertarget{_unit_selected_visual_8cs_source_l00023}\mbox{\hyperlink{class_unit_selected_visual_a0e72e395e1b61ba666ce19a7b34e472a}{00023}}\ \ \ \ \ \textcolor{keyword}{private}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_unit_selected_visual_a0e72e395e1b61ba666ce19a7b34e472a}{Start}}()}
+\DoxyCodeLine{\Hypertarget{_unit_selected_visual_8cs_source_l00024}00024\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_unit_selected_visual_8cs_source_l00025}00025\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{class_unit_action_system}{UnitActionSystem}}.\mbox{\hyperlink{class_unit_action_system_aade075caf30c86ba81a057352a0f0a55}{Instance}}\ !=\ \textcolor{keyword}{null})}
+\DoxyCodeLine{\Hypertarget{_unit_selected_visual_8cs_source_l00026}00026\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_unit_selected_visual_8cs_source_l00027}00027\ \ \ \ \ \ \ \ \ \ \ \ \ UnitActionSystem.Instance.OnSelectedUnitChanged\ +=\ \mbox{\hyperlink{class_unit_selected_visual_a171b7994c05bf1dd5360f60b1e26a08e}{UnitActionSystem\_OnSelectedUnitChanged}};}
+\DoxyCodeLine{\Hypertarget{_unit_selected_visual_8cs_source_l00028}00028\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_unit_selected_visual_a734fdd4f0cd30959d45cf60b0a805bbb}{UpdateVisual}}();}
+\DoxyCodeLine{\Hypertarget{_unit_selected_visual_8cs_source_l00029}00029\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_unit_selected_visual_8cs_source_l00030}00030\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_unit_selected_visual_8cs_source_l00031}00031\ }
+\DoxyCodeLine{\Hypertarget{_unit_selected_visual_8cs_source_l00032}\mbox{\hyperlink{class_unit_selected_visual_ac19c6e0624e0101e78dac77578b46d54}{00032}}\ \ \ \ \ \textcolor{keyword}{private}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_unit_selected_visual_ac19c6e0624e0101e78dac77578b46d54}{OnDestroy}}()}
+\DoxyCodeLine{\Hypertarget{_unit_selected_visual_8cs_source_l00033}00033\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_unit_selected_visual_8cs_source_l00034}00034\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{class_unit_action_system}{UnitActionSystem}}.\mbox{\hyperlink{class_unit_action_system_aade075caf30c86ba81a057352a0f0a55}{Instance}}\ !=\ \textcolor{keyword}{null})}
+\DoxyCodeLine{\Hypertarget{_unit_selected_visual_8cs_source_l00035}00035\ \ \ \ \ \ \ \ \ \ \ \ \ UnitActionSystem.Instance.OnSelectedUnitChanged\ -\/=\ \mbox{\hyperlink{class_unit_selected_visual_a171b7994c05bf1dd5360f60b1e26a08e}{UnitActionSystem\_OnSelectedUnitChanged}};}
+\DoxyCodeLine{\Hypertarget{_unit_selected_visual_8cs_source_l00036}00036\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_unit_selected_visual_8cs_source_l00037}00037\ }
+\DoxyCodeLine{\Hypertarget{_unit_selected_visual_8cs_source_l00038}\mbox{\hyperlink{class_unit_selected_visual_a171b7994c05bf1dd5360f60b1e26a08e}{00038}}\ \ \ \ \ \textcolor{keyword}{private}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_unit_selected_visual_a171b7994c05bf1dd5360f60b1e26a08e}{UnitActionSystem\_OnSelectedUnitChanged}}(\textcolor{keywordtype}{object}\ sender,\ EventArgs\ empty)}
+\DoxyCodeLine{\Hypertarget{_unit_selected_visual_8cs_source_l00039}00039\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_unit_selected_visual_8cs_source_l00040}00040\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_unit_selected_visual_a734fdd4f0cd30959d45cf60b0a805bbb}{UpdateVisual}}();}
+\DoxyCodeLine{\Hypertarget{_unit_selected_visual_8cs_source_l00041}00041\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_unit_selected_visual_8cs_source_l00042}00042\ }
+\DoxyCodeLine{\Hypertarget{_unit_selected_visual_8cs_source_l00043}\mbox{\hyperlink{class_unit_selected_visual_a734fdd4f0cd30959d45cf60b0a805bbb}{00043}}\ \ \ \ \ \textcolor{keyword}{private}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_unit_selected_visual_a734fdd4f0cd30959d45cf60b0a805bbb}{UpdateVisual}}()}
+\DoxyCodeLine{\Hypertarget{_unit_selected_visual_8cs_source_l00044}00044\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_unit_selected_visual_8cs_source_l00045}00045\ \ \ \ \ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{\Hypertarget{_unit_selected_visual_8cs_source_l00046}00046\ \textcolor{comment}{\ \ \ \ \ \ \ \ if\ (unit\ ==\ UnitActionSystem.Instance.GetSelectedUnit())}}
+\DoxyCodeLine{\Hypertarget{_unit_selected_visual_8cs_source_l00047}00047\ \textcolor{comment}{\ \ \ \ \ \ \ \ \{}}
+\DoxyCodeLine{\Hypertarget{_unit_selected_visual_8cs_source_l00048}00048\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ meshRenderer.enabled\ =\ true;}}
+\DoxyCodeLine{\Hypertarget{_unit_selected_visual_8cs_source_l00049}00049\ \textcolor{comment}{\ \ \ \ \ \ \ \ \}}}
+\DoxyCodeLine{\Hypertarget{_unit_selected_visual_8cs_source_l00050}00050\ \textcolor{comment}{\ \ \ \ \ \ \ \ else}}
+\DoxyCodeLine{\Hypertarget{_unit_selected_visual_8cs_source_l00051}00051\ \textcolor{comment}{\ \ \ \ \ \ \ \ \{}}
+\DoxyCodeLine{\Hypertarget{_unit_selected_visual_8cs_source_l00052}00052\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ meshRenderer.enabled\ =\ false;}}
+\DoxyCodeLine{\Hypertarget{_unit_selected_visual_8cs_source_l00053}00053\ \textcolor{comment}{\ \ \ \ \ \ \ \ \}}}
+\DoxyCodeLine{\Hypertarget{_unit_selected_visual_8cs_source_l00054}00054\ \textcolor{comment}{\ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{\Hypertarget{_unit_selected_visual_8cs_source_l00055}00055\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!\textcolor{keyword}{this}\ ||\ \mbox{\hyperlink{class_unit_selected_visual_a74d97845f584cd838c797c3e354f614c}{meshRenderer}}\ ==\ \textcolor{keyword}{null}\ ||\ \mbox{\hyperlink{class_unit_action_system}{UnitActionSystem}}.\mbox{\hyperlink{class_unit_action_system_aade075caf30c86ba81a057352a0f0a55}{Instance}}\ ==\ \textcolor{keyword}{null})\ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{\Hypertarget{_unit_selected_visual_8cs_source_l00056}00056\ \ \ \ \ \ \ \ \ var\ selected\ =\ \mbox{\hyperlink{class_unit_action_system}{UnitActionSystem}}.\mbox{\hyperlink{class_unit_action_system_aade075caf30c86ba81a057352a0f0a55}{Instance}}.\mbox{\hyperlink{class_unit_action_system_a03b257e8f1ff89c63d59860c00b2b12d}{GetSelectedUnit}}();}
+\DoxyCodeLine{\Hypertarget{_unit_selected_visual_8cs_source_l00057}00057\ \ \ \ \ \ \ \ \ meshRenderer.enabled\ =\ (\mbox{\hyperlink{class_unit_selected_visual_a970848de0afdafe4600f3d071a6347df}{unit}}\ !=\ \textcolor{keyword}{null}\ \&\&\ selected\ ==\ \mbox{\hyperlink{class_unit_selected_visual_a970848de0afdafe4600f3d071a6347df}{unit}});}
+\DoxyCodeLine{\Hypertarget{_unit_selected_visual_8cs_source_l00058}00058\ }
+\DoxyCodeLine{\Hypertarget{_unit_selected_visual_8cs_source_l00059}00059\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_unit_selected_visual_8cs_source_l00060}00060\ \}}
+
+\end{DoxyCode}

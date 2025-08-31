@@ -1,0 +1,177 @@
+\doxysection{Unit\+Selected\+Visual Class Reference}
+\hypertarget{class_unit_selected_visual}{}\label{class_unit_selected_visual}\index{UnitSelectedVisual@{UnitSelectedVisual}}
+
+
+This class is responsible for displaying a visual indicator when a unit is selected in the game. It uses a Mesh\+Renderer component to show or hide the visual representation of the selected unit.  
+
+
+Inheritance diagram for Unit\+Selected\+Visual\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{class_unit_selected_visual}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Private Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{class_unit_selected_visual_aefe556a59b42ab2dace2aee047b071a2}{Awake}} ()
+\item 
+void \mbox{\hyperlink{class_unit_selected_visual_a0e72e395e1b61ba666ce19a7b34e472a}{Start}} ()
+\item 
+void \mbox{\hyperlink{class_unit_selected_visual_ac19c6e0624e0101e78dac77578b46d54}{On\+Destroy}} ()
+\item 
+void \mbox{\hyperlink{class_unit_selected_visual_a171b7994c05bf1dd5360f60b1e26a08e}{Unit\+Action\+System\+\_\+\+On\+Selected\+Unit\+Changed}} (object sender, Event\+Args empty)
+\item 
+void \mbox{\hyperlink{class_unit_selected_visual_a734fdd4f0cd30959d45cf60b0a805bbb}{Update\+Visual}} ()
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{class_unit}{Unit}} \mbox{\hyperlink{class_unit_selected_visual_a970848de0afdafe4600f3d071a6347df}{unit}}
+\item 
+Mesh\+Renderer \mbox{\hyperlink{class_unit_selected_visual_a74d97845f584cd838c797c3e354f614c}{mesh\+Renderer}}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+This class is responsible for displaying a visual indicator when a unit is selected in the game. It uses a Mesh\+Renderer component to show or hide the visual representation of the selected unit. 
+
+Definition at line \mbox{\hyperlink{_unit_selected_visual_8cs_source_l00008}{8}} of file \mbox{\hyperlink{_unit_selected_visual_8cs_source}{Unit\+Selected\+Visual.\+cs}}.
+
+
+
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_unit_selected_visual_aefe556a59b42ab2dace2aee047b071a2}\index{UnitSelectedVisual@{UnitSelectedVisual}!Awake@{Awake}}
+\index{Awake@{Awake}!UnitSelectedVisual@{UnitSelectedVisual}}
+\doxysubsubsection{\texorpdfstring{Awake()}{Awake()}}
+{\footnotesize\ttfamily \label{class_unit_selected_visual_aefe556a59b42ab2dace2aee047b071a2} 
+void Unit\+Selected\+Visual.\+Awake (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_unit_selected_visual_8cs_source_l00015}{15}} of file \mbox{\hyperlink{_unit_selected_visual_8cs_source}{Unit\+Selected\+Visual.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00016\ \ \ \ \ \{}
+\DoxyCodeLine{00017\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ meshRenderer\ =\ GetComponent<MeshRenderer>();}}
+\DoxyCodeLine{00018\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ meshRenderer.enabled\ =\ false;}}
+\DoxyCodeLine{00019\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!\mbox{\hyperlink{class_unit_selected_visual_a74d97845f584cd838c797c3e354f614c}{meshRenderer}})\ \mbox{\hyperlink{class_unit_selected_visual_a74d97845f584cd838c797c3e354f614c}{meshRenderer}}\ =\ GetComponentInChildren<MeshRenderer>(\textcolor{keyword}{true});}
+\DoxyCodeLine{00020\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{class_unit_selected_visual_a74d97845f584cd838c797c3e354f614c}{meshRenderer}})\ meshRenderer.enabled\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00021\ \ \ \ \ \}}
+
+\end{DoxyCode}
+\Hypertarget{class_unit_selected_visual_ac19c6e0624e0101e78dac77578b46d54}\index{UnitSelectedVisual@{UnitSelectedVisual}!OnDestroy@{OnDestroy}}
+\index{OnDestroy@{OnDestroy}!UnitSelectedVisual@{UnitSelectedVisual}}
+\doxysubsubsection{\texorpdfstring{OnDestroy()}{OnDestroy()}}
+{\footnotesize\ttfamily \label{class_unit_selected_visual_ac19c6e0624e0101e78dac77578b46d54} 
+void Unit\+Selected\+Visual.\+On\+Destroy (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_unit_selected_visual_8cs_source_l00032}{32}} of file \mbox{\hyperlink{_unit_selected_visual_8cs_source}{Unit\+Selected\+Visual.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00033\ \ \ \ \ \{}
+\DoxyCodeLine{00034\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (UnitActionSystem.Instance\ !=\ \textcolor{keyword}{null})}
+\DoxyCodeLine{00035\ \ \ \ \ \ \ \ \ \ \ \ \ UnitActionSystem.Instance.OnSelectedUnitChanged\ -\/=\ \mbox{\hyperlink{class_unit_selected_visual_a171b7994c05bf1dd5360f60b1e26a08e}{UnitActionSystem\_OnSelectedUnitChanged}};}
+\DoxyCodeLine{00036\ \ \ \ \ \}}
+
+\end{DoxyCode}
+\Hypertarget{class_unit_selected_visual_a0e72e395e1b61ba666ce19a7b34e472a}\index{UnitSelectedVisual@{UnitSelectedVisual}!Start@{Start}}
+\index{Start@{Start}!UnitSelectedVisual@{UnitSelectedVisual}}
+\doxysubsubsection{\texorpdfstring{Start()}{Start()}}
+{\footnotesize\ttfamily \label{class_unit_selected_visual_a0e72e395e1b61ba666ce19a7b34e472a} 
+void Unit\+Selected\+Visual.\+Start (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_unit_selected_visual_8cs_source_l00023}{23}} of file \mbox{\hyperlink{_unit_selected_visual_8cs_source}{Unit\+Selected\+Visual.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00024\ \ \ \ \ \{}
+\DoxyCodeLine{00025\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (UnitActionSystem.Instance\ !=\ \textcolor{keyword}{null})}
+\DoxyCodeLine{00026\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00027\ \ \ \ \ \ \ \ \ \ \ \ \ UnitActionSystem.Instance.OnSelectedUnitChanged\ +=\ \mbox{\hyperlink{class_unit_selected_visual_a171b7994c05bf1dd5360f60b1e26a08e}{UnitActionSystem\_OnSelectedUnitChanged}};}
+\DoxyCodeLine{00028\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_unit_selected_visual_a734fdd4f0cd30959d45cf60b0a805bbb}{UpdateVisual}}();}
+\DoxyCodeLine{00029\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00030\ \ \ \ \ \}}
+
+\end{DoxyCode}
+\Hypertarget{class_unit_selected_visual_a171b7994c05bf1dd5360f60b1e26a08e}\index{UnitSelectedVisual@{UnitSelectedVisual}!UnitActionSystem\_OnSelectedUnitChanged@{UnitActionSystem\_OnSelectedUnitChanged}}
+\index{UnitActionSystem\_OnSelectedUnitChanged@{UnitActionSystem\_OnSelectedUnitChanged}!UnitSelectedVisual@{UnitSelectedVisual}}
+\doxysubsubsection{\texorpdfstring{UnitActionSystem\_OnSelectedUnitChanged()}{UnitActionSystem\_OnSelectedUnitChanged()}}
+{\footnotesize\ttfamily \label{class_unit_selected_visual_a171b7994c05bf1dd5360f60b1e26a08e} 
+void Unit\+Selected\+Visual.\+Unit\+Action\+System\+\_\+\+On\+Selected\+Unit\+Changed (\begin{DoxyParamCaption}\item[{object}]{sender}{, }\item[{Event\+Args}]{empty}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_unit_selected_visual_8cs_source_l00038}{38}} of file \mbox{\hyperlink{_unit_selected_visual_8cs_source}{Unit\+Selected\+Visual.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00039\ \ \ \ \ \{}
+\DoxyCodeLine{00040\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_unit_selected_visual_a734fdd4f0cd30959d45cf60b0a805bbb}{UpdateVisual}}();}
+\DoxyCodeLine{00041\ \ \ \ \ \}}
+
+\end{DoxyCode}
+\Hypertarget{class_unit_selected_visual_a734fdd4f0cd30959d45cf60b0a805bbb}\index{UnitSelectedVisual@{UnitSelectedVisual}!UpdateVisual@{UpdateVisual}}
+\index{UpdateVisual@{UpdateVisual}!UnitSelectedVisual@{UnitSelectedVisual}}
+\doxysubsubsection{\texorpdfstring{UpdateVisual()}{UpdateVisual()}}
+{\footnotesize\ttfamily \label{class_unit_selected_visual_a734fdd4f0cd30959d45cf60b0a805bbb} 
+void Unit\+Selected\+Visual.\+Update\+Visual (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_unit_selected_visual_8cs_source_l00043}{43}} of file \mbox{\hyperlink{_unit_selected_visual_8cs_source}{Unit\+Selected\+Visual.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00044\ \ \ \ \ \{}
+\DoxyCodeLine{00045\ \ \ \ \ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00046\ \textcolor{comment}{\ \ \ \ \ \ \ \ if\ (unit\ ==\ UnitActionSystem.Instance.GetSelectedUnit()) }}
+\DoxyCodeLine{00047\ \textcolor{comment}{\ \ \ \ \ \ \ \ \{ }}
+\DoxyCodeLine{00048\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ meshRenderer.enabled\ =\ true; }}
+\DoxyCodeLine{00049\ \textcolor{comment}{\ \ \ \ \ \ \ \ \} }}
+\DoxyCodeLine{00050\ \textcolor{comment}{\ \ \ \ \ \ \ \ else }}
+\DoxyCodeLine{00051\ \textcolor{comment}{\ \ \ \ \ \ \ \ \{ }}
+\DoxyCodeLine{00052\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ meshRenderer.enabled\ =\ false; }}
+\DoxyCodeLine{00053\ \textcolor{comment}{\ \ \ \ \ \ \ \ \} }}
+\DoxyCodeLine{00054\ \textcolor{comment}{\ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00055\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!\textcolor{keyword}{this}\ ||\ \mbox{\hyperlink{class_unit_selected_visual_a74d97845f584cd838c797c3e354f614c}{meshRenderer}}\ ==\ \textcolor{keyword}{null}\ ||\ UnitActionSystem.Instance\ ==\ \textcolor{keyword}{null})\ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{00056\ \ \ \ \ \ \ \ \ var\ selected\ =\ UnitActionSystem.Instance.GetSelectedUnit();}
+\DoxyCodeLine{00057\ \ \ \ \ \ \ \ \ meshRenderer.enabled\ =\ (\mbox{\hyperlink{class_unit_selected_visual_a970848de0afdafe4600f3d071a6347df}{unit}}\ !=\ \textcolor{keyword}{null}\ \&\&\ selected\ ==\ \mbox{\hyperlink{class_unit_selected_visual_a970848de0afdafe4600f3d071a6347df}{unit}});}
+\DoxyCodeLine{00058\ }
+\DoxyCodeLine{00059\ \ \ \ \ \}}
+
+\end{DoxyCode}
+
+
+\doxysubsection{Member Data Documentation}
+\Hypertarget{class_unit_selected_visual_a74d97845f584cd838c797c3e354f614c}\index{UnitSelectedVisual@{UnitSelectedVisual}!meshRenderer@{meshRenderer}}
+\index{meshRenderer@{meshRenderer}!UnitSelectedVisual@{UnitSelectedVisual}}
+\doxysubsubsection{\texorpdfstring{meshRenderer}{meshRenderer}}
+{\footnotesize\ttfamily \label{class_unit_selected_visual_a74d97845f584cd838c797c3e354f614c} 
+Mesh\+Renderer Unit\+Selected\+Visual.\+mesh\+Renderer\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_unit_selected_visual_8cs_source_l00011}{11}} of file \mbox{\hyperlink{_unit_selected_visual_8cs_source}{Unit\+Selected\+Visual.\+cs}}.
+
+\Hypertarget{class_unit_selected_visual_a970848de0afdafe4600f3d071a6347df}\index{UnitSelectedVisual@{UnitSelectedVisual}!unit@{unit}}
+\index{unit@{unit}!UnitSelectedVisual@{UnitSelectedVisual}}
+\doxysubsubsection{\texorpdfstring{unit}{unit}}
+{\footnotesize\ttfamily \label{class_unit_selected_visual_a970848de0afdafe4600f3d071a6347df} 
+\mbox{\hyperlink{class_unit}{Unit}} Unit\+Selected\+Visual.\+unit\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_unit_selected_visual_8cs_source_l00010}{10}} of file \mbox{\hyperlink{_unit_selected_visual_8cs_source}{Unit\+Selected\+Visual.\+cs}}.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+D\+:/\+Unity/\+Rogue\+Shooter/\+Rogue\+Shooter/\+Assets/\+Scripts/\+Player\+Units/\mbox{\hyperlink{_unit_selected_visual_8cs}{Unit\+Selected\+Visual.\+cs}}\end{DoxyCompactItemize}

@@ -1,0 +1,149 @@
+\doxysection{Back\+Button\+UI Class Reference}
+\hypertarget{class_back_button_u_i}{}\label{class_back_button_u_i}\index{BackButtonUI@{BackButtonUI}}
+Inheritance diagram for Back\+Button\+UI\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{class_back_button_u_i}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Private Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{class_back_button_u_i_afe5bbae8b96c47adfb011b69bacf4e2f}{Awake}} ()
+\item 
+void \mbox{\hyperlink{class_back_button_u_i_a9146bf9a95bb655d117369a238c78ef3}{Back\+Button\+\_\+\+On\+Click}} ()
+\item 
+void \mbox{\hyperlink{class_back_button_u_i_a72af8929ea868cda870013b82ee3fe61}{Start}} ()
+\item 
+void \mbox{\hyperlink{class_back_button_u_i_ad52c5fa39f536284d5cae03630118fd5}{Update}} ()
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+Game\+Object \mbox{\hyperlink{class_back_button_u_i_ae5e20387f66df323f22830dfab055183}{connect\+Canvas}}
+\item 
+Game\+Object \mbox{\hyperlink{class_back_button_u_i_a76e1ab903d6a3f025d4b059ba455b50d}{game\+Mode\+Select\+Canvas}}
+\item 
+Button \mbox{\hyperlink{class_back_button_u_i_ad0ab694daf7d481c24c3f6d30ef597e6}{back\+Button}}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+
+
+Definition at line \mbox{\hyperlink{_back_button_u_i_8cs_source_l00004}{4}} of file \mbox{\hyperlink{_back_button_u_i_8cs_source}{Back\+Button\+UI.\+cs}}.
+
+
+
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_back_button_u_i_afe5bbae8b96c47adfb011b69bacf4e2f}\index{BackButtonUI@{BackButtonUI}!Awake@{Awake}}
+\index{Awake@{Awake}!BackButtonUI@{BackButtonUI}}
+\doxysubsubsection{\texorpdfstring{Awake()}{Awake()}}
+{\footnotesize\ttfamily \label{class_back_button_u_i_afe5bbae8b96c47adfb011b69bacf4e2f} 
+void Back\+Button\+UI.\+Awake (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_back_button_u_i_8cs_source_l00015}{15}} of file \mbox{\hyperlink{_back_button_u_i_8cs_source}{Back\+Button\+UI.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00016\ \ \ \ \ \{}
+\DoxyCodeLine{00017\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00018\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Add\ button\ listener}}
+\DoxyCodeLine{00019\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_back_button_u_i_ad0ab694daf7d481c24c3f6d30ef597e6}{backButton}}.onClick.AddListener(\mbox{\hyperlink{class_back_button_u_i_a9146bf9a95bb655d117369a238c78ef3}{BackButton\_OnClick}});}
+\DoxyCodeLine{00020\ \ \ \ \ \}}
+
+\end{DoxyCode}
+\Hypertarget{class_back_button_u_i_a9146bf9a95bb655d117369a238c78ef3}\index{BackButtonUI@{BackButtonUI}!BackButton\_OnClick@{BackButton\_OnClick}}
+\index{BackButton\_OnClick@{BackButton\_OnClick}!BackButtonUI@{BackButtonUI}}
+\doxysubsubsection{\texorpdfstring{BackButton\_OnClick()}{BackButton\_OnClick()}}
+{\footnotesize\ttfamily \label{class_back_button_u_i_a9146bf9a95bb655d117369a238c78ef3} 
+void Back\+Button\+UI.\+Back\+Button\+\_\+\+On\+Click (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_back_button_u_i_8cs_source_l00022}{22}} of file \mbox{\hyperlink{_back_button_u_i_8cs_source}{Back\+Button\+UI.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00023\ \ \ \ \ \{}
+\DoxyCodeLine{00024\ \ \ \ \ \ \ \ \ Debug.Log(\textcolor{stringliteral}{"{}Back\ button\ clicked."{}});}
+\DoxyCodeLine{00025\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Hide\ the\ connect\ canvas\ and\ show\ the\ game\ mode\ select\ canvas}}
+\DoxyCodeLine{00026\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_back_button_u_i_ae5e20387f66df323f22830dfab055183}{connectCanvas}}.SetActive(\textcolor{keyword}{false});}
+\DoxyCodeLine{00027\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_back_button_u_i_a76e1ab903d6a3f025d4b059ba455b50d}{gameModeSelectCanvas}}.SetActive(\textcolor{keyword}{true});}
+\DoxyCodeLine{00028\ \ \ \ \ \}}
+
+\end{DoxyCode}
+\Hypertarget{class_back_button_u_i_a72af8929ea868cda870013b82ee3fe61}\index{BackButtonUI@{BackButtonUI}!Start@{Start}}
+\index{Start@{Start}!BackButtonUI@{BackButtonUI}}
+\doxysubsubsection{\texorpdfstring{Start()}{Start()}}
+{\footnotesize\ttfamily \label{class_back_button_u_i_a72af8929ea868cda870013b82ee3fe61} 
+void Back\+Button\+UI.\+Start (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_back_button_u_i_8cs_source_l00031}{31}} of file \mbox{\hyperlink{_back_button_u_i_8cs_source}{Back\+Button\+UI.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00032\ \ \ \ \ \{}
+\DoxyCodeLine{00033\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00034\ \ \ \ \ \}}
+
+\end{DoxyCode}
+\Hypertarget{class_back_button_u_i_ad52c5fa39f536284d5cae03630118fd5}\index{BackButtonUI@{BackButtonUI}!Update@{Update}}
+\index{Update@{Update}!BackButtonUI@{BackButtonUI}}
+\doxysubsubsection{\texorpdfstring{Update()}{Update()}}
+{\footnotesize\ttfamily \label{class_back_button_u_i_ad52c5fa39f536284d5cae03630118fd5} 
+void Back\+Button\+UI.\+Update (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_back_button_u_i_8cs_source_l00037}{37}} of file \mbox{\hyperlink{_back_button_u_i_8cs_source}{Back\+Button\+UI.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00038\ \ \ \ \ \{}
+\DoxyCodeLine{00039\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00040\ \ \ \ \ \}}
+
+\end{DoxyCode}
+
+
+\doxysubsection{Member Data Documentation}
+\Hypertarget{class_back_button_u_i_ad0ab694daf7d481c24c3f6d30ef597e6}\index{BackButtonUI@{BackButtonUI}!backButton@{backButton}}
+\index{backButton@{backButton}!BackButtonUI@{BackButtonUI}}
+\doxysubsubsection{\texorpdfstring{backButton}{backButton}}
+{\footnotesize\ttfamily \label{class_back_button_u_i_ad0ab694daf7d481c24c3f6d30ef597e6} 
+Button Back\+Button\+UI.\+back\+Button\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_back_button_u_i_8cs_source_l00013}{13}} of file \mbox{\hyperlink{_back_button_u_i_8cs_source}{Back\+Button\+UI.\+cs}}.
+
+\Hypertarget{class_back_button_u_i_ae5e20387f66df323f22830dfab055183}\index{BackButtonUI@{BackButtonUI}!connectCanvas@{connectCanvas}}
+\index{connectCanvas@{connectCanvas}!BackButtonUI@{BackButtonUI}}
+\doxysubsubsection{\texorpdfstring{connectCanvas}{connectCanvas}}
+{\footnotesize\ttfamily \label{class_back_button_u_i_ae5e20387f66df323f22830dfab055183} 
+Game\+Object Back\+Button\+UI.\+connect\+Canvas\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_back_button_u_i_8cs_source_l00009}{9}} of file \mbox{\hyperlink{_back_button_u_i_8cs_source}{Back\+Button\+UI.\+cs}}.
+
+\Hypertarget{class_back_button_u_i_a76e1ab903d6a3f025d4b059ba455b50d}\index{BackButtonUI@{BackButtonUI}!gameModeSelectCanvas@{gameModeSelectCanvas}}
+\index{gameModeSelectCanvas@{gameModeSelectCanvas}!BackButtonUI@{BackButtonUI}}
+\doxysubsubsection{\texorpdfstring{gameModeSelectCanvas}{gameModeSelectCanvas}}
+{\footnotesize\ttfamily \label{class_back_button_u_i_a76e1ab903d6a3f025d4b059ba455b50d} 
+Game\+Object Back\+Button\+UI.\+game\+Mode\+Select\+Canvas\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_back_button_u_i_8cs_source_l00010}{10}} of file \mbox{\hyperlink{_back_button_u_i_8cs_source}{Back\+Button\+UI.\+cs}}.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+D\+:/\+Unity/\+Rogue\+Shooter/\+Rogue\+Shooter/\+Assets/\+Scripts/\+Menu/\mbox{\hyperlink{_back_button_u_i_8cs}{Back\+Button\+UI.\+cs}}\end{DoxyCompactItemize}

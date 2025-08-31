@@ -1,0 +1,488 @@
+\doxysection{Unit Class Reference}
+\hypertarget{class_unit}{}\label{class_unit}\index{Unit@{Unit}}
+
+
+This class represents a unit in the game. Actions can be called on the unit to perform various actions like moving or shooting. The class inherits from Network\+Behaviour to support multiplayer functionality.  
+
+
+Inheritance diagram for Unit\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{class_unit}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{class_move_action}{Move\+Action}} \mbox{\hyperlink{class_unit_a2900e147bfdf99ccb8c0197b3721198c}{Get\+Move\+Action}} ()
+\item 
+\mbox{\hyperlink{class_spin_action}{Spin\+Action}} \mbox{\hyperlink{class_unit_a43ba26d6e6b1887546ce08527a15f048}{Get\+Spin\+Action}} ()
+\item 
+\mbox{\hyperlink{struct_grid_position}{Grid\+Position}} \mbox{\hyperlink{class_unit_ad60652a863c76a3d889aa9d47a467688}{Get\+Grid\+Position}} ()
+\item 
+Vector3 \mbox{\hyperlink{class_unit_a2dbd8fe78c5be94df2b81816fffe2df0}{Get\+World\+Position}} ()
+\item 
+\mbox{\hyperlink{class_base_action}{Base\+Action}}\mbox{[}$\,$\mbox{]} \mbox{\hyperlink{class_unit_ae8fafcccd25eaf19c961b78871fd244f}{Get\+Base\+Actions\+Array}} ()
+\item 
+bool \mbox{\hyperlink{class_unit_afd8995267e93ddb4b652dd3dfead1fd4}{Try\+Spend\+Action\+Points\+To\+Take\+Action}} (\mbox{\hyperlink{class_base_action}{Base\+Action}} base\+Action)
+\item 
+bool \mbox{\hyperlink{class_unit_acb7946d692a60a71aa9db3bab5b7fd52}{Can\+Spend\+Action\+Points\+To\+Take\+Action}} (\mbox{\hyperlink{class_base_action}{Base\+Action}} base\+Action)
+\item 
+int \mbox{\hyperlink{class_unit_a9d86c07e2b08fe284b9e37c2e61a2eed}{Get\+Action\+Points}} ()
+\item 
+bool \mbox{\hyperlink{class_unit_a8b4a979fcc5105ba9fec1629284a6653}{Is\+Enemy}} ()
+\item 
+void \mbox{\hyperlink{class_unit_abf43d9f4c8ccd6f284a1e8982a226d5d}{Damage}} ()
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Events}
+\begin{DoxyCompactItemize}
+\item 
+static Event\+Handler \mbox{\hyperlink{class_unit_a24cce37c6f78356f0624a0bf5aaa25af}{On\+Any\+Action\+Points\+Changed}}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Private Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{class_unit_aa5d760cd67e37717756deebe958d70ae}{Awake}} ()
+\item 
+void \mbox{\hyperlink{class_unit_a9c1ff7b7289c2ed898bc92a0c3027058}{Start}} ()
+\item 
+void \mbox{\hyperlink{class_unit_a99a69e981cce14a41538066318308b08}{Update}} ()
+\item 
+void \mbox{\hyperlink{class_unit_addfc5e3aa15d4fd48ecaaf8d0a21bcb1}{Spend\+Action\+Points}} (int amount)
+\item 
+void \mbox{\hyperlink{class_unit_a4035fa9d4cf49a5f267901bbbd0cc674}{Turn\+System\+\_\+\+On\+Turn\+Changed}} (object sender, Event\+Args e)
+\begin{DoxyCompactList}\small\item\em This method is called when the turn changes. It resets the action points to the maximum value. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_unit_a212dff995fdc4d3024490c4b33c94f39}{On\+Destroy}} ()
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+bool \mbox{\hyperlink{class_unit_aa7fef9481be9e9cc96b2338ac284f97a}{is\+Enemy}}
+\item 
+\mbox{\hyperlink{struct_grid_position}{Grid\+Position}} \mbox{\hyperlink{class_unit_a5e73973e0332cef550be362e294474a7}{grid\+Position}}
+\item 
+\mbox{\hyperlink{class_move_action}{Move\+Action}} \mbox{\hyperlink{class_unit_aa504edf0ce93dae6cd743b0d0e9c5f13}{move\+Action}}
+\item 
+\mbox{\hyperlink{class_spin_action}{Spin\+Action}} \mbox{\hyperlink{class_unit_ad47e1c5a7462f7c89d1e9daa289e63c3}{spin\+Action}}
+\item 
+\mbox{\hyperlink{class_base_action}{Base\+Action}}\mbox{[}$\,$\mbox{]} \mbox{\hyperlink{class_unit_aa77d1ecae15e2e134a0ca53d9f4d1efc}{base\+Actions\+Array}}
+\item 
+int \mbox{\hyperlink{class_unit_adcd4c8b7e9910ca63e7f89a37c7c42e5}{action\+Points}} = \mbox{\hyperlink{class_unit_aaf0ad9663540b0e3d85f23c2e8fb56b8}{ACTION\+\_\+\+POINTS\+\_\+\+MAX}}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Static Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+const int \mbox{\hyperlink{class_unit_aaf0ad9663540b0e3d85f23c2e8fb56b8}{ACTION\+\_\+\+POINTS\+\_\+\+MAX}} = 2
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+This class represents a unit in the game. Actions can be called on the unit to perform various actions like moving or shooting. The class inherits from Network\+Behaviour to support multiplayer functionality. 
+
+Definition at line \mbox{\hyperlink{_unit_8cs_source_l00010}{10}} of file \mbox{\hyperlink{_unit_8cs_source}{Unit.\+cs}}.
+
+
+
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_unit_aa5d760cd67e37717756deebe958d70ae}\index{Unit@{Unit}!Awake@{Awake}}
+\index{Awake@{Awake}!Unit@{Unit}}
+\doxysubsubsection{\texorpdfstring{Awake()}{Awake()}}
+{\footnotesize\ttfamily \label{class_unit_aa5d760cd67e37717756deebe958d70ae} 
+void Unit.\+Awake (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_unit_8cs_source_l00027}{27}} of file \mbox{\hyperlink{_unit_8cs_source}{Unit.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00028\ \ \ \ \ \{}
+\DoxyCodeLine{00029\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_unit_aa504edf0ce93dae6cd743b0d0e9c5f13}{moveAction}}\ =\ GetComponent<MoveAction>();}
+\DoxyCodeLine{00030\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_unit_ad47e1c5a7462f7c89d1e9daa289e63c3}{spinAction}}\ =\ GetComponent<SpinAction>();}
+\DoxyCodeLine{00031\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_unit_aa77d1ecae15e2e134a0ca53d9f4d1efc}{baseActionsArray}}\ =\ GetComponents<BaseAction>();}
+\DoxyCodeLine{00032\ \ \ \ \ \}}
+
+\end{DoxyCode}
+\Hypertarget{class_unit_acb7946d692a60a71aa9db3bab5b7fd52}\index{Unit@{Unit}!CanSpendActionPointsToTakeAction@{CanSpendActionPointsToTakeAction}}
+\index{CanSpendActionPointsToTakeAction@{CanSpendActionPointsToTakeAction}!Unit@{Unit}}
+\doxysubsubsection{\texorpdfstring{CanSpendActionPointsToTakeAction()}{CanSpendActionPointsToTakeAction()}}
+{\footnotesize\ttfamily \label{class_unit_acb7946d692a60a71aa9db3bab5b7fd52} 
+bool Unit.\+Can\+Spend\+Action\+Points\+To\+Take\+Action (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{class_base_action}{Base\+Action}}}]{base\+Action}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line \mbox{\hyperlink{_unit_8cs_source_l00091}{91}} of file \mbox{\hyperlink{_unit_8cs_source}{Unit.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00092\ \ \ \ \ \{}
+\DoxyCodeLine{00093\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{class_unit_adcd4c8b7e9910ca63e7f89a37c7c42e5}{actionPoints}}\ >=\ baseAction.\mbox{\hyperlink{class_base_action_a20cc796d15b41abbe6ea0da8604692fa}{GetActionPointsCost}}())}
+\DoxyCodeLine{00094\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00095\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ actionPoints\ -\/=\ baseAction.GetActionPointsCost();}}
+\DoxyCodeLine{00096\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00097\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00098\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00099\ \ \ \ \ \}}
+
+\end{DoxyCode}
+\Hypertarget{class_unit_abf43d9f4c8ccd6f284a1e8982a226d5d}\index{Unit@{Unit}!Damage@{Damage}}
+\index{Damage@{Damage}!Unit@{Unit}}
+\doxysubsubsection{\texorpdfstring{Damage()}{Damage()}}
+{\footnotesize\ttfamily \label{class_unit_abf43d9f4c8ccd6f284a1e8982a226d5d} 
+void Unit.\+Damage (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line \mbox{\hyperlink{_unit_8cs_source_l00131}{131}} of file \mbox{\hyperlink{_unit_8cs_source}{Unit.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00132\ \ \ \ \ \{}
+\DoxyCodeLine{00133\ \ \ \ \ \ \ \ \ Debug.Log(transform\ +\ \textcolor{stringliteral}{"{}\ took\ damage"{}});}
+\DoxyCodeLine{00134\ \ \ \ \ \}}
+
+\end{DoxyCode}
+\Hypertarget{class_unit_a9d86c07e2b08fe284b9e37c2e61a2eed}\index{Unit@{Unit}!GetActionPoints@{GetActionPoints}}
+\index{GetActionPoints@{GetActionPoints}!Unit@{Unit}}
+\doxysubsubsection{\texorpdfstring{GetActionPoints()}{GetActionPoints()}}
+{\footnotesize\ttfamily \label{class_unit_a9d86c07e2b08fe284b9e37c2e61a2eed} 
+int Unit.\+Get\+Action\+Points (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line \mbox{\hyperlink{_unit_8cs_source_l00108}{108}} of file \mbox{\hyperlink{_unit_8cs_source}{Unit.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00109\ \ \ \ \ \{}
+\DoxyCodeLine{00110\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{class_unit_adcd4c8b7e9910ca63e7f89a37c7c42e5}{actionPoints}};}
+\DoxyCodeLine{00111\ \ \ \ \ \}}
+
+\end{DoxyCode}
+\Hypertarget{class_unit_ae8fafcccd25eaf19c961b78871fd244f}\index{Unit@{Unit}!GetBaseActionsArray@{GetBaseActionsArray}}
+\index{GetBaseActionsArray@{GetBaseActionsArray}!Unit@{Unit}}
+\doxysubsubsection{\texorpdfstring{GetBaseActionsArray()}{GetBaseActionsArray()}}
+{\footnotesize\ttfamily \label{class_unit_ae8fafcccd25eaf19c961b78871fd244f} 
+\mbox{\hyperlink{class_base_action}{Base\+Action}}\mbox{[}$\,$\mbox{]} Unit.\+Get\+Base\+Actions\+Array (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line \mbox{\hyperlink{_unit_8cs_source_l00076}{76}} of file \mbox{\hyperlink{_unit_8cs_source}{Unit.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00077\ \ \ \ \ \{}
+\DoxyCodeLine{00078\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{class_unit_aa77d1ecae15e2e134a0ca53d9f4d1efc}{baseActionsArray}};}
+\DoxyCodeLine{00079\ \ \ \ \ \}}
+
+\end{DoxyCode}
+\Hypertarget{class_unit_ad60652a863c76a3d889aa9d47a467688}\index{Unit@{Unit}!GetGridPosition@{GetGridPosition}}
+\index{GetGridPosition@{GetGridPosition}!Unit@{Unit}}
+\doxysubsubsection{\texorpdfstring{GetGridPosition()}{GetGridPosition()}}
+{\footnotesize\ttfamily \label{class_unit_ad60652a863c76a3d889aa9d47a467688} 
+\mbox{\hyperlink{struct_grid_position}{Grid\+Position}} Unit.\+Get\+Grid\+Position (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line \mbox{\hyperlink{_unit_8cs_source_l00066}{66}} of file \mbox{\hyperlink{_unit_8cs_source}{Unit.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00067\ \ \ \ \ \{}
+\DoxyCodeLine{00068\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{class_unit_a5e73973e0332cef550be362e294474a7}{gridPosition}};}
+\DoxyCodeLine{00069\ \ \ \ \ \}}
+
+\end{DoxyCode}
+\Hypertarget{class_unit_a2900e147bfdf99ccb8c0197b3721198c}\index{Unit@{Unit}!GetMoveAction@{GetMoveAction}}
+\index{GetMoveAction@{GetMoveAction}!Unit@{Unit}}
+\doxysubsubsection{\texorpdfstring{GetMoveAction()}{GetMoveAction()}}
+{\footnotesize\ttfamily \label{class_unit_a2900e147bfdf99ccb8c0197b3721198c} 
+\mbox{\hyperlink{class_move_action}{Move\+Action}} Unit.\+Get\+Move\+Action (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line \mbox{\hyperlink{_unit_8cs_source_l00056}{56}} of file \mbox{\hyperlink{_unit_8cs_source}{Unit.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00057\ \ \ \ \ \{}
+\DoxyCodeLine{00058\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{class_unit_aa504edf0ce93dae6cd743b0d0e9c5f13}{moveAction}};}
+\DoxyCodeLine{00059\ \ \ \ \ \}}
+
+\end{DoxyCode}
+\Hypertarget{class_unit_a43ba26d6e6b1887546ce08527a15f048}\index{Unit@{Unit}!GetSpinAction@{GetSpinAction}}
+\index{GetSpinAction@{GetSpinAction}!Unit@{Unit}}
+\doxysubsubsection{\texorpdfstring{GetSpinAction()}{GetSpinAction()}}
+{\footnotesize\ttfamily \label{class_unit_a43ba26d6e6b1887546ce08527a15f048} 
+\mbox{\hyperlink{class_spin_action}{Spin\+Action}} Unit.\+Get\+Spin\+Action (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line \mbox{\hyperlink{_unit_8cs_source_l00061}{61}} of file \mbox{\hyperlink{_unit_8cs_source}{Unit.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00062\ \ \ \ \ \{}
+\DoxyCodeLine{00063\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{class_unit_ad47e1c5a7462f7c89d1e9daa289e63c3}{spinAction}};}
+\DoxyCodeLine{00064\ \ \ \ \ \}}
+
+\end{DoxyCode}
+\Hypertarget{class_unit_a2dbd8fe78c5be94df2b81816fffe2df0}\index{Unit@{Unit}!GetWorldPosition@{GetWorldPosition}}
+\index{GetWorldPosition@{GetWorldPosition}!Unit@{Unit}}
+\doxysubsubsection{\texorpdfstring{GetWorldPosition()}{GetWorldPosition()}}
+{\footnotesize\ttfamily \label{class_unit_a2dbd8fe78c5be94df2b81816fffe2df0} 
+Vector3 Unit.\+Get\+World\+Position (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line \mbox{\hyperlink{_unit_8cs_source_l00071}{71}} of file \mbox{\hyperlink{_unit_8cs_source}{Unit.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00072\ \ \ \ \ \{}
+\DoxyCodeLine{00073\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ transform.position;}
+\DoxyCodeLine{00074\ \ \ \ \ \}}
+
+\end{DoxyCode}
+\Hypertarget{class_unit_a8b4a979fcc5105ba9fec1629284a6653}\index{Unit@{Unit}!IsEnemy@{IsEnemy}}
+\index{IsEnemy@{IsEnemy}!Unit@{Unit}}
+\doxysubsubsection{\texorpdfstring{IsEnemy()}{IsEnemy()}}
+{\footnotesize\ttfamily \label{class_unit_a8b4a979fcc5105ba9fec1629284a6653} 
+bool Unit.\+Is\+Enemy (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line \mbox{\hyperlink{_unit_8cs_source_l00126}{126}} of file \mbox{\hyperlink{_unit_8cs_source}{Unit.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00127\ \ \ \ \ \{}
+\DoxyCodeLine{00128\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{class_unit_aa7fef9481be9e9cc96b2338ac284f97a}{isEnemy}};}
+\DoxyCodeLine{00129\ \ \ \ \ \}}
+
+\end{DoxyCode}
+\Hypertarget{class_unit_a212dff995fdc4d3024490c4b33c94f39}\index{Unit@{Unit}!OnDestroy@{OnDestroy}}
+\index{OnDestroy@{OnDestroy}!Unit@{Unit}}
+\doxysubsubsection{\texorpdfstring{OnDestroy()}{OnDestroy()}}
+{\footnotesize\ttfamily \label{class_unit_a212dff995fdc4d3024490c4b33c94f39} 
+void Unit.\+On\+Destroy (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_unit_8cs_source_l00136}{136}} of file \mbox{\hyperlink{_unit_8cs_source}{Unit.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00137\ \ \ \ \ \{}
+\DoxyCodeLine{00138\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (LevelGrid.Instance\ !=\ \textcolor{keyword}{null})}
+\DoxyCodeLine{00139\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00140\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_unit_a5e73973e0332cef550be362e294474a7}{gridPosition}}\ =\ LevelGrid.Instance.GetGridPosition(transform.position);}
+\DoxyCodeLine{00141\ \ \ \ \ \ \ \ \ \ \ \ \ LevelGrid.Instance.RemoveUnitAtGridPosition(\mbox{\hyperlink{class_unit_a5e73973e0332cef550be362e294474a7}{gridPosition}},\ \textcolor{keyword}{this});}
+\DoxyCodeLine{00142\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00143\ \ \ \ \ \}}
+
+\end{DoxyCode}
+\Hypertarget{class_unit_addfc5e3aa15d4fd48ecaaf8d0a21bcb1}\index{Unit@{Unit}!SpendActionPoints@{SpendActionPoints}}
+\index{SpendActionPoints@{SpendActionPoints}!Unit@{Unit}}
+\doxysubsubsection{\texorpdfstring{SpendActionPoints()}{SpendActionPoints()}}
+{\footnotesize\ttfamily \label{class_unit_addfc5e3aa15d4fd48ecaaf8d0a21bcb1} 
+void Unit.\+Spend\+Action\+Points (\begin{DoxyParamCaption}\item[{int}]{amount}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_unit_8cs_source_l00101}{101}} of file \mbox{\hyperlink{_unit_8cs_source}{Unit.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00102\ \ \ \ \ \{}
+\DoxyCodeLine{00103\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_unit_adcd4c8b7e9910ca63e7f89a37c7c42e5}{actionPoints}}\ -\/=\ amount;}
+\DoxyCodeLine{00104\ }
+\DoxyCodeLine{00105\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_unit_a24cce37c6f78356f0624a0bf5aaa25af}{OnAnyActionPointsChanged}}?.Invoke(\textcolor{keyword}{this},\ EventArgs.Empty);}
+\DoxyCodeLine{00106\ \ \ \ \ \}}
+
+\end{DoxyCode}
+\Hypertarget{class_unit_a9c1ff7b7289c2ed898bc92a0c3027058}\index{Unit@{Unit}!Start@{Start}}
+\index{Start@{Start}!Unit@{Unit}}
+\doxysubsubsection{\texorpdfstring{Start()}{Start()}}
+{\footnotesize\ttfamily \label{class_unit_a9c1ff7b7289c2ed898bc92a0c3027058} 
+void Unit.\+Start (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_unit_8cs_source_l00034}{34}} of file \mbox{\hyperlink{_unit_8cs_source}{Unit.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00035\ \ \ \ \ \{}
+\DoxyCodeLine{00036\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (LevelGrid.Instance\ !=\ \textcolor{keyword}{null})}
+\DoxyCodeLine{00037\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00038\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_unit_a5e73973e0332cef550be362e294474a7}{gridPosition}}\ =\ LevelGrid.Instance.GetGridPosition(transform.position);}
+\DoxyCodeLine{00039\ \ \ \ \ \ \ \ \ \ \ \ \ LevelGrid.Instance.AddUnitAtGridPosition(\mbox{\hyperlink{class_unit_a5e73973e0332cef550be362e294474a7}{gridPosition}},\ \textcolor{keyword}{this});}
+\DoxyCodeLine{00040\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00041\ }
+\DoxyCodeLine{00042\ \ \ \ \ \ \ \ \ TurnSystem.Instance.OnTurnChanged\ +=\ \mbox{\hyperlink{class_unit_a4035fa9d4cf49a5f267901bbbd0cc674}{TurnSystem\_OnTurnChanged}};}
+\DoxyCodeLine{00043\ \ \ \ \ \}}
+
+\end{DoxyCode}
+\Hypertarget{class_unit_afd8995267e93ddb4b652dd3dfead1fd4}\index{Unit@{Unit}!TrySpendActionPointsToTakeAction@{TrySpendActionPointsToTakeAction}}
+\index{TrySpendActionPointsToTakeAction@{TrySpendActionPointsToTakeAction}!Unit@{Unit}}
+\doxysubsubsection{\texorpdfstring{TrySpendActionPointsToTakeAction()}{TrySpendActionPointsToTakeAction()}}
+{\footnotesize\ttfamily \label{class_unit_afd8995267e93ddb4b652dd3dfead1fd4} 
+bool Unit.\+Try\+Spend\+Action\+Points\+To\+Take\+Action (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{class_base_action}{Base\+Action}}}]{base\+Action}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line \mbox{\hyperlink{_unit_8cs_source_l00081}{81}} of file \mbox{\hyperlink{_unit_8cs_source}{Unit.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00082\ \ \ \ \ \{}
+\DoxyCodeLine{00083\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{class_unit_acb7946d692a60a71aa9db3bab5b7fd52}{CanSpendActionPointsToTakeAction}}(baseAction))}
+\DoxyCodeLine{00084\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00085\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_unit_addfc5e3aa15d4fd48ecaaf8d0a21bcb1}{SpendActionPoints}}(baseAction.\mbox{\hyperlink{class_base_action_a20cc796d15b41abbe6ea0da8604692fa}{GetActionPointsCost}}());}
+\DoxyCodeLine{00086\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00087\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00088\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00089\ \ \ \ \ \}}
+
+\end{DoxyCode}
+\Hypertarget{class_unit_a4035fa9d4cf49a5f267901bbbd0cc674}\index{Unit@{Unit}!TurnSystem\_OnTurnChanged@{TurnSystem\_OnTurnChanged}}
+\index{TurnSystem\_OnTurnChanged@{TurnSystem\_OnTurnChanged}!Unit@{Unit}}
+\doxysubsubsection{\texorpdfstring{TurnSystem\_OnTurnChanged()}{TurnSystem\_OnTurnChanged()}}
+{\footnotesize\ttfamily \label{class_unit_a4035fa9d4cf49a5f267901bbbd0cc674} 
+void Unit.\+Turn\+System\+\_\+\+On\+Turn\+Changed (\begin{DoxyParamCaption}\item[{object}]{sender}{, }\item[{Event\+Args}]{e}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [private]}}
+
+
+
+This method is called when the turn changes. It resets the action points to the maximum value. 
+
+
+
+Definition at line \mbox{\hyperlink{_unit_8cs_source_l00116}{116}} of file \mbox{\hyperlink{_unit_8cs_source}{Unit.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00117\ \ \ \ \ \{}
+\DoxyCodeLine{00118\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ ((\mbox{\hyperlink{class_unit_aa7fef9481be9e9cc96b2338ac284f97a}{isEnemy}}\ \&\&\ !TurnSystem.Instance.IsPlayerTurn())\ ||}
+\DoxyCodeLine{00119\ \ \ \ \ \ \ \ \ (!\mbox{\hyperlink{class_unit_aa7fef9481be9e9cc96b2338ac284f97a}{isEnemy}}\ \&\&\ TurnSystem.Instance.IsPlayerTurn()))}
+\DoxyCodeLine{00120\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00121\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_unit_adcd4c8b7e9910ca63e7f89a37c7c42e5}{actionPoints}}\ =\ \mbox{\hyperlink{class_unit_aaf0ad9663540b0e3d85f23c2e8fb56b8}{ACTION\_POINTS\_MAX}};}
+\DoxyCodeLine{00122\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_unit_a24cce37c6f78356f0624a0bf5aaa25af}{OnAnyActionPointsChanged}}?.Invoke(\textcolor{keyword}{this},\ EventArgs.Empty);}
+\DoxyCodeLine{00123\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00124\ \ \ \ \ \}}
+
+\end{DoxyCode}
+\Hypertarget{class_unit_a99a69e981cce14a41538066318308b08}\index{Unit@{Unit}!Update@{Update}}
+\index{Update@{Update}!Unit@{Unit}}
+\doxysubsubsection{\texorpdfstring{Update()}{Update()}}
+{\footnotesize\ttfamily \label{class_unit_a99a69e981cce14a41538066318308b08} 
+void Unit.\+Update (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_unit_8cs_source_l00045}{45}} of file \mbox{\hyperlink{_unit_8cs_source}{Unit.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00046\ \ \ \ \ \{}
+\DoxyCodeLine{00047\ }
+\DoxyCodeLine{00048\ \ \ \ \ \ \ \ \ GridPosition\ newGridPosition\ =\ LevelGrid.Instance.GetGridPosition(transform.position);}
+\DoxyCodeLine{00049\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (newGridPosition\ !=\ \mbox{\hyperlink{class_unit_a5e73973e0332cef550be362e294474a7}{gridPosition}})}
+\DoxyCodeLine{00050\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00051\ \ \ \ \ \ \ \ \ \ \ \ \ LevelGrid.Instance.UnitMoveToGridPosition(\mbox{\hyperlink{class_unit_a5e73973e0332cef550be362e294474a7}{gridPosition}},\ newGridPosition,\ \textcolor{keyword}{this});}
+\DoxyCodeLine{00052\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_unit_a5e73973e0332cef550be362e294474a7}{gridPosition}}\ =\ newGridPosition;}
+\DoxyCodeLine{00053\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00054\ \ \ \ \ \}}
+
+\end{DoxyCode}
+
+
+\doxysubsection{Member Data Documentation}
+\Hypertarget{class_unit_aaf0ad9663540b0e3d85f23c2e8fb56b8}\index{Unit@{Unit}!ACTION\_POINTS\_MAX@{ACTION\_POINTS\_MAX}}
+\index{ACTION\_POINTS\_MAX@{ACTION\_POINTS\_MAX}!Unit@{Unit}}
+\doxysubsubsection{\texorpdfstring{ACTION\_POINTS\_MAX}{ACTION\_POINTS\_MAX}}
+{\footnotesize\ttfamily \label{class_unit_aaf0ad9663540b0e3d85f23c2e8fb56b8} 
+const int Unit.\+ACTION\+\_\+\+POINTS\+\_\+\+MAX = 2\hspace{0.3cm}{\ttfamily [static]}, {\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_unit_8cs_source_l00013}{13}} of file \mbox{\hyperlink{_unit_8cs_source}{Unit.\+cs}}.
+
+\Hypertarget{class_unit_adcd4c8b7e9910ca63e7f89a37c7c42e5}\index{Unit@{Unit}!actionPoints@{actionPoints}}
+\index{actionPoints@{actionPoints}!Unit@{Unit}}
+\doxysubsubsection{\texorpdfstring{actionPoints}{actionPoints}}
+{\footnotesize\ttfamily \label{class_unit_adcd4c8b7e9910ca63e7f89a37c7c42e5} 
+int Unit.\+action\+Points = \mbox{\hyperlink{class_unit_aaf0ad9663540b0e3d85f23c2e8fb56b8}{ACTION\+\_\+\+POINTS\+\_\+\+MAX}}\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_unit_8cs_source_l00025}{25}} of file \mbox{\hyperlink{_unit_8cs_source}{Unit.\+cs}}.
+
+\Hypertarget{class_unit_aa77d1ecae15e2e134a0ca53d9f4d1efc}\index{Unit@{Unit}!baseActionsArray@{baseActionsArray}}
+\index{baseActionsArray@{baseActionsArray}!Unit@{Unit}}
+\doxysubsubsection{\texorpdfstring{baseActionsArray}{baseActionsArray}}
+{\footnotesize\ttfamily \label{class_unit_aa77d1ecae15e2e134a0ca53d9f4d1efc} 
+\mbox{\hyperlink{class_base_action}{Base\+Action}} \mbox{[}$\,$\mbox{]} Unit.\+base\+Actions\+Array\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_unit_8cs_source_l00023}{23}} of file \mbox{\hyperlink{_unit_8cs_source}{Unit.\+cs}}.
+
+\Hypertarget{class_unit_a5e73973e0332cef550be362e294474a7}\index{Unit@{Unit}!gridPosition@{gridPosition}}
+\index{gridPosition@{gridPosition}!Unit@{Unit}}
+\doxysubsubsection{\texorpdfstring{gridPosition}{gridPosition}}
+{\footnotesize\ttfamily \label{class_unit_a5e73973e0332cef550be362e294474a7} 
+\mbox{\hyperlink{struct_grid_position}{Grid\+Position}} Unit.\+grid\+Position\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_unit_8cs_source_l00019}{19}} of file \mbox{\hyperlink{_unit_8cs_source}{Unit.\+cs}}.
+
+\Hypertarget{class_unit_aa7fef9481be9e9cc96b2338ac284f97a}\index{Unit@{Unit}!isEnemy@{isEnemy}}
+\index{isEnemy@{isEnemy}!Unit@{Unit}}
+\doxysubsubsection{\texorpdfstring{isEnemy}{isEnemy}}
+{\footnotesize\ttfamily \label{class_unit_aa7fef9481be9e9cc96b2338ac284f97a} 
+bool Unit.\+is\+Enemy\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_unit_8cs_source_l00017}{17}} of file \mbox{\hyperlink{_unit_8cs_source}{Unit.\+cs}}.
+
+\Hypertarget{class_unit_aa504edf0ce93dae6cd743b0d0e9c5f13}\index{Unit@{Unit}!moveAction@{moveAction}}
+\index{moveAction@{moveAction}!Unit@{Unit}}
+\doxysubsubsection{\texorpdfstring{moveAction}{moveAction}}
+{\footnotesize\ttfamily \label{class_unit_aa504edf0ce93dae6cd743b0d0e9c5f13} 
+\mbox{\hyperlink{class_move_action}{Move\+Action}} Unit.\+move\+Action\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_unit_8cs_source_l00020}{20}} of file \mbox{\hyperlink{_unit_8cs_source}{Unit.\+cs}}.
+
+\Hypertarget{class_unit_ad47e1c5a7462f7c89d1e9daa289e63c3}\index{Unit@{Unit}!spinAction@{spinAction}}
+\index{spinAction@{spinAction}!Unit@{Unit}}
+\doxysubsubsection{\texorpdfstring{spinAction}{spinAction}}
+{\footnotesize\ttfamily \label{class_unit_ad47e1c5a7462f7c89d1e9daa289e63c3} 
+\mbox{\hyperlink{class_spin_action}{Spin\+Action}} Unit.\+spin\+Action\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_unit_8cs_source_l00021}{21}} of file \mbox{\hyperlink{_unit_8cs_source}{Unit.\+cs}}.
+
+
+
+\doxysubsection{Event Documentation}
+\Hypertarget{class_unit_a24cce37c6f78356f0624a0bf5aaa25af}\index{Unit@{Unit}!OnAnyActionPointsChanged@{OnAnyActionPointsChanged}}
+\index{OnAnyActionPointsChanged@{OnAnyActionPointsChanged}!Unit@{Unit}}
+\doxysubsubsection{\texorpdfstring{OnAnyActionPointsChanged}{OnAnyActionPointsChanged}}
+{\footnotesize\ttfamily \label{class_unit_a24cce37c6f78356f0624a0bf5aaa25af} 
+Event\+Handler Unit.\+On\+Any\+Action\+Points\+Changed\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Definition at line \mbox{\hyperlink{_unit_8cs_source_l00015}{15}} of file \mbox{\hyperlink{_unit_8cs_source}{Unit.\+cs}}.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+D\+:/\+Unity/\+Rogue\+Shooter/\+Rogue\+Shooter/\+Assets/\+Scripts/\+Player\+Units/\mbox{\hyperlink{_unit_8cs}{Unit.\+cs}}\end{DoxyCompactItemize}

@@ -1,0 +1,107 @@
+\doxysection{Mouse\+World Class Reference}
+\hypertarget{class_mouse_world}{}\label{class_mouse_world}\index{MouseWorld@{MouseWorld}}
+
+
+This class is responsible for handling mouse interactions in the game world. It provides a method to get the mouse position in the world space based on the camera\textquotesingle{}s perspective.  
+
+
+Inheritance diagram for Mouse\+World\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{class_mouse_world}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+static Vector3 \mbox{\hyperlink{class_mouse_world_a184cc1cee246290c6eeec982616ead4a}{Get\+Mouse\+World\+Position}} ()
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Private Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{class_mouse_world_a4189d22dc31f6357e3a95a62f10ec704}{Awake}} ()
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+Layer\+Mask \mbox{\hyperlink{class_mouse_world_a4af0eb9ae30d3d33ae12fabdadb24a58}{mouse\+Plane\+Layer\+Mask}}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Static Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+static \mbox{\hyperlink{class_mouse_world}{Mouse\+World}} \mbox{\hyperlink{class_mouse_world_a85074ee2ad6f846166fad1c134cb164e}{instance}}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+This class is responsible for handling mouse interactions in the game world. It provides a method to get the mouse position in the world space based on the camera\textquotesingle{}s perspective. 
+
+Definition at line \mbox{\hyperlink{_mouse_world_8cs_source_l00008}{8}} of file \mbox{\hyperlink{_mouse_world_8cs_source}{Mouse\+World.\+cs}}.
+
+
+
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_mouse_world_a4189d22dc31f6357e3a95a62f10ec704}\index{MouseWorld@{MouseWorld}!Awake@{Awake}}
+\index{Awake@{Awake}!MouseWorld@{MouseWorld}}
+\doxysubsubsection{\texorpdfstring{Awake()}{Awake()}}
+{\footnotesize\ttfamily \label{class_mouse_world_a4189d22dc31f6357e3a95a62f10ec704} 
+void Mouse\+World.\+Awake (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_mouse_world_8cs_source_l00013}{13}} of file \mbox{\hyperlink{_mouse_world_8cs_source}{Mouse\+World.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00014\ \ \ \ \ \{}
+\DoxyCodeLine{00015\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_mouse_world_a85074ee2ad6f846166fad1c134cb164e}{instance}}\ =\ \textcolor{keyword}{this};}
+\DoxyCodeLine{00016\ \ \ \ \ \}}
+
+\end{DoxyCode}
+\Hypertarget{class_mouse_world_a184cc1cee246290c6eeec982616ead4a}\index{MouseWorld@{MouseWorld}!GetMouseWorldPosition@{GetMouseWorldPosition}}
+\index{GetMouseWorldPosition@{GetMouseWorldPosition}!MouseWorld@{MouseWorld}}
+\doxysubsubsection{\texorpdfstring{GetMouseWorldPosition()}{GetMouseWorldPosition()}}
+{\footnotesize\ttfamily \label{class_mouse_world_a184cc1cee246290c6eeec982616ead4a} 
+static Vector3 Mouse\+World.\+Get\+Mouse\+World\+Position (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+Definition at line \mbox{\hyperlink{_mouse_world_8cs_source_l00018}{18}} of file \mbox{\hyperlink{_mouse_world_8cs_source}{Mouse\+World.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00019\ \ \ \ \ \{}
+\DoxyCodeLine{00020\ \ \ \ \ \ \ \ \ Ray\ ray\ =\ Camera.main.ScreenPointToRay(Input.mousePosition);}
+\DoxyCodeLine{00021\ \ \ \ \ \ \ \ \ Physics.Raycast(ray,\ out\ RaycastHit\ raycastHit,\ \textcolor{keywordtype}{float}.MaxValue,\ \mbox{\hyperlink{class_mouse_world_a85074ee2ad6f846166fad1c134cb164e}{instance}}.mousePlaneLayerMask);}
+\DoxyCodeLine{00022\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ raycastHit.point;}
+\DoxyCodeLine{00023\ \ \ \ \ \}}
+
+\end{DoxyCode}
+
+
+\doxysubsection{Member Data Documentation}
+\Hypertarget{class_mouse_world_a85074ee2ad6f846166fad1c134cb164e}\index{MouseWorld@{MouseWorld}!instance@{instance}}
+\index{instance@{instance}!MouseWorld@{MouseWorld}}
+\doxysubsubsection{\texorpdfstring{instance}{instance}}
+{\footnotesize\ttfamily \label{class_mouse_world_a85074ee2ad6f846166fad1c134cb164e} 
+\mbox{\hyperlink{class_mouse_world}{Mouse\+World}} Mouse\+World.\+instance\hspace{0.3cm}{\ttfamily [static]}, {\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_mouse_world_8cs_source_l00010}{10}} of file \mbox{\hyperlink{_mouse_world_8cs_source}{Mouse\+World.\+cs}}.
+
+\Hypertarget{class_mouse_world_a4af0eb9ae30d3d33ae12fabdadb24a58}\index{MouseWorld@{MouseWorld}!mousePlaneLayerMask@{mousePlaneLayerMask}}
+\index{mousePlaneLayerMask@{mousePlaneLayerMask}!MouseWorld@{MouseWorld}}
+\doxysubsubsection{\texorpdfstring{mousePlaneLayerMask}{mousePlaneLayerMask}}
+{\footnotesize\ttfamily \label{class_mouse_world_a4af0eb9ae30d3d33ae12fabdadb24a58} 
+Layer\+Mask Mouse\+World.\+mouse\+Plane\+Layer\+Mask\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_mouse_world_8cs_source_l00011}{11}} of file \mbox{\hyperlink{_mouse_world_8cs_source}{Mouse\+World.\+cs}}.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+D\+:/\+Unity/\+Rogue\+Shooter/\+Rogue\+Shooter/\+Assets/\+Scripts/\+Game\+Logic/\mbox{\hyperlink{_mouse_world_8cs}{Mouse\+World.\+cs}}\end{DoxyCompactItemize}

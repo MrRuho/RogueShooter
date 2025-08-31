@@ -1,0 +1,110 @@
+\doxysection{Enemy\+AI Class Reference}
+\hypertarget{class_enemy_a_i}{}\label{class_enemy_a_i}\index{EnemyAI@{EnemyAI}}
+Inheritance diagram for Enemy\+AI\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{class_enemy_a_i}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Private Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{class_enemy_a_i_afbc147ca64645c8e682b0d5c6dc85431}{Start}} ()
+\item 
+void \mbox{\hyperlink{class_enemy_a_i_ab8b1e78aae1a489d4d323d5b3c0290e9}{Update}} ()
+\item 
+void \mbox{\hyperlink{class_enemy_a_i_afcb6b82062ba57c0016c2b85e161db41}{Turn\+System\+\_\+\+On\+Turn\+Changed}} (object sender, Event\+Args e)
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+float \mbox{\hyperlink{class_enemy_a_i_a914490ed23e56d57769ce86ff36eefb8}{timer}}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+
+
+Definition at line \mbox{\hyperlink{_enemy_a_i_8cs_source_l00004}{4}} of file \mbox{\hyperlink{_enemy_a_i_8cs_source}{Enemy\+AI.\+cs}}.
+
+
+
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_enemy_a_i_afbc147ca64645c8e682b0d5c6dc85431}\index{EnemyAI@{EnemyAI}!Start@{Start}}
+\index{Start@{Start}!EnemyAI@{EnemyAI}}
+\doxysubsubsection{\texorpdfstring{Start()}{Start()}}
+{\footnotesize\ttfamily \label{class_enemy_a_i_afbc147ca64645c8e682b0d5c6dc85431} 
+void Enemy\+AI.\+Start (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_enemy_a_i_8cs_source_l00008}{8}} of file \mbox{\hyperlink{_enemy_a_i_8cs_source}{Enemy\+AI.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00009\ \ \ \ \ \{}
+\DoxyCodeLine{00010\ \ \ \ \ \ \ \ \ TurnSystem.Instance.OnTurnChanged\ +=\ \mbox{\hyperlink{class_enemy_a_i_afcb6b82062ba57c0016c2b85e161db41}{TurnSystem\_OnTurnChanged}};}
+\DoxyCodeLine{00011\ \ \ \ \ \}}
+
+\end{DoxyCode}
+\Hypertarget{class_enemy_a_i_afcb6b82062ba57c0016c2b85e161db41}\index{EnemyAI@{EnemyAI}!TurnSystem\_OnTurnChanged@{TurnSystem\_OnTurnChanged}}
+\index{TurnSystem\_OnTurnChanged@{TurnSystem\_OnTurnChanged}!EnemyAI@{EnemyAI}}
+\doxysubsubsection{\texorpdfstring{TurnSystem\_OnTurnChanged()}{TurnSystem\_OnTurnChanged()}}
+{\footnotesize\ttfamily \label{class_enemy_a_i_afcb6b82062ba57c0016c2b85e161db41} 
+void Enemy\+AI.\+Turn\+System\+\_\+\+On\+Turn\+Changed (\begin{DoxyParamCaption}\item[{object}]{sender}{, }\item[{Event\+Args}]{e}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_enemy_a_i_8cs_source_l00026}{26}} of file \mbox{\hyperlink{_enemy_a_i_8cs_source}{Enemy\+AI.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00027\ \ \ \ \ \{}
+\DoxyCodeLine{00028\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_enemy_a_i_a914490ed23e56d57769ce86ff36eefb8}{timer}}\ =2f;}
+\DoxyCodeLine{00029\ \ \ \ \ \}}
+
+\end{DoxyCode}
+\Hypertarget{class_enemy_a_i_ab8b1e78aae1a489d4d323d5b3c0290e9}\index{EnemyAI@{EnemyAI}!Update@{Update}}
+\index{Update@{Update}!EnemyAI@{EnemyAI}}
+\doxysubsubsection{\texorpdfstring{Update()}{Update()}}
+{\footnotesize\ttfamily \label{class_enemy_a_i_ab8b1e78aae1a489d4d323d5b3c0290e9} 
+void Enemy\+AI.\+Update (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_enemy_a_i_8cs_source_l00012}{12}} of file \mbox{\hyperlink{_enemy_a_i_8cs_source}{Enemy\+AI.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00013\ \ \ \ \ \{}
+\DoxyCodeLine{00014\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (TurnSystem.Instance.IsPlayerTurn())}
+\DoxyCodeLine{00015\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00016\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{00017\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00018\ }
+\DoxyCodeLine{00019\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_enemy_a_i_a914490ed23e56d57769ce86ff36eefb8}{timer}}\ -\/=\ Time.deltaTime;}
+\DoxyCodeLine{00020\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{class_enemy_a_i_a914490ed23e56d57769ce86ff36eefb8}{timer}}\ <=\ 0f)}
+\DoxyCodeLine{00021\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00022\ \ \ \ \ \ \ \ \ \ \ \ \ TurnSystem.Instance.NextTurn();}
+\DoxyCodeLine{00023\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00024\ \ \ \ \ \}}
+
+\end{DoxyCode}
+
+
+\doxysubsection{Member Data Documentation}
+\Hypertarget{class_enemy_a_i_a914490ed23e56d57769ce86ff36eefb8}\index{EnemyAI@{EnemyAI}!timer@{timer}}
+\index{timer@{timer}!EnemyAI@{EnemyAI}}
+\doxysubsubsection{\texorpdfstring{timer}{timer}}
+{\footnotesize\ttfamily \label{class_enemy_a_i_a914490ed23e56d57769ce86ff36eefb8} 
+float Enemy\+AI.\+timer\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_enemy_a_i_8cs_source_l00006}{6}} of file \mbox{\hyperlink{_enemy_a_i_8cs_source}{Enemy\+AI.\+cs}}.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+D\+:/\+Unity/\+Rogue\+Shooter/\+Rogue\+Shooter/\+Assets/\+Scripts/\+Enemy/\mbox{\hyperlink{_enemy_a_i_8cs}{Enemy\+AI.\+cs}}\end{DoxyCompactItemize}

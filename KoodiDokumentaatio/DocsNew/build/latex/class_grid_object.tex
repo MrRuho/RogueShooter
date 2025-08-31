@@ -1,0 +1,211 @@
+\doxysection{Grid\+Object Class Reference}
+\hypertarget{class_grid_object}{}\label{class_grid_object}\index{GridObject@{GridObject}}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{class_grid_object_af08ff78ef8642af618db46d74cee2228}{Grid\+Object}} (\mbox{\hyperlink{class_grid_system}{Grid\+System}} \mbox{\hyperlink{class_grid_object_a349b53ef50f7cb416c81206cb9ac4dce}{grid\+System}}, \mbox{\hyperlink{struct_grid_position}{Grid\+Position}} \mbox{\hyperlink{class_grid_object_a5d206ba7b51e0a6b67736399b16d53f3}{grid\+Position}})
+\item 
+override string \mbox{\hyperlink{class_grid_object_a5d56757f9e3c2c5a06d0513356fe316d}{To\+String}} ()
+\item 
+void \mbox{\hyperlink{class_grid_object_afddae646e8880febf5fe25ea268bd6df}{Add\+Unit}} (\mbox{\hyperlink{class_unit}{Unit}} unit)
+\item 
+void \mbox{\hyperlink{class_grid_object_a0baed355a4a3bc3901e819831c471fa5}{Remove\+Unit}} (\mbox{\hyperlink{class_unit}{Unit}} unit)
+\item 
+List$<$ \mbox{\hyperlink{class_unit}{Unit}} $>$ \mbox{\hyperlink{class_grid_object_a918d48068c0ace9a430671df2c5beae5}{Get\+Unit\+List}} ()
+\item 
+bool \mbox{\hyperlink{class_grid_object_a7bb2690dc0e3d48d1c3d68b9fbfbaae9}{Has\+Any\+Unit}} ()
+\item 
+\mbox{\hyperlink{class_unit}{Unit}} \mbox{\hyperlink{class_grid_object_a314f4f943b2be346a10816030f575559}{Get\+Unit}} ()
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{class_grid_system}{Grid\+System}} \mbox{\hyperlink{class_grid_object_a349b53ef50f7cb416c81206cb9ac4dce}{grid\+System}}
+\item 
+\mbox{\hyperlink{struct_grid_position}{Grid\+Position}} \mbox{\hyperlink{class_grid_object_a5d206ba7b51e0a6b67736399b16d53f3}{grid\+Position}}
+\item 
+List$<$ \mbox{\hyperlink{class_unit}{Unit}} $>$ \mbox{\hyperlink{class_grid_object_a673eda75afdcc9200a0b257ace95044c}{unit\+List}}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+
+
+Definition at line \mbox{\hyperlink{_grid_object_8cs_source_l00010}{10}} of file \mbox{\hyperlink{_grid_object_8cs_source}{Grid\+Object.\+cs}}.
+
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{class_grid_object_af08ff78ef8642af618db46d74cee2228}\index{GridObject@{GridObject}!GridObject@{GridObject}}
+\index{GridObject@{GridObject}!GridObject@{GridObject}}
+\doxysubsubsection{\texorpdfstring{GridObject()}{GridObject()}}
+{\footnotesize\ttfamily \label{class_grid_object_af08ff78ef8642af618db46d74cee2228} 
+Grid\+Object.\+Grid\+Object (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{class_grid_system}{Grid\+System}}}]{grid\+System}{, }\item[{\mbox{\hyperlink{struct_grid_position}{Grid\+Position}}}]{grid\+Position}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line \mbox{\hyperlink{_grid_object_8cs_source_l00017}{17}} of file \mbox{\hyperlink{_grid_object_8cs_source}{Grid\+Object.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00018\ \ \ \ \ \{}
+\DoxyCodeLine{00019\ \ \ \ \ \ \ \ \ this.gridSystem\ =\ \mbox{\hyperlink{class_grid_object_a349b53ef50f7cb416c81206cb9ac4dce}{gridSystem}};}
+\DoxyCodeLine{00020\ \ \ \ \ \ \ \ \ this.gridPosition\ =\ \mbox{\hyperlink{class_grid_object_a5d206ba7b51e0a6b67736399b16d53f3}{gridPosition}};}
+\DoxyCodeLine{00021\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_grid_object_a673eda75afdcc9200a0b257ace95044c}{unitList}}\ =\ \textcolor{keyword}{new}\ List<Unit>();}
+\DoxyCodeLine{00022\ \ \ \ \ \}}
+
+\end{DoxyCode}
+
+
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_grid_object_afddae646e8880febf5fe25ea268bd6df}\index{GridObject@{GridObject}!AddUnit@{AddUnit}}
+\index{AddUnit@{AddUnit}!GridObject@{GridObject}}
+\doxysubsubsection{\texorpdfstring{AddUnit()}{AddUnit()}}
+{\footnotesize\ttfamily \label{class_grid_object_afddae646e8880febf5fe25ea268bd6df} 
+void Grid\+Object.\+Add\+Unit (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{class_unit}{Unit}}}]{unit}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line \mbox{\hyperlink{_grid_object_8cs_source_l00034}{34}} of file \mbox{\hyperlink{_grid_object_8cs_source}{Grid\+Object.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00035\ \ \ \ \ \{}
+\DoxyCodeLine{00036\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_grid_object_a673eda75afdcc9200a0b257ace95044c}{unitList}}.Add(unit);}
+\DoxyCodeLine{00037\ \ \ \ \ \}}
+
+\end{DoxyCode}
+\Hypertarget{class_grid_object_a314f4f943b2be346a10816030f575559}\index{GridObject@{GridObject}!GetUnit@{GetUnit}}
+\index{GetUnit@{GetUnit}!GridObject@{GridObject}}
+\doxysubsubsection{\texorpdfstring{GetUnit()}{GetUnit()}}
+{\footnotesize\ttfamily \label{class_grid_object_a314f4f943b2be346a10816030f575559} 
+\mbox{\hyperlink{class_unit}{Unit}} Grid\+Object.\+Get\+Unit (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line \mbox{\hyperlink{_grid_object_8cs_source_l00054}{54}} of file \mbox{\hyperlink{_grid_object_8cs_source}{Grid\+Object.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00055\ \ \ \ \ \{}
+\DoxyCodeLine{00056\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{class_grid_object_a7bb2690dc0e3d48d1c3d68b9fbfbaae9}{HasAnyUnit}}())}
+\DoxyCodeLine{00057\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00058\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{class_grid_object_a673eda75afdcc9200a0b257ace95044c}{unitList}}[0];}
+\DoxyCodeLine{00059\ \ \ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00060\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00061\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{null};}
+\DoxyCodeLine{00062\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00063\ \ \ \ \ \}}
+
+\end{DoxyCode}
+\Hypertarget{class_grid_object_a918d48068c0ace9a430671df2c5beae5}\index{GridObject@{GridObject}!GetUnitList@{GetUnitList}}
+\index{GetUnitList@{GetUnitList}!GridObject@{GridObject}}
+\doxysubsubsection{\texorpdfstring{GetUnitList()}{GetUnitList()}}
+{\footnotesize\ttfamily \label{class_grid_object_a918d48068c0ace9a430671df2c5beae5} 
+List$<$ \mbox{\hyperlink{class_unit}{Unit}} $>$ Grid\+Object.\+Get\+Unit\+List (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line \mbox{\hyperlink{_grid_object_8cs_source_l00044}{44}} of file \mbox{\hyperlink{_grid_object_8cs_source}{Grid\+Object.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00045\ \ \ \ \ \{}
+\DoxyCodeLine{00046\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{class_grid_object_a673eda75afdcc9200a0b257ace95044c}{unitList}};}
+\DoxyCodeLine{00047\ \ \ \ \ \}}
+
+\end{DoxyCode}
+\Hypertarget{class_grid_object_a7bb2690dc0e3d48d1c3d68b9fbfbaae9}\index{GridObject@{GridObject}!HasAnyUnit@{HasAnyUnit}}
+\index{HasAnyUnit@{HasAnyUnit}!GridObject@{GridObject}}
+\doxysubsubsection{\texorpdfstring{HasAnyUnit()}{HasAnyUnit()}}
+{\footnotesize\ttfamily \label{class_grid_object_a7bb2690dc0e3d48d1c3d68b9fbfbaae9} 
+bool Grid\+Object.\+Has\+Any\+Unit (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line \mbox{\hyperlink{_grid_object_8cs_source_l00049}{49}} of file \mbox{\hyperlink{_grid_object_8cs_source}{Grid\+Object.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00050\ \ \ \ \ \{}
+\DoxyCodeLine{00051\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ unitList.Count\ >\ 0;}
+\DoxyCodeLine{00052\ \ \ \ \ \}}
+
+\end{DoxyCode}
+\Hypertarget{class_grid_object_a0baed355a4a3bc3901e819831c471fa5}\index{GridObject@{GridObject}!RemoveUnit@{RemoveUnit}}
+\index{RemoveUnit@{RemoveUnit}!GridObject@{GridObject}}
+\doxysubsubsection{\texorpdfstring{RemoveUnit()}{RemoveUnit()}}
+{\footnotesize\ttfamily \label{class_grid_object_a0baed355a4a3bc3901e819831c471fa5} 
+void Grid\+Object.\+Remove\+Unit (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{class_unit}{Unit}}}]{unit}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line \mbox{\hyperlink{_grid_object_8cs_source_l00039}{39}} of file \mbox{\hyperlink{_grid_object_8cs_source}{Grid\+Object.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00040\ \ \ \ \ \{}
+\DoxyCodeLine{00041\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_grid_object_a673eda75afdcc9200a0b257ace95044c}{unitList}}.Remove(unit);}
+\DoxyCodeLine{00042\ \ \ \ \ \}}
+
+\end{DoxyCode}
+\Hypertarget{class_grid_object_a5d56757f9e3c2c5a06d0513356fe316d}\index{GridObject@{GridObject}!ToString@{ToString}}
+\index{ToString@{ToString}!GridObject@{GridObject}}
+\doxysubsubsection{\texorpdfstring{ToString()}{ToString()}}
+{\footnotesize\ttfamily \label{class_grid_object_a5d56757f9e3c2c5a06d0513356fe316d} 
+override string Grid\+Object.\+To\+String (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line \mbox{\hyperlink{_grid_object_8cs_source_l00024}{24}} of file \mbox{\hyperlink{_grid_object_8cs_source}{Grid\+Object.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00025\ \ \ \ \ \{}
+\DoxyCodeLine{00026\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{string}\ unitListString\ =\ \textcolor{stringliteral}{"{}"{}};}
+\DoxyCodeLine{00027\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{foreach}\ (Unit\ unit\ \textcolor{keywordflow}{in}\ \mbox{\hyperlink{class_grid_object_a673eda75afdcc9200a0b257ace95044c}{unitList}})}
+\DoxyCodeLine{00028\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00029\ \ \ \ \ \ \ \ \ \ \ \ \ unitListString\ +=\ unit\ +\ \textcolor{stringliteral}{"{}\(\backslash\)n"{}};}
+\DoxyCodeLine{00030\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00031\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{class_grid_object_a5d206ba7b51e0a6b67736399b16d53f3}{gridPosition}}.ToString()\ +\ \textcolor{stringliteral}{"{}\(\backslash\)n"{}}\ +\ unitListString;}
+\DoxyCodeLine{00032\ \ \ \ \ \}}
+
+\end{DoxyCode}
+
+
+\doxysubsection{Member Data Documentation}
+\Hypertarget{class_grid_object_a5d206ba7b51e0a6b67736399b16d53f3}\index{GridObject@{GridObject}!gridPosition@{gridPosition}}
+\index{gridPosition@{gridPosition}!GridObject@{GridObject}}
+\doxysubsubsection{\texorpdfstring{gridPosition}{gridPosition}}
+{\footnotesize\ttfamily \label{class_grid_object_a5d206ba7b51e0a6b67736399b16d53f3} 
+\mbox{\hyperlink{struct_grid_position}{Grid\+Position}} Grid\+Object.\+grid\+Position\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_grid_object_8cs_source_l00013}{13}} of file \mbox{\hyperlink{_grid_object_8cs_source}{Grid\+Object.\+cs}}.
+
+\Hypertarget{class_grid_object_a349b53ef50f7cb416c81206cb9ac4dce}\index{GridObject@{GridObject}!gridSystem@{gridSystem}}
+\index{gridSystem@{gridSystem}!GridObject@{GridObject}}
+\doxysubsubsection{\texorpdfstring{gridSystem}{gridSystem}}
+{\footnotesize\ttfamily \label{class_grid_object_a349b53ef50f7cb416c81206cb9ac4dce} 
+\mbox{\hyperlink{class_grid_system}{Grid\+System}} Grid\+Object.\+grid\+System\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_grid_object_8cs_source_l00012}{12}} of file \mbox{\hyperlink{_grid_object_8cs_source}{Grid\+Object.\+cs}}.
+
+\Hypertarget{class_grid_object_a673eda75afdcc9200a0b257ace95044c}\index{GridObject@{GridObject}!unitList@{unitList}}
+\index{unitList@{unitList}!GridObject@{GridObject}}
+\doxysubsubsection{\texorpdfstring{unitList}{unitList}}
+{\footnotesize\ttfamily \label{class_grid_object_a673eda75afdcc9200a0b257ace95044c} 
+List$<$\mbox{\hyperlink{class_unit}{Unit}}$>$ Grid\+Object.\+unit\+List\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_grid_object_8cs_source_l00015}{15}} of file \mbox{\hyperlink{_grid_object_8cs_source}{Grid\+Object.\+cs}}.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+D\+:/\+Unity/\+Rogue\+Shooter/\+Rogue\+Shooter/\+Assets/\+Scripts/\+Grid/\mbox{\hyperlink{_grid_object_8cs}{Grid\+Object.\+cs}}\end{DoxyCompactItemize}

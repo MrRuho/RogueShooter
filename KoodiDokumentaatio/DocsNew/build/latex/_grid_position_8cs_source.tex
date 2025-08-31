@@ -1,0 +1,69 @@
+\doxysection{Grid\+Position.\+cs}
+\hypertarget{_grid_position_8cs_source}{}\label{_grid_position_8cs_source}\index{D:/Unity/RogueShooter/RogueShooter/Assets/Scripts/Grid/GridPosition.cs@{D:/Unity/RogueShooter/RogueShooter/Assets/Scripts/Grid/GridPosition.cs}}
+\mbox{\hyperlink{_grid_position_8cs}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\Hypertarget{_grid_position_8cs_source_l00001}00001\ \textcolor{keyword}{using\ }System;}
+\DoxyCodeLine{\Hypertarget{_grid_position_8cs_source_l00002}00002\ \textcolor{keyword}{using\ }NUnit.Framework;}
+\DoxyCodeLine{\Hypertarget{_grid_position_8cs_source_l00003}00003\ }
+\DoxyCodeLine{\Hypertarget{_grid_position_8cs_source_l00004}00004\ \textcolor{comment}{//\ <summary>}}
+\DoxyCodeLine{\Hypertarget{_grid_position_8cs_source_l00005}00005\ \textcolor{comment}{//\ This\ struct\ represents\ a\ position\ in\ a\ grid\ system.}}
+\DoxyCodeLine{\Hypertarget{_grid_position_8cs_source_l00006}00006\ \textcolor{comment}{//\ It\ contains\ two\ integer\ values,\ x\ and\ z,\ which\ represent\ the\ coordinates\ of\ the\ position\ in\ the\ grid.}}
+\DoxyCodeLine{\Hypertarget{_grid_position_8cs_source_l00007}00007\ \textcolor{comment}{//\ It\ also\ contains\ methods\ for\ comparing\ two\ GridPosition\ objects,\ adding\ and\ subtracting\ them,\ and\ converting\ them\ to\ a\ string\ representation.}}
+\DoxyCodeLine{\Hypertarget{_grid_position_8cs_source_l00008}00008\ \textcolor{comment}{//\ </summary>}}
+\DoxyCodeLine{\Hypertarget{_grid_position_8cs_source_l00009}00009\ }
+\DoxyCodeLine{\Hypertarget{_grid_position_8cs_source_l00010}\mbox{\hyperlink{struct_grid_position}{00010}}\ \textcolor{keyword}{public}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_grid_position_a0d062f3bd0bca531dcfac72cac1c011b}{GridPosition}}:IEquatable<GridPosition>}
+\DoxyCodeLine{\Hypertarget{_grid_position_8cs_source_l00011}00011\ \{}
+\DoxyCodeLine{\Hypertarget{_grid_position_8cs_source_l00012}\mbox{\hyperlink{struct_grid_position_aef898922000b94ac0e4e999a033c39db}{00012}}\ \ \ \ \ \textcolor{keyword}{public}\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{struct_grid_position_aef898922000b94ac0e4e999a033c39db}{x}};}
+\DoxyCodeLine{\Hypertarget{_grid_position_8cs_source_l00013}\mbox{\hyperlink{struct_grid_position_a5a9176b933a89d37a0d5ff44091ee22b}{00013}}\ \ \ \ \ \textcolor{keyword}{public}\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{struct_grid_position_a5a9176b933a89d37a0d5ff44091ee22b}{z}};}
+\DoxyCodeLine{\Hypertarget{_grid_position_8cs_source_l00014}00014\ }
+\DoxyCodeLine{\Hypertarget{_grid_position_8cs_source_l00015}\mbox{\hyperlink{struct_grid_position_a0d062f3bd0bca531dcfac72cac1c011b}{00015}}\ \ \ \ \ \textcolor{keyword}{public}\ \mbox{\hyperlink{struct_grid_position_a0d062f3bd0bca531dcfac72cac1c011b}{GridPosition}}(\textcolor{keywordtype}{int}\ \mbox{\hyperlink{struct_grid_position_aef898922000b94ac0e4e999a033c39db}{x}},\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{struct_grid_position_a5a9176b933a89d37a0d5ff44091ee22b}{z}})}
+\DoxyCodeLine{\Hypertarget{_grid_position_8cs_source_l00016}00016\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_grid_position_8cs_source_l00017}00017\ \ \ \ \ \ \ \ \ this.x\ =\ \mbox{\hyperlink{struct_grid_position_aef898922000b94ac0e4e999a033c39db}{x}};}
+\DoxyCodeLine{\Hypertarget{_grid_position_8cs_source_l00018}00018\ \ \ \ \ \ \ \ \ this.z\ =\ \mbox{\hyperlink{struct_grid_position_a5a9176b933a89d37a0d5ff44091ee22b}{z}};}
+\DoxyCodeLine{\Hypertarget{_grid_position_8cs_source_l00019}00019\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_grid_position_8cs_source_l00020}00020\ }
+\DoxyCodeLine{\Hypertarget{_grid_position_8cs_source_l00021}\mbox{\hyperlink{struct_grid_position_ac3d265d250bf0ed49bbe944dc8652ded}{00021}}\ \ \ \ \ \textcolor{keyword}{public}\ \textcolor{keyword}{override}\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{struct_grid_position_ac3d265d250bf0ed49bbe944dc8652ded}{Equals}}(\textcolor{keywordtype}{object}\ obj)}
+\DoxyCodeLine{\Hypertarget{_grid_position_8cs_source_l00022}00022\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_grid_position_8cs_source_l00023}00023\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ obj\ is\ \mbox{\hyperlink{struct_grid_position_a0d062f3bd0bca531dcfac72cac1c011b}{GridPosition}}\ position\ \&\&\ }
+\DoxyCodeLine{\Hypertarget{_grid_position_8cs_source_l00024}00024\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_grid_position_aef898922000b94ac0e4e999a033c39db}{x}}\ ==\ position.x\ }
+\DoxyCodeLine{\Hypertarget{_grid_position_8cs_source_l00025}00025\ \ \ \ \ \ \ \ \ \&\&\ \mbox{\hyperlink{struct_grid_position_a5a9176b933a89d37a0d5ff44091ee22b}{z}}\ ==\ position.z;}
+\DoxyCodeLine{\Hypertarget{_grid_position_8cs_source_l00026}00026\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_grid_position_8cs_source_l00027}00027\ }
+\DoxyCodeLine{\Hypertarget{_grid_position_8cs_source_l00028}\mbox{\hyperlink{struct_grid_position_a45ac4a093765b9e18fa29a179cb8e3d1}{00028}}\ \ \ \ \ \textcolor{keyword}{public}\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{struct_grid_position_a45ac4a093765b9e18fa29a179cb8e3d1}{Equals}}(\mbox{\hyperlink{struct_grid_position_a0d062f3bd0bca531dcfac72cac1c011b}{GridPosition}}\ other)}
+\DoxyCodeLine{\Hypertarget{_grid_position_8cs_source_l00029}00029\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_grid_position_8cs_source_l00030}00030\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{this}\ ==\ other;}
+\DoxyCodeLine{\Hypertarget{_grid_position_8cs_source_l00031}00031\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_grid_position_8cs_source_l00032}00032\ }
+\DoxyCodeLine{\Hypertarget{_grid_position_8cs_source_l00033}\mbox{\hyperlink{struct_grid_position_a027fac057943eeaf632837a1c9275c6d}{00033}}\ \ \ \ \ \textcolor{keyword}{public}\ \textcolor{keyword}{override}\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{struct_grid_position_a027fac057943eeaf632837a1c9275c6d}{GetHashCode}}()}
+\DoxyCodeLine{\Hypertarget{_grid_position_8cs_source_l00034}00034\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_grid_position_8cs_source_l00035}00035\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ HashCode.Combine(\mbox{\hyperlink{struct_grid_position_aef898922000b94ac0e4e999a033c39db}{x}},\ \mbox{\hyperlink{struct_grid_position_a5a9176b933a89d37a0d5ff44091ee22b}{z}});}
+\DoxyCodeLine{\Hypertarget{_grid_position_8cs_source_l00036}00036\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_grid_position_8cs_source_l00037}00037\ }
+\DoxyCodeLine{\Hypertarget{_grid_position_8cs_source_l00038}\mbox{\hyperlink{struct_grid_position_ae1aacc75fedc04dcbd99029711591da4}{00038}}\ \ \ \ \ \textcolor{keyword}{public}\ \textcolor{keyword}{override}\ \textcolor{keywordtype}{string}\ \mbox{\hyperlink{struct_grid_position_ae1aacc75fedc04dcbd99029711591da4}{ToString}}()}
+\DoxyCodeLine{\Hypertarget{_grid_position_8cs_source_l00039}00039\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_grid_position_8cs_source_l00040}00040\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \$\textcolor{stringliteral}{"{}(\{x\},\ \{z\})"{}};}
+\DoxyCodeLine{\Hypertarget{_grid_position_8cs_source_l00041}00041\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_grid_position_8cs_source_l00042}00042\ }
+\DoxyCodeLine{\Hypertarget{_grid_position_8cs_source_l00043}\mbox{\hyperlink{struct_grid_position_a11083c4f298c26d7c933001ae2702fa0}{00043}}\ \ \ \ \ \textcolor{keyword}{public}\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{struct_grid_position_a11083c4f298c26d7c933001ae2702fa0}{operator\ ==}}(\mbox{\hyperlink{struct_grid_position_a0d062f3bd0bca531dcfac72cac1c011b}{GridPosition}}\ a,\ \mbox{\hyperlink{struct_grid_position_a0d062f3bd0bca531dcfac72cac1c011b}{GridPosition}}\ b)}
+\DoxyCodeLine{\Hypertarget{_grid_position_8cs_source_l00044}00044\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_grid_position_8cs_source_l00045}00045\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ a.x\ ==\ b.x\ \&\&\ a.z\ ==\ b.\mbox{\hyperlink{struct_grid_position_a5a9176b933a89d37a0d5ff44091ee22b}{z}};}
+\DoxyCodeLine{\Hypertarget{_grid_position_8cs_source_l00046}00046\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_grid_position_8cs_source_l00047}00047\ }
+\DoxyCodeLine{\Hypertarget{_grid_position_8cs_source_l00048}\mbox{\hyperlink{struct_grid_position_aa85398e6e059c790c02cbbf30fa43c8e}{00048}}\ \ \ \ \ \textcolor{keyword}{public}\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{struct_grid_position_aa85398e6e059c790c02cbbf30fa43c8e}{operator\ !=}}(\mbox{\hyperlink{struct_grid_position_a0d062f3bd0bca531dcfac72cac1c011b}{GridPosition}}\ a,\ \mbox{\hyperlink{struct_grid_position_a0d062f3bd0bca531dcfac72cac1c011b}{GridPosition}}\ b)}
+\DoxyCodeLine{\Hypertarget{_grid_position_8cs_source_l00049}00049\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_grid_position_8cs_source_l00050}00050\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ !(a\ ==\ b);}
+\DoxyCodeLine{\Hypertarget{_grid_position_8cs_source_l00051}00051\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_grid_position_8cs_source_l00052}00052\ }
+\DoxyCodeLine{\Hypertarget{_grid_position_8cs_source_l00053}\mbox{\hyperlink{struct_grid_position_a597eed18262b1f741116e8a773d3e856}{00053}}\ \ \ \ \ \textcolor{keyword}{public}\ \textcolor{keyword}{static}\ \mbox{\hyperlink{struct_grid_position_a0d062f3bd0bca531dcfac72cac1c011b}{GridPosition}}\ \mbox{\hyperlink{struct_grid_position_a597eed18262b1f741116e8a773d3e856}{operator\ +}}(\mbox{\hyperlink{struct_grid_position_a0d062f3bd0bca531dcfac72cac1c011b}{GridPosition}}\ a,\ \mbox{\hyperlink{struct_grid_position_a0d062f3bd0bca531dcfac72cac1c011b}{GridPosition}}\ b)}
+\DoxyCodeLine{\Hypertarget{_grid_position_8cs_source_l00054}00054\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_grid_position_8cs_source_l00055}00055\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{new}\ \mbox{\hyperlink{struct_grid_position_a0d062f3bd0bca531dcfac72cac1c011b}{GridPosition}}(a.\mbox{\hyperlink{struct_grid_position_aef898922000b94ac0e4e999a033c39db}{x}}\ +\ b.\mbox{\hyperlink{struct_grid_position_aef898922000b94ac0e4e999a033c39db}{x}},\ a.\mbox{\hyperlink{struct_grid_position_a5a9176b933a89d37a0d5ff44091ee22b}{z}}\ +\ b.\mbox{\hyperlink{struct_grid_position_a5a9176b933a89d37a0d5ff44091ee22b}{z}});}
+\DoxyCodeLine{\Hypertarget{_grid_position_8cs_source_l00056}00056\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_grid_position_8cs_source_l00057}00057\ }
+\DoxyCodeLine{\Hypertarget{_grid_position_8cs_source_l00058}\mbox{\hyperlink{struct_grid_position_a7e1287117699cc7fcd9eff7b5d00c13f}{00058}}\ \ \ \ \ \textcolor{keyword}{public}\ \textcolor{keyword}{static}\ \mbox{\hyperlink{struct_grid_position_a0d062f3bd0bca531dcfac72cac1c011b}{GridPosition}}\ \mbox{\hyperlink{struct_grid_position_a7e1287117699cc7fcd9eff7b5d00c13f}{operator\ -\/}}(\mbox{\hyperlink{struct_grid_position_a0d062f3bd0bca531dcfac72cac1c011b}{GridPosition}}\ a,\ \mbox{\hyperlink{struct_grid_position_a0d062f3bd0bca531dcfac72cac1c011b}{GridPosition}}\ b)}
+\DoxyCodeLine{\Hypertarget{_grid_position_8cs_source_l00059}00059\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_grid_position_8cs_source_l00060}00060\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{new}\ \mbox{\hyperlink{struct_grid_position_a0d062f3bd0bca531dcfac72cac1c011b}{GridPosition}}(a.\mbox{\hyperlink{struct_grid_position_aef898922000b94ac0e4e999a033c39db}{x}}\ -\/\ b.\mbox{\hyperlink{struct_grid_position_aef898922000b94ac0e4e999a033c39db}{x}},\ a.\mbox{\hyperlink{struct_grid_position_a5a9176b933a89d37a0d5ff44091ee22b}{z}}\ -\/\ b.\mbox{\hyperlink{struct_grid_position_a5a9176b933a89d37a0d5ff44091ee22b}{z}});}
+\DoxyCodeLine{\Hypertarget{_grid_position_8cs_source_l00061}00061\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_grid_position_8cs_source_l00062}00062\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{_grid_position_8cs_source_l00063}00063\ \}}
+
+\end{DoxyCode}

@@ -1,0 +1,180 @@
+\doxysection{Connect Class Reference}
+\hypertarget{class_connect}{}\label{class_connect}\index{Connect@{Connect}}
+
+
+This class is responsible for connecting to the Unity Relay service. It provides methods to host a game and join a game as a client.  
+
+
+Inheritance diagram for Connect\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{class_connect}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{class_connect_ab81526e2698d314c2ee361ea2e873336}{Host\+LAN}} ()
+\item 
+void \mbox{\hyperlink{class_connect_a7be34d258330c2a7d1ef79f1344a556d}{Client\+LAN}} ()
+\item 
+void \mbox{\hyperlink{class_connect_ab2366bb3479a6d53d6a1d827863527fb}{Host}} ()
+\item 
+void \mbox{\hyperlink{class_connect_abc7be4b44e5b0c4657a4747d39abb8bf}{Client}} ()
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Private Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{class_connect_ac6e2169ca1fe9cb786fdffac1ba9f313}{Awake}} ()
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{class_utp_1_1_game_network_manager}{Game\+Network\+Manager}} \mbox{\hyperlink{class_connect_acc5ff7e06927a04a30576996e2aaf6b6}{nm}}
+\item 
+TMP\+\_\+\+Input\+Field \mbox{\hyperlink{class_connect_a183b3dac1c8d1f4402b87bb2e96286fe}{ip\+Field}}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+This class is responsible for connecting to the Unity Relay service. It provides methods to host a game and join a game as a client. 
+
+Definition at line \mbox{\hyperlink{_connect_8cs_source_l00010}{10}} of file \mbox{\hyperlink{_connect_8cs_source}{Connect.\+cs}}.
+
+
+
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_connect_ac6e2169ca1fe9cb786fdffac1ba9f313}\index{Connect@{Connect}!Awake@{Awake}}
+\index{Awake@{Awake}!Connect@{Connect}}
+\doxysubsubsection{\texorpdfstring{Awake()}{Awake()}}
+{\footnotesize\ttfamily \label{class_connect_ac6e2169ca1fe9cb786fdffac1ba9f313} 
+void Connect.\+Awake (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_connect_8cs_source_l00015}{15}} of file \mbox{\hyperlink{_connect_8cs_source}{Connect.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00016\ \ \ \ \ \{}
+\DoxyCodeLine{00017\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ find\ the\ NetworkManager\ in\ the\ scene\ if\ not\ set\ in\ Inspector}}
+\DoxyCodeLine{00018\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!\mbox{\hyperlink{class_connect_acc5ff7e06927a04a30576996e2aaf6b6}{nm}})\ \mbox{\hyperlink{class_connect_acc5ff7e06927a04a30576996e2aaf6b6}{nm}}\ =\ NetworkManager.singleton\ as\ GameNetworkManager;}
+\DoxyCodeLine{00019\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!\mbox{\hyperlink{class_connect_acc5ff7e06927a04a30576996e2aaf6b6}{nm}})\ \mbox{\hyperlink{class_connect_acc5ff7e06927a04a30576996e2aaf6b6}{nm}}\ =\ FindFirstObjectByType<GameNetworkManager>();}
+\DoxyCodeLine{00020\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!\mbox{\hyperlink{class_connect_acc5ff7e06927a04a30576996e2aaf6b6}{nm}})\ Debug.LogError(\textcolor{stringliteral}{"{}[Connect]\ GameNetworkManager\ not\ found\ in\ scene."{}});}
+\DoxyCodeLine{00021\ \ \ \ \ \}}
+
+\end{DoxyCode}
+\Hypertarget{class_connect_abc7be4b44e5b0c4657a4747d39abb8bf}\index{Connect@{Connect}!Client@{Client}}
+\index{Client@{Client}!Connect@{Connect}}
+\doxysubsubsection{\texorpdfstring{Client()}{Client()}}
+{\footnotesize\ttfamily \label{class_connect_abc7be4b44e5b0c4657a4747d39abb8bf} 
+void Connect.\+Client (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line \mbox{\hyperlink{_connect_8cs_source_l00052}{52}} of file \mbox{\hyperlink{_connect_8cs_source}{Connect.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00053\ \ \ \ \ \{}
+\DoxyCodeLine{00054\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!\mbox{\hyperlink{class_connect_acc5ff7e06927a04a30576996e2aaf6b6}{nm}})}
+\DoxyCodeLine{00055\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00056\ \ \ \ \ \ \ \ \ \ \ \ \ Debug.LogError(\textcolor{stringliteral}{"{}[Connect]\ GameNetworkManager\ not\ found\ in\ scene."{}});}
+\DoxyCodeLine{00057\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{00058\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00059\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00060\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_connect_acc5ff7e06927a04a30576996e2aaf6b6}{nm}}.JoinRelayServer();}
+\DoxyCodeLine{00061\ \ \ \ \ \}}
+
+\end{DoxyCode}
+\Hypertarget{class_connect_a7be34d258330c2a7d1ef79f1344a556d}\index{Connect@{Connect}!ClientLAN@{ClientLAN}}
+\index{ClientLAN@{ClientLAN}!Connect@{Connect}}
+\doxysubsubsection{\texorpdfstring{ClientLAN()}{ClientLAN()}}
+{\footnotesize\ttfamily \label{class_connect_a7be34d258330c2a7d1ef79f1344a556d} 
+void Connect.\+Client\+LAN (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line \mbox{\hyperlink{_connect_8cs_source_l00030}{30}} of file \mbox{\hyperlink{_connect_8cs_source}{Connect.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00031\ \ \ \ \ \{}
+\DoxyCodeLine{00032\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Jos\ syötekenttä\ puuttuu/tyhjä\ →\ oletus\ localhost\ (sama\ kone)}}
+\DoxyCodeLine{00033\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{string}\ ip\ =\ (\mbox{\hyperlink{class_connect_a183b3dac1c8d1f4402b87bb2e96286fe}{ipField}}\ !=\ \textcolor{keyword}{null}\ \&\&\ !\textcolor{keywordtype}{string}.IsNullOrWhiteSpace(\mbox{\hyperlink{class_connect_a183b3dac1c8d1f4402b87bb2e96286fe}{ipField}}.text))}
+\DoxyCodeLine{00034\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ?\ \mbox{\hyperlink{class_connect_a183b3dac1c8d1f4402b87bb2e96286fe}{ipField}}.text.Trim()}
+\DoxyCodeLine{00035\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ :\ \textcolor{stringliteral}{"{}localhost"{}};\ \textcolor{comment}{//\ tai\ 127.0.0.1}}
+\DoxyCodeLine{00036\ }
+\DoxyCodeLine{00037\ \ \ \ \ \ \ \ \ nm.networkAddress\ =\ ip;\ \ \ \textcolor{comment}{//\ <<<\ TÄRKEIN\ KOHTA}}
+\DoxyCodeLine{00038\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_connect_acc5ff7e06927a04a30576996e2aaf6b6}{nm}}.JoinStandardServer();\ \ \textcolor{comment}{//\ useRelay=false\ ja\ StartClient()}}
+\DoxyCodeLine{00039\ \ \ \ \ \}}
+
+\end{DoxyCode}
+\Hypertarget{class_connect_ab2366bb3479a6d53d6a1d827863527fb}\index{Connect@{Connect}!Host@{Host}}
+\index{Host@{Host}!Connect@{Connect}}
+\doxysubsubsection{\texorpdfstring{Host()}{Host()}}
+{\footnotesize\ttfamily \label{class_connect_ab2366bb3479a6d53d6a1d827863527fb} 
+void Connect.\+Host (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line \mbox{\hyperlink{_connect_8cs_source_l00041}{41}} of file \mbox{\hyperlink{_connect_8cs_source}{Connect.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00042\ \ \ \ \ \{}
+\DoxyCodeLine{00043\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!\mbox{\hyperlink{class_connect_acc5ff7e06927a04a30576996e2aaf6b6}{nm}})}
+\DoxyCodeLine{00044\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00045\ \ \ \ \ \ \ \ \ \ \ \ \ Debug.LogError(\textcolor{stringliteral}{"{}[Connect]\ GameNetworkManager\ not\ found\ in\ scene."{}});}
+\DoxyCodeLine{00046\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{00047\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00048\ }
+\DoxyCodeLine{00049\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_connect_acc5ff7e06927a04a30576996e2aaf6b6}{nm}}.StartRelayHost(2,\ \textcolor{keyword}{null});}
+\DoxyCodeLine{00050\ \ \ \ \ \}}
+
+\end{DoxyCode}
+\Hypertarget{class_connect_ab81526e2698d314c2ee361ea2e873336}\index{Connect@{Connect}!HostLAN@{HostLAN}}
+\index{HostLAN@{HostLAN}!Connect@{Connect}}
+\doxysubsubsection{\texorpdfstring{HostLAN()}{HostLAN()}}
+{\footnotesize\ttfamily \label{class_connect_ab81526e2698d314c2ee361ea2e873336} 
+void Connect.\+Host\+LAN (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line \mbox{\hyperlink{_connect_8cs_source_l00024}{24}} of file \mbox{\hyperlink{_connect_8cs_source}{Connect.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00025\ \ \ \ \ \{}
+\DoxyCodeLine{00026\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_connect_acc5ff7e06927a04a30576996e2aaf6b6}{nm}}.StartStandardHost();\ \textcolor{comment}{//\ tämä\ asettaa\ useRelay=false\ ja\ käynnistää\ hostin}}
+\DoxyCodeLine{00027\ \ \ \ \ \}}
+
+\end{DoxyCode}
+
+
+\doxysubsection{Member Data Documentation}
+\Hypertarget{class_connect_a183b3dac1c8d1f4402b87bb2e96286fe}\index{Connect@{Connect}!ipField@{ipField}}
+\index{ipField@{ipField}!Connect@{Connect}}
+\doxysubsubsection{\texorpdfstring{ipField}{ipField}}
+{\footnotesize\ttfamily \label{class_connect_a183b3dac1c8d1f4402b87bb2e96286fe} 
+TMP\+\_\+\+Input\+Field Connect.\+ip\+Field\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_connect_8cs_source_l00013}{13}} of file \mbox{\hyperlink{_connect_8cs_source}{Connect.\+cs}}.
+
+\Hypertarget{class_connect_acc5ff7e06927a04a30576996e2aaf6b6}\index{Connect@{Connect}!nm@{nm}}
+\index{nm@{nm}!Connect@{Connect}}
+\doxysubsubsection{\texorpdfstring{nm}{nm}}
+{\footnotesize\ttfamily \label{class_connect_acc5ff7e06927a04a30576996e2aaf6b6} 
+\mbox{\hyperlink{class_utp_1_1_game_network_manager}{Game\+Network\+Manager}} Connect.\+nm\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_connect_8cs_source_l00012}{12}} of file \mbox{\hyperlink{_connect_8cs_source}{Connect.\+cs}}.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+D\+:/\+Unity/\+Rogue\+Shooter/\+Rogue\+Shooter/\+Assets/\+Scripts/\+Oneline/\mbox{\hyperlink{_connect_8cs}{Connect.\+cs}}\end{DoxyCompactItemize}

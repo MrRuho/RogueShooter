@@ -1,0 +1,37 @@
+\doxysection{Unit\+Action\+Busy\+UI.\+cs}
+\hypertarget{_unit_action_busy_u_i_8cs_source}{}\label{_unit_action_busy_u_i_8cs_source}\index{D:/Unity/RogueShooter/RogueShooter/Assets/Scripts/PlayerUnits/UnitsControlUI/UnitActionBusyUI.cs@{D:/Unity/RogueShooter/RogueShooter/Assets/Scripts/PlayerUnits/UnitsControlUI/UnitActionBusyUI.cs}}
+\mbox{\hyperlink{_unit_action_busy_u_i_8cs}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\Hypertarget{_unit_action_busy_u_i_8cs_source_l00001}00001\ \textcolor{keyword}{using\ }UnityEngine;}
+\DoxyCodeLine{\Hypertarget{_unit_action_busy_u_i_8cs_source_l00002}00002\ }
+\DoxyCodeLine{\Hypertarget{_unit_action_busy_u_i_8cs_source_l00006}\mbox{\hyperlink{class_unit_action_busy_u_i}{00006}}\ \textcolor{keyword}{public}\ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_unit_action_busy_u_i}{UnitActionBusyUI}}\ :\ MonoBehaviour}
+\DoxyCodeLine{\Hypertarget{_unit_action_busy_u_i_8cs_source_l00007}00007\ \{}
+\DoxyCodeLine{\Hypertarget{_unit_action_busy_u_i_8cs_source_l00008}\mbox{\hyperlink{class_unit_action_busy_u_i_a21d5d6b823bd2e5aa5f20929804e6424}{00008}}\ \ \ \ \ \textcolor{keyword}{private}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_unit_action_busy_u_i_a21d5d6b823bd2e5aa5f20929804e6424}{Start}}()}
+\DoxyCodeLine{\Hypertarget{_unit_action_busy_u_i_8cs_source_l00009}00009\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_unit_action_busy_u_i_8cs_source_l00010}00010\ \ \ \ \ \ \ \ \ UnitActionSystem.Instance.OnBusyChanged\ +=\ \mbox{\hyperlink{class_unit_action_busy_u_i_ae984698daae034f5da39939f8f08284e}{UnitActionSystem\_OnBusyChanged}};}
+\DoxyCodeLine{\Hypertarget{_unit_action_busy_u_i_8cs_source_l00011}00011\ }
+\DoxyCodeLine{\Hypertarget{_unit_action_busy_u_i_8cs_source_l00012}00012\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_unit_action_busy_u_i_ae16fce9f52cdeb54828ba6c9b3473ed9}{Hide}}();}
+\DoxyCodeLine{\Hypertarget{_unit_action_busy_u_i_8cs_source_l00013}00013\ }
+\DoxyCodeLine{\Hypertarget{_unit_action_busy_u_i_8cs_source_l00014}00014\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_unit_action_busy_u_i_8cs_source_l00015}\mbox{\hyperlink{class_unit_action_busy_u_i_a723e5926dda26282f6ee3f51a0432052}{00015}}\ \ \ \ \ \textcolor{keyword}{private}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_unit_action_busy_u_i_a723e5926dda26282f6ee3f51a0432052}{Show}}()}
+\DoxyCodeLine{\Hypertarget{_unit_action_busy_u_i_8cs_source_l00016}00016\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_unit_action_busy_u_i_8cs_source_l00017}00017\ \ \ \ \ \ \ \ \ gameObject.SetActive(\textcolor{keyword}{true});}
+\DoxyCodeLine{\Hypertarget{_unit_action_busy_u_i_8cs_source_l00018}00018\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_unit_action_busy_u_i_8cs_source_l00019}\mbox{\hyperlink{class_unit_action_busy_u_i_ae16fce9f52cdeb54828ba6c9b3473ed9}{00019}}\ \ \ \ \ \textcolor{keyword}{private}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_unit_action_busy_u_i_ae16fce9f52cdeb54828ba6c9b3473ed9}{Hide}}()}
+\DoxyCodeLine{\Hypertarget{_unit_action_busy_u_i_8cs_source_l00020}00020\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_unit_action_busy_u_i_8cs_source_l00021}00021\ \ \ \ \ \ \ \ \ gameObject.SetActive(\textcolor{keyword}{false});}
+\DoxyCodeLine{\Hypertarget{_unit_action_busy_u_i_8cs_source_l00022}00022\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_unit_action_busy_u_i_8cs_source_l00026}\mbox{\hyperlink{class_unit_action_busy_u_i_ae984698daae034f5da39939f8f08284e}{00026}}\ \ \ \ \ \textcolor{keyword}{private}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_unit_action_busy_u_i_ae984698daae034f5da39939f8f08284e}{UnitActionSystem\_OnBusyChanged}}(\textcolor{keywordtype}{object}\ sender,\ \textcolor{keywordtype}{bool}\ isBusy)}
+\DoxyCodeLine{\Hypertarget{_unit_action_busy_u_i_8cs_source_l00027}00027\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_unit_action_busy_u_i_8cs_source_l00028}00028\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (isBusy)}
+\DoxyCodeLine{\Hypertarget{_unit_action_busy_u_i_8cs_source_l00029}00029\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_unit_action_busy_u_i_8cs_source_l00030}00030\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_unit_action_busy_u_i_a723e5926dda26282f6ee3f51a0432052}{Show}}();}
+\DoxyCodeLine{\Hypertarget{_unit_action_busy_u_i_8cs_source_l00031}00031\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_unit_action_busy_u_i_8cs_source_l00032}00032\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{\Hypertarget{_unit_action_busy_u_i_8cs_source_l00033}00033\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_unit_action_busy_u_i_8cs_source_l00034}00034\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_unit_action_busy_u_i_ae16fce9f52cdeb54828ba6c9b3473ed9}{Hide}}();}
+\DoxyCodeLine{\Hypertarget{_unit_action_busy_u_i_8cs_source_l00035}00035\ \ \ \ \ \ \ \ \ \}\ }
+\DoxyCodeLine{\Hypertarget{_unit_action_busy_u_i_8cs_source_l00036}00036\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_unit_action_busy_u_i_8cs_source_l00037}00037\ \}}
+
+\end{DoxyCode}

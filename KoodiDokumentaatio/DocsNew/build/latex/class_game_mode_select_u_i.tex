@@ -1,0 +1,232 @@
+\doxysection{Game\+Mode\+Select\+UI Class Reference}
+\hypertarget{class_game_mode_select_u_i}{}\label{class_game_mode_select_u_i}\index{GameModeSelectUI@{GameModeSelectUI}}
+Inheritance diagram for Game\+Mode\+Select\+UI\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{class_game_mode_select_u_i}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{class_game_mode_select_u_i_ae11fdca98cefbbbd3252106c7182614c}{On\+Click\+Co\+Op}} ()
+\item 
+void \mbox{\hyperlink{class_game_mode_select_u_i_aa2b367e4c7b467a8b440eff7b9e82412}{On\+Click\+PvP}} ()
+\item 
+void \mbox{\hyperlink{class_game_mode_select_u_i_ae9ba58e57bc131c7022dac494a67efa0}{On\+Selected}} ()
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Private Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{class_game_mode_select_u_i_a65c12020ff74e1b8a84caa11cd2beb55}{Awake}} ()
+\item 
+void \mbox{\hyperlink{class_game_mode_select_u_i_af780c7ac9803b90fdf1e8a23553bdb44}{On\+Mode\+Selected}} (string mode)
+\item 
+System.\+Collections.\+IEnumerator \mbox{\hyperlink{class_game_mode_select_u_i_a659b72ce04def9201a8db7433eb03043}{Reset\+Grid\+Next\+Frame}} ()
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+Game\+Object \mbox{\hyperlink{class_game_mode_select_u_i_a334110681c18c6b53d1d3ec186145292}{game\+Mode\+Select\+Canvas}}
+\item 
+Game\+Object \mbox{\hyperlink{class_game_mode_select_u_i_a5cc1eebf65f9fb9f9b8ec842b996dcec}{connect\+Canvas}}
+\item 
+Button \mbox{\hyperlink{class_game_mode_select_u_i_aa31d536b7ad8e0e48bb2bd5ceb9fb7fd}{coop\+Button}}
+\item 
+Button \mbox{\hyperlink{class_game_mode_select_u_i_a5a09bb50a3de68c3e59602e269d50652}{pvp\+Button}}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+
+
+Definition at line \mbox{\hyperlink{_game_mode_select_u_i_8cs_source_l00004}{4}} of file \mbox{\hyperlink{_game_mode_select_u_i_8cs_source}{Game\+Mode\+Select\+UI.\+cs}}.
+
+
+
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_game_mode_select_u_i_a65c12020ff74e1b8a84caa11cd2beb55}\index{GameModeSelectUI@{GameModeSelectUI}!Awake@{Awake}}
+\index{Awake@{Awake}!GameModeSelectUI@{GameModeSelectUI}}
+\doxysubsubsection{\texorpdfstring{Awake()}{Awake()}}
+{\footnotesize\ttfamily \label{class_game_mode_select_u_i_a65c12020ff74e1b8a84caa11cd2beb55} 
+void Game\+Mode\+Select\+UI.\+Awake (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_game_mode_select_u_i_8cs_source_l00016}{16}} of file \mbox{\hyperlink{_game_mode_select_u_i_8cs_source}{Game\+Mode\+Select\+UI.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00017\ \ \ \ \ \{}
+\DoxyCodeLine{00018\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Ensure\ the\ game\ mode\ select\ canvas\ is\ active\ and\ connect\ canvas\ is\ inactive\ at\ start}}
+\DoxyCodeLine{00019\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_game_mode_select_u_i_a334110681c18c6b53d1d3ec186145292}{gameModeSelectCanvas}}.SetActive(\textcolor{keyword}{true});}
+\DoxyCodeLine{00020\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_game_mode_select_u_i_a5cc1eebf65f9fb9f9b8ec842b996dcec}{connectCanvas}}.SetActive(\textcolor{keyword}{false});}
+\DoxyCodeLine{00021\ }
+\DoxyCodeLine{00022\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Add\ button\ listeners}}
+\DoxyCodeLine{00023\ \ \ \ \ \ \ \ \textcolor{comment}{//\ coopButton.onClick.AddListener(()\ =>\ OnModeSelected("{}Co-\/op"{}));}}
+\DoxyCodeLine{00024\ \ \ \ \ \ \ \ \textcolor{comment}{//\ pvpButton.onClick.AddListener(()\ =>\ OnModeSelected("{}PvP"{}));}}
+\DoxyCodeLine{00025\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_game_mode_select_u_i_aa31d536b7ad8e0e48bb2bd5ceb9fb7fd}{coopButton}}.onClick.AddListener(\mbox{\hyperlink{class_game_mode_select_u_i_ae11fdca98cefbbbd3252106c7182614c}{OnClickCoOp}});}
+\DoxyCodeLine{00026\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_game_mode_select_u_i_a5a09bb50a3de68c3e59602e269d50652}{pvpButton}}.onClick.AddListener(\mbox{\hyperlink{class_game_mode_select_u_i_aa2b367e4c7b467a8b440eff7b9e82412}{OnClickPvP}});}
+\DoxyCodeLine{00027\ \ \ \ \ \}}
+
+\end{DoxyCode}
+\Hypertarget{class_game_mode_select_u_i_ae11fdca98cefbbbd3252106c7182614c}\index{GameModeSelectUI@{GameModeSelectUI}!OnClickCoOp@{OnClickCoOp}}
+\index{OnClickCoOp@{OnClickCoOp}!GameModeSelectUI@{GameModeSelectUI}}
+\doxysubsubsection{\texorpdfstring{OnClickCoOp()}{OnClickCoOp()}}
+{\footnotesize\ttfamily \label{class_game_mode_select_u_i_ae11fdca98cefbbbd3252106c7182614c} 
+void Game\+Mode\+Select\+UI.\+On\+Click\+Co\+Op (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line \mbox{\hyperlink{_game_mode_select_u_i_8cs_source_l00054}{54}} of file \mbox{\hyperlink{_game_mode_select_u_i_8cs_source}{Game\+Mode\+Select\+UI.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00055\ \ \ \ \ \{}
+\DoxyCodeLine{00056\ \ \ \ \ \ \ \ \ GameModeManager.SetCoOp();}
+\DoxyCodeLine{00057\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_game_mode_select_u_i_ae9ba58e57bc131c7022dac494a67efa0}{OnSelected}}();}
+\DoxyCodeLine{00058\ \ \ \ \ \}}
+
+\end{DoxyCode}
+\Hypertarget{class_game_mode_select_u_i_aa2b367e4c7b467a8b440eff7b9e82412}\index{GameModeSelectUI@{GameModeSelectUI}!OnClickPvP@{OnClickPvP}}
+\index{OnClickPvP@{OnClickPvP}!GameModeSelectUI@{GameModeSelectUI}}
+\doxysubsubsection{\texorpdfstring{OnClickPvP()}{OnClickPvP()}}
+{\footnotesize\ttfamily \label{class_game_mode_select_u_i_aa2b367e4c7b467a8b440eff7b9e82412} 
+void Game\+Mode\+Select\+UI.\+On\+Click\+PvP (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line \mbox{\hyperlink{_game_mode_select_u_i_8cs_source_l00060}{60}} of file \mbox{\hyperlink{_game_mode_select_u_i_8cs_source}{Game\+Mode\+Select\+UI.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00061\ \ \ \ \ \{}
+\DoxyCodeLine{00062\ \ \ \ \ \ \ \ \ GameModeManager.SetVersus();}
+\DoxyCodeLine{00063\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_game_mode_select_u_i_ae9ba58e57bc131c7022dac494a67efa0}{OnSelected}}();}
+\DoxyCodeLine{00064\ \ \ \ \ \}}
+
+\end{DoxyCode}
+\Hypertarget{class_game_mode_select_u_i_af780c7ac9803b90fdf1e8a23553bdb44}\index{GameModeSelectUI@{GameModeSelectUI}!OnModeSelected@{OnModeSelected}}
+\index{OnModeSelected@{OnModeSelected}!GameModeSelectUI@{GameModeSelectUI}}
+\doxysubsubsection{\texorpdfstring{OnModeSelected()}{OnModeSelected()}}
+{\footnotesize\ttfamily \label{class_game_mode_select_u_i_af780c7ac9803b90fdf1e8a23553bdb44} 
+void Game\+Mode\+Select\+UI.\+On\+Mode\+Selected (\begin{DoxyParamCaption}\item[{string}]{mode}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_game_mode_select_u_i_8cs_source_l00029}{29}} of file \mbox{\hyperlink{_game_mode_select_u_i_8cs_source}{Game\+Mode\+Select\+UI.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00030\ \ \ \ \ \{}
+\DoxyCodeLine{00031\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Clear\ the\ field\ of\ existing\ units}}
+\DoxyCodeLine{00032\ \ \ \ \ \ \ \ \ FieldCleaner.ClearAll();}
+\DoxyCodeLine{00033\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ UnitActionSystem.Instance?.SetSelectedUnit(null);}}
+\DoxyCodeLine{00034\ \ \ \ \ \ \ \ \ StartCoroutine(\mbox{\hyperlink{class_game_mode_select_u_i_a659b72ce04def9201a8db7433eb03043}{ResetGridNextFrame}}());}
+\DoxyCodeLine{00035\ }
+\DoxyCodeLine{00036\ \ \ \ \ \ \ \ \ Debug.Log(\$\textcolor{stringliteral}{"{}\{mode\}\ mode\ selected."{}});}
+\DoxyCodeLine{00037\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Hide\ the\ game\ mode\ select\ canvas\ and\ show\ the\ connect\ canvas}}
+\DoxyCodeLine{00038\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_game_mode_select_u_i_a334110681c18c6b53d1d3ec186145292}{gameModeSelectCanvas}}.SetActive(\textcolor{keyword}{false});}
+\DoxyCodeLine{00039\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_game_mode_select_u_i_a5cc1eebf65f9fb9f9b8ec842b996dcec}{connectCanvas}}.SetActive(\textcolor{keyword}{true});}
+\DoxyCodeLine{00040\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Additional\ logic\ for\ handling\ mode\ selection\ can\ be\ added\ here}}
+\DoxyCodeLine{00041\ }
+\DoxyCodeLine{00042\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Set\ the\ selected\ game\ mode\ in\ GameModeManager}}
+\DoxyCodeLine{00043\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (mode\ ==\ \textcolor{stringliteral}{"{}Co-\/op"{}})}
+\DoxyCodeLine{00044\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00045\ \ \ \ \ \ \ \ \ \ \ \ \ GameModeManager.SetCoOp();}
+\DoxyCodeLine{00046\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00047\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00048\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00049\ \ \ \ \ \ \ \ \ \ \ \ \ GameModeManager.SetVersus();}
+\DoxyCodeLine{00050\ \ \ \ \ \ \ \ \ \}\ }
+\DoxyCodeLine{00051\ }
+\DoxyCodeLine{00052\ \ \ \ \ \}}
+
+\end{DoxyCode}
+\Hypertarget{class_game_mode_select_u_i_ae9ba58e57bc131c7022dac494a67efa0}\index{GameModeSelectUI@{GameModeSelectUI}!OnSelected@{OnSelected}}
+\index{OnSelected@{OnSelected}!GameModeSelectUI@{GameModeSelectUI}}
+\doxysubsubsection{\texorpdfstring{OnSelected()}{OnSelected()}}
+{\footnotesize\ttfamily \label{class_game_mode_select_u_i_ae9ba58e57bc131c7022dac494a67efa0} 
+void Game\+Mode\+Select\+UI.\+On\+Selected (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line \mbox{\hyperlink{_game_mode_select_u_i_8cs_source_l00066}{66}} of file \mbox{\hyperlink{_game_mode_select_u_i_8cs_source}{Game\+Mode\+Select\+UI.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00067\ \ \ \ \ \{}
+\DoxyCodeLine{00068\ \ \ \ \ \ \ \ \ FieldCleaner.ClearAll();}
+\DoxyCodeLine{00069\ \ \ \ \ \ \ \ \ StartCoroutine(\mbox{\hyperlink{class_game_mode_select_u_i_a659b72ce04def9201a8db7433eb03043}{ResetGridNextFrame}}());}
+\DoxyCodeLine{00070\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_game_mode_select_u_i_a334110681c18c6b53d1d3ec186145292}{gameModeSelectCanvas}}.SetActive(\textcolor{keyword}{false});}
+\DoxyCodeLine{00071\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_game_mode_select_u_i_a5cc1eebf65f9fb9f9b8ec842b996dcec}{connectCanvas}}.SetActive(\textcolor{keyword}{true});}
+\DoxyCodeLine{00072\ \ \ \ \ \}}
+
+\end{DoxyCode}
+\Hypertarget{class_game_mode_select_u_i_a659b72ce04def9201a8db7433eb03043}\index{GameModeSelectUI@{GameModeSelectUI}!ResetGridNextFrame@{ResetGridNextFrame}}
+\index{ResetGridNextFrame@{ResetGridNextFrame}!GameModeSelectUI@{GameModeSelectUI}}
+\doxysubsubsection{\texorpdfstring{ResetGridNextFrame()}{ResetGridNextFrame()}}
+{\footnotesize\ttfamily \label{class_game_mode_select_u_i_a659b72ce04def9201a8db7433eb03043} 
+System.\+Collections.\+IEnumerator Game\+Mode\+Select\+UI.\+Reset\+Grid\+Next\+Frame (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_game_mode_select_u_i_8cs_source_l00074}{74}} of file \mbox{\hyperlink{_game_mode_select_u_i_8cs_source}{Game\+Mode\+Select\+UI.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00075\ \ \ \ \ \{}
+\DoxyCodeLine{00076\ \ \ \ \ \ \ \ \ yield\ \textcolor{keywordflow}{return}\ \textcolor{keyword}{new}\ WaitForEndOfFrame();}
+\DoxyCodeLine{00077\ \ \ \ \ \ \ \ \ var\ lg\ =\ LevelGrid.Instance;}
+\DoxyCodeLine{00078\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (lg\ !=\ \textcolor{keyword}{null})\ lg.RebuildOccupancyFromScene();}
+\DoxyCodeLine{00079\ \ \ \ \ \}}
+
+\end{DoxyCode}
+
+
+\doxysubsection{Member Data Documentation}
+\Hypertarget{class_game_mode_select_u_i_a5cc1eebf65f9fb9f9b8ec842b996dcec}\index{GameModeSelectUI@{GameModeSelectUI}!connectCanvas@{connectCanvas}}
+\index{connectCanvas@{connectCanvas}!GameModeSelectUI@{GameModeSelectUI}}
+\doxysubsubsection{\texorpdfstring{connectCanvas}{connectCanvas}}
+{\footnotesize\ttfamily \label{class_game_mode_select_u_i_a5cc1eebf65f9fb9f9b8ec842b996dcec} 
+Game\+Object Game\+Mode\+Select\+UI.\+connect\+Canvas\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_game_mode_select_u_i_8cs_source_l00009}{9}} of file \mbox{\hyperlink{_game_mode_select_u_i_8cs_source}{Game\+Mode\+Select\+UI.\+cs}}.
+
+\Hypertarget{class_game_mode_select_u_i_aa31d536b7ad8e0e48bb2bd5ceb9fb7fd}\index{GameModeSelectUI@{GameModeSelectUI}!coopButton@{coopButton}}
+\index{coopButton@{coopButton}!GameModeSelectUI@{GameModeSelectUI}}
+\doxysubsubsection{\texorpdfstring{coopButton}{coopButton}}
+{\footnotesize\ttfamily \label{class_game_mode_select_u_i_aa31d536b7ad8e0e48bb2bd5ceb9fb7fd} 
+Button Game\+Mode\+Select\+UI.\+coop\+Button\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_game_mode_select_u_i_8cs_source_l00013}{13}} of file \mbox{\hyperlink{_game_mode_select_u_i_8cs_source}{Game\+Mode\+Select\+UI.\+cs}}.
+
+\Hypertarget{class_game_mode_select_u_i_a334110681c18c6b53d1d3ec186145292}\index{GameModeSelectUI@{GameModeSelectUI}!gameModeSelectCanvas@{gameModeSelectCanvas}}
+\index{gameModeSelectCanvas@{gameModeSelectCanvas}!GameModeSelectUI@{GameModeSelectUI}}
+\doxysubsubsection{\texorpdfstring{gameModeSelectCanvas}{gameModeSelectCanvas}}
+{\footnotesize\ttfamily \label{class_game_mode_select_u_i_a334110681c18c6b53d1d3ec186145292} 
+Game\+Object Game\+Mode\+Select\+UI.\+game\+Mode\+Select\+Canvas\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_game_mode_select_u_i_8cs_source_l00008}{8}} of file \mbox{\hyperlink{_game_mode_select_u_i_8cs_source}{Game\+Mode\+Select\+UI.\+cs}}.
+
+\Hypertarget{class_game_mode_select_u_i_a5a09bb50a3de68c3e59602e269d50652}\index{GameModeSelectUI@{GameModeSelectUI}!pvpButton@{pvpButton}}
+\index{pvpButton@{pvpButton}!GameModeSelectUI@{GameModeSelectUI}}
+\doxysubsubsection{\texorpdfstring{pvpButton}{pvpButton}}
+{\footnotesize\ttfamily \label{class_game_mode_select_u_i_a5a09bb50a3de68c3e59602e269d50652} 
+Button Game\+Mode\+Select\+UI.\+pvp\+Button\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_game_mode_select_u_i_8cs_source_l00014}{14}} of file \mbox{\hyperlink{_game_mode_select_u_i_8cs_source}{Game\+Mode\+Select\+UI.\+cs}}.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+D\+:/\+Unity/\+Rogue\+Shooter/\+Rogue\+Shooter/\+Assets/\+Scripts/\+Menu/\mbox{\hyperlink{_game_mode_select_u_i_8cs}{Game\+Mode\+Select\+UI.\+cs}}\end{DoxyCompactItemize}

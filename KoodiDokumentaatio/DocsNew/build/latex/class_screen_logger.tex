@@ -1,0 +1,169 @@
+\doxysection{Screen\+Logger Class Reference}
+\hypertarget{class_screen_logger}{}\label{class_screen_logger}\index{ScreenLogger@{ScreenLogger}}
+Inheritance diagram for Screen\+Logger\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{class_screen_logger}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+int \mbox{\hyperlink{class_screen_logger_affc3cfa876f183bca4b6c62d7a374bd8}{max\+Lines}} = 100
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Private Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{class_screen_logger_a1345a3bb446108171fa0843746010b12}{Awake}} ()
+\item 
+void \mbox{\hyperlink{class_screen_logger_a3875a1d5b5b83ebf24f1df9337dc6601}{On\+Destroy}} ()
+\item 
+void \mbox{\hyperlink{class_screen_logger_acdaa6d67a98d128dc8b3c3c2611f713b}{Handle\+Log}} (string msg, string stack, Log\+Type type)
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+Text\+Mesh\+Pro\+UGUI \mbox{\hyperlink{class_screen_logger_a9c8810ddbd401e1a963153913acb043e}{text}}
+\item 
+readonly Queue$<$ string $>$ \mbox{\hyperlink{class_screen_logger_aec3456f2218fb6ecf78a24fc1b79a995}{lines}} = new Queue$<$string$>$()
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Static Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+static \mbox{\hyperlink{class_screen_logger}{Screen\+Logger}} \mbox{\hyperlink{class_screen_logger_aa335f56ca70de86d5542640f96c8cfe8}{inst}}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+
+
+Definition at line \mbox{\hyperlink{_screen_logger_8cs_source_l00005}{5}} of file \mbox{\hyperlink{_screen_logger_8cs_source}{Screen\+Logger.\+cs}}.
+
+
+
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_screen_logger_a1345a3bb446108171fa0843746010b12}\index{ScreenLogger@{ScreenLogger}!Awake@{Awake}}
+\index{Awake@{Awake}!ScreenLogger@{ScreenLogger}}
+\doxysubsubsection{\texorpdfstring{Awake()}{Awake()}}
+{\footnotesize\ttfamily \label{class_screen_logger_a1345a3bb446108171fa0843746010b12} 
+void Screen\+Logger.\+Awake (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_screen_logger_8cs_source_l00012}{12}} of file \mbox{\hyperlink{_screen_logger_8cs_source}{Screen\+Logger.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00013\ \ \ \ \ \{}
+\DoxyCodeLine{00014\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{class_screen_logger_aa335f56ca70de86d5542640f96c8cfe8}{inst}}\ !=\ \textcolor{keyword}{null})\ \{\ Destroy(gameObject);\ \textcolor{keywordflow}{return};\ \}}
+\DoxyCodeLine{00015\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_screen_logger_aa335f56ca70de86d5542640f96c8cfe8}{inst}}\ =\ \textcolor{keyword}{this};}
+\DoxyCodeLine{00016\ \ \ \ \ \ \ \ \ DontDestroyOnLoad(gameObject);}
+\DoxyCodeLine{00017\ }
+\DoxyCodeLine{00018\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Canvas}}
+\DoxyCodeLine{00019\ \ \ \ \ \ \ \ \ var\ canvasGO\ =\ \textcolor{keyword}{new}\ GameObject(\textcolor{stringliteral}{"{}ScreenLogCanvas"{}});}
+\DoxyCodeLine{00020\ \ \ \ \ \ \ \ \ var\ canvas\ =\ canvasGO.AddComponent<Canvas>();}
+\DoxyCodeLine{00021\ \ \ \ \ \ \ \ \ canvas.renderMode\ =\ RenderMode.ScreenSpaceOverlay;}
+\DoxyCodeLine{00022\ \ \ \ \ \ \ \ \ canvas.sortingOrder\ =\ 9999;}
+\DoxyCodeLine{00023\ }
+\DoxyCodeLine{00024\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Text}}
+\DoxyCodeLine{00025\ \ \ \ \ \ \ \ \ var\ tgo\ =\ \textcolor{keyword}{new}\ GameObject(\textcolor{stringliteral}{"{}Log"{}});}
+\DoxyCodeLine{00026\ \ \ \ \ \ \ \ \ tgo.transform.SetParent(canvasGO.transform);}
+\DoxyCodeLine{00027\ \ \ \ \ \ \ \ \ var\ rt\ =\ tgo.AddComponent<RectTransform>();}
+\DoxyCodeLine{00028\ \ \ \ \ \ \ \ \ rt.anchorMin\ =\ \textcolor{keyword}{new}\ Vector2(0,\ 0);}
+\DoxyCodeLine{00029\ \ \ \ \ \ \ \ \ rt.anchorMax\ =\ \textcolor{keyword}{new}\ Vector2(1,\ 0);}
+\DoxyCodeLine{00030\ \ \ \ \ \ \ \ \ rt.pivot\ =\ \textcolor{keyword}{new}\ Vector2(0.5f,\ 0);}
+\DoxyCodeLine{00031\ \ \ \ \ \ \ \ \ rt.offsetMin\ =\ \textcolor{keyword}{new}\ Vector2(10,\ 10);}
+\DoxyCodeLine{00032\ \ \ \ \ \ \ \ \ rt.offsetMax\ =\ \textcolor{keyword}{new}\ Vector2(-\/10,\ 210);}
+\DoxyCodeLine{00033\ }
+\DoxyCodeLine{00034\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_screen_logger_a9c8810ddbd401e1a963153913acb043e}{text}}\ =\ tgo.AddComponent<TextMeshProUGUI>();}
+\DoxyCodeLine{00035\ \ \ \ \ \ \ \ \ text.fontSize\ =\ 18;}
+\DoxyCodeLine{00036\ \ \ \ \ \ \ \ \ text.textWrappingMode\ =\ TextWrappingModes.NoWrap;}
+\DoxyCodeLine{00037\ }
+\DoxyCodeLine{00038\ \ \ \ \ \ \ \ \ Application.logMessageReceived\ +=\ \mbox{\hyperlink{class_screen_logger_acdaa6d67a98d128dc8b3c3c2611f713b}{HandleLog}};}
+\DoxyCodeLine{00039\ \ \ \ \ \}}
+
+\end{DoxyCode}
+\Hypertarget{class_screen_logger_acdaa6d67a98d128dc8b3c3c2611f713b}\index{ScreenLogger@{ScreenLogger}!HandleLog@{HandleLog}}
+\index{HandleLog@{HandleLog}!ScreenLogger@{ScreenLogger}}
+\doxysubsubsection{\texorpdfstring{HandleLog()}{HandleLog()}}
+{\footnotesize\ttfamily \label{class_screen_logger_acdaa6d67a98d128dc8b3c3c2611f713b} 
+void Screen\+Logger.\+Handle\+Log (\begin{DoxyParamCaption}\item[{string}]{msg}{, }\item[{string}]{stack}{, }\item[{Log\+Type}]{type}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_screen_logger_8cs_source_l00043}{43}} of file \mbox{\hyperlink{_screen_logger_8cs_source}{Screen\+Logger.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00044\ \ \ \ \ \{}
+\DoxyCodeLine{00045\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{string}\ prefix\ =\ type\ ==\ LogType.Error\ ||\ type\ ==\ LogType.Exception\ ?\ \textcolor{stringliteral}{"{}[ERR]"{}}\ :}
+\DoxyCodeLine{00046\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ type\ ==\ LogType.Warning\ ?\ \textcolor{stringliteral}{"{}[WARN]"{}}\ :\ \textcolor{stringliteral}{"{}[LOG]"{}};}
+\DoxyCodeLine{00047\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_screen_logger_aec3456f2218fb6ecf78a24fc1b79a995}{lines}}.Enqueue(\$\textcolor{stringliteral}{"{}\{System.DateTime.Now:HH:mm:ss\}\ \{prefix\}\ \{msg\}"{}});}
+\DoxyCodeLine{00048\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{while}\ (\mbox{\hyperlink{class_screen_logger_aec3456f2218fb6ecf78a24fc1b79a995}{lines}}.Count\ >\ \mbox{\hyperlink{class_screen_logger_affc3cfa876f183bca4b6c62d7a374bd8}{maxLines}})\ \mbox{\hyperlink{class_screen_logger_aec3456f2218fb6ecf78a24fc1b79a995}{lines}}.Dequeue();}
+\DoxyCodeLine{00049\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{class_screen_logger_a9c8810ddbd401e1a963153913acb043e}{text}}\ !=\ \textcolor{keyword}{null})\ text.text\ =\ \textcolor{keywordtype}{string}.Join(\textcolor{stringliteral}{"{}\(\backslash\)n"{}},\ \mbox{\hyperlink{class_screen_logger_aec3456f2218fb6ecf78a24fc1b79a995}{lines}});}
+\DoxyCodeLine{00050\ \ \ \ \ \}}
+
+\end{DoxyCode}
+\Hypertarget{class_screen_logger_a3875a1d5b5b83ebf24f1df9337dc6601}\index{ScreenLogger@{ScreenLogger}!OnDestroy@{OnDestroy}}
+\index{OnDestroy@{OnDestroy}!ScreenLogger@{ScreenLogger}}
+\doxysubsubsection{\texorpdfstring{OnDestroy()}{OnDestroy()}}
+{\footnotesize\ttfamily \label{class_screen_logger_a3875a1d5b5b83ebf24f1df9337dc6601} 
+void Screen\+Logger.\+On\+Destroy (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_screen_logger_8cs_source_l00041}{41}} of file \mbox{\hyperlink{_screen_logger_8cs_source}{Screen\+Logger.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00041\ \{\ Application.logMessageReceived\ -\/=\ \mbox{\hyperlink{class_screen_logger_acdaa6d67a98d128dc8b3c3c2611f713b}{HandleLog}};\ \}}
+
+\end{DoxyCode}
+
+
+\doxysubsection{Member Data Documentation}
+\Hypertarget{class_screen_logger_aa335f56ca70de86d5542640f96c8cfe8}\index{ScreenLogger@{ScreenLogger}!inst@{inst}}
+\index{inst@{inst}!ScreenLogger@{ScreenLogger}}
+\doxysubsubsection{\texorpdfstring{inst}{inst}}
+{\footnotesize\ttfamily \label{class_screen_logger_aa335f56ca70de86d5542640f96c8cfe8} 
+\mbox{\hyperlink{class_screen_logger}{Screen\+Logger}} Screen\+Logger.\+inst\hspace{0.3cm}{\ttfamily [static]}, {\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_screen_logger_8cs_source_l00007}{7}} of file \mbox{\hyperlink{_screen_logger_8cs_source}{Screen\+Logger.\+cs}}.
+
+\Hypertarget{class_screen_logger_aec3456f2218fb6ecf78a24fc1b79a995}\index{ScreenLogger@{ScreenLogger}!lines@{lines}}
+\index{lines@{lines}!ScreenLogger@{ScreenLogger}}
+\doxysubsubsection{\texorpdfstring{lines}{lines}}
+{\footnotesize\ttfamily \label{class_screen_logger_aec3456f2218fb6ecf78a24fc1b79a995} 
+readonly Queue$<$string$>$ Screen\+Logger.\+lines = new Queue$<$string$>$()\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_screen_logger_8cs_source_l00009}{9}} of file \mbox{\hyperlink{_screen_logger_8cs_source}{Screen\+Logger.\+cs}}.
+
+\Hypertarget{class_screen_logger_affc3cfa876f183bca4b6c62d7a374bd8}\index{ScreenLogger@{ScreenLogger}!maxLines@{maxLines}}
+\index{maxLines@{maxLines}!ScreenLogger@{ScreenLogger}}
+\doxysubsubsection{\texorpdfstring{maxLines}{maxLines}}
+{\footnotesize\ttfamily \label{class_screen_logger_affc3cfa876f183bca4b6c62d7a374bd8} 
+int Screen\+Logger.\+max\+Lines = 100}
+
+
+
+Definition at line \mbox{\hyperlink{_screen_logger_8cs_source_l00010}{10}} of file \mbox{\hyperlink{_screen_logger_8cs_source}{Screen\+Logger.\+cs}}.
+
+\Hypertarget{class_screen_logger_a9c8810ddbd401e1a963153913acb043e}\index{ScreenLogger@{ScreenLogger}!text@{text}}
+\index{text@{text}!ScreenLogger@{ScreenLogger}}
+\doxysubsubsection{\texorpdfstring{text}{text}}
+{\footnotesize\ttfamily \label{class_screen_logger_a9c8810ddbd401e1a963153913acb043e} 
+Text\+Mesh\+Pro\+UGUI Screen\+Logger.\+text\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_screen_logger_8cs_source_l00008}{8}} of file \mbox{\hyperlink{_screen_logger_8cs_source}{Screen\+Logger.\+cs}}.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+D\+:/\+Unity/\+Rogue\+Shooter/\+Rogue\+Shooter/\+Assets/\+Scripts/\+Debugging/\mbox{\hyperlink{_screen_logger_8cs}{Screen\+Logger.\+cs}}\end{DoxyCompactItemize}

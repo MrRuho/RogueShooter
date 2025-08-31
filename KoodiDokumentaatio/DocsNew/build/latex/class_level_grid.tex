@@ -1,0 +1,389 @@
+\doxysection{Level\+Grid Class Reference}
+\hypertarget{class_level_grid}{}\label{class_level_grid}\index{LevelGrid@{LevelGrid}}
+
+
+This class is responsible for managing the grid system in the game. It creates a grid of grid objects and provides methods to interact with the grid.  
+
+
+Inheritance diagram for Level\+Grid\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{class_level_grid}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{class_level_grid_a9036911e6cb7c673cca01e380822af22}{Add\+Unit\+At\+Grid\+Position}} (\mbox{\hyperlink{struct_grid_position}{Grid\+Position}} grid\+Position, \mbox{\hyperlink{class_unit}{Unit}} unit)
+\item 
+List$<$ \mbox{\hyperlink{class_unit}{Unit}} $>$ \mbox{\hyperlink{class_level_grid_a9c37a29191a1d331523da3d124da56e2}{Get\+Unit\+List\+At\+Grid\+Position}} (\mbox{\hyperlink{struct_grid_position}{Grid\+Position}} grid\+Position)
+\item 
+void \mbox{\hyperlink{class_level_grid_a77b366dc212c6697e1d9ffe6c1cd96c5}{Remove\+Unit\+At\+Grid\+Position}} (\mbox{\hyperlink{struct_grid_position}{Grid\+Position}} grid\+Position, \mbox{\hyperlink{class_unit}{Unit}} unit)
+\item 
+void \mbox{\hyperlink{class_level_grid_aede42508e6a06f5a7969f85957944b5b}{Unit\+Move\+To\+Grid\+Position}} (\mbox{\hyperlink{struct_grid_position}{Grid\+Position}} from\+Grid\+Position, \mbox{\hyperlink{struct_grid_position}{Grid\+Position}} to\+Grid\+Position, \mbox{\hyperlink{class_unit}{Unit}} unit)
+\item 
+\mbox{\hyperlink{struct_grid_position}{Grid\+Position}} \mbox{\hyperlink{class_level_grid_ac5cd7d80c94447425224ac930d6a9a3a}{Get\+Grid\+Position}} (Vector3 world\+Position)
+\item 
+Vector3 \mbox{\hyperlink{class_level_grid_a0c9229e022b654040de6b7b2d7a5b73f}{Get\+World\+Position}} (\mbox{\hyperlink{struct_grid_position}{Grid\+Position}} grid\+Position)
+\item 
+bool \mbox{\hyperlink{class_level_grid_a44154127c6c78b958c7e84a3d8427192}{Is\+Valid\+Grid\+Position}} (\mbox{\hyperlink{struct_grid_position}{Grid\+Position}} grid\+Position)
+\item 
+int \mbox{\hyperlink{class_level_grid_a8b94a0a920113c353802b9d920fea43a}{Get\+Width}} ()
+\item 
+int \mbox{\hyperlink{class_level_grid_aae9fb6f8bfcc0f2e09db8c11b471bda9}{Get\+Height}} ()
+\item 
+bool \mbox{\hyperlink{class_level_grid_ae37c0843b9a37392fee852c36dab849f}{Has\+Any\+Unit\+On\+Grid\+Position}} (\mbox{\hyperlink{struct_grid_position}{Grid\+Position}} grid\+Position)
+\item 
+\mbox{\hyperlink{class_unit}{Unit}} \mbox{\hyperlink{class_level_grid_a342c61b1e0f5e844f4b4361bb48597f6}{Get\+Unit\+At\+Grid\+Position}} (\mbox{\hyperlink{struct_grid_position}{Grid\+Position}} grid\+Position)
+\item 
+void \mbox{\hyperlink{class_level_grid_adf9aa958722cc25c2db7303e7fd6b5d5}{Clear\+All\+Occupancy}} ()
+\item 
+void \mbox{\hyperlink{class_level_grid_a1fbeb14df5ca95020f2cf67037d14e50}{Rebuild\+Occupancy\+From\+Scene}} ()
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Properties}
+\begin{DoxyCompactItemize}
+\item 
+static \mbox{\hyperlink{class_level_grid}{Level\+Grid}} \mbox{\hyperlink{class_level_grid_a2289e5f589c75631e3a0348a0992b7d5}{Instance}}\hspace{0.3cm}{\ttfamily  \mbox{[}get, private set\mbox{]}}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Private Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{class_level_grid_af5fc17f7d04f324774f1cb3ebcf5cda5}{Awake}} ()
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+Transform \mbox{\hyperlink{class_level_grid_a485dee10776c4d0c45947659c99c2cea}{debug\+Prefab}}
+\item 
+\mbox{\hyperlink{class_grid_system}{Grid\+System}} \mbox{\hyperlink{class_level_grid_a9fc00eaf2e010b35150ad06bc2a232af}{grid\+System}}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+This class is responsible for managing the grid system in the game. It creates a grid of grid objects and provides methods to interact with the grid. 
+
+Definition at line \mbox{\hyperlink{_level_grid_8cs_source_l00009}{9}} of file \mbox{\hyperlink{_level_grid_8cs_source}{Level\+Grid.\+cs}}.
+
+
+
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_level_grid_a9036911e6cb7c673cca01e380822af22}\index{LevelGrid@{LevelGrid}!AddUnitAtGridPosition@{AddUnitAtGridPosition}}
+\index{AddUnitAtGridPosition@{AddUnitAtGridPosition}!LevelGrid@{LevelGrid}}
+\doxysubsubsection{\texorpdfstring{AddUnitAtGridPosition()}{AddUnitAtGridPosition()}}
+{\footnotesize\ttfamily \label{class_level_grid_a9036911e6cb7c673cca01e380822af22} 
+void Level\+Grid.\+Add\+Unit\+At\+Grid\+Position (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{struct_grid_position}{Grid\+Position}}}]{grid\+Position}{, }\item[{\mbox{\hyperlink{class_unit}{Unit}}}]{unit}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line \mbox{\hyperlink{_level_grid_8cs_source_l00030}{30}} of file \mbox{\hyperlink{_level_grid_8cs_source}{Level\+Grid.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00031\ \ \ \ \ \{}
+\DoxyCodeLine{00032\ \ \ \ \ \ \ \ \ GridObject\ gridObject\ =\ \mbox{\hyperlink{class_level_grid_a9fc00eaf2e010b35150ad06bc2a232af}{gridSystem}}.GetGridObject(gridPosition);}
+\DoxyCodeLine{00033\ \ \ \ \ \ \ \ \ gridObject.\mbox{\hyperlink{class_grid_object_afddae646e8880febf5fe25ea268bd6df}{AddUnit}}(unit);}
+\DoxyCodeLine{00034\ \ \ \ \ \}}
+
+\end{DoxyCode}
+\Hypertarget{class_level_grid_af5fc17f7d04f324774f1cb3ebcf5cda5}\index{LevelGrid@{LevelGrid}!Awake@{Awake}}
+\index{Awake@{Awake}!LevelGrid@{LevelGrid}}
+\doxysubsubsection{\texorpdfstring{Awake()}{Awake()}}
+{\footnotesize\ttfamily \label{class_level_grid_af5fc17f7d04f324774f1cb3ebcf5cda5} 
+void Level\+Grid.\+Awake (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_level_grid_8cs_source_l00014}{14}} of file \mbox{\hyperlink{_level_grid_8cs_source}{Level\+Grid.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00015\ \ \ \ \ \{}
+\DoxyCodeLine{00016\ }
+\DoxyCodeLine{00017\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Ensure\ that\ there\ is\ only\ one\ instance\ in\ the\ scene}}
+\DoxyCodeLine{00018\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{class_level_grid_a2289e5f589c75631e3a0348a0992b7d5}{Instance}}\ !=\ \textcolor{keyword}{null})}
+\DoxyCodeLine{00019\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00020\ \ \ \ \ \ \ \ \ \ \ \ \ Debug.LogError(\textcolor{stringliteral}{"{}LevelGrid:\ More\ than\ one\ LevelGrid\ in\ the\ scene!"{}}\ +\ transform\ +\ \textcolor{stringliteral}{"{}\ "{}}\ +\ \mbox{\hyperlink{class_level_grid_a2289e5f589c75631e3a0348a0992b7d5}{Instance}});}
+\DoxyCodeLine{00021\ \ \ \ \ \ \ \ \ \ \ \ \ Destroy(gameObject);}
+\DoxyCodeLine{00022\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{00023\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00024\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_level_grid_a2289e5f589c75631e3a0348a0992b7d5}{Instance}}\ =\ \textcolor{keyword}{this};}
+\DoxyCodeLine{00025\ }
+\DoxyCodeLine{00026\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_level_grid_a9fc00eaf2e010b35150ad06bc2a232af}{gridSystem}}\ =\ \textcolor{keyword}{new}\ GridSystem(10,\ 10,\ 2f);}
+\DoxyCodeLine{00027\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_level_grid_a9fc00eaf2e010b35150ad06bc2a232af}{gridSystem}}.CreateDebugObjects(\mbox{\hyperlink{class_level_grid_a485dee10776c4d0c45947659c99c2cea}{debugPrefab}});}
+\DoxyCodeLine{00028\ \ \ \ \ \}}
+
+\end{DoxyCode}
+\Hypertarget{class_level_grid_adf9aa958722cc25c2db7303e7fd6b5d5}\index{LevelGrid@{LevelGrid}!ClearAllOccupancy@{ClearAllOccupancy}}
+\index{ClearAllOccupancy@{ClearAllOccupancy}!LevelGrid@{LevelGrid}}
+\doxysubsubsection{\texorpdfstring{ClearAllOccupancy()}{ClearAllOccupancy()}}
+{\footnotesize\ttfamily \label{class_level_grid_adf9aa958722cc25c2db7303e7fd6b5d5} 
+void Level\+Grid.\+Clear\+All\+Occupancy (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line \mbox{\hyperlink{_level_grid_8cs_source_l00094}{94}} of file \mbox{\hyperlink{_level_grid_8cs_source}{Level\+Grid.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00095\ \ \ \ \ \{}
+\DoxyCodeLine{00096\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ x\ =\ 0;\ x\ <\ \mbox{\hyperlink{class_level_grid_a9fc00eaf2e010b35150ad06bc2a232af}{gridSystem}}.GetWidth();\ x++)}
+\DoxyCodeLine{00097\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00098\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ z\ =\ 0;\ z\ <\ \mbox{\hyperlink{class_level_grid_a9fc00eaf2e010b35150ad06bc2a232af}{gridSystem}}.GetHeight();\ z++)}
+\DoxyCodeLine{00099\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00100\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ var\ gridPosition\ =\ \textcolor{keyword}{new}\ GridPosition(x,\ z);}
+\DoxyCodeLine{00101\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ var\ gridObject\ =\ \mbox{\hyperlink{class_level_grid_a9fc00eaf2e010b35150ad06bc2a232af}{gridSystem}}.GetGridObject(gridPosition);}
+\DoxyCodeLine{00102\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ var\ list\ =\ gridObject.GetUnitList();}
+\DoxyCodeLine{00103\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ list?.Clear();}
+\DoxyCodeLine{00104\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00105\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00106\ \ \ \ \ \}}
+
+\end{DoxyCode}
+\Hypertarget{class_level_grid_ac5cd7d80c94447425224ac930d6a9a3a}\index{LevelGrid@{LevelGrid}!GetGridPosition@{GetGridPosition}}
+\index{GetGridPosition@{GetGridPosition}!LevelGrid@{LevelGrid}}
+\doxysubsubsection{\texorpdfstring{GetGridPosition()}{GetGridPosition()}}
+{\footnotesize\ttfamily \label{class_level_grid_ac5cd7d80c94447425224ac930d6a9a3a} 
+\mbox{\hyperlink{struct_grid_position}{Grid\+Position}} Level\+Grid.\+Get\+Grid\+Position (\begin{DoxyParamCaption}\item[{Vector3}]{world\+Position}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line \mbox{\hyperlink{_level_grid_8cs_source_l00058}{58}} of file \mbox{\hyperlink{_level_grid_8cs_source}{Level\+Grid.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00059\ \ \ \ \ \{}
+\DoxyCodeLine{00060\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{class_level_grid_a9fc00eaf2e010b35150ad06bc2a232af}{gridSystem}}.GetGridPosition(worldPosition);}
+\DoxyCodeLine{00061\ \ \ \ \ \}}
+
+\end{DoxyCode}
+\Hypertarget{class_level_grid_aae9fb6f8bfcc0f2e09db8c11b471bda9}\index{LevelGrid@{LevelGrid}!GetHeight@{GetHeight}}
+\index{GetHeight@{GetHeight}!LevelGrid@{LevelGrid}}
+\doxysubsubsection{\texorpdfstring{GetHeight()}{GetHeight()}}
+{\footnotesize\ttfamily \label{class_level_grid_aae9fb6f8bfcc0f2e09db8c11b471bda9} 
+int Level\+Grid.\+Get\+Height (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line \mbox{\hyperlink{_level_grid_8cs_source_l00077}{77}} of file \mbox{\hyperlink{_level_grid_8cs_source}{Level\+Grid.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00078\ \ \ \ \ \{}
+\DoxyCodeLine{00079\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{class_level_grid_a9fc00eaf2e010b35150ad06bc2a232af}{gridSystem}}.GetHeight();}
+\DoxyCodeLine{00080\ \ \ \ \ \}}
+
+\end{DoxyCode}
+\Hypertarget{class_level_grid_a342c61b1e0f5e844f4b4361bb48597f6}\index{LevelGrid@{LevelGrid}!GetUnitAtGridPosition@{GetUnitAtGridPosition}}
+\index{GetUnitAtGridPosition@{GetUnitAtGridPosition}!LevelGrid@{LevelGrid}}
+\doxysubsubsection{\texorpdfstring{GetUnitAtGridPosition()}{GetUnitAtGridPosition()}}
+{\footnotesize\ttfamily \label{class_level_grid_a342c61b1e0f5e844f4b4361bb48597f6} 
+\mbox{\hyperlink{class_unit}{Unit}} Level\+Grid.\+Get\+Unit\+At\+Grid\+Position (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{struct_grid_position}{Grid\+Position}}}]{grid\+Position}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line \mbox{\hyperlink{_level_grid_8cs_source_l00088}{88}} of file \mbox{\hyperlink{_level_grid_8cs_source}{Level\+Grid.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00089\ \ \ \ \ \{}
+\DoxyCodeLine{00090\ \ \ \ \ \ \ \ \ GridObject\ gridObject\ =\ \mbox{\hyperlink{class_level_grid_a9fc00eaf2e010b35150ad06bc2a232af}{gridSystem}}.GetGridObject(gridPosition);}
+\DoxyCodeLine{00091\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ gridObject.\mbox{\hyperlink{class_grid_object_a314f4f943b2be346a10816030f575559}{GetUnit}}();}
+\DoxyCodeLine{00092\ \ \ \ \ \}}
+
+\end{DoxyCode}
+\Hypertarget{class_level_grid_a9c37a29191a1d331523da3d124da56e2}\index{LevelGrid@{LevelGrid}!GetUnitListAtGridPosition@{GetUnitListAtGridPosition}}
+\index{GetUnitListAtGridPosition@{GetUnitListAtGridPosition}!LevelGrid@{LevelGrid}}
+\doxysubsubsection{\texorpdfstring{GetUnitListAtGridPosition()}{GetUnitListAtGridPosition()}}
+{\footnotesize\ttfamily \label{class_level_grid_a9c37a29191a1d331523da3d124da56e2} 
+List$<$ \mbox{\hyperlink{class_unit}{Unit}} $>$ Level\+Grid.\+Get\+Unit\+List\+At\+Grid\+Position (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{struct_grid_position}{Grid\+Position}}}]{grid\+Position}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line \mbox{\hyperlink{_level_grid_8cs_source_l00036}{36}} of file \mbox{\hyperlink{_level_grid_8cs_source}{Level\+Grid.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00037\ \ \ \ \ \{}
+\DoxyCodeLine{00038\ \ \ \ \ \ \ \ \ GridObject\ gridObject\ =\ \mbox{\hyperlink{class_level_grid_a9fc00eaf2e010b35150ad06bc2a232af}{gridSystem}}.GetGridObject(gridPosition);}
+\DoxyCodeLine{00039\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (gridObject\ !=\ \textcolor{keyword}{null})}
+\DoxyCodeLine{00040\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00041\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ gridObject.\mbox{\hyperlink{class_grid_object_a918d48068c0ace9a430671df2c5beae5}{GetUnitList}}();}
+\DoxyCodeLine{00042\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00043\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{null};}
+\DoxyCodeLine{00044\ \ \ \ \ \}}
+
+\end{DoxyCode}
+\Hypertarget{class_level_grid_a8b94a0a920113c353802b9d920fea43a}\index{LevelGrid@{LevelGrid}!GetWidth@{GetWidth}}
+\index{GetWidth@{GetWidth}!LevelGrid@{LevelGrid}}
+\doxysubsubsection{\texorpdfstring{GetWidth()}{GetWidth()}}
+{\footnotesize\ttfamily \label{class_level_grid_a8b94a0a920113c353802b9d920fea43a} 
+int Level\+Grid.\+Get\+Width (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line \mbox{\hyperlink{_level_grid_8cs_source_l00073}{73}} of file \mbox{\hyperlink{_level_grid_8cs_source}{Level\+Grid.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00074\ \ \ \ \ \{}
+\DoxyCodeLine{00075\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{class_level_grid_a9fc00eaf2e010b35150ad06bc2a232af}{gridSystem}}.GetWidth();}
+\DoxyCodeLine{00076\ \ \ \ \ \}}
+
+\end{DoxyCode}
+\Hypertarget{class_level_grid_a0c9229e022b654040de6b7b2d7a5b73f}\index{LevelGrid@{LevelGrid}!GetWorldPosition@{GetWorldPosition}}
+\index{GetWorldPosition@{GetWorldPosition}!LevelGrid@{LevelGrid}}
+\doxysubsubsection{\texorpdfstring{GetWorldPosition()}{GetWorldPosition()}}
+{\footnotesize\ttfamily \label{class_level_grid_a0c9229e022b654040de6b7b2d7a5b73f} 
+Vector3 Level\+Grid.\+Get\+World\+Position (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{struct_grid_position}{Grid\+Position}}}]{grid\+Position}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line \mbox{\hyperlink{_level_grid_8cs_source_l00063}{63}} of file \mbox{\hyperlink{_level_grid_8cs_source}{Level\+Grid.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00064\ \ \ \ \ \{}
+\DoxyCodeLine{00065\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{class_level_grid_a9fc00eaf2e010b35150ad06bc2a232af}{gridSystem}}.GetWorldPosition(gridPosition);}
+\DoxyCodeLine{00066\ \ \ \ \ \}}
+
+\end{DoxyCode}
+\Hypertarget{class_level_grid_ae37c0843b9a37392fee852c36dab849f}\index{LevelGrid@{LevelGrid}!HasAnyUnitOnGridPosition@{HasAnyUnitOnGridPosition}}
+\index{HasAnyUnitOnGridPosition@{HasAnyUnitOnGridPosition}!LevelGrid@{LevelGrid}}
+\doxysubsubsection{\texorpdfstring{HasAnyUnitOnGridPosition()}{HasAnyUnitOnGridPosition()}}
+{\footnotesize\ttfamily \label{class_level_grid_ae37c0843b9a37392fee852c36dab849f} 
+bool Level\+Grid.\+Has\+Any\+Unit\+On\+Grid\+Position (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{struct_grid_position}{Grid\+Position}}}]{grid\+Position}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line \mbox{\hyperlink{_level_grid_8cs_source_l00082}{82}} of file \mbox{\hyperlink{_level_grid_8cs_source}{Level\+Grid.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00083\ \ \ \ \ \{}
+\DoxyCodeLine{00084\ \ \ \ \ \ \ \ \ GridObject\ gridObject\ =\ \mbox{\hyperlink{class_level_grid_a9fc00eaf2e010b35150ad06bc2a232af}{gridSystem}}.GetGridObject(gridPosition);}
+\DoxyCodeLine{00085\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ gridObject.\mbox{\hyperlink{class_grid_object_a7bb2690dc0e3d48d1c3d68b9fbfbaae9}{HasAnyUnit}}();}
+\DoxyCodeLine{00086\ \ \ \ \ \}}
+
+\end{DoxyCode}
+\Hypertarget{class_level_grid_a44154127c6c78b958c7e84a3d8427192}\index{LevelGrid@{LevelGrid}!IsValidGridPosition@{IsValidGridPosition}}
+\index{IsValidGridPosition@{IsValidGridPosition}!LevelGrid@{LevelGrid}}
+\doxysubsubsection{\texorpdfstring{IsValidGridPosition()}{IsValidGridPosition()}}
+{\footnotesize\ttfamily \label{class_level_grid_a44154127c6c78b958c7e84a3d8427192} 
+bool Level\+Grid.\+Is\+Valid\+Grid\+Position (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{struct_grid_position}{Grid\+Position}}}]{grid\+Position}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line \mbox{\hyperlink{_level_grid_8cs_source_l00068}{68}} of file \mbox{\hyperlink{_level_grid_8cs_source}{Level\+Grid.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00069\ \ \ \ \ \{}
+\DoxyCodeLine{00070\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{class_level_grid_a9fc00eaf2e010b35150ad06bc2a232af}{gridSystem}}.IsValidGridPosition(gridPosition);}
+\DoxyCodeLine{00071\ \ \ \ \ \}}
+
+\end{DoxyCode}
+\Hypertarget{class_level_grid_a1fbeb14df5ca95020f2cf67037d14e50}\index{LevelGrid@{LevelGrid}!RebuildOccupancyFromScene@{RebuildOccupancyFromScene}}
+\index{RebuildOccupancyFromScene@{RebuildOccupancyFromScene}!LevelGrid@{LevelGrid}}
+\doxysubsubsection{\texorpdfstring{RebuildOccupancyFromScene()}{RebuildOccupancyFromScene()}}
+{\footnotesize\ttfamily \label{class_level_grid_a1fbeb14df5ca95020f2cf67037d14e50} 
+void Level\+Grid.\+Rebuild\+Occupancy\+From\+Scene (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line \mbox{\hyperlink{_level_grid_8cs_source_l00108}{108}} of file \mbox{\hyperlink{_level_grid_8cs_source}{Level\+Grid.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00109\ \ \ \ \ \{}
+\DoxyCodeLine{00110\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_level_grid_adf9aa958722cc25c2db7303e7fd6b5d5}{ClearAllOccupancy}}();}
+\DoxyCodeLine{00111\ \ \ \ \ \ \ \ \ var\ units\ =\ Object.FindObjectsByType<Unit>(FindObjectsSortMode.None);}
+\DoxyCodeLine{00112\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{foreach}\ (var\ u\ \textcolor{keywordflow}{in}\ units)}
+\DoxyCodeLine{00113\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00114\ \ \ \ \ \ \ \ \ \ \ \ \ var\ gp\ =\ \mbox{\hyperlink{class_level_grid_ac5cd7d80c94447425224ac930d6a9a3a}{GetGridPosition}}(u.transform.position);}
+\DoxyCodeLine{00115\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_level_grid_a9036911e6cb7c673cca01e380822af22}{AddUnitAtGridPosition}}(gp,\ u);}
+\DoxyCodeLine{00116\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00117\ \ \ \ \ \}}
+
+\end{DoxyCode}
+\Hypertarget{class_level_grid_a77b366dc212c6697e1d9ffe6c1cd96c5}\index{LevelGrid@{LevelGrid}!RemoveUnitAtGridPosition@{RemoveUnitAtGridPosition}}
+\index{RemoveUnitAtGridPosition@{RemoveUnitAtGridPosition}!LevelGrid@{LevelGrid}}
+\doxysubsubsection{\texorpdfstring{RemoveUnitAtGridPosition()}{RemoveUnitAtGridPosition()}}
+{\footnotesize\ttfamily \label{class_level_grid_a77b366dc212c6697e1d9ffe6c1cd96c5} 
+void Level\+Grid.\+Remove\+Unit\+At\+Grid\+Position (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{struct_grid_position}{Grid\+Position}}}]{grid\+Position}{, }\item[{\mbox{\hyperlink{class_unit}{Unit}}}]{unit}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line \mbox{\hyperlink{_level_grid_8cs_source_l00046}{46}} of file \mbox{\hyperlink{_level_grid_8cs_source}{Level\+Grid.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00047\ \ \ \ \ \{}
+\DoxyCodeLine{00048\ \ \ \ \ \ \ \ \ GridObject\ gridObject\ =\ \mbox{\hyperlink{class_level_grid_a9fc00eaf2e010b35150ad06bc2a232af}{gridSystem}}.GetGridObject(gridPosition);}
+\DoxyCodeLine{00049\ \ \ \ \ \ \ \ \ gridObject.\mbox{\hyperlink{class_grid_object_a0baed355a4a3bc3901e819831c471fa5}{RemoveUnit}}(unit);}
+\DoxyCodeLine{00050\ \ \ \ \ \}}
+
+\end{DoxyCode}
+\Hypertarget{class_level_grid_aede42508e6a06f5a7969f85957944b5b}\index{LevelGrid@{LevelGrid}!UnitMoveToGridPosition@{UnitMoveToGridPosition}}
+\index{UnitMoveToGridPosition@{UnitMoveToGridPosition}!LevelGrid@{LevelGrid}}
+\doxysubsubsection{\texorpdfstring{UnitMoveToGridPosition()}{UnitMoveToGridPosition()}}
+{\footnotesize\ttfamily \label{class_level_grid_aede42508e6a06f5a7969f85957944b5b} 
+void Level\+Grid.\+Unit\+Move\+To\+Grid\+Position (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{struct_grid_position}{Grid\+Position}}}]{from\+Grid\+Position}{, }\item[{\mbox{\hyperlink{struct_grid_position}{Grid\+Position}}}]{to\+Grid\+Position}{, }\item[{\mbox{\hyperlink{class_unit}{Unit}}}]{unit}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line \mbox{\hyperlink{_level_grid_8cs_source_l00052}{52}} of file \mbox{\hyperlink{_level_grid_8cs_source}{Level\+Grid.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00053\ \ \ \ \ \{}
+\DoxyCodeLine{00054\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_level_grid_a77b366dc212c6697e1d9ffe6c1cd96c5}{RemoveUnitAtGridPosition}}(fromGridPosition,\ unit);}
+\DoxyCodeLine{00055\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_level_grid_a9036911e6cb7c673cca01e380822af22}{AddUnitAtGridPosition}}(toGridPosition,\ unit);}
+\DoxyCodeLine{00056\ \ \ \ \ \}}
+
+\end{DoxyCode}
+
+
+\doxysubsection{Member Data Documentation}
+\Hypertarget{class_level_grid_a485dee10776c4d0c45947659c99c2cea}\index{LevelGrid@{LevelGrid}!debugPrefab@{debugPrefab}}
+\index{debugPrefab@{debugPrefab}!LevelGrid@{LevelGrid}}
+\doxysubsubsection{\texorpdfstring{debugPrefab}{debugPrefab}}
+{\footnotesize\ttfamily \label{class_level_grid_a485dee10776c4d0c45947659c99c2cea} 
+Transform Level\+Grid.\+debug\+Prefab\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_level_grid_8cs_source_l00012}{12}} of file \mbox{\hyperlink{_level_grid_8cs_source}{Level\+Grid.\+cs}}.
+
+\Hypertarget{class_level_grid_a9fc00eaf2e010b35150ad06bc2a232af}\index{LevelGrid@{LevelGrid}!gridSystem@{gridSystem}}
+\index{gridSystem@{gridSystem}!LevelGrid@{LevelGrid}}
+\doxysubsubsection{\texorpdfstring{gridSystem}{gridSystem}}
+{\footnotesize\ttfamily \label{class_level_grid_a9fc00eaf2e010b35150ad06bc2a232af} 
+\mbox{\hyperlink{class_grid_system}{Grid\+System}} Level\+Grid.\+grid\+System\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_level_grid_8cs_source_l00013}{13}} of file \mbox{\hyperlink{_level_grid_8cs_source}{Level\+Grid.\+cs}}.
+
+
+
+\doxysubsection{Property Documentation}
+\Hypertarget{class_level_grid_a2289e5f589c75631e3a0348a0992b7d5}\index{LevelGrid@{LevelGrid}!Instance@{Instance}}
+\index{Instance@{Instance}!LevelGrid@{LevelGrid}}
+\doxysubsubsection{\texorpdfstring{Instance}{Instance}}
+{\footnotesize\ttfamily \label{class_level_grid_a2289e5f589c75631e3a0348a0992b7d5} 
+\mbox{\hyperlink{class_level_grid}{Level\+Grid}} Level\+Grid.\+Instance\hspace{0.3cm}{\ttfamily [static]}, {\ttfamily [get]}, {\ttfamily [private set]}}
+
+
+
+Definition at line \mbox{\hyperlink{_level_grid_8cs_source_l00011}{11}} of file \mbox{\hyperlink{_level_grid_8cs_source}{Level\+Grid.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00011\ \{\ \textcolor{keyword}{get};\ \textcolor{keyword}{private}\ \textcolor{keyword}{set};\ \}}
+
+\end{DoxyCode}
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+D\+:/\+Unity/\+Rogue\+Shooter/\+Rogue\+Shooter/\+Assets/\+Scripts/\+Grid/\mbox{\hyperlink{_level_grid_8cs}{Level\+Grid.\+cs}}\end{DoxyCompactItemize}

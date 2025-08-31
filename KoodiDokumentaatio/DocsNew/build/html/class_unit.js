@@ -1,0 +1,27 @@
+var class_unit =
+[
+    [ "Awake", "class_unit.html#aa5d760cd67e37717756deebe958d70ae", null ],
+    [ "CanSpendActionPointsToTakeAction", "class_unit.html#acb7946d692a60a71aa9db3bab5b7fd52", null ],
+    [ "Damage", "class_unit.html#abf43d9f4c8ccd6f284a1e8982a226d5d", null ],
+    [ "GetActionPoints", "class_unit.html#a9d86c07e2b08fe284b9e37c2e61a2eed", null ],
+    [ "GetBaseActionsArray", "class_unit.html#ae8fafcccd25eaf19c961b78871fd244f", null ],
+    [ "GetGridPosition", "class_unit.html#ad60652a863c76a3d889aa9d47a467688", null ],
+    [ "GetMoveAction", "class_unit.html#a2900e147bfdf99ccb8c0197b3721198c", null ],
+    [ "GetSpinAction", "class_unit.html#a43ba26d6e6b1887546ce08527a15f048", null ],
+    [ "GetWorldPosition", "class_unit.html#a2dbd8fe78c5be94df2b81816fffe2df0", null ],
+    [ "IsEnemy", "class_unit.html#a8b4a979fcc5105ba9fec1629284a6653", null ],
+    [ "OnDestroy", "class_unit.html#a212dff995fdc4d3024490c4b33c94f39", null ],
+    [ "SpendActionPoints", "class_unit.html#addfc5e3aa15d4fd48ecaaf8d0a21bcb1", null ],
+    [ "Start", "class_unit.html#a9c1ff7b7289c2ed898bc92a0c3027058", null ],
+    [ "TrySpendActionPointsToTakeAction", "class_unit.html#afd8995267e93ddb4b652dd3dfead1fd4", null ],
+    [ "TurnSystem_OnTurnChanged", "class_unit.html#a4035fa9d4cf49a5f267901bbbd0cc674", null ],
+    [ "Update", "class_unit.html#a99a69e981cce14a41538066318308b08", null ],
+    [ "ACTION_POINTS_MAX", "class_unit.html#aaf0ad9663540b0e3d85f23c2e8fb56b8", null ],
+    [ "actionPoints", "class_unit.html#adcd4c8b7e9910ca63e7f89a37c7c42e5", null ],
+    [ "baseActionsArray", "class_unit.html#aa77d1ecae15e2e134a0ca53d9f4d1efc", null ],
+    [ "gridPosition", "class_unit.html#a5e73973e0332cef550be362e294474a7", null ],
+    [ "isEnemy", "class_unit.html#aa7fef9481be9e9cc96b2338ac284f97a", null ],
+    [ "moveAction", "class_unit.html#aa504edf0ce93dae6cd743b0d0e9c5f13", null ],
+    [ "spinAction", "class_unit.html#ad47e1c5a7462f7c89d1e9daa289e63c3", null ],
+    [ "OnAnyActionPointsChanged", "class_unit.html#a24cce37c6f78356f0624a0bf5aaa25af", null ]
+];

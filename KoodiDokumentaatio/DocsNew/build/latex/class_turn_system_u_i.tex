@@ -1,0 +1,292 @@
+\doxysection{Turn\+System\+UI Class Reference}
+\hypertarget{class_turn_system_u_i}{}\label{class_turn_system_u_i}\index{TurnSystemUI@{TurnSystemUI}}
+Inheritance diagram for Turn\+System\+UI\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{class_turn_system_u_i}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{class_turn_system_u_i_a1cba6fa77d0086227db2270e80d9eadf}{Set\+Can\+Act}} (bool can\+Act)
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Private Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{class_turn_system_u_i_aaa58c5d15026aa43affc5842fdb2d642}{Start}} ()
+\item 
+void \mbox{\hyperlink{class_turn_system_u_i_a32ae1c21880f66a1d565a19d9084b0d1}{On\+Disable}} ()
+\item 
+void \mbox{\hyperlink{class_turn_system_u_i_a15760c56cafa6a125dff1d882f82ffff}{On\+End\+Turn\+Clicked}} ()
+\item 
+void \mbox{\hyperlink{class_turn_system_u_i_a86a0d290c1e9f87b891ec4d999f003c8}{Cache\+Local\+Player\+Controller}} ()
+\item 
+void \mbox{\hyperlink{class_turn_system_u_i_a31e3952ffbed4cf1823a32cb3b0c4b0e}{Turn\+System\+\_\+\+On\+Turn\+Changed}} (object s, Event\+Args e)
+\item 
+void \mbox{\hyperlink{class_turn_system_u_i_a3f941f09c639d693328a6f719ff6cf25}{Update\+For\+Singleplayer}} ()
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+Button \mbox{\hyperlink{class_turn_system_u_i_a0973b7fb61d9a597779d296e4519b6e3}{end\+Turn\+Button}}
+\item 
+Text\+Mesh\+Pro\+UGUI \mbox{\hyperlink{class_turn_system_u_i_addce87c79fde218fc95c12042bad3b43}{turn\+Number\+Text}}
+\item 
+Game\+Object \mbox{\hyperlink{class_turn_system_u_i_a7559ab1d0a7c1225e239d62200925758}{enemy\+Turn\+Visual\+Game\+Object}}
+\item 
+bool \mbox{\hyperlink{class_turn_system_u_i_a19df9f8c3a2729d48027b43725cba65d}{is\+Coop}}
+\item 
+\mbox{\hyperlink{class_player_controller}{Player\+Controller}} \mbox{\hyperlink{class_turn_system_u_i_a334009937c4b790531436af547d61d64}{local\+Player\+Controller}}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+
+
+Definition at line \mbox{\hyperlink{_turn_system_u_i_8cs_source_l00007}{7}} of file \mbox{\hyperlink{_turn_system_u_i_8cs_source}{Turn\+System\+UI.\+cs}}.
+
+
+
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_turn_system_u_i_a86a0d290c1e9f87b891ec4d999f003c8}\index{TurnSystemUI@{TurnSystemUI}!CacheLocalPlayerController@{CacheLocalPlayerController}}
+\index{CacheLocalPlayerController@{CacheLocalPlayerController}!TurnSystemUI@{TurnSystemUI}}
+\doxysubsubsection{\texorpdfstring{CacheLocalPlayerController()}{CacheLocalPlayerController()}}
+{\footnotesize\ttfamily \label{class_turn_system_u_i_a86a0d290c1e9f87b891ec4d999f003c8} 
+void Turn\+System\+UI.\+Cache\+Local\+Player\+Controller (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_turn_system_u_i_8cs_source_l00099}{99}} of file \mbox{\hyperlink{_turn_system_u_i_8cs_source}{Turn\+System\+UI.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00100\ \ \ \ \ \{}
+\DoxyCodeLine{00101\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{class_turn_system_u_i_a334009937c4b790531436af547d61d64}{localPlayerController}}\ ==\ \textcolor{keyword}{null})}
+\DoxyCodeLine{00102\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00103\ \ \ \ \ \ \ \ \ \ \ \ \ var\ conn\ =\ NetworkClient.connection;}
+\DoxyCodeLine{00104\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (conn\ !=\ \textcolor{keyword}{null}\ \&\&\ conn.identity\ !=\ \textcolor{keyword}{null})}
+\DoxyCodeLine{00105\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00106\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_turn_system_u_i_a334009937c4b790531436af547d61d64}{localPlayerController}}\ =\ conn.identity.GetComponent<PlayerController>();}
+\DoxyCodeLine{00107\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00108\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00109\ \ \ \ \ \}}
+
+\end{DoxyCode}
+\Hypertarget{class_turn_system_u_i_a32ae1c21880f66a1d565a19d9084b0d1}\index{TurnSystemUI@{TurnSystemUI}!OnDisable@{OnDisable}}
+\index{OnDisable@{OnDisable}!TurnSystemUI@{TurnSystemUI}}
+\doxysubsubsection{\texorpdfstring{OnDisable()}{OnDisable()}}
+{\footnotesize\ttfamily \label{class_turn_system_u_i_a32ae1c21880f66a1d565a19d9084b0d1} 
+void Turn\+System\+UI.\+On\+Disable (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_turn_system_u_i_8cs_source_l00043}{43}} of file \mbox{\hyperlink{_turn_system_u_i_8cs_source}{Turn\+System\+UI.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00044\ \ \ \ \ \{}
+\DoxyCodeLine{00045\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!\mbox{\hyperlink{class_turn_system_u_i_a19df9f8c3a2729d48027b43725cba65d}{isCoop}}\ \&\&\ TurnSystem.Instance\ !=\ \textcolor{keyword}{null})}
+\DoxyCodeLine{00046\ \ \ \ \ \ \ \ \ \ \ \ \ TurnSystem.Instance.OnTurnChanged\ -\/=\ \mbox{\hyperlink{class_turn_system_u_i_a31e3952ffbed4cf1823a32cb3b0c4b0e}{TurnSystem\_OnTurnChanged}};}
+\DoxyCodeLine{00047\ \ \ \ \ \}}
+
+\end{DoxyCode}
+\Hypertarget{class_turn_system_u_i_a15760c56cafa6a125dff1d882f82ffff}\index{TurnSystemUI@{TurnSystemUI}!OnEndTurnClicked@{OnEndTurnClicked}}
+\index{OnEndTurnClicked@{OnEndTurnClicked}!TurnSystemUI@{TurnSystemUI}}
+\doxysubsubsection{\texorpdfstring{OnEndTurnClicked()}{OnEndTurnClicked()}}
+{\footnotesize\ttfamily \label{class_turn_system_u_i_a15760c56cafa6a125dff1d882f82ffff} 
+void Turn\+System\+UI.\+On\+End\+Turn\+Clicked (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_turn_system_u_i_8cs_source_l00062}{62}} of file \mbox{\hyperlink{_turn_system_u_i_8cs_source}{Turn\+System\+UI.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00063\ \ \ \ \ \{}
+\DoxyCodeLine{00064\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Päättele\ co-\/op\ -\/tila\ tilannekohtaisesti\ (ei\ SelectedMode)}}
+\DoxyCodeLine{00065\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ isCoopNow\ =}
+\DoxyCodeLine{00066\ \ \ \ \ \ \ \ \ \ \ \ \ CoopTurnCoordinator.Instance\ !=\ \textcolor{keyword}{null}\ \&\&}
+\DoxyCodeLine{00067\ \ \ \ \ \ \ \ \ \ \ \ \ (NetworkServer.active\ ||\ NetworkClient.isConnected);}
+\DoxyCodeLine{00068\ }
+\DoxyCodeLine{00069\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!isCoopNow)}
+\DoxyCodeLine{00070\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00071\ \ \ \ \ \ \ \ \ \ \ \ \ Debug.Log(\textcolor{stringliteral}{"{}[UI]\ EndTurn\ clicked\ (SP)"{}});}
+\DoxyCodeLine{00072\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (TurnSystem.Instance\ !=\ \textcolor{keyword}{null})}
+\DoxyCodeLine{00073\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00074\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ TurnSystem.Instance.NextTurn();}
+\DoxyCodeLine{00075\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00076\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00077\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00078\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Debug.LogWarning(\textcolor{stringliteral}{"{}[UI]\ TurnSystem.Instance\ is\ null"{}});}
+\DoxyCodeLine{00079\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00080\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{00081\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00082\ }
+\DoxyCodeLine{00083\ \ \ \ \ \ \ \ \ Debug.Log(\textcolor{stringliteral}{"{}[UI]\ EndTurn\ clicked\ (Co-\/op)"{}});}
+\DoxyCodeLine{00084\ }
+\DoxyCodeLine{00085\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_turn_system_u_i_a86a0d290c1e9f87b891ec4d999f003c8}{CacheLocalPlayerController}}();}
+\DoxyCodeLine{00086\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{class_turn_system_u_i_a334009937c4b790531436af547d61d64}{localPlayerController}}\ ==\ \textcolor{keyword}{null})}
+\DoxyCodeLine{00087\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00088\ \ \ \ \ \ \ \ \ \ \ \ \ Debug.LogWarning(\textcolor{stringliteral}{"{}[UI]\ Local\ PlayerController\ not\ found"{}});}
+\DoxyCodeLine{00089\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{00090\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00091\ }
+\DoxyCodeLine{00092\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Estä\ tuplaklikki}}
+\DoxyCodeLine{00093\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_turn_system_u_i_a1cba6fa77d0086227db2270e80d9eadf}{SetCanAct}}(\textcolor{keyword}{false});}
+\DoxyCodeLine{00094\ }
+\DoxyCodeLine{00095\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Lähetä\ serverille}}
+\DoxyCodeLine{00096\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_turn_system_u_i_a334009937c4b790531436af547d61d64}{localPlayerController}}.ClickEndTurn();}
+\DoxyCodeLine{00097\ \ \ \ \ \}}
+
+\end{DoxyCode}
+\Hypertarget{class_turn_system_u_i_a1cba6fa77d0086227db2270e80d9eadf}\index{TurnSystemUI@{TurnSystemUI}!SetCanAct@{SetCanAct}}
+\index{SetCanAct@{SetCanAct}!TurnSystemUI@{TurnSystemUI}}
+\doxysubsubsection{\texorpdfstring{SetCanAct()}{SetCanAct()}}
+{\footnotesize\ttfamily \label{class_turn_system_u_i_a1cba6fa77d0086227db2270e80d9eadf} 
+void Turn\+System\+UI.\+Set\+Can\+Act (\begin{DoxyParamCaption}\item[{bool}]{can\+Act}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line \mbox{\hyperlink{_turn_system_u_i_8cs_source_l00050}{50}} of file \mbox{\hyperlink{_turn_system_u_i_8cs_source}{Turn\+System\+UI.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00051\ \ \ \ \ \{}
+\DoxyCodeLine{00052\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{class_turn_system_u_i_a0973b7fb61d9a597779d296e4519b6e3}{endTurnButton}}\ ==\ \textcolor{keyword}{null})\ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{00053\ }
+\DoxyCodeLine{00054\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_turn_system_u_i_a0973b7fb61d9a597779d296e4519b6e3}{endTurnButton}}.onClick.RemoveListener(\mbox{\hyperlink{class_turn_system_u_i_a15760c56cafa6a125dff1d882f82ffff}{OnEndTurnClicked}});}
+\DoxyCodeLine{00055\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (canAct)\ \mbox{\hyperlink{class_turn_system_u_i_a0973b7fb61d9a597779d296e4519b6e3}{endTurnButton}}.onClick.AddListener(\mbox{\hyperlink{class_turn_system_u_i_a15760c56cafa6a125dff1d882f82ffff}{OnEndTurnClicked}});}
+\DoxyCodeLine{00056\ }
+\DoxyCodeLine{00057\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_turn_system_u_i_a0973b7fb61d9a597779d296e4519b6e3}{endTurnButton}}.gameObject.SetActive(canAct);\ \ \ \textcolor{comment}{//\ jos\ haluat\ pitää\ aina\ näkyvissä,\ vaihda\ SetActive(true)}}
+\DoxyCodeLine{00058\ \ \ \ \ \ \ \ \ endTurnButton.interactable\ =\ canAct;}
+\DoxyCodeLine{00059\ \ \ \ \ \}}
+
+\end{DoxyCode}
+\Hypertarget{class_turn_system_u_i_aaa58c5d15026aa43affc5842fdb2d642}\index{TurnSystemUI@{TurnSystemUI}!Start@{Start}}
+\index{Start@{Start}!TurnSystemUI@{TurnSystemUI}}
+\doxysubsubsection{\texorpdfstring{Start()}{Start()}}
+{\footnotesize\ttfamily \label{class_turn_system_u_i_aaa58c5d15026aa43affc5842fdb2d642} 
+void Turn\+System\+UI.\+Start (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_turn_system_u_i_8cs_source_l00016}{16}} of file \mbox{\hyperlink{_turn_system_u_i_8cs_source}{Turn\+System\+UI.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00017\ \ \ \ \ \{}
+\DoxyCodeLine{00018\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_turn_system_u_i_a19df9f8c3a2729d48027b43725cba65d}{isCoop}}\ =\ GameModeManager.SelectedMode\ ==\ \mbox{\hyperlink{_game_mode_manager_8cs_aaf5ef5a17b53e9997c837b07015589de}{GameMode}}.CoOp;}
+\DoxyCodeLine{00019\ }
+\DoxyCodeLine{00020\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ kiinnitä\ handler\ tasan\ kerran}}
+\DoxyCodeLine{00021\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{class_turn_system_u_i_a0973b7fb61d9a597779d296e4519b6e3}{endTurnButton}}\ !=\ \textcolor{keyword}{null})}
+\DoxyCodeLine{00022\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00023\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_turn_system_u_i_a0973b7fb61d9a597779d296e4519b6e3}{endTurnButton}}.onClick.RemoveAllListeners();}
+\DoxyCodeLine{00024\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_turn_system_u_i_a0973b7fb61d9a597779d296e4519b6e3}{endTurnButton}}.onClick.AddListener(\mbox{\hyperlink{class_turn_system_u_i_a15760c56cafa6a125dff1d882f82ffff}{OnEndTurnClicked}});}
+\DoxyCodeLine{00025\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00026\ }
+\DoxyCodeLine{00027\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{class_turn_system_u_i_a19df9f8c3a2729d48027b43725cba65d}{isCoop}})}
+\DoxyCodeLine{00028\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00029\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Co-\/opissa\ nappi\ on\ DISABLED\ kunnes\ serveri\ kertoo\ että\ saa\ toimia}}
+\DoxyCodeLine{00030\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_turn_system_u_i_a1cba6fa77d0086227db2270e80d9eadf}{SetCanAct}}(\textcolor{keyword}{false});}
+\DoxyCodeLine{00031\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00032\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00033\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00034\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Singleplayer:\ vanha\ eventti}}
+\DoxyCodeLine{00035\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (TurnSystem.Instance\ !=\ \textcolor{keyword}{null})}
+\DoxyCodeLine{00036\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00037\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ TurnSystem.Instance.OnTurnChanged\ +=\ \mbox{\hyperlink{class_turn_system_u_i_a31e3952ffbed4cf1823a32cb3b0c4b0e}{TurnSystem\_OnTurnChanged}};}
+\DoxyCodeLine{00038\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_turn_system_u_i_a3f941f09c639d693328a6f719ff6cf25}{UpdateForSingleplayer}}();}
+\DoxyCodeLine{00039\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00040\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00041\ \ \ \ \ \}}
+
+\end{DoxyCode}
+\Hypertarget{class_turn_system_u_i_a31e3952ffbed4cf1823a32cb3b0c4b0e}\index{TurnSystemUI@{TurnSystemUI}!TurnSystem\_OnTurnChanged@{TurnSystem\_OnTurnChanged}}
+\index{TurnSystem\_OnTurnChanged@{TurnSystem\_OnTurnChanged}!TurnSystemUI@{TurnSystemUI}}
+\doxysubsubsection{\texorpdfstring{TurnSystem\_OnTurnChanged()}{TurnSystem\_OnTurnChanged()}}
+{\footnotesize\ttfamily \label{class_turn_system_u_i_a31e3952ffbed4cf1823a32cb3b0c4b0e} 
+void Turn\+System\+UI.\+Turn\+System\+\_\+\+On\+Turn\+Changed (\begin{DoxyParamCaption}\item[{object}]{s}{, }\item[{Event\+Args}]{e}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [private]}}
+
+\Hypertarget{class_turn_system_u_i_a3f941f09c639d693328a6f719ff6cf25}\index{TurnSystemUI@{TurnSystemUI}!UpdateForSingleplayer@{UpdateForSingleplayer}}
+\index{UpdateForSingleplayer@{UpdateForSingleplayer}!TurnSystemUI@{TurnSystemUI}}
+\doxysubsubsection{\texorpdfstring{UpdateForSingleplayer()}{UpdateForSingleplayer()}}
+{\footnotesize\ttfamily \label{class_turn_system_u_i_a3f941f09c639d693328a6f719ff6cf25} 
+void Turn\+System\+UI.\+Update\+For\+Singleplayer (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_turn_system_u_i_8cs_source_l00114}{114}} of file \mbox{\hyperlink{_turn_system_u_i_8cs_source}{Turn\+System\+UI.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00115\ \ \ \ \ \{}
+\DoxyCodeLine{00116\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{class_turn_system_u_i_addce87c79fde218fc95c12042bad3b43}{turnNumberText}}\ !=\ \textcolor{keyword}{null})}
+\DoxyCodeLine{00117\ \ \ \ \ \ \ \ \ \ \ \ \ turnNumberText.text\ =\ \textcolor{stringliteral}{"{}Turn:\ "{}}\ +\ TurnSystem.Instance.GetTurnNumber();}
+\DoxyCodeLine{00118\ }
+\DoxyCodeLine{00119\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{class_turn_system_u_i_a7559ab1d0a7c1225e239d62200925758}{enemyTurnVisualGameObject}}\ !=\ \textcolor{keyword}{null})}
+\DoxyCodeLine{00120\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_turn_system_u_i_a7559ab1d0a7c1225e239d62200925758}{enemyTurnVisualGameObject}}.SetActive(!TurnSystem.Instance.IsPlayerTurn());}
+\DoxyCodeLine{00121\ }
+\DoxyCodeLine{00122\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{class_turn_system_u_i_a0973b7fb61d9a597779d296e4519b6e3}{endTurnButton}}\ !=\ \textcolor{keyword}{null})}
+\DoxyCodeLine{00123\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_turn_system_u_i_a0973b7fb61d9a597779d296e4519b6e3}{endTurnButton}}.gameObject.SetActive(TurnSystem.Instance.IsPlayerTurn());}
+\DoxyCodeLine{00124\ \ \ \ \ \}}
+
+\end{DoxyCode}
+
+
+\doxysubsection{Member Data Documentation}
+\Hypertarget{class_turn_system_u_i_a0973b7fb61d9a597779d296e4519b6e3}\index{TurnSystemUI@{TurnSystemUI}!endTurnButton@{endTurnButton}}
+\index{endTurnButton@{endTurnButton}!TurnSystemUI@{TurnSystemUI}}
+\doxysubsubsection{\texorpdfstring{endTurnButton}{endTurnButton}}
+{\footnotesize\ttfamily \label{class_turn_system_u_i_a0973b7fb61d9a597779d296e4519b6e3} 
+Button Turn\+System\+UI.\+end\+Turn\+Button\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_turn_system_u_i_8cs_source_l00009}{9}} of file \mbox{\hyperlink{_turn_system_u_i_8cs_source}{Turn\+System\+UI.\+cs}}.
+
+\Hypertarget{class_turn_system_u_i_a7559ab1d0a7c1225e239d62200925758}\index{TurnSystemUI@{TurnSystemUI}!enemyTurnVisualGameObject@{enemyTurnVisualGameObject}}
+\index{enemyTurnVisualGameObject@{enemyTurnVisualGameObject}!TurnSystemUI@{TurnSystemUI}}
+\doxysubsubsection{\texorpdfstring{enemyTurnVisualGameObject}{enemyTurnVisualGameObject}}
+{\footnotesize\ttfamily \label{class_turn_system_u_i_a7559ab1d0a7c1225e239d62200925758} 
+Game\+Object Turn\+System\+UI.\+enemy\+Turn\+Visual\+Game\+Object\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_turn_system_u_i_8cs_source_l00011}{11}} of file \mbox{\hyperlink{_turn_system_u_i_8cs_source}{Turn\+System\+UI.\+cs}}.
+
+\Hypertarget{class_turn_system_u_i_a19df9f8c3a2729d48027b43725cba65d}\index{TurnSystemUI@{TurnSystemUI}!isCoop@{isCoop}}
+\index{isCoop@{isCoop}!TurnSystemUI@{TurnSystemUI}}
+\doxysubsubsection{\texorpdfstring{isCoop}{isCoop}}
+{\footnotesize\ttfamily \label{class_turn_system_u_i_a19df9f8c3a2729d48027b43725cba65d} 
+bool Turn\+System\+UI.\+is\+Coop\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_turn_system_u_i_8cs_source_l00013}{13}} of file \mbox{\hyperlink{_turn_system_u_i_8cs_source}{Turn\+System\+UI.\+cs}}.
+
+\Hypertarget{class_turn_system_u_i_a334009937c4b790531436af547d61d64}\index{TurnSystemUI@{TurnSystemUI}!localPlayerController@{localPlayerController}}
+\index{localPlayerController@{localPlayerController}!TurnSystemUI@{TurnSystemUI}}
+\doxysubsubsection{\texorpdfstring{localPlayerController}{localPlayerController}}
+{\footnotesize\ttfamily \label{class_turn_system_u_i_a334009937c4b790531436af547d61d64} 
+\mbox{\hyperlink{class_player_controller}{Player\+Controller}} Turn\+System\+UI.\+local\+Player\+Controller\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_turn_system_u_i_8cs_source_l00014}{14}} of file \mbox{\hyperlink{_turn_system_u_i_8cs_source}{Turn\+System\+UI.\+cs}}.
+
+\Hypertarget{class_turn_system_u_i_addce87c79fde218fc95c12042bad3b43}\index{TurnSystemUI@{TurnSystemUI}!turnNumberText@{turnNumberText}}
+\index{turnNumberText@{turnNumberText}!TurnSystemUI@{TurnSystemUI}}
+\doxysubsubsection{\texorpdfstring{turnNumberText}{turnNumberText}}
+{\footnotesize\ttfamily \label{class_turn_system_u_i_addce87c79fde218fc95c12042bad3b43} 
+Text\+Mesh\+Pro\+UGUI Turn\+System\+UI.\+turn\+Number\+Text\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_turn_system_u_i_8cs_source_l00010}{10}} of file \mbox{\hyperlink{_turn_system_u_i_8cs_source}{Turn\+System\+UI.\+cs}}.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+D\+:/\+Unity/\+Rogue\+Shooter/\+Rogue\+Shooter/\+Assets/\+Scripts/\+Player\+Units/\+Units\+Control\+UI/\mbox{\hyperlink{_turn_system_u_i_8cs}{Turn\+System\+UI.\+cs}}\end{DoxyCompactItemize}

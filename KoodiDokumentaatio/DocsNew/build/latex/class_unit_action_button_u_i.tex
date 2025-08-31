@@ -1,0 +1,131 @@
+\doxysection{Unit\+Action\+Button\+UI Class Reference}
+\hypertarget{class_unit_action_button_u_i}{}\label{class_unit_action_button_u_i}\index{UnitActionButtonUI@{UnitActionButtonUI}}
+
+
+This class is responsible for displaying the action button TXT in the UI.  
+
+
+Inheritance diagram for Unit\+Action\+Button\+UI\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{class_unit_action_button_u_i}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{class_unit_action_button_u_i_a938d6af54779f503a9b1d16bbb053d02}{Set\+Base\+Action}} (\mbox{\hyperlink{class_base_action}{Base\+Action}} \mbox{\hyperlink{class_unit_action_button_u_i_adfbe96d342f0f437eff0c2958839d19e}{base\+Action}})
+\item 
+void \mbox{\hyperlink{class_unit_action_button_u_i_a699334c0be8d985d03c479fc52ec367f}{Update\+Selected\+Visual}} ()
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+Text\+Mesh\+Pro\+UGUI \mbox{\hyperlink{class_unit_action_button_u_i_ada6cf7e56a57730c533b33a136b6525a}{text\+Mesh\+Pro}}
+\item 
+Button \mbox{\hyperlink{class_unit_action_button_u_i_a4c8c4cdf11ac4a6e492b69734697164a}{action\+Button}}
+\item 
+Game\+Object \mbox{\hyperlink{class_unit_action_button_u_i_a19920c9fe8bef563573da50a49a17443}{action\+Button\+Selected\+Visual}}
+\item 
+\mbox{\hyperlink{class_base_action}{Base\+Action}} \mbox{\hyperlink{class_unit_action_button_u_i_adfbe96d342f0f437eff0c2958839d19e}{base\+Action}}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+This class is responsible for displaying the action button TXT in the UI. 
+
+Definition at line \mbox{\hyperlink{_unit_action_button_u_i_8cs_source_l00009}{9}} of file \mbox{\hyperlink{_unit_action_button_u_i_8cs_source}{Unit\+Action\+Button\+UI.\+cs}}.
+
+
+
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_unit_action_button_u_i_a938d6af54779f503a9b1d16bbb053d02}\index{UnitActionButtonUI@{UnitActionButtonUI}!SetBaseAction@{SetBaseAction}}
+\index{SetBaseAction@{SetBaseAction}!UnitActionButtonUI@{UnitActionButtonUI}}
+\doxysubsubsection{\texorpdfstring{SetBaseAction()}{SetBaseAction()}}
+{\footnotesize\ttfamily \label{class_unit_action_button_u_i_a938d6af54779f503a9b1d16bbb053d02} 
+void Unit\+Action\+Button\+UI.\+Set\+Base\+Action (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{class_base_action}{Base\+Action}}}]{base\+Action}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line \mbox{\hyperlink{_unit_action_button_u_i_8cs_source_l00017}{17}} of file \mbox{\hyperlink{_unit_action_button_u_i_8cs_source}{Unit\+Action\+Button\+UI.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00018\ \ \ \ \ \{}
+\DoxyCodeLine{00019\ \ \ \ \ \ \ \ \ this.baseAction\ =\ \mbox{\hyperlink{class_unit_action_button_u_i_adfbe96d342f0f437eff0c2958839d19e}{baseAction}};}
+\DoxyCodeLine{00020\ \ \ \ \ \ \ \ \ textMeshPro.text\ =\ \mbox{\hyperlink{class_unit_action_button_u_i_adfbe96d342f0f437eff0c2958839d19e}{baseAction}}.GetActionName().ToUpper();}
+\DoxyCodeLine{00021\ }
+\DoxyCodeLine{00022\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_unit_action_button_u_i_a4c8c4cdf11ac4a6e492b69734697164a}{actionButton}}.onClick.AddListener(()\ =>}
+\DoxyCodeLine{00023\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00024\ \ \ \ \ \ \ \ \ \ \ \ \ UnitActionSystem.Instance.SetSelectedAction(\mbox{\hyperlink{class_unit_action_button_u_i_adfbe96d342f0f437eff0c2958839d19e}{baseAction}});}
+\DoxyCodeLine{00025\ \ \ \ \ \ \ \ \ \}\ );}
+\DoxyCodeLine{00026\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00027\ \ \ \ \ \}}
+
+\end{DoxyCode}
+\Hypertarget{class_unit_action_button_u_i_a699334c0be8d985d03c479fc52ec367f}\index{UnitActionButtonUI@{UnitActionButtonUI}!UpdateSelectedVisual@{UpdateSelectedVisual}}
+\index{UpdateSelectedVisual@{UpdateSelectedVisual}!UnitActionButtonUI@{UnitActionButtonUI}}
+\doxysubsubsection{\texorpdfstring{UpdateSelectedVisual()}{UpdateSelectedVisual()}}
+{\footnotesize\ttfamily \label{class_unit_action_button_u_i_a699334c0be8d985d03c479fc52ec367f} 
+void Unit\+Action\+Button\+UI.\+Update\+Selected\+Visual (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line \mbox{\hyperlink{_unit_action_button_u_i_8cs_source_l00029}{29}} of file \mbox{\hyperlink{_unit_action_button_u_i_8cs_source}{Unit\+Action\+Button\+UI.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00030\ \ \ \ \ \{}
+\DoxyCodeLine{00031\ \ \ \ \ \ \ \ \ BaseAction\ selectedbaseAction\ =\ UnitActionSystem.Instance.GetSelectedAction();}
+\DoxyCodeLine{00032\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_unit_action_button_u_i_a19920c9fe8bef563573da50a49a17443}{actionButtonSelectedVisual}}.SetActive(selectedbaseAction\ ==\ \mbox{\hyperlink{class_unit_action_button_u_i_adfbe96d342f0f437eff0c2958839d19e}{baseAction}});}
+\DoxyCodeLine{00033\ \ \ \ \ \}}
+
+\end{DoxyCode}
+
+
+\doxysubsection{Member Data Documentation}
+\Hypertarget{class_unit_action_button_u_i_a4c8c4cdf11ac4a6e492b69734697164a}\index{UnitActionButtonUI@{UnitActionButtonUI}!actionButton@{actionButton}}
+\index{actionButton@{actionButton}!UnitActionButtonUI@{UnitActionButtonUI}}
+\doxysubsubsection{\texorpdfstring{actionButton}{actionButton}}
+{\footnotesize\ttfamily \label{class_unit_action_button_u_i_a4c8c4cdf11ac4a6e492b69734697164a} 
+Button Unit\+Action\+Button\+UI.\+action\+Button\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_unit_action_button_u_i_8cs_source_l00012}{12}} of file \mbox{\hyperlink{_unit_action_button_u_i_8cs_source}{Unit\+Action\+Button\+UI.\+cs}}.
+
+\Hypertarget{class_unit_action_button_u_i_a19920c9fe8bef563573da50a49a17443}\index{UnitActionButtonUI@{UnitActionButtonUI}!actionButtonSelectedVisual@{actionButtonSelectedVisual}}
+\index{actionButtonSelectedVisual@{actionButtonSelectedVisual}!UnitActionButtonUI@{UnitActionButtonUI}}
+\doxysubsubsection{\texorpdfstring{actionButtonSelectedVisual}{actionButtonSelectedVisual}}
+{\footnotesize\ttfamily \label{class_unit_action_button_u_i_a19920c9fe8bef563573da50a49a17443} 
+Game\+Object Unit\+Action\+Button\+UI.\+action\+Button\+Selected\+Visual\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_unit_action_button_u_i_8cs_source_l00013}{13}} of file \mbox{\hyperlink{_unit_action_button_u_i_8cs_source}{Unit\+Action\+Button\+UI.\+cs}}.
+
+\Hypertarget{class_unit_action_button_u_i_adfbe96d342f0f437eff0c2958839d19e}\index{UnitActionButtonUI@{UnitActionButtonUI}!baseAction@{baseAction}}
+\index{baseAction@{baseAction}!UnitActionButtonUI@{UnitActionButtonUI}}
+\doxysubsubsection{\texorpdfstring{baseAction}{baseAction}}
+{\footnotesize\ttfamily \label{class_unit_action_button_u_i_adfbe96d342f0f437eff0c2958839d19e} 
+\mbox{\hyperlink{class_base_action}{Base\+Action}} Unit\+Action\+Button\+UI.\+base\+Action\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_unit_action_button_u_i_8cs_source_l00015}{15}} of file \mbox{\hyperlink{_unit_action_button_u_i_8cs_source}{Unit\+Action\+Button\+UI.\+cs}}.
+
+\Hypertarget{class_unit_action_button_u_i_ada6cf7e56a57730c533b33a136b6525a}\index{UnitActionButtonUI@{UnitActionButtonUI}!textMeshPro@{textMeshPro}}
+\index{textMeshPro@{textMeshPro}!UnitActionButtonUI@{UnitActionButtonUI}}
+\doxysubsubsection{\texorpdfstring{textMeshPro}{textMeshPro}}
+{\footnotesize\ttfamily \label{class_unit_action_button_u_i_ada6cf7e56a57730c533b33a136b6525a} 
+Text\+Mesh\+Pro\+UGUI Unit\+Action\+Button\+UI.\+text\+Mesh\+Pro\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_unit_action_button_u_i_8cs_source_l00011}{11}} of file \mbox{\hyperlink{_unit_action_button_u_i_8cs_source}{Unit\+Action\+Button\+UI.\+cs}}.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+D\+:/\+Unity/\+Rogue\+Shooter/\+Rogue\+Shooter/\+Assets/\+Scripts/\+Player\+Units/\+Units\+Control\+UI/\mbox{\hyperlink{_unit_action_button_u_i_8cs}{Unit\+Action\+Button\+UI.\+cs}}\end{DoxyCompactItemize}

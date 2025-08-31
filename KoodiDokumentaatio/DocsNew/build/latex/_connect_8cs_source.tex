@@ -1,0 +1,65 @@
+\doxysection{Connect.\+cs}
+\hypertarget{_connect_8cs_source}{}\label{_connect_8cs_source}\index{D:/Unity/RogueShooter/RogueShooter/Assets/Scripts/Oneline/Connect.cs@{D:/Unity/RogueShooter/RogueShooter/Assets/Scripts/Oneline/Connect.cs}}
+\mbox{\hyperlink{_connect_8cs}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\Hypertarget{_connect_8cs_source_l00001}00001\ \textcolor{keyword}{using\ }UnityEngine;}
+\DoxyCodeLine{\Hypertarget{_connect_8cs_source_l00002}00002\ \textcolor{keyword}{using\ }TMPro;}
+\DoxyCodeLine{\Hypertarget{_connect_8cs_source_l00003}00003\ \textcolor{keyword}{using\ }Mirror;}
+\DoxyCodeLine{\Hypertarget{_connect_8cs_source_l00004}00004\ \textcolor{keyword}{using\ }\mbox{\hyperlink{namespace_utp}{Utp}};}
+\DoxyCodeLine{\Hypertarget{_connect_8cs_source_l00005}00005\ }
+\DoxyCodeLine{\Hypertarget{_connect_8cs_source_l00010}\mbox{\hyperlink{class_connect}{00010}}\ \textcolor{keyword}{public}\ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_connect}{Connect}}\ :\ MonoBehaviour}
+\DoxyCodeLine{\Hypertarget{_connect_8cs_source_l00011}00011\ \{}
+\DoxyCodeLine{\Hypertarget{_connect_8cs_source_l00012}\mbox{\hyperlink{class_connect_acc5ff7e06927a04a30576996e2aaf6b6}{00012}}\ \ \ \ \ [SerializeField]\ \textcolor{keyword}{private}\ \mbox{\hyperlink{class_utp_1_1_game_network_manager}{GameNetworkManager}}\ \mbox{\hyperlink{class_connect_acc5ff7e06927a04a30576996e2aaf6b6}{nm}};\ \textcolor{comment}{//\ vedä\ tämä\ Inspectorissa}}
+\DoxyCodeLine{\Hypertarget{_connect_8cs_source_l00013}\mbox{\hyperlink{class_connect_a183b3dac1c8d1f4402b87bb2e96286fe}{00013}}\ \ \ \ \ [SerializeField]\ \textcolor{keyword}{private}\ TMP\_InputField\ \mbox{\hyperlink{class_connect_a183b3dac1c8d1f4402b87bb2e96286fe}{ipField}};\ }
+\DoxyCodeLine{\Hypertarget{_connect_8cs_source_l00014}00014\ }
+\DoxyCodeLine{\Hypertarget{_connect_8cs_source_l00015}\mbox{\hyperlink{class_connect_ac6e2169ca1fe9cb786fdffac1ba9f313}{00015}}\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_connect_ac6e2169ca1fe9cb786fdffac1ba9f313}{Awake}}()}
+\DoxyCodeLine{\Hypertarget{_connect_8cs_source_l00016}00016\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_connect_8cs_source_l00017}00017\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ find\ the\ NetworkManager\ in\ the\ scene\ if\ not\ set\ in\ Inspector}}
+\DoxyCodeLine{\Hypertarget{_connect_8cs_source_l00018}00018\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!\mbox{\hyperlink{class_connect_acc5ff7e06927a04a30576996e2aaf6b6}{nm}})\ \mbox{\hyperlink{class_connect_acc5ff7e06927a04a30576996e2aaf6b6}{nm}}\ =\ NetworkManager.singleton\ as\ \mbox{\hyperlink{class_utp_1_1_game_network_manager}{GameNetworkManager}};}
+\DoxyCodeLine{\Hypertarget{_connect_8cs_source_l00019}00019\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!\mbox{\hyperlink{class_connect_acc5ff7e06927a04a30576996e2aaf6b6}{nm}})\ \mbox{\hyperlink{class_connect_acc5ff7e06927a04a30576996e2aaf6b6}{nm}}\ =\ FindFirstObjectByType<GameNetworkManager>();}
+\DoxyCodeLine{\Hypertarget{_connect_8cs_source_l00020}00020\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!\mbox{\hyperlink{class_connect_acc5ff7e06927a04a30576996e2aaf6b6}{nm}})\ Debug.LogError(\textcolor{stringliteral}{"{}[Connect]\ GameNetworkManager\ not\ found\ in\ scene."{}});}
+\DoxyCodeLine{\Hypertarget{_connect_8cs_source_l00021}00021\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_connect_8cs_source_l00022}00022\ }
+\DoxyCodeLine{\Hypertarget{_connect_8cs_source_l00023}00023\ \ \ \ \ \textcolor{comment}{//\ HOST\ (LAN):\ ei\ Relaytä}}
+\DoxyCodeLine{\Hypertarget{_connect_8cs_source_l00024}\mbox{\hyperlink{class_connect_ab81526e2698d314c2ee361ea2e873336}{00024}}\ \ \ \ \ \textcolor{keyword}{public}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_connect_ab81526e2698d314c2ee361ea2e873336}{HostLAN}}()}
+\DoxyCodeLine{\Hypertarget{_connect_8cs_source_l00025}00025\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_connect_8cs_source_l00026}00026\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_connect_acc5ff7e06927a04a30576996e2aaf6b6}{nm}}.StartStandardHost();\ \textcolor{comment}{//\ tämä\ asettaa\ useRelay=false\ ja\ käynnistää\ hostin}}
+\DoxyCodeLine{\Hypertarget{_connect_8cs_source_l00027}00027\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_connect_8cs_source_l00028}00028\ }
+\DoxyCodeLine{\Hypertarget{_connect_8cs_source_l00029}00029\ \ \ \ \ \textcolor{comment}{//\ CLIENT\ (LAN):\ ei\ Relaytä}}
+\DoxyCodeLine{\Hypertarget{_connect_8cs_source_l00030}\mbox{\hyperlink{class_connect_a7be34d258330c2a7d1ef79f1344a556d}{00030}}\ \ \ \ \ \textcolor{keyword}{public}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_connect_a7be34d258330c2a7d1ef79f1344a556d}{ClientLAN}}()}
+\DoxyCodeLine{\Hypertarget{_connect_8cs_source_l00031}00031\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_connect_8cs_source_l00032}00032\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Jos\ syötekenttä\ puuttuu/tyhjä\ →\ oletus\ localhost\ (sama\ kone)}}
+\DoxyCodeLine{\Hypertarget{_connect_8cs_source_l00033}00033\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{string}\ ip\ =\ (\mbox{\hyperlink{class_connect_a183b3dac1c8d1f4402b87bb2e96286fe}{ipField}}\ !=\ \textcolor{keyword}{null}\ \&\&\ !\textcolor{keywordtype}{string}.IsNullOrWhiteSpace(\mbox{\hyperlink{class_connect_a183b3dac1c8d1f4402b87bb2e96286fe}{ipField}}.text))}
+\DoxyCodeLine{\Hypertarget{_connect_8cs_source_l00034}00034\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ?\ \mbox{\hyperlink{class_connect_a183b3dac1c8d1f4402b87bb2e96286fe}{ipField}}.text.Trim()}
+\DoxyCodeLine{\Hypertarget{_connect_8cs_source_l00035}00035\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ :\ \textcolor{stringliteral}{"{}localhost"{}};\ \textcolor{comment}{//\ tai\ 127.0.0.1}}
+\DoxyCodeLine{\Hypertarget{_connect_8cs_source_l00036}00036\ }
+\DoxyCodeLine{\Hypertarget{_connect_8cs_source_l00037}00037\ \ \ \ \ \ \ \ \ nm.networkAddress\ =\ ip;\ \ \ \textcolor{comment}{//\ <<<\ TÄRKEIN\ KOHTA}}
+\DoxyCodeLine{\Hypertarget{_connect_8cs_source_l00038}00038\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_connect_acc5ff7e06927a04a30576996e2aaf6b6}{nm}}.JoinStandardServer();\ \ \textcolor{comment}{//\ useRelay=false\ ja\ StartClient()}}
+\DoxyCodeLine{\Hypertarget{_connect_8cs_source_l00039}00039\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_connect_8cs_source_l00040}00040\ }
+\DoxyCodeLine{\Hypertarget{_connect_8cs_source_l00041}\mbox{\hyperlink{class_connect_ab2366bb3479a6d53d6a1d827863527fb}{00041}}\ \ \ \ \ \textcolor{keyword}{public}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_connect_ab2366bb3479a6d53d6a1d827863527fb}{Host}}()}
+\DoxyCodeLine{\Hypertarget{_connect_8cs_source_l00042}00042\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_connect_8cs_source_l00043}00043\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!\mbox{\hyperlink{class_connect_acc5ff7e06927a04a30576996e2aaf6b6}{nm}})}
+\DoxyCodeLine{\Hypertarget{_connect_8cs_source_l00044}00044\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_connect_8cs_source_l00045}00045\ \ \ \ \ \ \ \ \ \ \ \ \ Debug.LogError(\textcolor{stringliteral}{"{}[Connect]\ GameNetworkManager\ not\ found\ in\ scene."{}});}
+\DoxyCodeLine{\Hypertarget{_connect_8cs_source_l00046}00046\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{\Hypertarget{_connect_8cs_source_l00047}00047\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_connect_8cs_source_l00048}00048\ }
+\DoxyCodeLine{\Hypertarget{_connect_8cs_source_l00049}00049\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_connect_acc5ff7e06927a04a30576996e2aaf6b6}{nm}}.StartRelayHost(2,\ \textcolor{keyword}{null});}
+\DoxyCodeLine{\Hypertarget{_connect_8cs_source_l00050}00050\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_connect_8cs_source_l00051}00051\ }
+\DoxyCodeLine{\Hypertarget{_connect_8cs_source_l00052}\mbox{\hyperlink{class_connect_abc7be4b44e5b0c4657a4747d39abb8bf}{00052}}\ \ \ \ \ \textcolor{keyword}{public}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_connect_abc7be4b44e5b0c4657a4747d39abb8bf}{Client}}\ ()}
+\DoxyCodeLine{\Hypertarget{_connect_8cs_source_l00053}00053\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_connect_8cs_source_l00054}00054\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!\mbox{\hyperlink{class_connect_acc5ff7e06927a04a30576996e2aaf6b6}{nm}})}
+\DoxyCodeLine{\Hypertarget{_connect_8cs_source_l00055}00055\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_connect_8cs_source_l00056}00056\ \ \ \ \ \ \ \ \ \ \ \ \ Debug.LogError(\textcolor{stringliteral}{"{}[Connect]\ GameNetworkManager\ not\ found\ in\ scene."{}});}
+\DoxyCodeLine{\Hypertarget{_connect_8cs_source_l00057}00057\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{\Hypertarget{_connect_8cs_source_l00058}00058\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_connect_8cs_source_l00059}00059\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{_connect_8cs_source_l00060}00060\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_connect_acc5ff7e06927a04a30576996e2aaf6b6}{nm}}.JoinRelayServer();}
+\DoxyCodeLine{\Hypertarget{_connect_8cs_source_l00061}00061\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_connect_8cs_source_l00062}00062\ }
+\DoxyCodeLine{\Hypertarget{_connect_8cs_source_l00063}00063\ \}}
+
+\end{DoxyCode}

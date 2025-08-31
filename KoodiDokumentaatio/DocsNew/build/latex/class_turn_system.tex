@@ -1,0 +1,204 @@
+\doxysection{Turn\+System Class Reference}
+\hypertarget{class_turn_system}{}\label{class_turn_system}\index{TurnSystem@{TurnSystem}}
+Inheritance diagram for Turn\+System\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{class_turn_system}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{class_turn_system_a1d01c677281cb15fbfcf758f8727c548}{Next\+Turn}} ()
+\item 
+int \mbox{\hyperlink{class_turn_system_ab5dc35083f1a9831cddde97453289da0}{Get\+Turn\+Number}} ()
+\item 
+bool \mbox{\hyperlink{class_turn_system_a0cd72934034eb02591fb17a108db3e94}{Is\+Player\+Turn}} ()
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Properties}
+\begin{DoxyCompactItemize}
+\item 
+static \mbox{\hyperlink{class_turn_system}{Turn\+System}} \mbox{\hyperlink{class_turn_system_afb88390bd634f5f5d61677c68819ef3b}{Instance}}\hspace{0.3cm}{\ttfamily  \mbox{[}get, private set\mbox{]}}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Events}
+\begin{DoxyCompactItemize}
+\item 
+Event\+Handler \mbox{\hyperlink{class_turn_system_aa239da2eeb9957252951f7993ae98269}{On\+Turn\+Changed}}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Private Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{class_turn_system_a2ec4dabc2bb84d89da39538c16411db5}{Awake}} ()
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+int \mbox{\hyperlink{class_turn_system_ab6863e239320f2b4fc69f687f5a19d72}{turn\+Number}} = 1
+\item 
+bool \mbox{\hyperlink{class_turn_system_ab04d22a0dca92b505dccf74d85a6bb06}{is\+Player\+Turn}} = true
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+
+
+Definition at line \mbox{\hyperlink{_turn_system_8cs_source_l00004}{4}} of file \mbox{\hyperlink{_turn_system_8cs_source}{Turn\+System.\+cs}}.
+
+
+
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_turn_system_a2ec4dabc2bb84d89da39538c16411db5}\index{TurnSystem@{TurnSystem}!Awake@{Awake}}
+\index{Awake@{Awake}!TurnSystem@{TurnSystem}}
+\doxysubsubsection{\texorpdfstring{Awake()}{Awake()}}
+{\footnotesize\ttfamily \label{class_turn_system_a2ec4dabc2bb84d89da39538c16411db5} 
+void Turn\+System.\+Awake (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_turn_system_8cs_source_l00012}{12}} of file \mbox{\hyperlink{_turn_system_8cs_source}{Turn\+System.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00013\ \ \ \ \ \{}
+\DoxyCodeLine{00014\ }
+\DoxyCodeLine{00015\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Ensure\ that\ there\ is\ only\ one\ instance\ in\ the\ scene}}
+\DoxyCodeLine{00016\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{class_turn_system_afb88390bd634f5f5d61677c68819ef3b}{Instance}}\ !=\ \textcolor{keyword}{null})}
+\DoxyCodeLine{00017\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00018\ \ \ \ \ \ \ \ \ \ \ \ \ Debug.LogError(\textcolor{stringliteral}{"{}\ More\ than\ one\ TurnSystem\ in\ the\ scene!"{}}\ +\ transform\ +\ \textcolor{stringliteral}{"{}\ "{}}\ +\ \mbox{\hyperlink{class_turn_system_afb88390bd634f5f5d61677c68819ef3b}{Instance}});}
+\DoxyCodeLine{00019\ \ \ \ \ \ \ \ \ \ \ \ \ Destroy(gameObject);}
+\DoxyCodeLine{00020\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{00021\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00022\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_turn_system_afb88390bd634f5f5d61677c68819ef3b}{Instance}}\ =\ \textcolor{keyword}{this};}
+\DoxyCodeLine{00023\ \ \ \ \ \}}
+
+\end{DoxyCode}
+\Hypertarget{class_turn_system_ab5dc35083f1a9831cddde97453289da0}\index{TurnSystem@{TurnSystem}!GetTurnNumber@{GetTurnNumber}}
+\index{GetTurnNumber@{GetTurnNumber}!TurnSystem@{TurnSystem}}
+\doxysubsubsection{\texorpdfstring{GetTurnNumber()}{GetTurnNumber()}}
+{\footnotesize\ttfamily \label{class_turn_system_ab5dc35083f1a9831cddde97453289da0} 
+int Turn\+System.\+Get\+Turn\+Number (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line \mbox{\hyperlink{_turn_system_8cs_source_l00050}{50}} of file \mbox{\hyperlink{_turn_system_8cs_source}{Turn\+System.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00051\ \ \ \ \ \{}
+\DoxyCodeLine{00052\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{class_turn_system_ab6863e239320f2b4fc69f687f5a19d72}{turnNumber}};}
+\DoxyCodeLine{00053\ \ \ \ \ \}}
+
+\end{DoxyCode}
+\Hypertarget{class_turn_system_a0cd72934034eb02591fb17a108db3e94}\index{TurnSystem@{TurnSystem}!IsPlayerTurn@{IsPlayerTurn}}
+\index{IsPlayerTurn@{IsPlayerTurn}!TurnSystem@{TurnSystem}}
+\doxysubsubsection{\texorpdfstring{IsPlayerTurn()}{IsPlayerTurn()}}
+{\footnotesize\ttfamily \label{class_turn_system_a0cd72934034eb02591fb17a108db3e94} 
+bool Turn\+System.\+Is\+Player\+Turn (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line \mbox{\hyperlink{_turn_system_8cs_source_l00055}{55}} of file \mbox{\hyperlink{_turn_system_8cs_source}{Turn\+System.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00056\ \ \ \ \ \{}
+\DoxyCodeLine{00057\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{class_turn_system_ab04d22a0dca92b505dccf74d85a6bb06}{isPlayerTurn}};}
+\DoxyCodeLine{00058\ \ \ \ \ \}}
+
+\end{DoxyCode}
+\Hypertarget{class_turn_system_a1d01c677281cb15fbfcf758f8727c548}\index{TurnSystem@{TurnSystem}!NextTurn@{NextTurn}}
+\index{NextTurn@{NextTurn}!TurnSystem@{TurnSystem}}
+\doxysubsubsection{\texorpdfstring{NextTurn()}{NextTurn()}}
+{\footnotesize\ttfamily \label{class_turn_system_a1d01c677281cb15fbfcf758f8727c548} 
+void Turn\+System.\+Next\+Turn (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line \mbox{\hyperlink{_turn_system_8cs_source_l00025}{25}} of file \mbox{\hyperlink{_turn_system_8cs_source}{Turn\+System.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00026\ \ \ \ \ \{}
+\DoxyCodeLine{00027\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Tarkista\ pelimoodi}}
+\DoxyCodeLine{00028\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (GameModeManager.SelectedMode\ ==\ \mbox{\hyperlink{_game_mode_manager_8cs_aaf5ef5a17b53e9997c837b07015589de}{GameMode}}.SinglePlayer)}
+\DoxyCodeLine{00029\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00030\ \ \ \ \ \ \ \ \ \ \ \ \ Debug.Log(\textcolor{stringliteral}{"{}Single\ Player\ mode:\ Proceeding\ to\ the\ next\ turn."{}});}
+\DoxyCodeLine{00031\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_turn_system_ab6863e239320f2b4fc69f687f5a19d72}{turnNumber}}++;}
+\DoxyCodeLine{00032\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_turn_system_ab04d22a0dca92b505dccf74d85a6bb06}{isPlayerTurn}}\ =\ !\mbox{\hyperlink{class_turn_system_ab04d22a0dca92b505dccf74d85a6bb06}{isPlayerTurn}};}
+\DoxyCodeLine{00033\ }
+\DoxyCodeLine{00034\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_turn_system_aa239da2eeb9957252951f7993ae98269}{OnTurnChanged}}?.Invoke(\textcolor{keyword}{this},\ EventArgs.Empty);}
+\DoxyCodeLine{00035\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00036\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (GameModeManager.SelectedMode\ ==\ \mbox{\hyperlink{_game_mode_manager_8cs_aaf5ef5a17b53e9997c837b07015589de}{GameMode}}.CoOp)}
+\DoxyCodeLine{00037\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00038\ \ \ \ \ \ \ \ \ \ \ \ \ Debug.Log(\textcolor{stringliteral}{"{}Co-\/Op\ mode:\ Proceeding\ to\ the\ next\ turn."{}});}
+\DoxyCodeLine{00039\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Tee\ jotain\ erityistä\ CoOp-\/tilassa}}
+\DoxyCodeLine{00040\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00041\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (GameModeManager.SelectedMode\ ==\ \mbox{\hyperlink{_game_mode_manager_8cs_aaf5ef5a17b53e9997c837b07015589de}{GameMode}}.Versus)}
+\DoxyCodeLine{00042\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00043\ \ \ \ \ \ \ \ \ \ \ \ \ Debug.Log(\textcolor{stringliteral}{"{}Versus\ mode:\ Proceeding\ to\ the\ next\ turn."{}});}
+\DoxyCodeLine{00044\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Tee\ jotain\ erityistä\ Versus-\/tilassa}}
+\DoxyCodeLine{00045\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00046\ }
+\DoxyCodeLine{00047\ }
+\DoxyCodeLine{00048\ \ \ \ \ \}}
+
+\end{DoxyCode}
+
+
+\doxysubsection{Member Data Documentation}
+\Hypertarget{class_turn_system_ab04d22a0dca92b505dccf74d85a6bb06}\index{TurnSystem@{TurnSystem}!isPlayerTurn@{isPlayerTurn}}
+\index{isPlayerTurn@{isPlayerTurn}!TurnSystem@{TurnSystem}}
+\doxysubsubsection{\texorpdfstring{isPlayerTurn}{isPlayerTurn}}
+{\footnotesize\ttfamily \label{class_turn_system_ab04d22a0dca92b505dccf74d85a6bb06} 
+bool Turn\+System.\+is\+Player\+Turn = true\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_turn_system_8cs_source_l00010}{10}} of file \mbox{\hyperlink{_turn_system_8cs_source}{Turn\+System.\+cs}}.
+
+\Hypertarget{class_turn_system_ab6863e239320f2b4fc69f687f5a19d72}\index{TurnSystem@{TurnSystem}!turnNumber@{turnNumber}}
+\index{turnNumber@{turnNumber}!TurnSystem@{TurnSystem}}
+\doxysubsubsection{\texorpdfstring{turnNumber}{turnNumber}}
+{\footnotesize\ttfamily \label{class_turn_system_ab6863e239320f2b4fc69f687f5a19d72} 
+int Turn\+System.\+turn\+Number = 1\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_turn_system_8cs_source_l00009}{9}} of file \mbox{\hyperlink{_turn_system_8cs_source}{Turn\+System.\+cs}}.
+
+
+
+\doxysubsection{Property Documentation}
+\Hypertarget{class_turn_system_afb88390bd634f5f5d61677c68819ef3b}\index{TurnSystem@{TurnSystem}!Instance@{Instance}}
+\index{Instance@{Instance}!TurnSystem@{TurnSystem}}
+\doxysubsubsection{\texorpdfstring{Instance}{Instance}}
+{\footnotesize\ttfamily \label{class_turn_system_afb88390bd634f5f5d61677c68819ef3b} 
+\mbox{\hyperlink{class_turn_system}{Turn\+System}} Turn\+System.\+Instance\hspace{0.3cm}{\ttfamily [static]}, {\ttfamily [get]}, {\ttfamily [private set]}}
+
+
+
+Definition at line \mbox{\hyperlink{_turn_system_8cs_source_l00006}{6}} of file \mbox{\hyperlink{_turn_system_8cs_source}{Turn\+System.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00006\ \{\ \textcolor{keyword}{get};\ \textcolor{keyword}{private}\ \textcolor{keyword}{set};\ \}}
+
+\end{DoxyCode}
+
+
+\doxysubsection{Event Documentation}
+\Hypertarget{class_turn_system_aa239da2eeb9957252951f7993ae98269}\index{TurnSystem@{TurnSystem}!OnTurnChanged@{OnTurnChanged}}
+\index{OnTurnChanged@{OnTurnChanged}!TurnSystem@{TurnSystem}}
+\doxysubsubsection{\texorpdfstring{OnTurnChanged}{OnTurnChanged}}
+{\footnotesize\ttfamily \label{class_turn_system_aa239da2eeb9957252951f7993ae98269} 
+Event\+Handler Turn\+System.\+On\+Turn\+Changed}
+
+
+
+Definition at line \mbox{\hyperlink{_turn_system_8cs_source_l00008}{8}} of file \mbox{\hyperlink{_turn_system_8cs_source}{Turn\+System.\+cs}}.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+D\+:/\+Unity/\+Rogue\+Shooter/\+Rogue\+Shooter/\+Assets/\+Scripts/\+Game\+Logic/\+Battle\+Logic/\mbox{\hyperlink{_turn_system_8cs}{Turn\+System.\+cs}}\end{DoxyCompactItemize}

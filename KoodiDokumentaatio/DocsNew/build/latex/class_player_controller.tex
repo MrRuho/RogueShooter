@@ -1,0 +1,137 @@
+\doxysection{Player\+Controller Class Reference}
+\hypertarget{class_player_controller}{}\label{class_player_controller}\index{PlayerController@{PlayerController}}
+Inheritance diagram for Player\+Controller\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{class_player_controller}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{class_player_controller_af39bb6f987761217f9b23bda6787229d}{Click\+End\+Turn}} ()
+\item 
+void \mbox{\hyperlink{class_player_controller_a596ace97f649ff6b030c081d06a03a54}{Server\+Set\+Has\+Ended}} (bool v)
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+bool \mbox{\hyperlink{class_player_controller_a5fb7cd96ae8b067b3c7ca045da1a8b6a}{has\+Ended\+This\+Turn}}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Private Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{class_player_controller_ab5864bf25dbe79b3710b52175db4d945}{Cmd\+End\+Turn}} ()
+\item 
+void \mbox{\hyperlink{class_player_controller_a1e8c4f16bef76f370546f31e23a8c7e9}{Target\+Notify\+Can\+Act}} (Network\+Connection\+To\+Client \+\_\+\+\_\+, bool can\+Act)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+
+
+Definition at line \mbox{\hyperlink{_player_controller_8cs_source_l00005}{5}} of file \mbox{\hyperlink{_player_controller_8cs_source}{Player\+Controller.\+cs}}.
+
+
+
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_player_controller_af39bb6f987761217f9b23bda6787229d}\index{PlayerController@{PlayerController}!ClickEndTurn@{ClickEndTurn}}
+\index{ClickEndTurn@{ClickEndTurn}!PlayerController@{PlayerController}}
+\doxysubsubsection{\texorpdfstring{ClickEndTurn()}{ClickEndTurn()}}
+{\footnotesize\ttfamily \label{class_player_controller_af39bb6f987761217f9b23bda6787229d} 
+void Player\+Controller.\+Click\+End\+Turn (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line \mbox{\hyperlink{_player_controller_8cs_source_l00010}{10}} of file \mbox{\hyperlink{_player_controller_8cs_source}{Player\+Controller.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00011\ \ \ \ \ \{}
+\DoxyCodeLine{00012\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!isLocalPlayer)\ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{00013\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{class_player_controller_a5fb7cd96ae8b067b3c7ca045da1a8b6a}{hasEndedThisTurn}})\ \textcolor{keywordflow}{return};\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ ei\ tuplia}}
+\DoxyCodeLine{00014\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (CoopTurnCoordinator.Instance\ \&\&\ CoopTurnCoordinator.Instance.phase\ !=\ \mbox{\hyperlink{_coop_turn_coordinator_8cs_a18940d82e778610ed3bc4500893bbab0}{TurnPhase}}.Players)\ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{00015\ \ \ \ \ \ \ \ \ Debug.Log(\textcolor{stringliteral}{"{}[PC]\ ClickEndTurn\ →\ CmdEndTurn()"{}});}
+\DoxyCodeLine{00016\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_player_controller_ab5864bf25dbe79b3710b52175db4d945}{CmdEndTurn}}();}
+\DoxyCodeLine{00017\ \ \ \ \ \}}
+
+\end{DoxyCode}
+\Hypertarget{class_player_controller_ab5864bf25dbe79b3710b52175db4d945}\index{PlayerController@{PlayerController}!CmdEndTurn@{CmdEndTurn}}
+\index{CmdEndTurn@{CmdEndTurn}!PlayerController@{PlayerController}}
+\doxysubsubsection{\texorpdfstring{CmdEndTurn()}{CmdEndTurn()}}
+{\footnotesize\ttfamily \label{class_player_controller_ab5864bf25dbe79b3710b52175db4d945} 
+void Player\+Controller.\+Cmd\+End\+Turn (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_player_controller_8cs_source_l00020}{20}} of file \mbox{\hyperlink{_player_controller_8cs_source}{Player\+Controller.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00021\ \ \ \ \ \{}
+\DoxyCodeLine{00022\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{class_player_controller_a5fb7cd96ae8b067b3c7ca045da1a8b6a}{hasEndedThisTurn}})\ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{00023\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_player_controller_a5fb7cd96ae8b067b3c7ca045da1a8b6a}{hasEndedThisTurn}}\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00024\ \ \ \ \ \ \ \ \ Debug.Log(\textcolor{stringliteral}{"{}[PC][SERVER]\ CmdEndTurn\ received"{}});}
+\DoxyCodeLine{00025\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Ilmoita\ koordinaattorille\ (serverissä)}}
+\DoxyCodeLine{00026\ \ \ \ \ \ \ \ \ CoopTurnCoordinator.Instance.ServerPlayerEndedTurn(netIdentity.netId);}
+\DoxyCodeLine{00027\ \ \ \ \ \}}
+
+\end{DoxyCode}
+\Hypertarget{class_player_controller_a596ace97f649ff6b030c081d06a03a54}\index{PlayerController@{PlayerController}!ServerSetHasEnded@{ServerSetHasEnded}}
+\index{ServerSetHasEnded@{ServerSetHasEnded}!PlayerController@{PlayerController}}
+\doxysubsubsection{\texorpdfstring{ServerSetHasEnded()}{ServerSetHasEnded()}}
+{\footnotesize\ttfamily \label{class_player_controller_a596ace97f649ff6b030c081d06a03a54} 
+void Player\+Controller.\+Server\+Set\+Has\+Ended (\begin{DoxyParamCaption}\item[{bool}]{v}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line \mbox{\hyperlink{_player_controller_8cs_source_l00031}{31}} of file \mbox{\hyperlink{_player_controller_8cs_source}{Player\+Controller.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00032\ \ \ \ \ \{}
+\DoxyCodeLine{00033\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_player_controller_a5fb7cd96ae8b067b3c7ca045da1a8b6a}{hasEndedThisTurn}}\ =\ v;}
+\DoxyCodeLine{00034\ \ \ \ \ \ \ \ \ Debug.Log(\$\textcolor{stringliteral}{"{}[PC][SERVER]\ ServerSetHasEnded(\{v\})\ for\ player\ \{netId\}"{}});}
+\DoxyCodeLine{00035\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_player_controller_a1e8c4f16bef76f370546f31e23a8c7e9}{TargetNotifyCanAct}}(connectionToClient,\ !v);}
+\DoxyCodeLine{00036\ \ \ \ \ \}}
+
+\end{DoxyCode}
+\Hypertarget{class_player_controller_a1e8c4f16bef76f370546f31e23a8c7e9}\index{PlayerController@{PlayerController}!TargetNotifyCanAct@{TargetNotifyCanAct}}
+\index{TargetNotifyCanAct@{TargetNotifyCanAct}!PlayerController@{PlayerController}}
+\doxysubsubsection{\texorpdfstring{TargetNotifyCanAct()}{TargetNotifyCanAct()}}
+{\footnotesize\ttfamily \label{class_player_controller_a1e8c4f16bef76f370546f31e23a8c7e9} 
+void Player\+Controller.\+Target\+Notify\+Can\+Act (\begin{DoxyParamCaption}\item[{Network\+Connection\+To\+Client}]{\+\_\+\+\_\+}{, }\item[{bool}]{can\+Act}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_player_controller_8cs_source_l00039}{39}} of file \mbox{\hyperlink{_player_controller_8cs_source}{Player\+Controller.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00040\ \ \ \ \ \{}
+\DoxyCodeLine{00041\ \ \ \ \ \ \ \ \ Debug.Log(\$\textcolor{stringliteral}{"{}[PC][CLIENT]\ TargetNotifyCanAct(\{canAct\})"{}});}
+\DoxyCodeLine{00042\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ UIEndTurnButton.interactable\ =\ canAct;}}
+\DoxyCodeLine{00043\ \ \ \ \ \ \ \ \ var\ ui\ =\ FindFirstObjectByType<TurnSystemUI>();}
+\DoxyCodeLine{00044\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (ui\ !=\ \textcolor{keyword}{null})}
+\DoxyCodeLine{00045\ \ \ \ \ \ \ \ \ ui.SetCanAct(canAct);}
+\DoxyCodeLine{00046\ \ \ \ \ \}}
+
+\end{DoxyCode}
+
+
+\doxysubsection{Member Data Documentation}
+\Hypertarget{class_player_controller_a5fb7cd96ae8b067b3c7ca045da1a8b6a}\index{PlayerController@{PlayerController}!hasEndedThisTurn@{hasEndedThisTurn}}
+\index{hasEndedThisTurn@{hasEndedThisTurn}!PlayerController@{PlayerController}}
+\doxysubsubsection{\texorpdfstring{hasEndedThisTurn}{hasEndedThisTurn}}
+{\footnotesize\ttfamily \label{class_player_controller_a5fb7cd96ae8b067b3c7ca045da1a8b6a} 
+bool Player\+Controller.\+has\+Ended\+This\+Turn}
+
+
+
+Definition at line \mbox{\hyperlink{_player_controller_8cs_source_l00007}{7}} of file \mbox{\hyperlink{_player_controller_8cs_source}{Player\+Controller.\+cs}}.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+D\+:/\+Unity/\+Rogue\+Shooter/\+Rogue\+Shooter/\+Assets/\+Scripts/\+Player\+Units/\+Unit\+Controller/\mbox{\hyperlink{_player_controller_8cs}{Player\+Controller.\+cs}}\end{DoxyCompactItemize}

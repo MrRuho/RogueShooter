@@ -1,0 +1,394 @@
+\doxysection{Shoot\+Action Class Reference}
+\hypertarget{class_shoot_action}{}\label{class_shoot_action}\index{ShootAction@{ShootAction}}
+Inheritance diagram for Shoot\+Action\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=3.000000cm]{class_shoot_action}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+override int \mbox{\hyperlink{class_shoot_action_a152a32b8f731d1015630cea40433f7bf}{Get\+Action\+Points\+Cost}} ()
+\item 
+override string \mbox{\hyperlink{class_shoot_action_a3386a996418ded3644017bf35dca7799}{Get\+Action\+Name}} ()
+\item 
+override List$<$ \mbox{\hyperlink{struct_grid_position}{Grid\+Position}} $>$ \mbox{\hyperlink{class_shoot_action_a30e5040d4446ed6c6eab0c1bc884a8c8}{Get\+Valid\+Grid\+Position\+List}} ()
+\item 
+override void \mbox{\hyperlink{class_shoot_action_a7e01b5ec188ee5ffce733148e30be951}{Take\+Action}} (\mbox{\hyperlink{struct_grid_position}{Grid\+Position}} grid\+Position, Action \mbox{\hyperlink{class_base_action_aea9027870bb7315f76f6ebc194ad2eda}{on\+Action\+Complete}})
+\end{DoxyCompactItemize}
+\doxysubsection*{Public Member Functions inherited from \mbox{\hyperlink{class_base_action}{Base\+Action}}}
+\begin{DoxyCompactItemize}
+\item 
+string \mbox{\hyperlink{class_base_action_a2d6fa85bf05cac68709a9578acad4b94}{Get\+Action\+Name}} ()
+\item 
+void \mbox{\hyperlink{class_base_action_a302a7e513098704184a28fb8f523569e}{Take\+Action}} (\mbox{\hyperlink{struct_grid_position}{Grid\+Position}} grid\+Position, Action \mbox{\hyperlink{class_base_action_aea9027870bb7315f76f6ebc194ad2eda}{on\+Action\+Complete}})
+\item 
+virtual bool \mbox{\hyperlink{class_base_action_ab306ccf6269e27160855c436dd0cb641}{Is\+Valid\+Grid\+Position}} (\mbox{\hyperlink{struct_grid_position}{Grid\+Position}} grid\+Position)
+\item 
+List$<$ \mbox{\hyperlink{struct_grid_position}{Grid\+Position}} $>$ \mbox{\hyperlink{class_base_action_a8328209505521544f18c0cba00e38a69}{Get\+Valid\+Grid\+Position\+List}} ()
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Private Types}
+\begin{DoxyCompactItemize}
+\item 
+enum \mbox{\hyperlink{class_shoot_action_a60376a07f38376656df2d10ea8941ff0}{State}} \{ \mbox{\hyperlink{class_shoot_action_a60376a07f38376656df2d10ea8941ff0a85104684d1eb7f4c0ce393441a0b669d}{Aiming}}
+, \mbox{\hyperlink{class_shoot_action_a60376a07f38376656df2d10ea8941ff0ad77f3ab1f2d580d0267893842d79b625}{Shooting}}
+, \mbox{\hyperlink{class_shoot_action_a60376a07f38376656df2d10ea8941ff0aa11156fc820c08174c7f565858e25a43}{Cooloff}}
+ \}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Private Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{class_shoot_action_a3458eb0635f3d0e8720995a23ff6068f}{Update}} ()
+\item 
+void \mbox{\hyperlink{class_shoot_action_a2e819c43102eee1583e8afc62c705c67}{Next\+State}} ()
+\item 
+void \mbox{\hyperlink{class_shoot_action_af3e4bbd4f4f7ef68d396d6d0317661fc}{Shoot}} ()
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{class_shoot_action_a60376a07f38376656df2d10ea8941ff0}{State}} \mbox{\hyperlink{class_shoot_action_ace3a5a4e0730db2906871d9eab6cc900}{state}}
+\item 
+int \mbox{\hyperlink{class_shoot_action_a1373ec5fa06ba0860f0ab1415a98ecf7}{max\+Shoot\+Distance}} = 7
+\item 
+float \mbox{\hyperlink{class_shoot_action_a2db90f308944310ffa1123b1f6dd07fe}{state\+Timer}}
+\item 
+\mbox{\hyperlink{class_unit}{Unit}} \mbox{\hyperlink{class_shoot_action_af746f75a7751084d5257d87e99c229c0}{target\+Unit}}
+\item 
+bool \mbox{\hyperlink{class_shoot_action_a68b1c8fb6debb02d104579f16f85ab6b}{can\+Shoot\+Bullet}}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Additional Inherited Members}
+\doxysubsection*{Protected Member Functions inherited from \mbox{\hyperlink{class_base_action}{Base\+Action}}}
+\begin{DoxyCompactItemize}
+\item 
+virtual void \mbox{\hyperlink{class_base_action_a16d4eba1b197769cc78a275f23bd8c63}{Awake}} ()
+\item 
+void \mbox{\hyperlink{class_base_action_a3820f80b1d1064524d4d5bf0563a1447}{Action\+Start}} (Action \mbox{\hyperlink{class_base_action_aea9027870bb7315f76f6ebc194ad2eda}{on\+Action\+Complete}})
+\item 
+void \mbox{\hyperlink{class_base_action_a3447bafb2a0f3a7b65e48275afcd818e}{Action\+Complete}} ()
+\end{DoxyCompactItemize}
+\doxysubsection*{Protected Attributes inherited from \mbox{\hyperlink{class_base_action}{Base\+Action}}}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{class_unit}{Unit}} \mbox{\hyperlink{class_base_action_abfd5ebd13630a017e31a4f6cd720dace}{unit}}
+\item 
+bool \mbox{\hyperlink{class_base_action_a6e99c6e9b79dd10395d595916cc0bd72}{is\+Active}}
+\item 
+Action \mbox{\hyperlink{class_base_action_aea9027870bb7315f76f6ebc194ad2eda}{on\+Action\+Complete}}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+
+
+Definition at line \mbox{\hyperlink{_shoot_action_8cs_source_l00005}{5}} of file \mbox{\hyperlink{_shoot_action_8cs_source}{Shoot\+Action.\+cs}}.
+
+
+
+\doxysubsection{Member Enumeration Documentation}
+\Hypertarget{class_shoot_action_a60376a07f38376656df2d10ea8941ff0}\index{ShootAction@{ShootAction}!State@{State}}
+\index{State@{State}!ShootAction@{ShootAction}}
+\doxysubsubsection{\texorpdfstring{State}{State}}
+{\footnotesize\ttfamily \label{class_shoot_action_a60376a07f38376656df2d10ea8941ff0} 
+enum \mbox{\hyperlink{class_shoot_action_a60376a07f38376656df2d10ea8941ff0}{Shoot\+Action.\+State}}\hspace{0.3cm}{\ttfamily [private]}}
+
+\begin{DoxyEnumFields}[2]{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{Aiming@{Aiming}!ShootAction@{ShootAction}}\index{ShootAction@{ShootAction}!Aiming@{Aiming}}}\Hypertarget{class_shoot_action_a60376a07f38376656df2d10ea8941ff0a85104684d1eb7f4c0ce393441a0b669d}\label{class_shoot_action_a60376a07f38376656df2d10ea8941ff0a85104684d1eb7f4c0ce393441a0b669d} 
+Aiming&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{Shooting@{Shooting}!ShootAction@{ShootAction}}\index{ShootAction@{ShootAction}!Shooting@{Shooting}}}\Hypertarget{class_shoot_action_a60376a07f38376656df2d10ea8941ff0ad77f3ab1f2d580d0267893842d79b625}\label{class_shoot_action_a60376a07f38376656df2d10ea8941ff0ad77f3ab1f2d580d0267893842d79b625} 
+Shooting&\\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{Cooloff@{Cooloff}!ShootAction@{ShootAction}}\index{ShootAction@{ShootAction}!Cooloff@{Cooloff}}}\Hypertarget{class_shoot_action_a60376a07f38376656df2d10ea8941ff0aa11156fc820c08174c7f565858e25a43}\label{class_shoot_action_a60376a07f38376656df2d10ea8941ff0aa11156fc820c08174c7f565858e25a43} 
+Cooloff&\\
+\hline
+
+\end{DoxyEnumFields}
+
+
+Definition at line \mbox{\hyperlink{_shoot_action_8cs_source_l00007}{7}} of file \mbox{\hyperlink{_shoot_action_8cs_source}{Shoot\+Action.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00008\ \ \ \ \ \{\ }
+\DoxyCodeLine{00009\ \ \ \ \ \ \ \ \ Aiming,}
+\DoxyCodeLine{00010\ \ \ \ \ \ \ \ \ Shooting,}
+\DoxyCodeLine{00011\ \ \ \ \ \ \ \ \ Cooloff}
+\DoxyCodeLine{00012\ \ \ \ \ \}}
+
+\end{DoxyCode}
+
+
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_shoot_action_a3386a996418ded3644017bf35dca7799}\index{ShootAction@{ShootAction}!GetActionName@{GetActionName}}
+\index{GetActionName@{GetActionName}!ShootAction@{ShootAction}}
+\doxysubsubsection{\texorpdfstring{GetActionName()}{GetActionName()}}
+{\footnotesize\ttfamily \label{class_shoot_action_a3386a996418ded3644017bf35dca7799} 
+override string Shoot\+Action.\+Get\+Action\+Name (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line \mbox{\hyperlink{_shoot_action_8cs_source_l00087}{87}} of file \mbox{\hyperlink{_shoot_action_8cs_source}{Shoot\+Action.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00088\ \ \ \ \ \{}
+\DoxyCodeLine{00089\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}Shoot"{}};}
+\DoxyCodeLine{00090\ \ \ \ \ \}}
+
+\end{DoxyCode}
+\Hypertarget{class_shoot_action_a152a32b8f731d1015630cea40433f7bf}\index{ShootAction@{ShootAction}!GetActionPointsCost@{GetActionPointsCost}}
+\index{GetActionPointsCost@{GetActionPointsCost}!ShootAction@{ShootAction}}
+\doxysubsubsection{\texorpdfstring{GetActionPointsCost()}{GetActionPointsCost()}}
+{\footnotesize\ttfamily \label{class_shoot_action_a152a32b8f731d1015630cea40433f7bf} 
+override int Shoot\+Action.\+Get\+Action\+Points\+Cost (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [virtual]}}
+
+
+
+Reimplemented from \mbox{\hyperlink{class_base_action_a20cc796d15b41abbe6ea0da8604692fa}{Base\+Action}}.
+
+
+
+Definition at line \mbox{\hyperlink{_shoot_action_8cs_source_l00082}{82}} of file \mbox{\hyperlink{_shoot_action_8cs_source}{Shoot\+Action.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00083\ \ \ \ \ \{}
+\DoxyCodeLine{00084\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 1;}
+\DoxyCodeLine{00085\ \ \ \ \ \}}
+
+\end{DoxyCode}
+\Hypertarget{class_shoot_action_a30e5040d4446ed6c6eab0c1bc884a8c8}\index{ShootAction@{ShootAction}!GetValidGridPositionList@{GetValidGridPositionList}}
+\index{GetValidGridPositionList@{GetValidGridPositionList}!ShootAction@{ShootAction}}
+\doxysubsubsection{\texorpdfstring{GetValidGridPositionList()}{GetValidGridPositionList()}}
+{\footnotesize\ttfamily \label{class_shoot_action_a30e5040d4446ed6c6eab0c1bc884a8c8} 
+override List$<$ \mbox{\hyperlink{struct_grid_position}{Grid\+Position}} $>$ Shoot\+Action.\+Get\+Valid\+Grid\+Position\+List (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line \mbox{\hyperlink{_shoot_action_8cs_source_l00092}{92}} of file \mbox{\hyperlink{_shoot_action_8cs_source}{Shoot\+Action.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00093\ \ \ \ \ \{}
+\DoxyCodeLine{00094\ \ \ \ \ \ \ \ \ List<GridPosition>\ validGridPositionList\ =\ \textcolor{keyword}{new}();}
+\DoxyCodeLine{00095\ }
+\DoxyCodeLine{00096\ \ \ \ \ \ \ \ \ GridPosition\ unitGridPosition\ =\ \mbox{\hyperlink{class_base_action_abfd5ebd13630a017e31a4f6cd720dace}{unit}}.GetGridPosition();}
+\DoxyCodeLine{00097\ }
+\DoxyCodeLine{00098\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ x\ =\ -\/\ \mbox{\hyperlink{class_shoot_action_a1373ec5fa06ba0860f0ab1415a98ecf7}{maxShootDistance}};\ x\ <=\ \mbox{\hyperlink{class_shoot_action_a1373ec5fa06ba0860f0ab1415a98ecf7}{maxShootDistance}};\ x++)}
+\DoxyCodeLine{00099\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00100\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ z\ =\ -\/\mbox{\hyperlink{class_shoot_action_a1373ec5fa06ba0860f0ab1415a98ecf7}{maxShootDistance}};\ z\ <=\ \mbox{\hyperlink{class_shoot_action_a1373ec5fa06ba0860f0ab1415a98ecf7}{maxShootDistance}};\ z++)}
+\DoxyCodeLine{00101\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00102\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ GridPosition\ offsetGridPosition\ =\ \textcolor{keyword}{new}(x,\ z);}
+\DoxyCodeLine{00103\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ GridPosition\ testGridPosition\ =\ unitGridPosition\ +\ offsetGridPosition;}
+\DoxyCodeLine{00104\ }
+\DoxyCodeLine{00105\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Check\ if\ the\ test\ grid\ position\ is\ within\ the\ valid\ range\ and\ not\ occupied\ by\ another\ unit}}
+\DoxyCodeLine{00106\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!LevelGrid.Instance.IsValidGridPosition(testGridPosition))\ \textcolor{keywordflow}{continue};}
+\DoxyCodeLine{00107\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ testDistance\ =\ Mathf.Abs(x)\ +\ Mathf.Abs(z);}
+\DoxyCodeLine{00108\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (testDistance\ >\ \mbox{\hyperlink{class_shoot_action_a1373ec5fa06ba0860f0ab1415a98ecf7}{maxShootDistance}})\ \textcolor{keywordflow}{continue};}
+\DoxyCodeLine{00109\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00110\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ DoDo\ show\ shooting\ range\ even\ if\ there\ are\ no\ units\ to\ shoot\ at}}
+\DoxyCodeLine{00111\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//validGridPositionList.Add(testGridPosition);}}
+\DoxyCodeLine{00112\ }
+\DoxyCodeLine{00113\ }
+\DoxyCodeLine{00114\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!LevelGrid.Instance.HasAnyUnitOnGridPosition(testGridPosition))\ \textcolor{keywordflow}{continue};}
+\DoxyCodeLine{00115\ }
+\DoxyCodeLine{00116\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Unit\ \mbox{\hyperlink{class_shoot_action_af746f75a7751084d5257d87e99c229c0}{targetUnit}}\ =\ LevelGrid.Instance.GetUnitAtGridPosition(testGridPosition);}
+\DoxyCodeLine{00117\ }
+\DoxyCodeLine{00118\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Make\ sure\ we\ don't\ include\ friendly\ units.\ Continue\ the\ loop\ only\ if\ the\ unit\ is\ an\ enemy.}}
+\DoxyCodeLine{00119\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{class_shoot_action_af746f75a7751084d5257d87e99c229c0}{targetUnit}}.IsEnemy()\ ==\ \mbox{\hyperlink{class_base_action_abfd5ebd13630a017e31a4f6cd720dace}{unit}}.IsEnemy())\ \textcolor{keywordflow}{continue};}
+\DoxyCodeLine{00120\ }
+\DoxyCodeLine{00121\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ validGridPositionList.Add(testGridPosition);}
+\DoxyCodeLine{00122\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Debug.Log(\$"{}Testing\ grid\ position:\ \{testGridPosition\}"{});}}
+\DoxyCodeLine{00123\ }
+\DoxyCodeLine{00124\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00125\ }
+\DoxyCodeLine{00126\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00127\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00128\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ validGridPositionList;}
+\DoxyCodeLine{00129\ \ \ \ \ \}}
+
+\end{DoxyCode}
+\Hypertarget{class_shoot_action_a2e819c43102eee1583e8afc62c705c67}\index{ShootAction@{ShootAction}!NextState@{NextState}}
+\index{NextState@{NextState}!ShootAction@{ShootAction}}
+\doxysubsubsection{\texorpdfstring{NextState()}{NextState()}}
+{\footnotesize\ttfamily \label{class_shoot_action_a2e819c43102eee1583e8afc62c705c67} 
+void Shoot\+Action.\+Next\+State (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_shoot_action_8cs_source_l00054}{54}} of file \mbox{\hyperlink{_shoot_action_8cs_source}{Shoot\+Action.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00055\ \ \ \ \ \{}
+\DoxyCodeLine{00056\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{switch}\ (\mbox{\hyperlink{class_shoot_action_ace3a5a4e0730db2906871d9eab6cc900}{state}})}
+\DoxyCodeLine{00057\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00058\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ \mbox{\hyperlink{class_shoot_action_a60376a07f38376656df2d10ea8941ff0}{State}}.Aiming:}
+\DoxyCodeLine{00059\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_shoot_action_ace3a5a4e0730db2906871d9eab6cc900}{state}}\ =\ \mbox{\hyperlink{class_shoot_action_a60376a07f38376656df2d10ea8941ff0}{State}}.Shooting;}
+\DoxyCodeLine{00060\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ shootingStateTime\ =\ 0.1f;}
+\DoxyCodeLine{00061\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_shoot_action_a2db90f308944310ffa1123b1f6dd07fe}{stateTimer}}\ =\ shootingStateTime;}
+\DoxyCodeLine{00062\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00063\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ \mbox{\hyperlink{class_shoot_action_a60376a07f38376656df2d10ea8941ff0}{State}}.Shooting:}
+\DoxyCodeLine{00064\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_shoot_action_ace3a5a4e0730db2906871d9eab6cc900}{state}}\ =\ \mbox{\hyperlink{class_shoot_action_a60376a07f38376656df2d10ea8941ff0}{State}}.Cooloff;}
+\DoxyCodeLine{00065\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ cooloffStateTime\ =\ 0.5f;}
+\DoxyCodeLine{00066\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_shoot_action_a2db90f308944310ffa1123b1f6dd07fe}{stateTimer}}\ =\ cooloffStateTime;}
+\DoxyCodeLine{00067\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00068\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ \mbox{\hyperlink{class_shoot_action_a60376a07f38376656df2d10ea8941ff0}{State}}.Cooloff:}
+\DoxyCodeLine{00069\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_base_action_a3447bafb2a0f3a7b65e48275afcd818e}{ActionComplete}}();}
+\DoxyCodeLine{00070\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00071\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00072\ }
+\DoxyCodeLine{00073\ \ \ \ \ \ \ \ \ Debug.Log(\mbox{\hyperlink{class_shoot_action_ace3a5a4e0730db2906871d9eab6cc900}{state}});}
+\DoxyCodeLine{00074\ \ \ \ \ \}}
+
+\end{DoxyCode}
+\Hypertarget{class_shoot_action_af3e4bbd4f4f7ef68d396d6d0317661fc}\index{ShootAction@{ShootAction}!Shoot@{Shoot}}
+\index{Shoot@{Shoot}!ShootAction@{ShootAction}}
+\doxysubsubsection{\texorpdfstring{Shoot()}{Shoot()}}
+{\footnotesize\ttfamily \label{class_shoot_action_af3e4bbd4f4f7ef68d396d6d0317661fc} 
+void Shoot\+Action.\+Shoot (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_shoot_action_8cs_source_l00076}{76}} of file \mbox{\hyperlink{_shoot_action_8cs_source}{Shoot\+Action.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00077\ \ \ \ \ \{}
+\DoxyCodeLine{00078\ \ \ \ \ \ \ \ \ Debug.Log(\textcolor{stringliteral}{"{}Shoot"{}});}
+\DoxyCodeLine{00079\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_shoot_action_af746f75a7751084d5257d87e99c229c0}{targetUnit}}.Damage();}
+\DoxyCodeLine{00080\ \ \ \ \ \}}
+
+\end{DoxyCode}
+\Hypertarget{class_shoot_action_a7e01b5ec188ee5ffce733148e30be951}\index{ShootAction@{ShootAction}!TakeAction@{TakeAction}}
+\index{TakeAction@{TakeAction}!ShootAction@{ShootAction}}
+\doxysubsubsection{\texorpdfstring{TakeAction()}{TakeAction()}}
+{\footnotesize\ttfamily \label{class_shoot_action_a7e01b5ec188ee5ffce733148e30be951} 
+override void Shoot\+Action.\+Take\+Action (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{struct_grid_position}{Grid\+Position}}}]{grid\+Position}{, }\item[{Action}]{on\+Action\+Complete}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line \mbox{\hyperlink{_shoot_action_8cs_source_l00132}{132}} of file \mbox{\hyperlink{_shoot_action_8cs_source}{Shoot\+Action.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00133\ \ \ \ \ \{}
+\DoxyCodeLine{00134\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_base_action_a3820f80b1d1064524d4d5bf0563a1447}{ActionStart}}(\mbox{\hyperlink{class_base_action_aea9027870bb7315f76f6ebc194ad2eda}{onActionComplete}});}
+\DoxyCodeLine{00135\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00136\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_shoot_action_af746f75a7751084d5257d87e99c229c0}{targetUnit}}\ =\ LevelGrid.Instance.GetUnitAtGridPosition(gridPosition);}
+\DoxyCodeLine{00137\ }
+\DoxyCodeLine{00138\ \ \ \ \ \ \ \ \ Debug.Log(\textcolor{stringliteral}{"{}Aiming"{}});}
+\DoxyCodeLine{00139\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_shoot_action_ace3a5a4e0730db2906871d9eab6cc900}{state}}\ =\ \mbox{\hyperlink{class_shoot_action_a60376a07f38376656df2d10ea8941ff0}{State}}.Aiming;}
+\DoxyCodeLine{00140\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ aimingStateTime\ =\ 1f;}
+\DoxyCodeLine{00141\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_shoot_action_a2db90f308944310ffa1123b1f6dd07fe}{stateTimer}}\ =\ aimingStateTime;}
+\DoxyCodeLine{00142\ }
+\DoxyCodeLine{00143\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_shoot_action_a68b1c8fb6debb02d104579f16f85ab6b}{canShootBullet}}\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00144\ \ \ \ \ \}}
+
+\end{DoxyCode}
+\Hypertarget{class_shoot_action_a3458eb0635f3d0e8720995a23ff6068f}\index{ShootAction@{ShootAction}!Update@{Update}}
+\index{Update@{Update}!ShootAction@{ShootAction}}
+\doxysubsubsection{\texorpdfstring{Update()}{Update()}}
+{\footnotesize\ttfamily \label{class_shoot_action_a3458eb0635f3d0e8720995a23ff6068f} 
+void Shoot\+Action.\+Update (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_shoot_action_8cs_source_l00022}{22}} of file \mbox{\hyperlink{_shoot_action_8cs_source}{Shoot\+Action.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00023\ \ \ \ \ \{}
+\DoxyCodeLine{00024\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!\mbox{\hyperlink{class_base_action_a6e99c6e9b79dd10395d595916cc0bd72}{isActive}})\ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{00025\ }
+\DoxyCodeLine{00026\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_shoot_action_a2db90f308944310ffa1123b1f6dd07fe}{stateTimer}}\ -\/=\ Time.deltaTime;}
+\DoxyCodeLine{00027\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{switch}\ (\mbox{\hyperlink{class_shoot_action_ace3a5a4e0730db2906871d9eab6cc900}{state}})}
+\DoxyCodeLine{00028\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00029\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ \mbox{\hyperlink{class_shoot_action_a60376a07f38376656df2d10ea8941ff0}{State}}.Aiming:}
+\DoxyCodeLine{00030\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Rotate\ towards\ the\ target\ position}}
+\DoxyCodeLine{00031\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Vector3\ aimDirection\ =\ (\mbox{\hyperlink{class_shoot_action_af746f75a7751084d5257d87e99c229c0}{targetUnit}}.GetWorldPosition()\ -\/\ \mbox{\hyperlink{class_base_action_abfd5ebd13630a017e31a4f6cd720dace}{unit}}.GetWorldPosition()).normalized;}
+\DoxyCodeLine{00032\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ rotationSpeed\ =\ 10f;}
+\DoxyCodeLine{00033\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ transform.forward\ =\ Vector3.Lerp(transform.forward,\ aimDirection,\ Time.deltaTime\ *\ rotationSpeed);}
+\DoxyCodeLine{00034\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00035\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ \mbox{\hyperlink{class_shoot_action_a60376a07f38376656df2d10ea8941ff0}{State}}.Shooting:}
+\DoxyCodeLine{00036\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{class_shoot_action_a68b1c8fb6debb02d104579f16f85ab6b}{canShootBullet}})}
+\DoxyCodeLine{00037\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00038\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_shoot_action_af3e4bbd4f4f7ef68d396d6d0317661fc}{Shoot}}();}
+\DoxyCodeLine{00039\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_shoot_action_a68b1c8fb6debb02d104579f16f85ab6b}{canShootBullet}}\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00040\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00041\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}\ \ }
+\DoxyCodeLine{00042\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00043\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ \mbox{\hyperlink{class_shoot_action_a60376a07f38376656df2d10ea8941ff0}{State}}.Cooloff:\ }
+\DoxyCodeLine{00044\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00045\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00046\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00047\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{class_shoot_action_a2db90f308944310ffa1123b1f6dd07fe}{stateTimer}}\ <=\ 0f)}
+\DoxyCodeLine{00048\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00049\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_shoot_action_a2e819c43102eee1583e8afc62c705c67}{NextState}}();}
+\DoxyCodeLine{00050\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00051\ }
+\DoxyCodeLine{00052\ \ \ \ \ \}}
+
+\end{DoxyCode}
+
+
+\doxysubsection{Member Data Documentation}
+\Hypertarget{class_shoot_action_a68b1c8fb6debb02d104579f16f85ab6b}\index{ShootAction@{ShootAction}!canShootBullet@{canShootBullet}}
+\index{canShootBullet@{canShootBullet}!ShootAction@{ShootAction}}
+\doxysubsubsection{\texorpdfstring{canShootBullet}{canShootBullet}}
+{\footnotesize\ttfamily \label{class_shoot_action_a68b1c8fb6debb02d104579f16f85ab6b} 
+bool Shoot\+Action.\+can\+Shoot\+Bullet\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_shoot_action_8cs_source_l00019}{19}} of file \mbox{\hyperlink{_shoot_action_8cs_source}{Shoot\+Action.\+cs}}.
+
+\Hypertarget{class_shoot_action_a1373ec5fa06ba0860f0ab1415a98ecf7}\index{ShootAction@{ShootAction}!maxShootDistance@{maxShootDistance}}
+\index{maxShootDistance@{maxShootDistance}!ShootAction@{ShootAction}}
+\doxysubsubsection{\texorpdfstring{maxShootDistance}{maxShootDistance}}
+{\footnotesize\ttfamily \label{class_shoot_action_a1373ec5fa06ba0860f0ab1415a98ecf7} 
+int Shoot\+Action.\+max\+Shoot\+Distance = 7\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_shoot_action_8cs_source_l00015}{15}} of file \mbox{\hyperlink{_shoot_action_8cs_source}{Shoot\+Action.\+cs}}.
+
+\Hypertarget{class_shoot_action_ace3a5a4e0730db2906871d9eab6cc900}\index{ShootAction@{ShootAction}!state@{state}}
+\index{state@{state}!ShootAction@{ShootAction}}
+\doxysubsubsection{\texorpdfstring{state}{state}}
+{\footnotesize\ttfamily \label{class_shoot_action_ace3a5a4e0730db2906871d9eab6cc900} 
+\mbox{\hyperlink{class_shoot_action_a60376a07f38376656df2d10ea8941ff0}{State}} Shoot\+Action.\+state\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_shoot_action_8cs_source_l00014}{14}} of file \mbox{\hyperlink{_shoot_action_8cs_source}{Shoot\+Action.\+cs}}.
+
+\Hypertarget{class_shoot_action_a2db90f308944310ffa1123b1f6dd07fe}\index{ShootAction@{ShootAction}!stateTimer@{stateTimer}}
+\index{stateTimer@{stateTimer}!ShootAction@{ShootAction}}
+\doxysubsubsection{\texorpdfstring{stateTimer}{stateTimer}}
+{\footnotesize\ttfamily \label{class_shoot_action_a2db90f308944310ffa1123b1f6dd07fe} 
+float Shoot\+Action.\+state\+Timer\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_shoot_action_8cs_source_l00017}{17}} of file \mbox{\hyperlink{_shoot_action_8cs_source}{Shoot\+Action.\+cs}}.
+
+\Hypertarget{class_shoot_action_af746f75a7751084d5257d87e99c229c0}\index{ShootAction@{ShootAction}!targetUnit@{targetUnit}}
+\index{targetUnit@{targetUnit}!ShootAction@{ShootAction}}
+\doxysubsubsection{\texorpdfstring{targetUnit}{targetUnit}}
+{\footnotesize\ttfamily \label{class_shoot_action_af746f75a7751084d5257d87e99c229c0} 
+\mbox{\hyperlink{class_unit}{Unit}} Shoot\+Action.\+target\+Unit\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_shoot_action_8cs_source_l00018}{18}} of file \mbox{\hyperlink{_shoot_action_8cs_source}{Shoot\+Action.\+cs}}.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+D\+:/\+Unity/\+Rogue\+Shooter/\+Rogue\+Shooter/\+Assets/\+Scripts/\+Player\+Units/\+Unit\+Actions/\mbox{\hyperlink{_shoot_action_8cs}{Shoot\+Action.\+cs}}\end{DoxyCompactItemize}

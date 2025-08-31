@@ -1,0 +1,332 @@
+\doxysection{Unit\+Action\+System\+UI Class Reference}
+\hypertarget{class_unit_action_system_u_i}{}\label{class_unit_action_system_u_i}\index{UnitActionSystemUI@{UnitActionSystemUI}}
+
+
+This class is responsible for displaying the action buttons for the selected unit in the UI. It creates and destroys action buttons based on the selected unit\textquotesingle{}s actions.  
+
+
+Inheritance diagram for Unit\+Action\+System\+UI\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{class_unit_action_system_u_i}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Private Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{class_unit_action_system_u_i_a1c5ba69ad5f76497db08cba6d60e32b5}{Awake}} ()
+\item 
+void \mbox{\hyperlink{class_unit_action_system_u_i_a0d8b1e2dcd58078ae0545c1457d4f953}{Start}} ()
+\item 
+void \mbox{\hyperlink{class_unit_action_system_u_i_a53bbb1047581b5fa8b71d88a65f8cc16}{Create\+Unit\+Action\+Buttons}} ()
+\item 
+void \mbox{\hyperlink{class_unit_action_system_u_i_aaf2771c46a694e4d452164c46c8e8791}{Destroy\+Action\+Buttons}} ()
+\item 
+void \mbox{\hyperlink{class_unit_action_system_u_i_aa6a338b9c8a07be787938a45ee0e75c7}{Unit\+Action\+System\+\_\+\+On\+Selected\+Unit\+Changed}} (object sender, Event\+Args e)
+\item 
+void \mbox{\hyperlink{class_unit_action_system_u_i_a89456c37000fa5e575ac3d2ac5fb03cd}{Unit\+Action\+System\+\_\+\+On\+Selected\+Action\+Changed}} (object sender, Event\+Args e)
+\item 
+void \mbox{\hyperlink{class_unit_action_system_u_i_a9727669beefbb7ee004440fe9058e327}{Unit\+Action\+System\+\_\+\+On\+Action\+Started}} (object sender, Event\+Args e)
+\item 
+void \mbox{\hyperlink{class_unit_action_system_u_i_a77cd8def07e00d8fd85100ff0ffc8c3a}{Update\+Selected\+Visual}} ()
+\item 
+void \mbox{\hyperlink{class_unit_action_system_u_i_a462d2b0fed6b6ce6cd3593be34c44872}{Update\+Action\+Points\+Visual}} ()
+\item 
+void \mbox{\hyperlink{class_unit_action_system_u_i_ad8bf68a69aaff5ed8541da8dceb6f536}{Turn\+System\+\_\+\+On\+Turn\+Changed}} (object sender, Event\+Args e)
+\begin{DoxyCompactList}\small\item\em This method is called when the turn changes. It resets the action points UI to the maximum value. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_unit_action_system_u_i_ae89495264a7ff9012a3354bec03f22d0}{Unit\+\_\+\+On\+Any\+Action\+Points\+Changed}} (object sender, Event\+Args e)
+\begin{DoxyCompactList}\small\item\em This method is called when the action points of any unit change. It updates the action points UI. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+Transform \mbox{\hyperlink{class_unit_action_system_u_i_a1050e6d40692381c9e0a060c0460f962}{action\+Button\+Prefab}}
+\item 
+Transform \mbox{\hyperlink{class_unit_action_system_u_i_ac3f0b5e859ca7e1028c5389f8b2f5b04}{action\+Button\+Container\+Transform}}
+\item 
+Text\+Mesh\+Pro\+UGUI \mbox{\hyperlink{class_unit_action_system_u_i_abf49d0c78953918906479a26ceda86f2}{action\+Points\+Text}}
+\item 
+List$<$ \mbox{\hyperlink{class_unit_action_button_u_i}{Unit\+Action\+Button\+UI}} $>$ \mbox{\hyperlink{class_unit_action_system_u_i_a27d4e85b75622a47f3ba2d0cb51d49d0}{action\+Button\+UIList}}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+This class is responsible for displaying the action buttons for the selected unit in the UI. It creates and destroys action buttons based on the selected unit\textquotesingle{}s actions. 
+
+Definition at line \mbox{\hyperlink{_unit_action_system_u_i_8cs_source_l00013}{13}} of file \mbox{\hyperlink{_unit_action_system_u_i_8cs_source}{Unit\+Action\+System\+UI.\+cs}}.
+
+
+
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_unit_action_system_u_i_a1c5ba69ad5f76497db08cba6d60e32b5}\index{UnitActionSystemUI@{UnitActionSystemUI}!Awake@{Awake}}
+\index{Awake@{Awake}!UnitActionSystemUI@{UnitActionSystemUI}}
+\doxysubsubsection{\texorpdfstring{Awake()}{Awake()}}
+{\footnotesize\ttfamily \label{class_unit_action_system_u_i_a1c5ba69ad5f76497db08cba6d60e32b5} 
+void Unit\+Action\+System\+UI.\+Awake (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_unit_action_system_u_i_8cs_source_l00022}{22}} of file \mbox{\hyperlink{_unit_action_system_u_i_8cs_source}{Unit\+Action\+System\+UI.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00023\ \ \ \ \ \{}
+\DoxyCodeLine{00024\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_unit_action_system_u_i_a27d4e85b75622a47f3ba2d0cb51d49d0}{actionButtonUIList}}\ =\ \textcolor{keyword}{new}\ List<UnitActionButtonUI>();}
+\DoxyCodeLine{00025\ \ \ \ \ \}}
+
+\end{DoxyCode}
+\Hypertarget{class_unit_action_system_u_i_a53bbb1047581b5fa8b71d88a65f8cc16}\index{UnitActionSystemUI@{UnitActionSystemUI}!CreateUnitActionButtons@{CreateUnitActionButtons}}
+\index{CreateUnitActionButtons@{CreateUnitActionButtons}!UnitActionSystemUI@{UnitActionSystemUI}}
+\doxysubsubsection{\texorpdfstring{CreateUnitActionButtons()}{CreateUnitActionButtons()}}
+{\footnotesize\ttfamily \label{class_unit_action_system_u_i_a53bbb1047581b5fa8b71d88a65f8cc16} 
+void Unit\+Action\+System\+UI.\+Create\+Unit\+Action\+Buttons (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_unit_action_system_u_i_8cs_source_l00036}{36}} of file \mbox{\hyperlink{_unit_action_system_u_i_8cs_source}{Unit\+Action\+System\+UI.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00037\ \ \ \ \ \{}
+\DoxyCodeLine{00038\ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00039\ \ \ \ \ \ \ \ \ Unit\ selectedUnit\ =\ UnitActionSystem.Instance.GetSelectedUnit();}
+\DoxyCodeLine{00040\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (selectedUnit\ ==\ \textcolor{keyword}{null})}
+\DoxyCodeLine{00041\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00042\ \ \ \ \ \ \ \ \ \ \ \ \ Debug.Log(\textcolor{stringliteral}{"{}No\ selected\ unit\ found."{}});}
+\DoxyCodeLine{00043\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{00044\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00045\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_unit_action_system_u_i_a27d4e85b75622a47f3ba2d0cb51d49d0}{actionButtonUIList}}.Clear();}
+\DoxyCodeLine{00046\ }
+\DoxyCodeLine{00047\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{foreach}\ (BaseAction\ baseAction\ \textcolor{keywordflow}{in}\ selectedUnit.\mbox{\hyperlink{class_unit_ae8fafcccd25eaf19c961b78871fd244f}{GetBaseActionsArray}}())}
+\DoxyCodeLine{00048\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00049\ \ \ \ \ \ \ \ \ \ \ \ \ Transform\ actionButtonTransform\ =\ Instantiate(\ \mbox{\hyperlink{class_unit_action_system_u_i_a1050e6d40692381c9e0a060c0460f962}{actionButtonPrefab}},\ \mbox{\hyperlink{class_unit_action_system_u_i_ac3f0b5e859ca7e1028c5389f8b2f5b04}{actionButtonContainerTransform}});}
+\DoxyCodeLine{00050\ \ \ \ \ \ \ \ \ \ \ \ \ UnitActionButtonUI\ actionButtonUI\ =\ actionButtonTransform.GetComponent<UnitActionButtonUI>();}
+\DoxyCodeLine{00051\ \ \ \ \ \ \ \ \ \ \ \ \ actionButtonUI.\mbox{\hyperlink{class_unit_action_button_u_i_a938d6af54779f503a9b1d16bbb053d02}{SetBaseAction}}(baseAction);}
+\DoxyCodeLine{00052\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_unit_action_system_u_i_a27d4e85b75622a47f3ba2d0cb51d49d0}{actionButtonUIList}}.Add(actionButtonUI);}
+\DoxyCodeLine{00053\ }
+\DoxyCodeLine{00054\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00055\ \ \ \ \ \}}
+
+\end{DoxyCode}
+\Hypertarget{class_unit_action_system_u_i_aaf2771c46a694e4d452164c46c8e8791}\index{UnitActionSystemUI@{UnitActionSystemUI}!DestroyActionButtons@{DestroyActionButtons}}
+\index{DestroyActionButtons@{DestroyActionButtons}!UnitActionSystemUI@{UnitActionSystemUI}}
+\doxysubsubsection{\texorpdfstring{DestroyActionButtons()}{DestroyActionButtons()}}
+{\footnotesize\ttfamily \label{class_unit_action_system_u_i_aaf2771c46a694e4d452164c46c8e8791} 
+void Unit\+Action\+System\+UI.\+Destroy\+Action\+Buttons (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_unit_action_system_u_i_8cs_source_l00057}{57}} of file \mbox{\hyperlink{_unit_action_system_u_i_8cs_source}{Unit\+Action\+System\+UI.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00058\ \ \ \ \ \{}
+\DoxyCodeLine{00059\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{foreach}\ (Transform\ child\ \textcolor{keywordflow}{in}\ \mbox{\hyperlink{class_unit_action_system_u_i_ac3f0b5e859ca7e1028c5389f8b2f5b04}{actionButtonContainerTransform}})}
+\DoxyCodeLine{00060\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00061\ \ \ \ \ \ \ \ \ \ \ \ \ Destroy(child.gameObject);}
+\DoxyCodeLine{00062\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00063\ \ \ \ \ \}}
+
+\end{DoxyCode}
+\Hypertarget{class_unit_action_system_u_i_a0d8b1e2dcd58078ae0545c1457d4f953}\index{UnitActionSystemUI@{UnitActionSystemUI}!Start@{Start}}
+\index{Start@{Start}!UnitActionSystemUI@{UnitActionSystemUI}}
+\doxysubsubsection{\texorpdfstring{Start()}{Start()}}
+{\footnotesize\ttfamily \label{class_unit_action_system_u_i_a0d8b1e2dcd58078ae0545c1457d4f953} 
+void Unit\+Action\+System\+UI.\+Start (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_unit_action_system_u_i_8cs_source_l00027}{27}} of file \mbox{\hyperlink{_unit_action_system_u_i_8cs_source}{Unit\+Action\+System\+UI.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00028\ \ \ \ \ \{}
+\DoxyCodeLine{00029\ \ \ \ \ \ \ \ \ UnitActionSystem.Instance.OnSelectedUnitChanged\ +=\ \mbox{\hyperlink{class_unit_action_system_u_i_aa6a338b9c8a07be787938a45ee0e75c7}{UnitActionSystem\_OnSelectedUnitChanged}};}
+\DoxyCodeLine{00030\ \ \ \ \ \ \ \ \ UnitActionSystem.Instance.OnSelectedActionChanged\ +=\ \mbox{\hyperlink{class_unit_action_system_u_i_a89456c37000fa5e575ac3d2ac5fb03cd}{UnitActionSystem\_OnSelectedActionChanged}};}
+\DoxyCodeLine{00031\ \ \ \ \ \ \ \ \ UnitActionSystem.Instance.OnActionStarted\ +=\ \mbox{\hyperlink{class_unit_action_system_u_i_a9727669beefbb7ee004440fe9058e327}{UnitActionSystem\_OnActionStarted}};}
+\DoxyCodeLine{00032\ \ \ \ \ \ \ \ \ TurnSystem.Instance.OnTurnChanged\ +=\ \mbox{\hyperlink{class_unit_action_system_u_i_ad8bf68a69aaff5ed8541da8dceb6f536}{TurnSystem\_OnTurnChanged}};}
+\DoxyCodeLine{00033\ \ \ \ \ \ \ \ \ Unit.OnAnyActionPointsChanged\ +=\ \mbox{\hyperlink{class_unit_action_system_u_i_ae89495264a7ff9012a3354bec03f22d0}{Unit\_OnAnyActionPointsChanged}};}
+\DoxyCodeLine{00034\ \ \ \ \ \}}
+
+\end{DoxyCode}
+\Hypertarget{class_unit_action_system_u_i_ad8bf68a69aaff5ed8541da8dceb6f536}\index{UnitActionSystemUI@{UnitActionSystemUI}!TurnSystem\_OnTurnChanged@{TurnSystem\_OnTurnChanged}}
+\index{TurnSystem\_OnTurnChanged@{TurnSystem\_OnTurnChanged}!UnitActionSystemUI@{UnitActionSystemUI}}
+\doxysubsubsection{\texorpdfstring{TurnSystem\_OnTurnChanged()}{TurnSystem\_OnTurnChanged()}}
+{\footnotesize\ttfamily \label{class_unit_action_system_u_i_ad8bf68a69aaff5ed8541da8dceb6f536} 
+void Unit\+Action\+System\+UI.\+Turn\+System\+\_\+\+On\+Turn\+Changed (\begin{DoxyParamCaption}\item[{object}]{sender}{, }\item[{Event\+Args}]{e}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [private]}}
+
+
+
+This method is called when the turn changes. It resets the action points UI to the maximum value. 
+
+
+
+Definition at line \mbox{\hyperlink{_unit_action_system_u_i_8cs_source_l00100}{100}} of file \mbox{\hyperlink{_unit_action_system_u_i_8cs_source}{Unit\+Action\+System\+UI.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00101\ \ \ \ \ \{}
+\DoxyCodeLine{00102\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_unit_action_system_u_i_a462d2b0fed6b6ce6cd3593be34c44872}{UpdateActionPointsVisual}}();}
+\DoxyCodeLine{00103\ \ \ \ \ \}}
+
+\end{DoxyCode}
+\Hypertarget{class_unit_action_system_u_i_ae89495264a7ff9012a3354bec03f22d0}\index{UnitActionSystemUI@{UnitActionSystemUI}!Unit\_OnAnyActionPointsChanged@{Unit\_OnAnyActionPointsChanged}}
+\index{Unit\_OnAnyActionPointsChanged@{Unit\_OnAnyActionPointsChanged}!UnitActionSystemUI@{UnitActionSystemUI}}
+\doxysubsubsection{\texorpdfstring{Unit\_OnAnyActionPointsChanged()}{Unit\_OnAnyActionPointsChanged()}}
+{\footnotesize\ttfamily \label{class_unit_action_system_u_i_ae89495264a7ff9012a3354bec03f22d0} 
+void Unit\+Action\+System\+UI.\+Unit\+\_\+\+On\+Any\+Action\+Points\+Changed (\begin{DoxyParamCaption}\item[{object}]{sender}{, }\item[{Event\+Args}]{e}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [private]}}
+
+
+
+This method is called when the action points of any unit change. It updates the action points UI. 
+
+
+
+Definition at line \mbox{\hyperlink{_unit_action_system_u_i_8cs_source_l00108}{108}} of file \mbox{\hyperlink{_unit_action_system_u_i_8cs_source}{Unit\+Action\+System\+UI.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00109\ \ \ \ \ \{}
+\DoxyCodeLine{00110\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_unit_action_system_u_i_a462d2b0fed6b6ce6cd3593be34c44872}{UpdateActionPointsVisual}}();}
+\DoxyCodeLine{00111\ \ \ \ \ \}}
+
+\end{DoxyCode}
+\Hypertarget{class_unit_action_system_u_i_a9727669beefbb7ee004440fe9058e327}\index{UnitActionSystemUI@{UnitActionSystemUI}!UnitActionSystem\_OnActionStarted@{UnitActionSystem\_OnActionStarted}}
+\index{UnitActionSystem\_OnActionStarted@{UnitActionSystem\_OnActionStarted}!UnitActionSystemUI@{UnitActionSystemUI}}
+\doxysubsubsection{\texorpdfstring{UnitActionSystem\_OnActionStarted()}{UnitActionSystem\_OnActionStarted()}}
+{\footnotesize\ttfamily \label{class_unit_action_system_u_i_a9727669beefbb7ee004440fe9058e327} 
+void Unit\+Action\+System\+UI.\+Unit\+Action\+System\+\_\+\+On\+Action\+Started (\begin{DoxyParamCaption}\item[{object}]{sender}{, }\item[{Event\+Args}]{e}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_unit_action_system_u_i_8cs_source_l00078}{78}} of file \mbox{\hyperlink{_unit_action_system_u_i_8cs_source}{Unit\+Action\+System\+UI.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00079\ \ \ \ \ \{}
+\DoxyCodeLine{00080\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_unit_action_system_u_i_a462d2b0fed6b6ce6cd3593be34c44872}{UpdateActionPointsVisual}}();}
+\DoxyCodeLine{00081\ \ \ \ \ \}}
+
+\end{DoxyCode}
+\Hypertarget{class_unit_action_system_u_i_a89456c37000fa5e575ac3d2ac5fb03cd}\index{UnitActionSystemUI@{UnitActionSystemUI}!UnitActionSystem\_OnSelectedActionChanged@{UnitActionSystem\_OnSelectedActionChanged}}
+\index{UnitActionSystem\_OnSelectedActionChanged@{UnitActionSystem\_OnSelectedActionChanged}!UnitActionSystemUI@{UnitActionSystemUI}}
+\doxysubsubsection{\texorpdfstring{UnitActionSystem\_OnSelectedActionChanged()}{UnitActionSystem\_OnSelectedActionChanged()}}
+{\footnotesize\ttfamily \label{class_unit_action_system_u_i_a89456c37000fa5e575ac3d2ac5fb03cd} 
+void Unit\+Action\+System\+UI.\+Unit\+Action\+System\+\_\+\+On\+Selected\+Action\+Changed (\begin{DoxyParamCaption}\item[{object}]{sender}{, }\item[{Event\+Args}]{e}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_unit_action_system_u_i_8cs_source_l00073}{73}} of file \mbox{\hyperlink{_unit_action_system_u_i_8cs_source}{Unit\+Action\+System\+UI.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00074\ \ \ \ \ \{}
+\DoxyCodeLine{00075\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_unit_action_system_u_i_a77cd8def07e00d8fd85100ff0ffc8c3a}{UpdateSelectedVisual}}();}
+\DoxyCodeLine{00076\ \ \ \ \ \}}
+
+\end{DoxyCode}
+\Hypertarget{class_unit_action_system_u_i_aa6a338b9c8a07be787938a45ee0e75c7}\index{UnitActionSystemUI@{UnitActionSystemUI}!UnitActionSystem\_OnSelectedUnitChanged@{UnitActionSystem\_OnSelectedUnitChanged}}
+\index{UnitActionSystem\_OnSelectedUnitChanged@{UnitActionSystem\_OnSelectedUnitChanged}!UnitActionSystemUI@{UnitActionSystemUI}}
+\doxysubsubsection{\texorpdfstring{UnitActionSystem\_OnSelectedUnitChanged()}{UnitActionSystem\_OnSelectedUnitChanged()}}
+{\footnotesize\ttfamily \label{class_unit_action_system_u_i_aa6a338b9c8a07be787938a45ee0e75c7} 
+void Unit\+Action\+System\+UI.\+Unit\+Action\+System\+\_\+\+On\+Selected\+Unit\+Changed (\begin{DoxyParamCaption}\item[{object}]{sender}{, }\item[{Event\+Args}]{e}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_unit_action_system_u_i_8cs_source_l00065}{65}} of file \mbox{\hyperlink{_unit_action_system_u_i_8cs_source}{Unit\+Action\+System\+UI.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00066\ \ \ \ \ \{}
+\DoxyCodeLine{00067\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_unit_action_system_u_i_aaf2771c46a694e4d452164c46c8e8791}{DestroyActionButtons}}();}
+\DoxyCodeLine{00068\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_unit_action_system_u_i_a53bbb1047581b5fa8b71d88a65f8cc16}{CreateUnitActionButtons}}();}
+\DoxyCodeLine{00069\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_unit_action_system_u_i_a77cd8def07e00d8fd85100ff0ffc8c3a}{UpdateSelectedVisual}}();}
+\DoxyCodeLine{00070\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_unit_action_system_u_i_a462d2b0fed6b6ce6cd3593be34c44872}{UpdateActionPointsVisual}}();}
+\DoxyCodeLine{00071\ \ \ \ \ \}}
+
+\end{DoxyCode}
+\Hypertarget{class_unit_action_system_u_i_a462d2b0fed6b6ce6cd3593be34c44872}\index{UnitActionSystemUI@{UnitActionSystemUI}!UpdateActionPointsVisual@{UpdateActionPointsVisual}}
+\index{UpdateActionPointsVisual@{UpdateActionPointsVisual}!UnitActionSystemUI@{UnitActionSystemUI}}
+\doxysubsubsection{\texorpdfstring{UpdateActionPointsVisual()}{UpdateActionPointsVisual()}}
+{\footnotesize\ttfamily \label{class_unit_action_system_u_i_a462d2b0fed6b6ce6cd3593be34c44872} 
+void Unit\+Action\+System\+UI.\+Update\+Action\+Points\+Visual (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_unit_action_system_u_i_8cs_source_l00091}{91}} of file \mbox{\hyperlink{_unit_action_system_u_i_8cs_source}{Unit\+Action\+System\+UI.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00092\ \ \ \ \ \{}
+\DoxyCodeLine{00093\ \ \ \ \ \ \ \ \ Unit\ selectedUnit\ =\ UnitActionSystem.Instance.GetSelectedUnit();}
+\DoxyCodeLine{00094\ \ \ \ \ \ \ \ \ actionPointsText.text\ =\ \textcolor{stringliteral}{"{}Action\ Points:\ "{}}\ +\ selectedUnit.\mbox{\hyperlink{class_unit_a9d86c07e2b08fe284b9e37c2e61a2eed}{GetActionPoints}}();}
+\DoxyCodeLine{00095\ \ \ \ \ \}}
+
+\end{DoxyCode}
+\Hypertarget{class_unit_action_system_u_i_a77cd8def07e00d8fd85100ff0ffc8c3a}\index{UnitActionSystemUI@{UnitActionSystemUI}!UpdateSelectedVisual@{UpdateSelectedVisual}}
+\index{UpdateSelectedVisual@{UpdateSelectedVisual}!UnitActionSystemUI@{UnitActionSystemUI}}
+\doxysubsubsection{\texorpdfstring{UpdateSelectedVisual()}{UpdateSelectedVisual()}}
+{\footnotesize\ttfamily \label{class_unit_action_system_u_i_a77cd8def07e00d8fd85100ff0ffc8c3a} 
+void Unit\+Action\+System\+UI.\+Update\+Selected\+Visual (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_unit_action_system_u_i_8cs_source_l00083}{83}} of file \mbox{\hyperlink{_unit_action_system_u_i_8cs_source}{Unit\+Action\+System\+UI.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00084\ \ \ \ \ \{}
+\DoxyCodeLine{00085\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{foreach}\ (UnitActionButtonUI\ actionButtonUI\ \textcolor{keywordflow}{in}\ \mbox{\hyperlink{class_unit_action_system_u_i_a27d4e85b75622a47f3ba2d0cb51d49d0}{actionButtonUIList}})}
+\DoxyCodeLine{00086\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00087\ \ \ \ \ \ \ \ \ \ \ \ \ actionButtonUI.\mbox{\hyperlink{class_unit_action_button_u_i_a699334c0be8d985d03c479fc52ec367f}{UpdateSelectedVisual}}();}
+\DoxyCodeLine{00088\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00089\ \ \ \ \ \}}
+
+\end{DoxyCode}
+
+
+\doxysubsection{Member Data Documentation}
+\Hypertarget{class_unit_action_system_u_i_ac3f0b5e859ca7e1028c5389f8b2f5b04}\index{UnitActionSystemUI@{UnitActionSystemUI}!actionButtonContainerTransform@{actionButtonContainerTransform}}
+\index{actionButtonContainerTransform@{actionButtonContainerTransform}!UnitActionSystemUI@{UnitActionSystemUI}}
+\doxysubsubsection{\texorpdfstring{actionButtonContainerTransform}{actionButtonContainerTransform}}
+{\footnotesize\ttfamily \label{class_unit_action_system_u_i_ac3f0b5e859ca7e1028c5389f8b2f5b04} 
+Transform Unit\+Action\+System\+UI.\+action\+Button\+Container\+Transform\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_unit_action_system_u_i_8cs_source_l00017}{17}} of file \mbox{\hyperlink{_unit_action_system_u_i_8cs_source}{Unit\+Action\+System\+UI.\+cs}}.
+
+\Hypertarget{class_unit_action_system_u_i_a1050e6d40692381c9e0a060c0460f962}\index{UnitActionSystemUI@{UnitActionSystemUI}!actionButtonPrefab@{actionButtonPrefab}}
+\index{actionButtonPrefab@{actionButtonPrefab}!UnitActionSystemUI@{UnitActionSystemUI}}
+\doxysubsubsection{\texorpdfstring{actionButtonPrefab}{actionButtonPrefab}}
+{\footnotesize\ttfamily \label{class_unit_action_system_u_i_a1050e6d40692381c9e0a060c0460f962} 
+Transform Unit\+Action\+System\+UI.\+action\+Button\+Prefab\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_unit_action_system_u_i_8cs_source_l00016}{16}} of file \mbox{\hyperlink{_unit_action_system_u_i_8cs_source}{Unit\+Action\+System\+UI.\+cs}}.
+
+\Hypertarget{class_unit_action_system_u_i_a27d4e85b75622a47f3ba2d0cb51d49d0}\index{UnitActionSystemUI@{UnitActionSystemUI}!actionButtonUIList@{actionButtonUIList}}
+\index{actionButtonUIList@{actionButtonUIList}!UnitActionSystemUI@{UnitActionSystemUI}}
+\doxysubsubsection{\texorpdfstring{actionButtonUIList}{actionButtonUIList}}
+{\footnotesize\ttfamily \label{class_unit_action_system_u_i_a27d4e85b75622a47f3ba2d0cb51d49d0} 
+List$<$\mbox{\hyperlink{class_unit_action_button_u_i}{Unit\+Action\+Button\+UI}}$>$ Unit\+Action\+System\+UI.\+action\+Button\+UIList\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_unit_action_system_u_i_8cs_source_l00020}{20}} of file \mbox{\hyperlink{_unit_action_system_u_i_8cs_source}{Unit\+Action\+System\+UI.\+cs}}.
+
+\Hypertarget{class_unit_action_system_u_i_abf49d0c78953918906479a26ceda86f2}\index{UnitActionSystemUI@{UnitActionSystemUI}!actionPointsText@{actionPointsText}}
+\index{actionPointsText@{actionPointsText}!UnitActionSystemUI@{UnitActionSystemUI}}
+\doxysubsubsection{\texorpdfstring{actionPointsText}{actionPointsText}}
+{\footnotesize\ttfamily \label{class_unit_action_system_u_i_abf49d0c78953918906479a26ceda86f2} 
+Text\+Mesh\+Pro\+UGUI Unit\+Action\+System\+UI.\+action\+Points\+Text\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_unit_action_system_u_i_8cs_source_l00018}{18}} of file \mbox{\hyperlink{_unit_action_system_u_i_8cs_source}{Unit\+Action\+System\+UI.\+cs}}.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+D\+:/\+Unity/\+Rogue\+Shooter/\+Rogue\+Shooter/\+Assets/\+Scripts/\+Player\+Units/\+Units\+Control\+UI/\mbox{\hyperlink{_unit_action_system_u_i_8cs}{Unit\+Action\+System\+UI.\+cs}}\end{DoxyCompactItemize}

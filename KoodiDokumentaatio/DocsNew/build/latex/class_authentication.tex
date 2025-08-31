@@ -1,0 +1,59 @@
+\doxysection{Authentication Class Reference}
+\hypertarget{class_authentication}{}\label{class_authentication}\index{Authentication@{Authentication}}
+
+
+This class is responsible for handling the authentication process using Unity Services. It initializes the Unity Services and signs in the user anonymously.  
+
+
+Inheritance diagram for Authentication\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{class_authentication}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Private Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+async void \mbox{\hyperlink{class_authentication_a7e51b61c551efeaf35a002d46c698127}{Start}} ()
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+This class is responsible for handling the authentication process using Unity Services. It initializes the Unity Services and signs in the user anonymously. 
+
+Definition at line \mbox{\hyperlink{_authentication_8cs_source_l00011}{11}} of file \mbox{\hyperlink{_authentication_8cs_source}{Authentication.\+cs}}.
+
+
+
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_authentication_a7e51b61c551efeaf35a002d46c698127}\index{Authentication@{Authentication}!Start@{Start}}
+\index{Start@{Start}!Authentication@{Authentication}}
+\doxysubsubsection{\texorpdfstring{Start()}{Start()}}
+{\footnotesize\ttfamily \label{class_authentication_a7e51b61c551efeaf35a002d46c698127} 
+async void Authentication.\+Start (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_authentication_8cs_source_l00014}{14}} of file \mbox{\hyperlink{_authentication_8cs_source}{Authentication.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00015\ \ \ \ \ \{}
+\DoxyCodeLine{00016\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{try}}
+\DoxyCodeLine{00017\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00018\ \ \ \ \ \ \ \ \ \ \ \ \ await\ UnityServices.InitializeAsync();}
+\DoxyCodeLine{00019\ \ \ \ \ \ \ \ \ \ \ \ \ await\ AuthenticationService.Instance.SignInAnonymouslyAsync();}
+\DoxyCodeLine{00020\ \ \ \ \ \ \ \ \ \ \ \ \ Debug.Log(\textcolor{stringliteral}{"{}Logged\ into\ Unity,\ player\ ID:\ "{}}\ +\ AuthenticationService.Instance.PlayerId);}
+\DoxyCodeLine{00021\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00022\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{catch}\ (Exception\ e)}
+\DoxyCodeLine{00023\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00024\ \ \ \ \ \ \ \ \ \ \ \ \ Debug.LogError(e);}
+\DoxyCodeLine{00025\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00026\ \ \ \ \ \}}
+
+\end{DoxyCode}
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+D\+:/\+Unity/\+Rogue\+Shooter/\+Rogue\+Shooter/\+Assets/\+Scripts/\+Oneline/\mbox{\hyperlink{_authentication_8cs}{Authentication.\+cs}}\end{DoxyCompactItemize}

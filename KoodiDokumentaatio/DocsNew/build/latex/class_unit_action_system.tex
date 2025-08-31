@@ -1,0 +1,443 @@
+\doxysection{Unit\+Action\+System Class Reference}
+\hypertarget{class_unit_action_system}{}\label{class_unit_action_system}\index{UnitActionSystem@{UnitActionSystem}}
+
+
+This script handles the unit action system in the game. It allows the player to select units and perform actions on them, such as moving or shooting.  
+
+
+Inheritance diagram for Unit\+Action\+System\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{class_unit_action_system}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{class_unit_action_system_a3f3360cf971c28186c03a5b1c2e684bd}{Set\+Selected\+Action}} (\mbox{\hyperlink{class_base_action}{Base\+Action}} base\+Action)
+\begin{DoxyCompactList}\small\item\em Sets the selected action and triggers the On\+Selected\+Action\+Changed event. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{class_unit}{Unit}} \mbox{\hyperlink{class_unit_action_system_a03b257e8f1ff89c63d59860c00b2b12d}{Get\+Selected\+Unit}} ()
+\item 
+\mbox{\hyperlink{class_base_action}{Base\+Action}} \mbox{\hyperlink{class_unit_action_system_a2339ff8deb76ac574641c36067f7d4b5}{Get\+Selected\+Action}} ()
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Properties}
+\begin{DoxyCompactItemize}
+\item 
+static \mbox{\hyperlink{class_unit_action_system}{Unit\+Action\+System}} \mbox{\hyperlink{class_unit_action_system_aade075caf30c86ba81a057352a0f0a55}{Instance}}\hspace{0.3cm}{\ttfamily  \mbox{[}get, private set\mbox{]}}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Events}
+\begin{DoxyCompactItemize}
+\item 
+Event\+Handler \mbox{\hyperlink{class_unit_action_system_a46f745ff83bab2e0de044d72582f2213}{On\+Selected\+Unit\+Changed}}
+\item 
+Event\+Handler \mbox{\hyperlink{class_unit_action_system_a6e7032e43174566cb6bcceba11632b58}{On\+Selected\+Action\+Changed}}
+\item 
+Event\+Handler$<$ bool $>$ \mbox{\hyperlink{class_unit_action_system_a23877355a0c1da360a1346a49635b6a4}{On\+Busy\+Changed}}
+\item 
+Event\+Handler \mbox{\hyperlink{class_unit_action_system_add6731eaaa028cc63a8be275b4f6ee33}{On\+Action\+Started}}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Private Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{class_unit_action_system_af7121bbf330728ccc33c75847a26b3cf}{Awake}} ()
+\item 
+void \mbox{\hyperlink{class_unit_action_system_a86d9ffa12df7caaf0cfa8720241e9de4}{Start}} ()
+\item 
+void \mbox{\hyperlink{class_unit_action_system_a6e3e0b080505eca4e41fc135e5843267}{Update}} ()
+\item 
+void \mbox{\hyperlink{class_unit_action_system_a235354e031eea95c5f33fc9b3dd1ec5e}{Handle\+Selected\+Action}} ()
+\item 
+void \mbox{\hyperlink{class_unit_action_system_a9f33856ddf08091b8347f5738be7f9a2}{Set\+Busy}} ()
+\item 
+void \mbox{\hyperlink{class_unit_action_system_aac2e59e84e16d38bb8a432ed768bc58e}{Clear\+Busy}} ()
+\begin{DoxyCompactList}\small\item\em This method is called when the action is completed. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{class_unit_action_system_ac59bb619a2cd7e2014b1a285737e1062}{Try\+Handle\+Unit\+Selection}} ()
+\begin{DoxyCompactList}\small\item\em This method is called when the player clicks on a unit in the game world. Check if the mouse is over a unit If so, select the unit and return If not, move the selected unit to the mouse position. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_unit_action_system_a6fb5ddbd18e32e5448f2e1a3e927b2d2}{Set\+Selected\+Unit}} (\mbox{\hyperlink{class_unit}{Unit}} unit)
+\begin{DoxyCompactList}\small\item\em Sets the selected unit and triggers the On\+Selected\+Unit\+Changed event. By defaults set the selected action to the unit\textquotesingle{}s move action. The most common action. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+Layer\+Mask \mbox{\hyperlink{class_unit_action_system_a8b9110675993593833108cff036d58e1}{unit\+Layer\+Mask}}
+\item 
+\mbox{\hyperlink{class_unit}{Unit}} \mbox{\hyperlink{class_unit_action_system_a2bae780345b21bd683cc6a36e3d7f834}{selected\+Unit}}
+\item 
+\mbox{\hyperlink{class_base_action}{Base\+Action}} \mbox{\hyperlink{class_unit_action_system_a8b5ef413eccb69e5a2abec4fe8a971e5}{selected\+Action}}
+\item 
+bool \mbox{\hyperlink{class_unit_action_system_aece0a4c3491e99ef19d834683acf3551}{is\+Busy}}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+This script handles the unit action system in the game. It allows the player to select units and perform actions on them, such as moving or shooting. 
+
+Definition at line \mbox{\hyperlink{_unit_action_system_8cs_source_l00013}{13}} of file \mbox{\hyperlink{_unit_action_system_8cs_source}{Unit\+Action\+System.\+cs}}.
+
+
+
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_unit_action_system_af7121bbf330728ccc33c75847a26b3cf}\index{UnitActionSystem@{UnitActionSystem}!Awake@{Awake}}
+\index{Awake@{Awake}!UnitActionSystem@{UnitActionSystem}}
+\doxysubsubsection{\texorpdfstring{Awake()}{Awake()}}
+{\footnotesize\ttfamily \label{class_unit_action_system_af7121bbf330728ccc33c75847a26b3cf} 
+void Unit\+Action\+System.\+Awake (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_unit_action_system_8cs_source_l00031}{31}} of file \mbox{\hyperlink{_unit_action_system_8cs_source}{Unit\+Action\+System.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00032\ \ \ \ \ \{}
+\DoxyCodeLine{00033\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_unit_action_system_a2bae780345b21bd683cc6a36e3d7f834}{selectedUnit}}\ =\ \textcolor{keyword}{null};}
+\DoxyCodeLine{00034\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Ensure\ that\ there\ is\ only\ one\ instance\ in\ the\ scene}}
+\DoxyCodeLine{00035\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{class_unit_action_system_aade075caf30c86ba81a057352a0f0a55}{Instance}}\ !=\ \textcolor{keyword}{null})}
+\DoxyCodeLine{00036\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00037\ \ \ \ \ \ \ \ \ \ \ \ \ Debug.LogError(\textcolor{stringliteral}{"{}UnitActionSystem:\ More\ than\ one\ UnitActionSystem\ in\ the\ scene!"{}}\ +\ transform\ +\ \textcolor{stringliteral}{"{}\ "{}}\ +\ \mbox{\hyperlink{class_unit_action_system_aade075caf30c86ba81a057352a0f0a55}{Instance}});}
+\DoxyCodeLine{00038\ \ \ \ \ \ \ \ \ \ \ \ \ Destroy(gameObject);}
+\DoxyCodeLine{00039\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{00040\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00041\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_unit_action_system_aade075caf30c86ba81a057352a0f0a55}{Instance}}\ =\ \textcolor{keyword}{this};}
+\DoxyCodeLine{00042\ \ \ \ \ \}}
+
+\end{DoxyCode}
+\Hypertarget{class_unit_action_system_aac2e59e84e16d38bb8a432ed768bc58e}\index{UnitActionSystem@{UnitActionSystem}!ClearBusy@{ClearBusy}}
+\index{ClearBusy@{ClearBusy}!UnitActionSystem@{UnitActionSystem}}
+\doxysubsubsection{\texorpdfstring{ClearBusy()}{ClearBusy()}}
+{\footnotesize\ttfamily \label{class_unit_action_system_aac2e59e84e16d38bb8a432ed768bc58e} 
+void Unit\+Action\+System.\+Clear\+Busy (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [private]}}
+
+
+
+This method is called when the action is completed. 
+
+
+
+Definition at line \mbox{\hyperlink{_unit_action_system_8cs_source_l00095}{95}} of file \mbox{\hyperlink{_unit_action_system_8cs_source}{Unit\+Action\+System.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00096\ \ \ \ \ \{}
+\DoxyCodeLine{00097\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_unit_action_system_aece0a4c3491e99ef19d834683acf3551}{isBusy}}\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00098\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_unit_action_system_a23877355a0c1da360a1346a49635b6a4}{OnBusyChanged}}?.Invoke(\textcolor{keyword}{this},\ \mbox{\hyperlink{class_unit_action_system_aece0a4c3491e99ef19d834683acf3551}{isBusy}});}
+\DoxyCodeLine{00099\ \ \ \ \ \}}
+
+\end{DoxyCode}
+\Hypertarget{class_unit_action_system_a2339ff8deb76ac574641c36067f7d4b5}\index{UnitActionSystem@{UnitActionSystem}!GetSelectedAction@{GetSelectedAction}}
+\index{GetSelectedAction@{GetSelectedAction}!UnitActionSystem@{UnitActionSystem}}
+\doxysubsubsection{\texorpdfstring{GetSelectedAction()}{GetSelectedAction()}}
+{\footnotesize\ttfamily \label{class_unit_action_system_a2339ff8deb76ac574641c36067f7d4b5} 
+\mbox{\hyperlink{class_base_action}{Base\+Action}} Unit\+Action\+System.\+Get\+Selected\+Action (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line \mbox{\hyperlink{_unit_action_system_8cs_source_l00152}{152}} of file \mbox{\hyperlink{_unit_action_system_8cs_source}{Unit\+Action\+System.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00153\ \ \ \ \ \{}
+\DoxyCodeLine{00154\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{class_unit_action_system_a8b5ef413eccb69e5a2abec4fe8a971e5}{selectedAction}};}
+\DoxyCodeLine{00155\ \ \ \ \ \}}
+
+\end{DoxyCode}
+\Hypertarget{class_unit_action_system_a03b257e8f1ff89c63d59860c00b2b12d}\index{UnitActionSystem@{UnitActionSystem}!GetSelectedUnit@{GetSelectedUnit}}
+\index{GetSelectedUnit@{GetSelectedUnit}!UnitActionSystem@{UnitActionSystem}}
+\doxysubsubsection{\texorpdfstring{GetSelectedUnit()}{GetSelectedUnit()}}
+{\footnotesize\ttfamily \label{class_unit_action_system_a03b257e8f1ff89c63d59860c00b2b12d} 
+\mbox{\hyperlink{class_unit}{Unit}} Unit\+Action\+System.\+Get\+Selected\+Unit (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line \mbox{\hyperlink{_unit_action_system_8cs_source_l00147}{147}} of file \mbox{\hyperlink{_unit_action_system_8cs_source}{Unit\+Action\+System.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00148\ \ \ \ \ \{}
+\DoxyCodeLine{00149\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{class_unit_action_system_a2bae780345b21bd683cc6a36e3d7f834}{selectedUnit}};}
+\DoxyCodeLine{00150\ \ \ \ \ \}}
+
+\end{DoxyCode}
+\Hypertarget{class_unit_action_system_a235354e031eea95c5f33fc9b3dd1ec5e}\index{UnitActionSystem@{UnitActionSystem}!HandleSelectedAction@{HandleSelectedAction}}
+\index{HandleSelectedAction@{HandleSelectedAction}!UnitActionSystem@{UnitActionSystem}}
+\doxysubsubsection{\texorpdfstring{HandleSelectedAction()}{HandleSelectedAction()}}
+{\footnotesize\ttfamily \label{class_unit_action_system_a235354e031eea95c5f33fc9b3dd1ec5e} 
+void Unit\+Action\+System.\+Handle\+Selected\+Action (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_unit_action_system_8cs_source_l00065}{65}} of file \mbox{\hyperlink{_unit_action_system_8cs_source}{Unit\+Action\+System.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00066\ \ \ \ \ \{}
+\DoxyCodeLine{00067\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (Input.GetMouseButtonDown(0))}
+\DoxyCodeLine{00068\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00069\ \ \ \ \ \ \ \ \ \ \ \ \ GridPosition\ mouseGridPosition\ =\ LevelGrid.Instance.GetGridPosition(MouseWorld.GetMouseWorldPosition());}
+\DoxyCodeLine{00070\ }
+\DoxyCodeLine{00071\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!\mbox{\hyperlink{class_unit_action_system_a8b5ef413eccb69e5a2abec4fe8a971e5}{selectedAction}}.IsValidGridPosition(mouseGridPosition)}
+\DoxyCodeLine{00072\ \ \ \ \ \ \ \ \ \ \ \ \ ||\ !\mbox{\hyperlink{class_unit_action_system_a2bae780345b21bd683cc6a36e3d7f834}{selectedUnit}}.TrySpendActionPointsToTakeAction(\mbox{\hyperlink{class_unit_action_system_a8b5ef413eccb69e5a2abec4fe8a971e5}{selectedAction}}))}
+\DoxyCodeLine{00073\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00074\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};\ \ \ \ \ \ \ }
+\DoxyCodeLine{00075\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00076\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_unit_action_system_a9f33856ddf08091b8347f5738be7f9a2}{SetBusy}}();}
+\DoxyCodeLine{00077\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_unit_action_system_a8b5ef413eccb69e5a2abec4fe8a971e5}{selectedAction}}.TakeAction(mouseGridPosition,\ \mbox{\hyperlink{class_unit_action_system_aac2e59e84e16d38bb8a432ed768bc58e}{ClearBusy}});}
+\DoxyCodeLine{00078\ }
+\DoxyCodeLine{00079\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_unit_action_system_add6731eaaa028cc63a8be275b4f6ee33}{OnActionStarted}}?.Invoke(\textcolor{keyword}{this},\ EventArgs.Empty);\ }
+\DoxyCodeLine{00080\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00081\ \ \ \ \ \}}
+
+\end{DoxyCode}
+\Hypertarget{class_unit_action_system_a9f33856ddf08091b8347f5738be7f9a2}\index{UnitActionSystem@{UnitActionSystem}!SetBusy@{SetBusy}}
+\index{SetBusy@{SetBusy}!UnitActionSystem@{UnitActionSystem}}
+\doxysubsubsection{\texorpdfstring{SetBusy()}{SetBusy()}}
+{\footnotesize\ttfamily \label{class_unit_action_system_a9f33856ddf08091b8347f5738be7f9a2} 
+void Unit\+Action\+System.\+Set\+Busy (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_unit_action_system_8cs_source_l00086}{86}} of file \mbox{\hyperlink{_unit_action_system_8cs_source}{Unit\+Action\+System.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00087\ \ \ \ \ \{}
+\DoxyCodeLine{00088\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_unit_action_system_aece0a4c3491e99ef19d834683acf3551}{isBusy}}\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00089\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_unit_action_system_a23877355a0c1da360a1346a49635b6a4}{OnBusyChanged}}?.Invoke(\textcolor{keyword}{this},\ \mbox{\hyperlink{class_unit_action_system_aece0a4c3491e99ef19d834683acf3551}{isBusy}});}
+\DoxyCodeLine{00090\ \ \ \ \ \}}
+
+\end{DoxyCode}
+\Hypertarget{class_unit_action_system_a3f3360cf971c28186c03a5b1c2e684bd}\index{UnitActionSystem@{UnitActionSystem}!SetSelectedAction@{SetSelectedAction}}
+\index{SetSelectedAction@{SetSelectedAction}!UnitActionSystem@{UnitActionSystem}}
+\doxysubsubsection{\texorpdfstring{SetSelectedAction()}{SetSelectedAction()}}
+{\footnotesize\ttfamily \label{class_unit_action_system_a3f3360cf971c28186c03a5b1c2e684bd} 
+void Unit\+Action\+System.\+Set\+Selected\+Action (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{class_base_action}{Base\+Action}}}]{base\+Action}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Sets the selected action and triggers the On\+Selected\+Action\+Changed event. 
+
+
+
+Definition at line \mbox{\hyperlink{_unit_action_system_8cs_source_l00141}{141}} of file \mbox{\hyperlink{_unit_action_system_8cs_source}{Unit\+Action\+System.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00142\ \ \ \ \ \{}
+\DoxyCodeLine{00143\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_unit_action_system_a8b5ef413eccb69e5a2abec4fe8a971e5}{selectedAction}}\ =\ baseAction;}
+\DoxyCodeLine{00144\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_unit_action_system_a6e7032e43174566cb6bcceba11632b58}{OnSelectedActionChanged}}?.Invoke(\textcolor{keyword}{this},\ EventArgs.Empty);}
+\DoxyCodeLine{00145\ \ \ \ \ \}}
+
+\end{DoxyCode}
+\Hypertarget{class_unit_action_system_a6fb5ddbd18e32e5448f2e1a3e927b2d2}\index{UnitActionSystem@{UnitActionSystem}!SetSelectedUnit@{SetSelectedUnit}}
+\index{SetSelectedUnit@{SetSelectedUnit}!UnitActionSystem@{UnitActionSystem}}
+\doxysubsubsection{\texorpdfstring{SetSelectedUnit()}{SetSelectedUnit()}}
+{\footnotesize\ttfamily \label{class_unit_action_system_a6fb5ddbd18e32e5448f2e1a3e927b2d2} 
+void Unit\+Action\+System.\+Set\+Selected\+Unit (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{class_unit}{Unit}}}]{unit}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [private]}}
+
+
+
+Sets the selected unit and triggers the On\+Selected\+Unit\+Changed event. By defaults set the selected action to the unit\textquotesingle{}s move action. The most common action. 
+
+
+
+Definition at line \mbox{\hyperlink{_unit_action_system_8cs_source_l00130}{130}} of file \mbox{\hyperlink{_unit_action_system_8cs_source}{Unit\+Action\+System.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00131\ \ \ \ \ \{}
+\DoxyCodeLine{00132\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}(unit.\mbox{\hyperlink{class_unit_a8b4a979fcc5105ba9fec1629284a6653}{IsEnemy}}())\ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{00133\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_unit_action_system_a2bae780345b21bd683cc6a36e3d7f834}{selectedUnit}}\ =\ unit;}
+\DoxyCodeLine{00134\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_unit_action_system_a3f3360cf971c28186c03a5b1c2e684bd}{SetSelectedAction}}(unit.\mbox{\hyperlink{class_unit_a2900e147bfdf99ccb8c0197b3721198c}{GetMoveAction}}());}
+\DoxyCodeLine{00135\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_unit_action_system_a46f745ff83bab2e0de044d72582f2213}{OnSelectedUnitChanged}}?.Invoke(\textcolor{keyword}{this},\ EventArgs.Empty);}
+\DoxyCodeLine{00136\ \ \ \ \ \}}
+
+\end{DoxyCode}
+\Hypertarget{class_unit_action_system_a86d9ffa12df7caaf0cfa8720241e9de4}\index{UnitActionSystem@{UnitActionSystem}!Start@{Start}}
+\index{Start@{Start}!UnitActionSystem@{UnitActionSystem}}
+\doxysubsubsection{\texorpdfstring{Start()}{Start()}}
+{\footnotesize\ttfamily \label{class_unit_action_system_a86d9ffa12df7caaf0cfa8720241e9de4} 
+void Unit\+Action\+System.\+Start (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_unit_action_system_8cs_source_l00044}{44}} of file \mbox{\hyperlink{_unit_action_system_8cs_source}{Unit\+Action\+System.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00045\ \ \ \ \ \{}
+\DoxyCodeLine{00046\ }
+\DoxyCodeLine{00047\ \ \ \ \ \}}
+
+\end{DoxyCode}
+\Hypertarget{class_unit_action_system_ac59bb619a2cd7e2014b1a285737e1062}\index{UnitActionSystem@{UnitActionSystem}!TryHandleUnitSelection@{TryHandleUnitSelection}}
+\index{TryHandleUnitSelection@{TryHandleUnitSelection}!UnitActionSystem@{UnitActionSystem}}
+\doxysubsubsection{\texorpdfstring{TryHandleUnitSelection()}{TryHandleUnitSelection()}}
+{\footnotesize\ttfamily \label{class_unit_action_system_ac59bb619a2cd7e2014b1a285737e1062} 
+bool Unit\+Action\+System.\+Try\+Handle\+Unit\+Selection (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [private]}}
+
+
+
+This method is called when the player clicks on a unit in the game world. Check if the mouse is over a unit If so, select the unit and return If not, move the selected unit to the mouse position. 
+
+
+
+Definition at line \mbox{\hyperlink{_unit_action_system_8cs_source_l00107}{107}} of file \mbox{\hyperlink{_unit_action_system_8cs_source}{Unit\+Action\+System.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00108\ \ \ \ \ \{}
+\DoxyCodeLine{00109\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}(Input.GetMouseButtonDown(0))}
+\DoxyCodeLine{00110\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00111\ \ \ \ \ \ \ \ \ \ \ \ \ Ray\ ray\ =\ Camera.main.ScreenPointToRay(Input.mousePosition);}
+\DoxyCodeLine{00112\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (Physics.Raycast(ray,\ out\ RaycastHit\ hit,\ \textcolor{keywordtype}{float}.MaxValue,\ \mbox{\hyperlink{class_unit_action_system_a8b9110675993593833108cff036d58e1}{unitLayerMask}}))}
+\DoxyCodeLine{00113\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00114\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (hit.transform.TryGetComponent<Unit>(out\ Unit\ unit))}
+\DoxyCodeLine{00115\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00116\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}(AuthorityHelper.HasLocalControl(unit)\ ||\ unit\ ==\ \mbox{\hyperlink{class_unit_action_system_a2bae780345b21bd683cc6a36e3d7f834}{selectedUnit}})\ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00117\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_unit_action_system_a6fb5ddbd18e32e5448f2e1a3e927b2d2}{SetSelectedUnit}}(unit);}
+\DoxyCodeLine{00118\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00119\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00120\ \ \ \ \ \ \ \ \ \ \ \ \ \}\ \ \ \ \ \ \ }
+\DoxyCodeLine{00121\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00122\ }
+\DoxyCodeLine{00123\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00124\ \ \ \ \ \}}
+
+\end{DoxyCode}
+\Hypertarget{class_unit_action_system_a6e3e0b080505eca4e41fc135e5843267}\index{UnitActionSystem@{UnitActionSystem}!Update@{Update}}
+\index{Update@{Update}!UnitActionSystem@{UnitActionSystem}}
+\doxysubsubsection{\texorpdfstring{Update()}{Update()}}
+{\footnotesize\ttfamily \label{class_unit_action_system_a6e3e0b080505eca4e41fc135e5843267} 
+void Unit\+Action\+System.\+Update (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_unit_action_system_8cs_source_l00048}{48}} of file \mbox{\hyperlink{_unit_action_system_8cs_source}{Unit\+Action\+System.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00049\ \ \ \ \ \{}
+\DoxyCodeLine{00050\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Prevents\ the\ player\ from\ performing\ multiple\ actions\ at\ the\ same\ time}}
+\DoxyCodeLine{00051\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{class_unit_action_system_aece0a4c3491e99ef19d834683acf3551}{isBusy}})\ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{00052\ }
+\DoxyCodeLine{00053\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ if\ is\ not\ the\ player's\ turn,\ ignore\ input}}
+\DoxyCodeLine{00054\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}(!TurnSystem.Instance.IsPlayerTurn())\ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{00055\ }
+\DoxyCodeLine{00056\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Ignore\ input\ if\ the\ mouse\ is\ over\ a\ UI\ element}}
+\DoxyCodeLine{00057\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}(EventSystem.current.IsPointerOverGameObject())\ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{00058\ \ \ \ }
+\DoxyCodeLine{00059\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Check\ if\ the\ player\ is\ trying\ to\ select\ a\ unit\ or\ move\ the\ selected\ unit}}
+\DoxyCodeLine{00060\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{class_unit_action_system_ac59bb619a2cd7e2014b1a285737e1062}{TryHandleUnitSelection}}())\ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{00061\ }
+\DoxyCodeLine{00062\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_unit_action_system_a235354e031eea95c5f33fc9b3dd1ec5e}{HandleSelectedAction}}();}
+\DoxyCodeLine{00063\ \ \ \ \ \}}
+
+\end{DoxyCode}
+
+
+\doxysubsection{Member Data Documentation}
+\Hypertarget{class_unit_action_system_aece0a4c3491e99ef19d834683acf3551}\index{UnitActionSystem@{UnitActionSystem}!isBusy@{isBusy}}
+\index{isBusy@{isBusy}!UnitActionSystem@{UnitActionSystem}}
+\doxysubsubsection{\texorpdfstring{isBusy}{isBusy}}
+{\footnotesize\ttfamily \label{class_unit_action_system_aece0a4c3491e99ef19d834683acf3551} 
+bool Unit\+Action\+System.\+is\+Busy\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_unit_action_system_8cs_source_l00029}{29}} of file \mbox{\hyperlink{_unit_action_system_8cs_source}{Unit\+Action\+System.\+cs}}.
+
+\Hypertarget{class_unit_action_system_a8b5ef413eccb69e5a2abec4fe8a971e5}\index{UnitActionSystem@{UnitActionSystem}!selectedAction@{selectedAction}}
+\index{selectedAction@{selectedAction}!UnitActionSystem@{UnitActionSystem}}
+\doxysubsubsection{\texorpdfstring{selectedAction}{selectedAction}}
+{\footnotesize\ttfamily \label{class_unit_action_system_a8b5ef413eccb69e5a2abec4fe8a971e5} 
+\mbox{\hyperlink{class_base_action}{Base\+Action}} Unit\+Action\+System.\+selected\+Action\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_unit_action_system_8cs_source_l00026}{26}} of file \mbox{\hyperlink{_unit_action_system_8cs_source}{Unit\+Action\+System.\+cs}}.
+
+\Hypertarget{class_unit_action_system_a2bae780345b21bd683cc6a36e3d7f834}\index{UnitActionSystem@{UnitActionSystem}!selectedUnit@{selectedUnit}}
+\index{selectedUnit@{selectedUnit}!UnitActionSystem@{UnitActionSystem}}
+\doxysubsubsection{\texorpdfstring{selectedUnit}{selectedUnit}}
+{\footnotesize\ttfamily \label{class_unit_action_system_a2bae780345b21bd683cc6a36e3d7f834} 
+\mbox{\hyperlink{class_unit}{Unit}} Unit\+Action\+System.\+selected\+Unit\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_unit_action_system_8cs_source_l00024}{24}} of file \mbox{\hyperlink{_unit_action_system_8cs_source}{Unit\+Action\+System.\+cs}}.
+
+\Hypertarget{class_unit_action_system_a8b9110675993593833108cff036d58e1}\index{UnitActionSystem@{UnitActionSystem}!unitLayerMask@{unitLayerMask}}
+\index{unitLayerMask@{unitLayerMask}!UnitActionSystem@{UnitActionSystem}}
+\doxysubsubsection{\texorpdfstring{unitLayerMask}{unitLayerMask}}
+{\footnotesize\ttfamily \label{class_unit_action_system_a8b9110675993593833108cff036d58e1} 
+Layer\+Mask Unit\+Action\+System.\+unit\+Layer\+Mask\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_unit_action_system_8cs_source_l00023}{23}} of file \mbox{\hyperlink{_unit_action_system_8cs_source}{Unit\+Action\+System.\+cs}}.
+
+
+
+\doxysubsection{Property Documentation}
+\Hypertarget{class_unit_action_system_aade075caf30c86ba81a057352a0f0a55}\index{UnitActionSystem@{UnitActionSystem}!Instance@{Instance}}
+\index{Instance@{Instance}!UnitActionSystem@{UnitActionSystem}}
+\doxysubsubsection{\texorpdfstring{Instance}{Instance}}
+{\footnotesize\ttfamily \label{class_unit_action_system_aade075caf30c86ba81a057352a0f0a55} 
+\mbox{\hyperlink{class_unit_action_system}{Unit\+Action\+System}} Unit\+Action\+System.\+Instance\hspace{0.3cm}{\ttfamily [static]}, {\ttfamily [get]}, {\ttfamily [private set]}}
+
+
+
+Definition at line \mbox{\hyperlink{_unit_action_system_8cs_source_l00015}{15}} of file \mbox{\hyperlink{_unit_action_system_8cs_source}{Unit\+Action\+System.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00015\ \{\ \textcolor{keyword}{get};\ \textcolor{keyword}{private}\ \textcolor{keyword}{set};\ \}}
+
+\end{DoxyCode}
+
+
+\doxysubsection{Event Documentation}
+\Hypertarget{class_unit_action_system_add6731eaaa028cc63a8be275b4f6ee33}\index{UnitActionSystem@{UnitActionSystem}!OnActionStarted@{OnActionStarted}}
+\index{OnActionStarted@{OnActionStarted}!UnitActionSystem@{UnitActionSystem}}
+\doxysubsubsection{\texorpdfstring{OnActionStarted}{OnActionStarted}}
+{\footnotesize\ttfamily \label{class_unit_action_system_add6731eaaa028cc63a8be275b4f6ee33} 
+Event\+Handler Unit\+Action\+System.\+On\+Action\+Started}
+
+
+
+Definition at line \mbox{\hyperlink{_unit_action_system_8cs_source_l00020}{20}} of file \mbox{\hyperlink{_unit_action_system_8cs_source}{Unit\+Action\+System.\+cs}}.
+
+\Hypertarget{class_unit_action_system_a23877355a0c1da360a1346a49635b6a4}\index{UnitActionSystem@{UnitActionSystem}!OnBusyChanged@{OnBusyChanged}}
+\index{OnBusyChanged@{OnBusyChanged}!UnitActionSystem@{UnitActionSystem}}
+\doxysubsubsection{\texorpdfstring{OnBusyChanged}{OnBusyChanged}}
+{\footnotesize\ttfamily \label{class_unit_action_system_a23877355a0c1da360a1346a49635b6a4} 
+Event\+Handler$<$bool$>$ Unit\+Action\+System.\+On\+Busy\+Changed}
+
+
+
+Definition at line \mbox{\hyperlink{_unit_action_system_8cs_source_l00019}{19}} of file \mbox{\hyperlink{_unit_action_system_8cs_source}{Unit\+Action\+System.\+cs}}.
+
+\Hypertarget{class_unit_action_system_a6e7032e43174566cb6bcceba11632b58}\index{UnitActionSystem@{UnitActionSystem}!OnSelectedActionChanged@{OnSelectedActionChanged}}
+\index{OnSelectedActionChanged@{OnSelectedActionChanged}!UnitActionSystem@{UnitActionSystem}}
+\doxysubsubsection{\texorpdfstring{OnSelectedActionChanged}{OnSelectedActionChanged}}
+{\footnotesize\ttfamily \label{class_unit_action_system_a6e7032e43174566cb6bcceba11632b58} 
+Event\+Handler Unit\+Action\+System.\+On\+Selected\+Action\+Changed}
+
+
+
+Definition at line \mbox{\hyperlink{_unit_action_system_8cs_source_l00018}{18}} of file \mbox{\hyperlink{_unit_action_system_8cs_source}{Unit\+Action\+System.\+cs}}.
+
+\Hypertarget{class_unit_action_system_a46f745ff83bab2e0de044d72582f2213}\index{UnitActionSystem@{UnitActionSystem}!OnSelectedUnitChanged@{OnSelectedUnitChanged}}
+\index{OnSelectedUnitChanged@{OnSelectedUnitChanged}!UnitActionSystem@{UnitActionSystem}}
+\doxysubsubsection{\texorpdfstring{OnSelectedUnitChanged}{OnSelectedUnitChanged}}
+{\footnotesize\ttfamily \label{class_unit_action_system_a46f745ff83bab2e0de044d72582f2213} 
+Event\+Handler Unit\+Action\+System.\+On\+Selected\+Unit\+Changed}
+
+
+
+Definition at line \mbox{\hyperlink{_unit_action_system_8cs_source_l00017}{17}} of file \mbox{\hyperlink{_unit_action_system_8cs_source}{Unit\+Action\+System.\+cs}}.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+D\+:/\+Unity/\+Rogue\+Shooter/\+Rogue\+Shooter/\+Assets/\+Scripts/\+Player\+Units/\+Unit\+Actions/\mbox{\hyperlink{_unit_action_system_8cs}{Unit\+Action\+System.\+cs}}\end{DoxyCompactItemize}

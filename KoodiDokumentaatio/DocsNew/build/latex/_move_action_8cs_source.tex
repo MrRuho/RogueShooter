@@ -1,0 +1,96 @@
+\doxysection{Move\+Action.\+cs}
+\hypertarget{_move_action_8cs_source}{}\label{_move_action_8cs_source}\index{D:/Unity/RogueShooter/RogueShooter/Assets/Scripts/PlayerUnits/UnitActions/MoveAction.cs@{D:/Unity/RogueShooter/RogueShooter/Assets/Scripts/PlayerUnits/UnitActions/MoveAction.cs}}
+\mbox{\hyperlink{_move_action_8cs}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\Hypertarget{_move_action_8cs_source_l00001}00001\ \textcolor{keyword}{using\ }System;}
+\DoxyCodeLine{\Hypertarget{_move_action_8cs_source_l00002}00002\ \textcolor{keyword}{using\ }System.Collections.Generic;}
+\DoxyCodeLine{\Hypertarget{_move_action_8cs_source_l00003}00003\ \textcolor{keyword}{using\ }Mirror;}
+\DoxyCodeLine{\Hypertarget{_move_action_8cs_source_l00004}00004\ \textcolor{keyword}{using\ }UnityEngine;}
+\DoxyCodeLine{\Hypertarget{_move_action_8cs_source_l00005}00005\ }
+\DoxyCodeLine{\Hypertarget{_move_action_8cs_source_l00010}00010\ }
+\DoxyCodeLine{\Hypertarget{_move_action_8cs_source_l00011}\mbox{\hyperlink{class_move_action}{00011}}\ \textcolor{keyword}{public}\ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_move_action}{MoveAction}}\ :\ \mbox{\hyperlink{class_base_action}{BaseAction}}}
+\DoxyCodeLine{\Hypertarget{_move_action_8cs_source_l00012}00012\ \{}
+\DoxyCodeLine{\Hypertarget{_move_action_8cs_source_l00013}\mbox{\hyperlink{class_move_action_ae2534e7458f3439202b3044b7777c4aa}{00013}}\ \ \ \ \ [SerializeField]\ \textcolor{keyword}{private}\ Animator\ \mbox{\hyperlink{class_move_action_ae2534e7458f3439202b3044b7777c4aa}{unitAnimator}};}
+\DoxyCodeLine{\Hypertarget{_move_action_8cs_source_l00014}\mbox{\hyperlink{class_move_action_a06991e324b451c7ac98b8d1437b075e8}{00014}}\ \ \ \ \ [SerializeField]\ \textcolor{keyword}{private}\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{class_move_action_a06991e324b451c7ac98b8d1437b075e8}{maxMoveDistance}}\ =\ 4;}
+\DoxyCodeLine{\Hypertarget{_move_action_8cs_source_l00015}\mbox{\hyperlink{class_move_action_a2dbfdbe2aa282af76a72a8f27c1b2419}{00015}}\ \ \ \ \ \textcolor{keyword}{private}\ Vector3\ \mbox{\hyperlink{class_move_action_a2dbfdbe2aa282af76a72a8f27c1b2419}{targetPosition}};}
+\DoxyCodeLine{\Hypertarget{_move_action_8cs_source_l00016}00016\ }
+\DoxyCodeLine{\Hypertarget{_move_action_8cs_source_l00017}\mbox{\hyperlink{class_move_action_a821930520e8301302c92908cf2de52eb}{00017}}\ \ \ \ \ \textcolor{keyword}{protected}\ \textcolor{keyword}{override}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_move_action_a821930520e8301302c92908cf2de52eb}{Awake}}()\ }
+\DoxyCodeLine{\Hypertarget{_move_action_8cs_source_l00018}00018\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_move_action_8cs_source_l00019}00019\ \ \ \ \ \ \ \ \ base.Awake();}
+\DoxyCodeLine{\Hypertarget{_move_action_8cs_source_l00020}00020\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_move_action_a2dbfdbe2aa282af76a72a8f27c1b2419}{targetPosition}}\ =\ transform.position;}
+\DoxyCodeLine{\Hypertarget{_move_action_8cs_source_l00021}00021\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_move_action_8cs_source_l00022}00022\ }
+\DoxyCodeLine{\Hypertarget{_move_action_8cs_source_l00023}\mbox{\hyperlink{class_move_action_a3ac154bc877dc43e272e5cc993ebd47d}{00023}}\ \ \ \ \ \textcolor{keyword}{private}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_move_action_a3ac154bc877dc43e272e5cc993ebd47d}{Update}}()}
+\DoxyCodeLine{\Hypertarget{_move_action_8cs_source_l00024}00024\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_move_action_8cs_source_l00025}00025\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}(\mbox{\hyperlink{class_authority_helper}{AuthorityHelper}}.\mbox{\hyperlink{class_authority_helper_aafe06aef56c71ab1f2e690e2a383a1ad}{HasLocalControl}}(\textcolor{keyword}{this}))\ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{\Hypertarget{_move_action_8cs_source_l00026}00026\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}(!\mbox{\hyperlink{class_base_action_a6e99c6e9b79dd10395d595916cc0bd72}{isActive}})\ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{\Hypertarget{_move_action_8cs_source_l00027}00027\ \ \ \ \ \ \ \ \ Vector3\ moveDirection\ =\ (\mbox{\hyperlink{class_move_action_a2dbfdbe2aa282af76a72a8f27c1b2419}{targetPosition}}\ -\/\ transform.position).normalized;}
+\DoxyCodeLine{\Hypertarget{_move_action_8cs_source_l00028}00028\ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{_move_action_8cs_source_l00029}00029\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ stoppingDistance\ =\ 0.2f;}
+\DoxyCodeLine{\Hypertarget{_move_action_8cs_source_l00030}00030\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (Vector3.Distance(transform.position,\ \mbox{\hyperlink{class_move_action_a2dbfdbe2aa282af76a72a8f27c1b2419}{targetPosition}})\ >\ stoppingDistance)}
+\DoxyCodeLine{\Hypertarget{_move_action_8cs_source_l00031}00031\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_move_action_8cs_source_l00032}00032\ }
+\DoxyCodeLine{\Hypertarget{_move_action_8cs_source_l00033}00033\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Move\ towards\ the\ target\ position}}
+\DoxyCodeLine{\Hypertarget{_move_action_8cs_source_l00034}00034\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Vector3\ moveDirection\ =\ (targetPosition\ -\/\ transform.position).normalized;}}
+\DoxyCodeLine{\Hypertarget{_move_action_8cs_source_l00035}00035\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ moveSpeed\ =\ 4f;}
+\DoxyCodeLine{\Hypertarget{_move_action_8cs_source_l00036}00036\ \ \ \ \ \ \ \ \ \ \ \ \ transform.position\ +=\ moveSpeed\ *\ Time.deltaTime\ *\ moveDirection;}
+\DoxyCodeLine{\Hypertarget{_move_action_8cs_source_l00037}00037\ }
+\DoxyCodeLine{\Hypertarget{_move_action_8cs_source_l00038}00038\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Rotate\ towards\ the\ target\ position}}
+\DoxyCodeLine{\Hypertarget{_move_action_8cs_source_l00039}00039\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ rotationSpeed\ =\ 10f;}
+\DoxyCodeLine{\Hypertarget{_move_action_8cs_source_l00040}00040\ \ \ \ \ \ \ \ \ \ \ \ \ transform.forward\ =\ Vector3.Lerp(transform.forward,\ moveDirection,\ Time.deltaTime\ *\ rotationSpeed);}
+\DoxyCodeLine{\Hypertarget{_move_action_8cs_source_l00041}00041\ }
+\DoxyCodeLine{\Hypertarget{_move_action_8cs_source_l00042}00042\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_move_action_ae2534e7458f3439202b3044b7777c4aa}{unitAnimator}}.SetBool(\textcolor{stringliteral}{"{}IsRunning"{}},\ \textcolor{keyword}{true});}
+\DoxyCodeLine{\Hypertarget{_move_action_8cs_source_l00043}00043\ }
+\DoxyCodeLine{\Hypertarget{_move_action_8cs_source_l00044}00044\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_move_action_8cs_source_l00045}00045\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{\Hypertarget{_move_action_8cs_source_l00046}00046\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_move_action_8cs_source_l00047}00047\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_move_action_ae2534e7458f3439202b3044b7777c4aa}{unitAnimator}}.SetBool(\textcolor{stringliteral}{"{}IsRunning"{}},\ \textcolor{keyword}{false});}
+\DoxyCodeLine{\Hypertarget{_move_action_8cs_source_l00048}00048\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_base_action_a3447bafb2a0f3a7b65e48275afcd818e}{ActionComplete}}();}
+\DoxyCodeLine{\Hypertarget{_move_action_8cs_source_l00049}00049\ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{_move_action_8cs_source_l00050}00050\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_move_action_8cs_source_l00051}00051\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_move_action_8cs_source_l00052}00052\ }
+\DoxyCodeLine{\Hypertarget{_move_action_8cs_source_l00053}\mbox{\hyperlink{class_move_action_ad64fd44dd3dcf195dfeaf4ce5a02a33f}{00053}}\ \ \ \ \ \textcolor{keyword}{public}\ \textcolor{keyword}{override}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_move_action_ad64fd44dd3dcf195dfeaf4ce5a02a33f}{TakeAction}}(\mbox{\hyperlink{struct_grid_position}{GridPosition}}\ gridPosition,\ Action\ \mbox{\hyperlink{class_base_action_aea9027870bb7315f76f6ebc194ad2eda}{onActionComplete}}\ )}
+\DoxyCodeLine{\Hypertarget{_move_action_8cs_source_l00054}00054\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_move_action_8cs_source_l00055}00055\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_base_action_a3820f80b1d1064524d4d5bf0563a1447}{ActionStart}}(\mbox{\hyperlink{class_base_action_aea9027870bb7315f76f6ebc194ad2eda}{onActionComplete}});}
+\DoxyCodeLine{\Hypertarget{_move_action_8cs_source_l00056}00056\ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{_move_action_8cs_source_l00057}00057\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_move_action_a2dbfdbe2aa282af76a72a8f27c1b2419}{targetPosition}}\ =\ \mbox{\hyperlink{class_level_grid}{LevelGrid}}.\mbox{\hyperlink{class_level_grid_a2289e5f589c75631e3a0348a0992b7d5}{Instance}}.\mbox{\hyperlink{class_level_grid_a0c9229e022b654040de6b7b2d7a5b73f}{GetWorldPosition}}(gridPosition);}
+\DoxyCodeLine{\Hypertarget{_move_action_8cs_source_l00058}00058\ \ \ \ }
+\DoxyCodeLine{\Hypertarget{_move_action_8cs_source_l00059}00059\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_move_action_8cs_source_l00060}00060\ }
+\DoxyCodeLine{\Hypertarget{_move_action_8cs_source_l00061}00061\ }
+\DoxyCodeLine{\Hypertarget{_move_action_8cs_source_l00062}\mbox{\hyperlink{class_move_action_af000a3860682e4609d37bd287bc14d86}{00062}}\ \ \ \ \ \textcolor{keyword}{public}\ \textcolor{keyword}{override}\ List<GridPosition>\ \mbox{\hyperlink{class_move_action_af000a3860682e4609d37bd287bc14d86}{GetValidGridPositionList}}()}
+\DoxyCodeLine{\Hypertarget{_move_action_8cs_source_l00063}00063\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_move_action_8cs_source_l00064}00064\ \ \ \ \ \ \ \ \ List<GridPosition>\ validGridPositionList\ =\ \textcolor{keyword}{new}();}
+\DoxyCodeLine{\Hypertarget{_move_action_8cs_source_l00065}00065\ }
+\DoxyCodeLine{\Hypertarget{_move_action_8cs_source_l00066}00066\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_grid_position}{GridPosition}}\ unitGridPosition\ =\ \mbox{\hyperlink{class_base_action_abfd5ebd13630a017e31a4f6cd720dace}{unit}}.GetGridPosition();}
+\DoxyCodeLine{\Hypertarget{_move_action_8cs_source_l00067}00067\ }
+\DoxyCodeLine{\Hypertarget{_move_action_8cs_source_l00068}00068\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ x\ =\ -\/\ \mbox{\hyperlink{class_move_action_a06991e324b451c7ac98b8d1437b075e8}{maxMoveDistance}};\ x\ <=\ \mbox{\hyperlink{class_move_action_a06991e324b451c7ac98b8d1437b075e8}{maxMoveDistance}};\ x++)}
+\DoxyCodeLine{\Hypertarget{_move_action_8cs_source_l00069}00069\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_move_action_8cs_source_l00070}00070\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ z\ =\ -\/\mbox{\hyperlink{class_move_action_a06991e324b451c7ac98b8d1437b075e8}{maxMoveDistance}};\ z\ <=\ \mbox{\hyperlink{class_move_action_a06991e324b451c7ac98b8d1437b075e8}{maxMoveDistance}};\ z++)}
+\DoxyCodeLine{\Hypertarget{_move_action_8cs_source_l00071}00071\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_move_action_8cs_source_l00072}00072\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_grid_position}{GridPosition}}\ offsetGridPosition\ =\ \textcolor{keyword}{new}(x,\ z);}
+\DoxyCodeLine{\Hypertarget{_move_action_8cs_source_l00073}00073\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_grid_position}{GridPosition}}\ testGridPosition\ =\ unitGridPosition\ +\ offsetGridPosition;}
+\DoxyCodeLine{\Hypertarget{_move_action_8cs_source_l00074}00074\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{_move_action_8cs_source_l00075}00075\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Check\ if\ the\ test\ grid\ position\ is\ within\ the\ valid\ range\ and\ not\ occupied\ by\ another\ unit}}
+\DoxyCodeLine{\Hypertarget{_move_action_8cs_source_l00076}00076\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}(!\mbox{\hyperlink{class_level_grid}{LevelGrid}}.\mbox{\hyperlink{class_level_grid_a2289e5f589c75631e3a0348a0992b7d5}{Instance}}.\mbox{\hyperlink{class_level_grid_a44154127c6c78b958c7e84a3d8427192}{IsValidGridPosition}}(testGridPosition)\ ||\ }
+\DoxyCodeLine{\Hypertarget{_move_action_8cs_source_l00077}00077\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ unitGridPosition\ ==\ testGridPosition\ ||\ }
+\DoxyCodeLine{\Hypertarget{_move_action_8cs_source_l00078}00078\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_level_grid}{LevelGrid}}.\mbox{\hyperlink{class_level_grid_a2289e5f589c75631e3a0348a0992b7d5}{Instance}}.\mbox{\hyperlink{class_level_grid_ae37c0843b9a37392fee852c36dab849f}{HasAnyUnitOnGridPosition}}(testGridPosition))\ \textcolor{keywordflow}{continue};}
+\DoxyCodeLine{\Hypertarget{_move_action_8cs_source_l00079}00079\ }
+\DoxyCodeLine{\Hypertarget{_move_action_8cs_source_l00080}00080\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ validGridPositionList.Add(testGridPosition);}
+\DoxyCodeLine{\Hypertarget{_move_action_8cs_source_l00081}00081\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Debug.Log(\$"{}Testing\ grid\ position:\ \{testGridPosition\}"{});}}
+\DoxyCodeLine{\Hypertarget{_move_action_8cs_source_l00082}00082\ }
+\DoxyCodeLine{\Hypertarget{_move_action_8cs_source_l00083}00083\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_move_action_8cs_source_l00084}00084\ }
+\DoxyCodeLine{\Hypertarget{_move_action_8cs_source_l00085}00085\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_move_action_8cs_source_l00086}00086\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{_move_action_8cs_source_l00087}00087\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ validGridPositionList;}
+\DoxyCodeLine{\Hypertarget{_move_action_8cs_source_l00088}00088\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_move_action_8cs_source_l00089}00089\ }
+\DoxyCodeLine{\Hypertarget{_move_action_8cs_source_l00090}\mbox{\hyperlink{class_move_action_a2a4bbe1e1e1fce4e375345cf67827d90}{00090}}\ \ \ \ \ \textcolor{keyword}{public}\ \ \textcolor{keyword}{override}\ \textcolor{keywordtype}{string}\ \mbox{\hyperlink{class_move_action_a2a4bbe1e1e1fce4e375345cf67827d90}{GetActionName}}()}
+\DoxyCodeLine{\Hypertarget{_move_action_8cs_source_l00091}00091\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_move_action_8cs_source_l00092}00092\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}Move"{}};}
+\DoxyCodeLine{\Hypertarget{_move_action_8cs_source_l00093}00093\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_move_action_8cs_source_l00094}00094\ \}}
+
+\end{DoxyCode}

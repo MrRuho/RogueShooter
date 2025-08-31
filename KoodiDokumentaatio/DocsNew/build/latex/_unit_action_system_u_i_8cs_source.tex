@@ -1,0 +1,109 @@
+\doxysection{Unit\+Action\+System\+UI.\+cs}
+\hypertarget{_unit_action_system_u_i_8cs_source}{}\label{_unit_action_system_u_i_8cs_source}\index{D:/Unity/RogueShooter/RogueShooter/Assets/Scripts/PlayerUnits/UnitsControlUI/UnitActionSystemUI.cs@{D:/Unity/RogueShooter/RogueShooter/Assets/Scripts/PlayerUnits/UnitsControlUI/UnitActionSystemUI.cs}}
+\mbox{\hyperlink{_unit_action_system_u_i_8cs}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\Hypertarget{_unit_action_system_u_i_8cs_source_l00001}00001\ \textcolor{keyword}{using\ }System;}
+\DoxyCodeLine{\Hypertarget{_unit_action_system_u_i_8cs_source_l00002}00002\ \textcolor{keyword}{using\ }System.Collections.Generic;}
+\DoxyCodeLine{\Hypertarget{_unit_action_system_u_i_8cs_source_l00003}00003\ \textcolor{keyword}{using\ }Unity.VisualScripting;}
+\DoxyCodeLine{\Hypertarget{_unit_action_system_u_i_8cs_source_l00004}00004\ \textcolor{keyword}{using\ }UnityEngine;}
+\DoxyCodeLine{\Hypertarget{_unit_action_system_u_i_8cs_source_l00005}00005\ \textcolor{keyword}{using\ }UnityEngine.UI;}
+\DoxyCodeLine{\Hypertarget{_unit_action_system_u_i_8cs_source_l00006}00006\ \textcolor{keyword}{using\ }TMPro;}
+\DoxyCodeLine{\Hypertarget{_unit_action_system_u_i_8cs_source_l00007}00007\ }
+\DoxyCodeLine{\Hypertarget{_unit_action_system_u_i_8cs_source_l00012}00012\ }
+\DoxyCodeLine{\Hypertarget{_unit_action_system_u_i_8cs_source_l00013}\mbox{\hyperlink{class_unit_action_system_u_i}{00013}}\ \textcolor{keyword}{public}\ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_unit_action_system_u_i}{UnitActionSystemUI}}\ :\ MonoBehaviour}
+\DoxyCodeLine{\Hypertarget{_unit_action_system_u_i_8cs_source_l00014}00014\ \{}
+\DoxyCodeLine{\Hypertarget{_unit_action_system_u_i_8cs_source_l00015}00015\ }
+\DoxyCodeLine{\Hypertarget{_unit_action_system_u_i_8cs_source_l00016}\mbox{\hyperlink{class_unit_action_system_u_i_a1050e6d40692381c9e0a060c0460f962}{00016}}\ \ \ \ \ [SerializeField]\ \textcolor{keyword}{private}\ Transform\ \mbox{\hyperlink{class_unit_action_system_u_i_a1050e6d40692381c9e0a060c0460f962}{actionButtonPrefab}};}
+\DoxyCodeLine{\Hypertarget{_unit_action_system_u_i_8cs_source_l00017}\mbox{\hyperlink{class_unit_action_system_u_i_ac3f0b5e859ca7e1028c5389f8b2f5b04}{00017}}\ \ \ \ \ [SerializeField]\ \textcolor{keyword}{private}\ Transform\ \mbox{\hyperlink{class_unit_action_system_u_i_ac3f0b5e859ca7e1028c5389f8b2f5b04}{actionButtonContainerTransform}};}
+\DoxyCodeLine{\Hypertarget{_unit_action_system_u_i_8cs_source_l00018}\mbox{\hyperlink{class_unit_action_system_u_i_abf49d0c78953918906479a26ceda86f2}{00018}}\ \ \ \ \ [SerializeField]\ \textcolor{keyword}{private}\ TextMeshProUGUI\ \mbox{\hyperlink{class_unit_action_system_u_i_abf49d0c78953918906479a26ceda86f2}{actionPointsText}};}
+\DoxyCodeLine{\Hypertarget{_unit_action_system_u_i_8cs_source_l00019}00019\ }
+\DoxyCodeLine{\Hypertarget{_unit_action_system_u_i_8cs_source_l00020}\mbox{\hyperlink{class_unit_action_system_u_i_a27d4e85b75622a47f3ba2d0cb51d49d0}{00020}}\ \ \ \ \ \textcolor{keyword}{private}\ List<UnitActionButtonUI>\ \mbox{\hyperlink{class_unit_action_system_u_i_a27d4e85b75622a47f3ba2d0cb51d49d0}{actionButtonUIList}};}
+\DoxyCodeLine{\Hypertarget{_unit_action_system_u_i_8cs_source_l00021}00021\ }
+\DoxyCodeLine{\Hypertarget{_unit_action_system_u_i_8cs_source_l00022}\mbox{\hyperlink{class_unit_action_system_u_i_a1c5ba69ad5f76497db08cba6d60e32b5}{00022}}\ \ \ \ \ \textcolor{keyword}{private}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_unit_action_system_u_i_a1c5ba69ad5f76497db08cba6d60e32b5}{Awake}}()}
+\DoxyCodeLine{\Hypertarget{_unit_action_system_u_i_8cs_source_l00023}00023\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_unit_action_system_u_i_8cs_source_l00024}00024\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_unit_action_system_u_i_a27d4e85b75622a47f3ba2d0cb51d49d0}{actionButtonUIList}}\ =\ \textcolor{keyword}{new}\ List<UnitActionButtonUI>();}
+\DoxyCodeLine{\Hypertarget{_unit_action_system_u_i_8cs_source_l00025}00025\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_unit_action_system_u_i_8cs_source_l00026}00026\ }
+\DoxyCodeLine{\Hypertarget{_unit_action_system_u_i_8cs_source_l00027}\mbox{\hyperlink{class_unit_action_system_u_i_a0d8b1e2dcd58078ae0545c1457d4f953}{00027}}\ \ \ \ \ \textcolor{keyword}{private}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_unit_action_system_u_i_a0d8b1e2dcd58078ae0545c1457d4f953}{Start}}()}
+\DoxyCodeLine{\Hypertarget{_unit_action_system_u_i_8cs_source_l00028}00028\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_unit_action_system_u_i_8cs_source_l00029}00029\ \ \ \ \ \ \ \ \ UnitActionSystem.Instance.OnSelectedUnitChanged\ +=\ \mbox{\hyperlink{class_unit_action_system_u_i_aa6a338b9c8a07be787938a45ee0e75c7}{UnitActionSystem\_OnSelectedUnitChanged}};}
+\DoxyCodeLine{\Hypertarget{_unit_action_system_u_i_8cs_source_l00030}00030\ \ \ \ \ \ \ \ \ UnitActionSystem.Instance.OnSelectedActionChanged\ +=\ \mbox{\hyperlink{class_unit_action_system_u_i_a89456c37000fa5e575ac3d2ac5fb03cd}{UnitActionSystem\_OnSelectedActionChanged}};}
+\DoxyCodeLine{\Hypertarget{_unit_action_system_u_i_8cs_source_l00031}00031\ \ \ \ \ \ \ \ \ UnitActionSystem.Instance.OnActionStarted\ +=\ \mbox{\hyperlink{class_unit_action_system_u_i_a9727669beefbb7ee004440fe9058e327}{UnitActionSystem\_OnActionStarted}};}
+\DoxyCodeLine{\Hypertarget{_unit_action_system_u_i_8cs_source_l00032}00032\ \ \ \ \ \ \ \ \ TurnSystem.Instance.OnTurnChanged\ +=\ \mbox{\hyperlink{class_unit_action_system_u_i_ad8bf68a69aaff5ed8541da8dceb6f536}{TurnSystem\_OnTurnChanged}};}
+\DoxyCodeLine{\Hypertarget{_unit_action_system_u_i_8cs_source_l00033}00033\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_unit_a24cce37c6f78356f0624a0bf5aaa25af}{Unit.OnAnyActionPointsChanged}}\ +=\ \mbox{\hyperlink{class_unit_action_system_u_i_ae89495264a7ff9012a3354bec03f22d0}{Unit\_OnAnyActionPointsChanged}};}
+\DoxyCodeLine{\Hypertarget{_unit_action_system_u_i_8cs_source_l00034}00034\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_unit_action_system_u_i_8cs_source_l00035}00035\ }
+\DoxyCodeLine{\Hypertarget{_unit_action_system_u_i_8cs_source_l00036}\mbox{\hyperlink{class_unit_action_system_u_i_a53bbb1047581b5fa8b71d88a65f8cc16}{00036}}\ \ \ \ \ \textcolor{keyword}{private}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_unit_action_system_u_i_a53bbb1047581b5fa8b71d88a65f8cc16}{CreateUnitActionButtons}}()}
+\DoxyCodeLine{\Hypertarget{_unit_action_system_u_i_8cs_source_l00037}00037\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_unit_action_system_u_i_8cs_source_l00038}00038\ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{_unit_action_system_u_i_8cs_source_l00039}00039\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_unit}{Unit}}\ selectedUnit\ =\ \mbox{\hyperlink{class_unit_action_system}{UnitActionSystem}}.\mbox{\hyperlink{class_unit_action_system_aade075caf30c86ba81a057352a0f0a55}{Instance}}.\mbox{\hyperlink{class_unit_action_system_a03b257e8f1ff89c63d59860c00b2b12d}{GetSelectedUnit}}();}
+\DoxyCodeLine{\Hypertarget{_unit_action_system_u_i_8cs_source_l00040}00040\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (selectedUnit\ ==\ \textcolor{keyword}{null})}
+\DoxyCodeLine{\Hypertarget{_unit_action_system_u_i_8cs_source_l00041}00041\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_unit_action_system_u_i_8cs_source_l00042}00042\ \ \ \ \ \ \ \ \ \ \ \ \ Debug.Log(\textcolor{stringliteral}{"{}No\ selected\ unit\ found."{}});}
+\DoxyCodeLine{\Hypertarget{_unit_action_system_u_i_8cs_source_l00043}00043\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{\Hypertarget{_unit_action_system_u_i_8cs_source_l00044}00044\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_unit_action_system_u_i_8cs_source_l00045}00045\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_unit_action_system_u_i_a27d4e85b75622a47f3ba2d0cb51d49d0}{actionButtonUIList}}.Clear();}
+\DoxyCodeLine{\Hypertarget{_unit_action_system_u_i_8cs_source_l00046}00046\ }
+\DoxyCodeLine{\Hypertarget{_unit_action_system_u_i_8cs_source_l00047}00047\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{foreach}\ (\mbox{\hyperlink{class_base_action}{BaseAction}}\ baseAction\ \textcolor{keywordflow}{in}\ selectedUnit.GetBaseActionsArray())}
+\DoxyCodeLine{\Hypertarget{_unit_action_system_u_i_8cs_source_l00048}00048\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_unit_action_system_u_i_8cs_source_l00049}00049\ \ \ \ \ \ \ \ \ \ \ \ \ Transform\ actionButtonTransform\ =\ Instantiate(\ \mbox{\hyperlink{class_unit_action_system_u_i_a1050e6d40692381c9e0a060c0460f962}{actionButtonPrefab}},\ \mbox{\hyperlink{class_unit_action_system_u_i_ac3f0b5e859ca7e1028c5389f8b2f5b04}{actionButtonContainerTransform}});}
+\DoxyCodeLine{\Hypertarget{_unit_action_system_u_i_8cs_source_l00050}00050\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_unit_action_button_u_i}{UnitActionButtonUI}}\ actionButtonUI\ =\ actionButtonTransform.GetComponent<\mbox{\hyperlink{class_unit_action_button_u_i}{UnitActionButtonUI}}>();}
+\DoxyCodeLine{\Hypertarget{_unit_action_system_u_i_8cs_source_l00051}00051\ \ \ \ \ \ \ \ \ \ \ \ \ actionButtonUI.\mbox{\hyperlink{class_unit_action_button_u_i_a938d6af54779f503a9b1d16bbb053d02}{SetBaseAction}}(baseAction);}
+\DoxyCodeLine{\Hypertarget{_unit_action_system_u_i_8cs_source_l00052}00052\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_unit_action_system_u_i_a27d4e85b75622a47f3ba2d0cb51d49d0}{actionButtonUIList}}.Add(actionButtonUI);}
+\DoxyCodeLine{\Hypertarget{_unit_action_system_u_i_8cs_source_l00053}00053\ }
+\DoxyCodeLine{\Hypertarget{_unit_action_system_u_i_8cs_source_l00054}00054\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_unit_action_system_u_i_8cs_source_l00055}00055\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_unit_action_system_u_i_8cs_source_l00056}00056\ }
+\DoxyCodeLine{\Hypertarget{_unit_action_system_u_i_8cs_source_l00057}\mbox{\hyperlink{class_unit_action_system_u_i_aaf2771c46a694e4d452164c46c8e8791}{00057}}\ \ \ \ \ \textcolor{keyword}{private}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_unit_action_system_u_i_aaf2771c46a694e4d452164c46c8e8791}{DestroyActionButtons}}()}
+\DoxyCodeLine{\Hypertarget{_unit_action_system_u_i_8cs_source_l00058}00058\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_unit_action_system_u_i_8cs_source_l00059}00059\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{foreach}\ (Transform\ child\ \textcolor{keywordflow}{in}\ \mbox{\hyperlink{class_unit_action_system_u_i_ac3f0b5e859ca7e1028c5389f8b2f5b04}{actionButtonContainerTransform}})}
+\DoxyCodeLine{\Hypertarget{_unit_action_system_u_i_8cs_source_l00060}00060\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_unit_action_system_u_i_8cs_source_l00061}00061\ \ \ \ \ \ \ \ \ \ \ \ \ Destroy(child.gameObject);}
+\DoxyCodeLine{\Hypertarget{_unit_action_system_u_i_8cs_source_l00062}00062\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_unit_action_system_u_i_8cs_source_l00063}00063\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_unit_action_system_u_i_8cs_source_l00064}00064\ }
+\DoxyCodeLine{\Hypertarget{_unit_action_system_u_i_8cs_source_l00065}\mbox{\hyperlink{class_unit_action_system_u_i_aa6a338b9c8a07be787938a45ee0e75c7}{00065}}\ \ \ \ \ \textcolor{keyword}{private}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_unit_action_system_u_i_aa6a338b9c8a07be787938a45ee0e75c7}{UnitActionSystem\_OnSelectedUnitChanged}}(\textcolor{keywordtype}{object}\ sender,\ EventArgs\ e)}
+\DoxyCodeLine{\Hypertarget{_unit_action_system_u_i_8cs_source_l00066}00066\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_unit_action_system_u_i_8cs_source_l00067}00067\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_unit_action_system_u_i_aaf2771c46a694e4d452164c46c8e8791}{DestroyActionButtons}}();}
+\DoxyCodeLine{\Hypertarget{_unit_action_system_u_i_8cs_source_l00068}00068\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_unit_action_system_u_i_a53bbb1047581b5fa8b71d88a65f8cc16}{CreateUnitActionButtons}}();}
+\DoxyCodeLine{\Hypertarget{_unit_action_system_u_i_8cs_source_l00069}00069\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_unit_action_system_u_i_a77cd8def07e00d8fd85100ff0ffc8c3a}{UpdateSelectedVisual}}();}
+\DoxyCodeLine{\Hypertarget{_unit_action_system_u_i_8cs_source_l00070}00070\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_unit_action_system_u_i_a462d2b0fed6b6ce6cd3593be34c44872}{UpdateActionPointsVisual}}();}
+\DoxyCodeLine{\Hypertarget{_unit_action_system_u_i_8cs_source_l00071}00071\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_unit_action_system_u_i_8cs_source_l00072}00072\ }
+\DoxyCodeLine{\Hypertarget{_unit_action_system_u_i_8cs_source_l00073}\mbox{\hyperlink{class_unit_action_system_u_i_a89456c37000fa5e575ac3d2ac5fb03cd}{00073}}\ \ \ \ \ \textcolor{keyword}{private}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_unit_action_system_u_i_a89456c37000fa5e575ac3d2ac5fb03cd}{UnitActionSystem\_OnSelectedActionChanged}}(\textcolor{keywordtype}{object}\ sender,\ EventArgs\ e)}
+\DoxyCodeLine{\Hypertarget{_unit_action_system_u_i_8cs_source_l00074}00074\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_unit_action_system_u_i_8cs_source_l00075}00075\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_unit_action_system_u_i_a77cd8def07e00d8fd85100ff0ffc8c3a}{UpdateSelectedVisual}}();}
+\DoxyCodeLine{\Hypertarget{_unit_action_system_u_i_8cs_source_l00076}00076\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_unit_action_system_u_i_8cs_source_l00077}00077\ }
+\DoxyCodeLine{\Hypertarget{_unit_action_system_u_i_8cs_source_l00078}\mbox{\hyperlink{class_unit_action_system_u_i_a9727669beefbb7ee004440fe9058e327}{00078}}\ \ \ \ \ \textcolor{keyword}{private}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_unit_action_system_u_i_a9727669beefbb7ee004440fe9058e327}{UnitActionSystem\_OnActionStarted}}(\textcolor{keywordtype}{object}\ sender,\ EventArgs\ e)}
+\DoxyCodeLine{\Hypertarget{_unit_action_system_u_i_8cs_source_l00079}00079\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_unit_action_system_u_i_8cs_source_l00080}00080\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_unit_action_system_u_i_a462d2b0fed6b6ce6cd3593be34c44872}{UpdateActionPointsVisual}}();}
+\DoxyCodeLine{\Hypertarget{_unit_action_system_u_i_8cs_source_l00081}00081\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_unit_action_system_u_i_8cs_source_l00082}00082\ }
+\DoxyCodeLine{\Hypertarget{_unit_action_system_u_i_8cs_source_l00083}\mbox{\hyperlink{class_unit_action_system_u_i_a77cd8def07e00d8fd85100ff0ffc8c3a}{00083}}\ \ \ \ \ \textcolor{keyword}{private}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_unit_action_system_u_i_a77cd8def07e00d8fd85100ff0ffc8c3a}{UpdateSelectedVisual}}()}
+\DoxyCodeLine{\Hypertarget{_unit_action_system_u_i_8cs_source_l00084}00084\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_unit_action_system_u_i_8cs_source_l00085}00085\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{foreach}\ (\mbox{\hyperlink{class_unit_action_button_u_i}{UnitActionButtonUI}}\ actionButtonUI\ \textcolor{keywordflow}{in}\ \mbox{\hyperlink{class_unit_action_system_u_i_a27d4e85b75622a47f3ba2d0cb51d49d0}{actionButtonUIList}})}
+\DoxyCodeLine{\Hypertarget{_unit_action_system_u_i_8cs_source_l00086}00086\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_unit_action_system_u_i_8cs_source_l00087}00087\ \ \ \ \ \ \ \ \ \ \ \ \ actionButtonUI.\mbox{\hyperlink{class_unit_action_button_u_i_a699334c0be8d985d03c479fc52ec367f}{UpdateSelectedVisual}}();}
+\DoxyCodeLine{\Hypertarget{_unit_action_system_u_i_8cs_source_l00088}00088\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_unit_action_system_u_i_8cs_source_l00089}00089\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_unit_action_system_u_i_8cs_source_l00090}00090\ }
+\DoxyCodeLine{\Hypertarget{_unit_action_system_u_i_8cs_source_l00091}\mbox{\hyperlink{class_unit_action_system_u_i_a462d2b0fed6b6ce6cd3593be34c44872}{00091}}\ \ \ \ \ \textcolor{keyword}{private}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_unit_action_system_u_i_a462d2b0fed6b6ce6cd3593be34c44872}{UpdateActionPointsVisual}}()}
+\DoxyCodeLine{\Hypertarget{_unit_action_system_u_i_8cs_source_l00092}00092\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_unit_action_system_u_i_8cs_source_l00093}00093\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_unit}{Unit}}\ selectedUnit\ =\ \mbox{\hyperlink{class_unit_action_system}{UnitActionSystem}}.\mbox{\hyperlink{class_unit_action_system_aade075caf30c86ba81a057352a0f0a55}{Instance}}.\mbox{\hyperlink{class_unit_action_system_a03b257e8f1ff89c63d59860c00b2b12d}{GetSelectedUnit}}();}
+\DoxyCodeLine{\Hypertarget{_unit_action_system_u_i_8cs_source_l00094}00094\ \ \ \ \ \ \ \ \ actionPointsText.text\ =\ \textcolor{stringliteral}{"{}Action\ Points:\ "{}}\ +\ selectedUnit.\mbox{\hyperlink{class_unit_a9d86c07e2b08fe284b9e37c2e61a2eed}{GetActionPoints}}();}
+\DoxyCodeLine{\Hypertarget{_unit_action_system_u_i_8cs_source_l00095}00095\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_unit_action_system_u_i_8cs_source_l00096}00096\ }
+\DoxyCodeLine{\Hypertarget{_unit_action_system_u_i_8cs_source_l00100}\mbox{\hyperlink{class_unit_action_system_u_i_ad8bf68a69aaff5ed8541da8dceb6f536}{00100}}\ \ \ \ \ \textcolor{keyword}{private}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_unit_action_system_u_i_ad8bf68a69aaff5ed8541da8dceb6f536}{TurnSystem\_OnTurnChanged}}(\textcolor{keywordtype}{object}\ sender,\ EventArgs\ e)}
+\DoxyCodeLine{\Hypertarget{_unit_action_system_u_i_8cs_source_l00101}00101\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_unit_action_system_u_i_8cs_source_l00102}00102\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_unit_action_system_u_i_a462d2b0fed6b6ce6cd3593be34c44872}{UpdateActionPointsVisual}}();}
+\DoxyCodeLine{\Hypertarget{_unit_action_system_u_i_8cs_source_l00103}00103\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_unit_action_system_u_i_8cs_source_l00104}00104\ }
+\DoxyCodeLine{\Hypertarget{_unit_action_system_u_i_8cs_source_l00108}\mbox{\hyperlink{class_unit_action_system_u_i_ae89495264a7ff9012a3354bec03f22d0}{00108}}\ \ \ \ \ \textcolor{keyword}{private}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_unit_action_system_u_i_ae89495264a7ff9012a3354bec03f22d0}{Unit\_OnAnyActionPointsChanged}}(\textcolor{keywordtype}{object}\ sender,\ EventArgs\ e)}
+\DoxyCodeLine{\Hypertarget{_unit_action_system_u_i_8cs_source_l00109}00109\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_unit_action_system_u_i_8cs_source_l00110}00110\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_unit_action_system_u_i_a462d2b0fed6b6ce6cd3593be34c44872}{UpdateActionPointsVisual}}();}
+\DoxyCodeLine{\Hypertarget{_unit_action_system_u_i_8cs_source_l00111}00111\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_unit_action_system_u_i_8cs_source_l00112}00112\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{_unit_action_system_u_i_8cs_source_l00113}00113\ \}}
+
+\end{DoxyCode}

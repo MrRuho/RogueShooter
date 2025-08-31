@@ -1,0 +1,201 @@
+\doxysection{Spin\+Action Class Reference}
+\hypertarget{class_spin_action}{}\label{class_spin_action}\index{SpinAction@{SpinAction}}
+
+
+This class is responsible for spinning a unit around its Y-\/axis.  
+
+
+Inheritance diagram for Spin\+Action\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=3.000000cm]{class_spin_action}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+override void \mbox{\hyperlink{class_spin_action_a166500f478c0b8c21df2655e9fee09e6}{Take\+Action}} (\mbox{\hyperlink{struct_grid_position}{Grid\+Position}} grid\+Position, Action \mbox{\hyperlink{class_base_action_aea9027870bb7315f76f6ebc194ad2eda}{on\+Action\+Complete}})
+\item 
+override string \mbox{\hyperlink{class_spin_action_aca020ea9d19e8a7ffc6ef3494bdb033c}{Get\+Action\+Name}} ()
+\item 
+override List$<$ \mbox{\hyperlink{struct_grid_position}{Grid\+Position}} $>$ \mbox{\hyperlink{class_spin_action_a5bd31a7b4cf5b8fd6649a807b935f235}{Get\+Valid\+Grid\+Position\+List}} ()
+\item 
+override int \mbox{\hyperlink{class_spin_action_adfa8aac568625b85208b55ad1c32cb39}{Get\+Action\+Points\+Cost}} ()
+\end{DoxyCompactItemize}
+\doxysubsection*{Public Member Functions inherited from \mbox{\hyperlink{class_base_action}{Base\+Action}}}
+\begin{DoxyCompactItemize}
+\item 
+string \mbox{\hyperlink{class_base_action_a2d6fa85bf05cac68709a9578acad4b94}{Get\+Action\+Name}} ()
+\item 
+void \mbox{\hyperlink{class_base_action_a302a7e513098704184a28fb8f523569e}{Take\+Action}} (\mbox{\hyperlink{struct_grid_position}{Grid\+Position}} grid\+Position, Action \mbox{\hyperlink{class_base_action_aea9027870bb7315f76f6ebc194ad2eda}{on\+Action\+Complete}})
+\item 
+virtual bool \mbox{\hyperlink{class_base_action_ab306ccf6269e27160855c436dd0cb641}{Is\+Valid\+Grid\+Position}} (\mbox{\hyperlink{struct_grid_position}{Grid\+Position}} grid\+Position)
+\item 
+List$<$ \mbox{\hyperlink{struct_grid_position}{Grid\+Position}} $>$ \mbox{\hyperlink{class_base_action_a8328209505521544f18c0cba00e38a69}{Get\+Valid\+Grid\+Position\+List}} ()
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Private Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{class_spin_action_a225be44a2d0c78361992bc8ab2ec3d88}{Update}} ()
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+float \mbox{\hyperlink{class_spin_action_ac9cae05fbb9ee180f91a3e4399c446a3}{total\+Spin\+Amount}} = 0f
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Additional Inherited Members}
+\doxysubsection*{Protected Member Functions inherited from \mbox{\hyperlink{class_base_action}{Base\+Action}}}
+\begin{DoxyCompactItemize}
+\item 
+virtual void \mbox{\hyperlink{class_base_action_a16d4eba1b197769cc78a275f23bd8c63}{Awake}} ()
+\item 
+void \mbox{\hyperlink{class_base_action_a3820f80b1d1064524d4d5bf0563a1447}{Action\+Start}} (Action \mbox{\hyperlink{class_base_action_aea9027870bb7315f76f6ebc194ad2eda}{on\+Action\+Complete}})
+\item 
+void \mbox{\hyperlink{class_base_action_a3447bafb2a0f3a7b65e48275afcd818e}{Action\+Complete}} ()
+\end{DoxyCompactItemize}
+\doxysubsection*{Protected Attributes inherited from \mbox{\hyperlink{class_base_action}{Base\+Action}}}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{class_unit}{Unit}} \mbox{\hyperlink{class_base_action_abfd5ebd13630a017e31a4f6cd720dace}{unit}}
+\item 
+bool \mbox{\hyperlink{class_base_action_a6e99c6e9b79dd10395d595916cc0bd72}{is\+Active}}
+\item 
+Action \mbox{\hyperlink{class_base_action_aea9027870bb7315f76f6ebc194ad2eda}{on\+Action\+Complete}}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+This class is responsible for spinning a unit around its Y-\/axis. 
+
+remarks\texorpdfstring{$>$}{>} Change to turn towards the direction the mouse is pointing 
+
+Definition at line \mbox{\hyperlink{_spin_action_8cs_source_l00014}{14}} of file \mbox{\hyperlink{_spin_action_8cs_source}{Spin\+Action.\+cs}}.
+
+
+
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_spin_action_aca020ea9d19e8a7ffc6ef3494bdb033c}\index{SpinAction@{SpinAction}!GetActionName@{GetActionName}}
+\index{GetActionName@{GetActionName}!SpinAction@{SpinAction}}
+\doxysubsubsection{\texorpdfstring{GetActionName()}{GetActionName()}}
+{\footnotesize\ttfamily \label{class_spin_action_aca020ea9d19e8a7ffc6ef3494bdb033c} 
+override string Spin\+Action.\+Get\+Action\+Name (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line \mbox{\hyperlink{_spin_action_8cs_source_l00042}{42}} of file \mbox{\hyperlink{_spin_action_8cs_source}{Spin\+Action.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00043\ \ \ \ \ \{}
+\DoxyCodeLine{00044\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}Spin"{}};}
+\DoxyCodeLine{00045\ \ \ \ \ \}}
+
+\end{DoxyCode}
+\Hypertarget{class_spin_action_adfa8aac568625b85208b55ad1c32cb39}\index{SpinAction@{SpinAction}!GetActionPointsCost@{GetActionPointsCost}}
+\index{GetActionPointsCost@{GetActionPointsCost}!SpinAction@{SpinAction}}
+\doxysubsubsection{\texorpdfstring{GetActionPointsCost()}{GetActionPointsCost()}}
+{\footnotesize\ttfamily \label{class_spin_action_adfa8aac568625b85208b55ad1c32cb39} 
+override int Spin\+Action.\+Get\+Action\+Points\+Cost (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [virtual]}}
+
+
+
+Reimplemented from \mbox{\hyperlink{class_base_action_a20cc796d15b41abbe6ea0da8604692fa}{Base\+Action}}.
+
+
+
+Definition at line \mbox{\hyperlink{_spin_action_8cs_source_l00058}{58}} of file \mbox{\hyperlink{_spin_action_8cs_source}{Spin\+Action.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00059\ \ \ \ \ \{}
+\DoxyCodeLine{00060\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 2;}
+\DoxyCodeLine{00061\ \ \ \ \ \}}
+
+\end{DoxyCode}
+\Hypertarget{class_spin_action_a5bd31a7b4cf5b8fd6649a807b935f235}\index{SpinAction@{SpinAction}!GetValidGridPositionList@{GetValidGridPositionList}}
+\index{GetValidGridPositionList@{GetValidGridPositionList}!SpinAction@{SpinAction}}
+\doxysubsubsection{\texorpdfstring{GetValidGridPositionList()}{GetValidGridPositionList()}}
+{\footnotesize\ttfamily \label{class_spin_action_a5bd31a7b4cf5b8fd6649a807b935f235} 
+override List$<$ \mbox{\hyperlink{struct_grid_position}{Grid\+Position}} $>$ Spin\+Action.\+Get\+Valid\+Grid\+Position\+List (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line \mbox{\hyperlink{_spin_action_8cs_source_l00047}{47}} of file \mbox{\hyperlink{_spin_action_8cs_source}{Spin\+Action.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00048\ \ \ \ \ \{}
+\DoxyCodeLine{00049\ \ \ \ \ \ \ }
+\DoxyCodeLine{00050\ \ \ \ \ \ \ \ \ GridPosition\ unitGridPosition\ =\ \mbox{\hyperlink{class_base_action_abfd5ebd13630a017e31a4f6cd720dace}{unit}}.GetGridPosition();}
+\DoxyCodeLine{00051\ }
+\DoxyCodeLine{00052\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{new}\ List<GridPosition>() }
+\DoxyCodeLine{00053\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00054\ \ \ \ \ \ \ \ \ \ \ \ \ unitGridPosition}
+\DoxyCodeLine{00055\ \ \ \ \ \ \ \ \ \};}
+\DoxyCodeLine{00056\ \ \ \ \ \}}
+
+\end{DoxyCode}
+\Hypertarget{class_spin_action_a166500f478c0b8c21df2655e9fee09e6}\index{SpinAction@{SpinAction}!TakeAction@{TakeAction}}
+\index{TakeAction@{TakeAction}!SpinAction@{SpinAction}}
+\doxysubsubsection{\texorpdfstring{TakeAction()}{TakeAction()}}
+{\footnotesize\ttfamily \label{class_spin_action_a166500f478c0b8c21df2655e9fee09e6} 
+override void Spin\+Action.\+Take\+Action (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{struct_grid_position}{Grid\+Position}}}]{grid\+Position}{, }\item[{Action}]{on\+Action\+Complete}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line \mbox{\hyperlink{_spin_action_8cs_source_l00035}{35}} of file \mbox{\hyperlink{_spin_action_8cs_source}{Spin\+Action.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00036\ \ \ \ \ \{}
+\DoxyCodeLine{00037\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_base_action_a3820f80b1d1064524d4d5bf0563a1447}{ActionStart}}(\mbox{\hyperlink{class_base_action_aea9027870bb7315f76f6ebc194ad2eda}{onActionComplete}});}
+\DoxyCodeLine{00038\ }
+\DoxyCodeLine{00039\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_spin_action_ac9cae05fbb9ee180f91a3e4399c446a3}{totalSpinAmount}}\ =\ 0f;}
+\DoxyCodeLine{00040\ \ \ \ \ \}}
+
+\end{DoxyCode}
+\Hypertarget{class_spin_action_a225be44a2d0c78361992bc8ab2ec3d88}\index{SpinAction@{SpinAction}!Update@{Update}}
+\index{Update@{Update}!SpinAction@{SpinAction}}
+\doxysubsubsection{\texorpdfstring{Update()}{Update()}}
+{\footnotesize\ttfamily \label{class_spin_action_a225be44a2d0c78361992bc8ab2ec3d88} 
+void Spin\+Action.\+Update (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_spin_action_8cs_source_l00021}{21}} of file \mbox{\hyperlink{_spin_action_8cs_source}{Spin\+Action.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00022\ \ \ \ \ \{}
+\DoxyCodeLine{00023\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}(!\mbox{\hyperlink{class_base_action_a6e99c6e9b79dd10395d595916cc0bd72}{isActive}})\ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{00024\ }
+\DoxyCodeLine{00025\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ spinAddAmmount\ =\ 360f\ *\ Time.deltaTime;}
+\DoxyCodeLine{00026\ \ \ \ \ \ \ \ \ transform.eulerAngles\ +=\ \textcolor{keyword}{new}\ Vector3(0,\ spinAddAmmount,\ 0);}
+\DoxyCodeLine{00027\ }
+\DoxyCodeLine{00028\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_spin_action_ac9cae05fbb9ee180f91a3e4399c446a3}{totalSpinAmount}}\ +=\ spinAddAmmount;}
+\DoxyCodeLine{00029\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{class_spin_action_ac9cae05fbb9ee180f91a3e4399c446a3}{totalSpinAmount}}\ >=\ 360f)}
+\DoxyCodeLine{00030\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00031\ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_base_action_a3447bafb2a0f3a7b65e48275afcd818e}{ActionComplete}}();}
+\DoxyCodeLine{00032\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00033\ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00034\ \ \ \ \ \}}
+
+\end{DoxyCode}
+
+
+\doxysubsection{Member Data Documentation}
+\Hypertarget{class_spin_action_ac9cae05fbb9ee180f91a3e4399c446a3}\index{SpinAction@{SpinAction}!totalSpinAmount@{totalSpinAmount}}
+\index{totalSpinAmount@{totalSpinAmount}!SpinAction@{SpinAction}}
+\doxysubsubsection{\texorpdfstring{totalSpinAmount}{totalSpinAmount}}
+{\footnotesize\ttfamily \label{class_spin_action_ac9cae05fbb9ee180f91a3e4399c446a3} 
+float Spin\+Action.\+total\+Spin\+Amount = 0f\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_spin_action_8cs_source_l00020}{20}} of file \mbox{\hyperlink{_spin_action_8cs_source}{Spin\+Action.\+cs}}.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+D\+:/\+Unity/\+Rogue\+Shooter/\+Rogue\+Shooter/\+Assets/\+Scripts/\+Player\+Units/\+Unit\+Actions/\mbox{\hyperlink{_spin_action_8cs}{Spin\+Action.\+cs}}\end{DoxyCompactItemize}

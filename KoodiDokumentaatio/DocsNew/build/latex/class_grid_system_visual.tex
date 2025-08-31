@@ -1,0 +1,245 @@
+\doxysection{Grid\+System\+Visual Class Reference}
+\hypertarget{class_grid_system_visual}{}\label{class_grid_system_visual}\index{GridSystemVisual@{GridSystemVisual}}
+
+
+This class is responsible for visualizing the grid system in the game. It creates a grid of visual objects that represent the grid positions.  
+
+
+Inheritance diagram for Grid\+System\+Visual\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{class_grid_system_visual}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{class_grid_system_visual_a22125f6cf8b6c195df4bc2da06902beb}{Hide\+All\+Grid\+Positions}} ()
+\item 
+void \mbox{\hyperlink{class_grid_system_visual_a27f4b93612585a300b0ab32895766cd0}{Show\+Grid\+Position\+List}} (List$<$ \mbox{\hyperlink{struct_grid_position}{Grid\+Position}} $>$ grid\+Position\+List)
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Properties}
+\begin{DoxyCompactItemize}
+\item 
+static \mbox{\hyperlink{class_grid_system_visual}{Grid\+System\+Visual}} \mbox{\hyperlink{class_grid_system_visual_a443690ce7764c5fb451969e1d980c750}{Instance}}\hspace{0.3cm}{\ttfamily  \mbox{[}get, private set\mbox{]}}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Private Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{class_grid_system_visual_a4b36091c66985087a8f8a2219479edac}{Awake}} ()
+\item 
+void \mbox{\hyperlink{class_grid_system_visual_a08a8bf62be873055ddf3aa86f38d7c3d}{Start}} ()
+\item 
+void \mbox{\hyperlink{class_grid_system_visual_a84d8794afebfb3678610804ef8d93a57}{Update}} ()
+\item 
+void \mbox{\hyperlink{class_grid_system_visual_ab13b6c36bf568718afcbb4e917f361bd}{Update\+Grid\+Visuals}} ()
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+Transform \mbox{\hyperlink{class_grid_system_visual_af93c8c2b29d3556c2eb9bddc363633b6}{grid\+System\+Visual\+Single\+Prefab}}
+\begin{DoxyCompactList}\small\item\em Purpose\+: This prefab is used to create the visual representation of each grid position. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{class_grid_system_visual_single}{Grid\+System\+Visual\+Single}}\mbox{[},\mbox{]} \mbox{\hyperlink{class_grid_system_visual_a027ea9f44810a3293ca4ce5ec3210dc9}{grid\+System\+Visual\+Single\+Array}}
+\begin{DoxyCompactList}\small\item\em Purpose\+: This array holds the visual objects for each grid position. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+This class is responsible for visualizing the grid system in the game. It creates a grid of visual objects that represent the grid positions. 
+
+Definition at line \mbox{\hyperlink{_grid_system_visual_8cs_source_l00010}{10}} of file \mbox{\hyperlink{_grid_system_visual_8cs_source}{Grid\+System\+Visual.\+cs}}.
+
+
+
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_grid_system_visual_a4b36091c66985087a8f8a2219479edac}\index{GridSystemVisual@{GridSystemVisual}!Awake@{Awake}}
+\index{Awake@{Awake}!GridSystemVisual@{GridSystemVisual}}
+\doxysubsubsection{\texorpdfstring{Awake()}{Awake()}}
+{\footnotesize\ttfamily \label{class_grid_system_visual_a4b36091c66985087a8f8a2219479edac} 
+void Grid\+System\+Visual.\+Awake (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [private]}}
+
+Purpose\+: Ensure that there is only one instance in the scene
+
+Definition at line \mbox{\hyperlink{_grid_system_visual_8cs_source_l00021}{21}} of file \mbox{\hyperlink{_grid_system_visual_8cs_source}{Grid\+System\+Visual.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00022\ \ \ \ \ \{}
+\DoxyCodeLine{00023\ }
+\DoxyCodeLine{00025\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{class_grid_system_visual_a443690ce7764c5fb451969e1d980c750}{Instance}}\ !=\ \textcolor{keyword}{null})}
+\DoxyCodeLine{00026\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00027\ \ \ \ \ \ \ \ \ \ \ \ \ Debug.LogError(\textcolor{stringliteral}{"{}More\ than\ one\ GridSystemVisual\ in\ the\ scene!"{}}\ +\ transform\ +\ \textcolor{stringliteral}{"{}\ "{}}\ +\ \mbox{\hyperlink{class_grid_system_visual_a443690ce7764c5fb451969e1d980c750}{Instance}});}
+\DoxyCodeLine{00028\ \ \ \ \ \ \ \ \ \ \ \ \ Destroy(gameObject);}
+\DoxyCodeLine{00029\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{00030\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00031\ }
+\DoxyCodeLine{00032\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_grid_system_visual_a443690ce7764c5fb451969e1d980c750}{Instance}}\ \ =\ \textcolor{keyword}{this};}
+\DoxyCodeLine{00033\ \ \ \ \ \}}
+
+\end{DoxyCode}
+\Hypertarget{class_grid_system_visual_a22125f6cf8b6c195df4bc2da06902beb}\index{GridSystemVisual@{GridSystemVisual}!HideAllGridPositions@{HideAllGridPositions}}
+\index{HideAllGridPositions@{HideAllGridPositions}!GridSystemVisual@{GridSystemVisual}}
+\doxysubsubsection{\texorpdfstring{HideAllGridPositions()}{HideAllGridPositions()}}
+{\footnotesize\ttfamily \label{class_grid_system_visual_a22125f6cf8b6c195df4bc2da06902beb} 
+void Grid\+System\+Visual.\+Hide\+All\+Grid\+Positions (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line \mbox{\hyperlink{_grid_system_visual_8cs_source_l00058}{58}} of file \mbox{\hyperlink{_grid_system_visual_8cs_source}{Grid\+System\+Visual.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00059\ \ \ \ \ \{}
+\DoxyCodeLine{00060\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ x\ =\ 0\ ;x\ <\ LevelGrid.Instance.GetWidth();\ x++)}
+\DoxyCodeLine{00061\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00062\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ z\ =\ 0;\ z\ <\ LevelGrid.Instance.GetHeight();\ z++)}
+\DoxyCodeLine{00063\ \ \ \ \ \ \ \ \ \ \ \ \ \{\ \ \ \ \ }
+\DoxyCodeLine{00064\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_grid_system_visual_a027ea9f44810a3293ca4ce5ec3210dc9}{gridSystemVisualSingleArray}}[x,\ z].Hide();\ }
+\DoxyCodeLine{00065\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00066\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00067\ \ \ \ \ \}}
+
+\end{DoxyCode}
+\Hypertarget{class_grid_system_visual_a27f4b93612585a300b0ab32895766cd0}\index{GridSystemVisual@{GridSystemVisual}!ShowGridPositionList@{ShowGridPositionList}}
+\index{ShowGridPositionList@{ShowGridPositionList}!GridSystemVisual@{GridSystemVisual}}
+\doxysubsubsection{\texorpdfstring{ShowGridPositionList()}{ShowGridPositionList()}}
+{\footnotesize\ttfamily \label{class_grid_system_visual_a27f4b93612585a300b0ab32895766cd0} 
+void Grid\+System\+Visual.\+Show\+Grid\+Position\+List (\begin{DoxyParamCaption}\item[{List$<$ \mbox{\hyperlink{struct_grid_position}{Grid\+Position}} $>$}]{grid\+Position\+List}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line \mbox{\hyperlink{_grid_system_visual_8cs_source_l00069}{69}} of file \mbox{\hyperlink{_grid_system_visual_8cs_source}{Grid\+System\+Visual.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00070\ \ \ \ \ \{}
+\DoxyCodeLine{00071\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_grid_system_visual_a22125f6cf8b6c195df4bc2da06902beb}{HideAllGridPositions}}();}
+\DoxyCodeLine{00072\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{foreach}\ (GridPosition\ gridPosition\ \textcolor{keywordflow}{in}\ gridPositionList)}
+\DoxyCodeLine{00073\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00074\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_grid_system_visual_a027ea9f44810a3293ca4ce5ec3210dc9}{gridSystemVisualSingleArray}}[gridPosition.\mbox{\hyperlink{struct_grid_position_aef898922000b94ac0e4e999a033c39db}{x}},\ gridPosition.\mbox{\hyperlink{struct_grid_position_a5a9176b933a89d37a0d5ff44091ee22b}{z}}].Show();}
+\DoxyCodeLine{00075\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00076\ \ \ \ \ \}}
+
+\end{DoxyCode}
+\Hypertarget{class_grid_system_visual_a08a8bf62be873055ddf3aa86f38d7c3d}\index{GridSystemVisual@{GridSystemVisual}!Start@{Start}}
+\index{Start@{Start}!GridSystemVisual@{GridSystemVisual}}
+\doxysubsubsection{\texorpdfstring{Start()}{Start()}}
+{\footnotesize\ttfamily \label{class_grid_system_visual_a08a8bf62be873055ddf3aa86f38d7c3d} 
+void Grid\+System\+Visual.\+Start (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [private]}}
+
+Purpose\+: Create a grid of visual objects that represent the grid positions. It instantiates a prefab at each grid position and sets the grid object for that position.
+
+Definition at line \mbox{\hyperlink{_grid_system_visual_8cs_source_l00035}{35}} of file \mbox{\hyperlink{_grid_system_visual_8cs_source}{Grid\+System\+Visual.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00036\ \ \ \ \ \{}
+\DoxyCodeLine{00037\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_grid_system_visual_a027ea9f44810a3293ca4ce5ec3210dc9}{gridSystemVisualSingleArray}}\ =\ \textcolor{keyword}{new}\ GridSystemVisualSingle[LevelGrid.Instance.GetWidth(),\ LevelGrid.Instance.GetHeight()];}
+\DoxyCodeLine{00038\ }
+\DoxyCodeLine{00041\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ x\ =\ 0\ ;x\ <\ LevelGrid.Instance.GetWidth();\ x++)}
+\DoxyCodeLine{00042\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00043\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ z\ =\ 0;\ z\ <\ LevelGrid.Instance.GetHeight();\ z++)}
+\DoxyCodeLine{00044\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00045\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ GridPosition\ gridPosition\ =\ \textcolor{keyword}{new}(x,\ z);}
+\DoxyCodeLine{00046\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Transform\ gridSystemVisualSingleTransform\ =\ Instantiate(\mbox{\hyperlink{class_grid_system_visual_af93c8c2b29d3556c2eb9bddc363633b6}{gridSystemVisualSinglePrefab}},\ LevelGrid.Instance.GetWorldPosition(gridPosition),\ Quaternion.identity);}
+\DoxyCodeLine{00047\ }
+\DoxyCodeLine{00048\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_grid_system_visual_a027ea9f44810a3293ca4ce5ec3210dc9}{gridSystemVisualSingleArray}}[x,\ z]\ =\ gridSystemVisualSingleTransform.GetComponent<GridSystemVisualSingle>();}
+\DoxyCodeLine{00049\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00050\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00051\ \ \ \ \ \}}
+
+\end{DoxyCode}
+\Hypertarget{class_grid_system_visual_a84d8794afebfb3678610804ef8d93a57}\index{GridSystemVisual@{GridSystemVisual}!Update@{Update}}
+\index{Update@{Update}!GridSystemVisual@{GridSystemVisual}}
+\doxysubsubsection{\texorpdfstring{Update()}{Update()}}
+{\footnotesize\ttfamily \label{class_grid_system_visual_a84d8794afebfb3678610804ef8d93a57} 
+void Grid\+System\+Visual.\+Update (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_grid_system_visual_8cs_source_l00053}{53}} of file \mbox{\hyperlink{_grid_system_visual_8cs_source}{Grid\+System\+Visual.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00054\ \ \ \ \ \{}
+\DoxyCodeLine{00055\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_grid_system_visual_ab13b6c36bf568718afcbb4e917f361bd}{UpdateGridVisuals}}();}
+\DoxyCodeLine{00056\ \ \ \ \ \}}
+
+\end{DoxyCode}
+\Hypertarget{class_grid_system_visual_ab13b6c36bf568718afcbb4e917f361bd}\index{GridSystemVisual@{GridSystemVisual}!UpdateGridVisuals@{UpdateGridVisuals}}
+\index{UpdateGridVisuals@{UpdateGridVisuals}!GridSystemVisual@{GridSystemVisual}}
+\doxysubsubsection{\texorpdfstring{UpdateGridVisuals()}{UpdateGridVisuals()}}
+{\footnotesize\ttfamily \label{class_grid_system_visual_ab13b6c36bf568718afcbb4e917f361bd} 
+void Grid\+System\+Visual.\+Update\+Grid\+Visuals (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_grid_system_visual_8cs_source_l00078}{78}} of file \mbox{\hyperlink{_grid_system_visual_8cs_source}{Grid\+System\+Visual.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00079\ \ \ \ \ \{}
+\DoxyCodeLine{00080\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_grid_system_visual_a22125f6cf8b6c195df4bc2da06902beb}{HideAllGridPositions}}();}
+\DoxyCodeLine{00081\ \ \ \ \ \ \ \ \ Unit\ selectedUnit\ =\ UnitActionSystem.Instance.GetSelectedUnit();}
+\DoxyCodeLine{00082\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (selectedUnit\ ==\ \textcolor{keyword}{null})\ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{00083\ }
+\DoxyCodeLine{00084\ \ \ \ \ \ \ \ \ BaseAction\ selectedAction\ =\ UnitActionSystem.Instance.GetSelectedAction();}
+\DoxyCodeLine{00085\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_grid_system_visual_a27f4b93612585a300b0ab32895766cd0}{ShowGridPositionList}}(}
+\DoxyCodeLine{00086\ \ \ \ \ \ \ \ \ \ \ \ \ selectedAction.\mbox{\hyperlink{class_base_action_a8328209505521544f18c0cba00e38a69}{GetValidGridPositionList}}());}
+\DoxyCodeLine{00087\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00088\ \ \ \ \ \}\ \ \ }
+
+\end{DoxyCode}
+
+
+\doxysubsection{Member Data Documentation}
+\Hypertarget{class_grid_system_visual_a027ea9f44810a3293ca4ce5ec3210dc9}\index{GridSystemVisual@{GridSystemVisual}!gridSystemVisualSingleArray@{gridSystemVisualSingleArray}}
+\index{gridSystemVisualSingleArray@{gridSystemVisualSingleArray}!GridSystemVisual@{GridSystemVisual}}
+\doxysubsubsection{\texorpdfstring{gridSystemVisualSingleArray}{gridSystemVisualSingleArray}}
+{\footnotesize\ttfamily \label{class_grid_system_visual_a027ea9f44810a3293ca4ce5ec3210dc9} 
+\mbox{\hyperlink{class_grid_system_visual_single}{Grid\+System\+Visual\+Single}} \mbox{[},\mbox{]} Grid\+System\+Visual.\+grid\+System\+Visual\+Single\+Array\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+Purpose\+: This array holds the visual objects for each grid position. 
+
+
+
+Definition at line \mbox{\hyperlink{_grid_system_visual_8cs_source_l00019}{19}} of file \mbox{\hyperlink{_grid_system_visual_8cs_source}{Grid\+System\+Visual.\+cs}}.
+
+\Hypertarget{class_grid_system_visual_af93c8c2b29d3556c2eb9bddc363633b6}\index{GridSystemVisual@{GridSystemVisual}!gridSystemVisualSinglePrefab@{gridSystemVisualSinglePrefab}}
+\index{gridSystemVisualSinglePrefab@{gridSystemVisualSinglePrefab}!GridSystemVisual@{GridSystemVisual}}
+\doxysubsubsection{\texorpdfstring{gridSystemVisualSinglePrefab}{gridSystemVisualSinglePrefab}}
+{\footnotesize\ttfamily \label{class_grid_system_visual_af93c8c2b29d3556c2eb9bddc363633b6} 
+Transform Grid\+System\+Visual.\+grid\+System\+Visual\+Single\+Prefab\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+Purpose\+: This prefab is used to create the visual representation of each grid position. 
+
+
+
+Definition at line \mbox{\hyperlink{_grid_system_visual_8cs_source_l00016}{16}} of file \mbox{\hyperlink{_grid_system_visual_8cs_source}{Grid\+System\+Visual.\+cs}}.
+
+
+
+\doxysubsection{Property Documentation}
+\Hypertarget{class_grid_system_visual_a443690ce7764c5fb451969e1d980c750}\index{GridSystemVisual@{GridSystemVisual}!Instance@{Instance}}
+\index{Instance@{Instance}!GridSystemVisual@{GridSystemVisual}}
+\doxysubsubsection{\texorpdfstring{Instance}{Instance}}
+{\footnotesize\ttfamily \label{class_grid_system_visual_a443690ce7764c5fb451969e1d980c750} 
+\mbox{\hyperlink{class_grid_system_visual}{Grid\+System\+Visual}} Grid\+System\+Visual.\+Instance\hspace{0.3cm}{\ttfamily [static]}, {\ttfamily [get]}, {\ttfamily [private set]}}
+
+
+
+Definition at line \mbox{\hyperlink{_grid_system_visual_8cs_source_l00013}{13}} of file \mbox{\hyperlink{_grid_system_visual_8cs_source}{Grid\+System\+Visual.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00013\ \{\ \textcolor{keyword}{get};\ \textcolor{keyword}{private}\ \textcolor{keyword}{set};\ \}}
+
+\end{DoxyCode}
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+D\+:/\+Unity/\+Rogue\+Shooter/\+Rogue\+Shooter/\+Assets/\+Scripts/\+Grid/\mbox{\hyperlink{_grid_system_visual_8cs}{Grid\+System\+Visual.\+cs}}\end{DoxyCompactItemize}

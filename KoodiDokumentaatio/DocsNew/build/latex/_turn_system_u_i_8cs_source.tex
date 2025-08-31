@@ -1,0 +1,131 @@
+\doxysection{Turn\+System\+UI.\+cs}
+\hypertarget{_turn_system_u_i_8cs_source}{}\label{_turn_system_u_i_8cs_source}\index{D:/Unity/RogueShooter/RogueShooter/Assets/Scripts/PlayerUnits/UnitsControlUI/TurnSystemUI.cs@{D:/Unity/RogueShooter/RogueShooter/Assets/Scripts/PlayerUnits/UnitsControlUI/TurnSystemUI.cs}}
+\mbox{\hyperlink{_turn_system_u_i_8cs}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\Hypertarget{_turn_system_u_i_8cs_source_l00001}00001\ \textcolor{keyword}{using\ }System;}
+\DoxyCodeLine{\Hypertarget{_turn_system_u_i_8cs_source_l00002}00002\ \textcolor{keyword}{using\ }Mirror;}
+\DoxyCodeLine{\Hypertarget{_turn_system_u_i_8cs_source_l00003}00003\ \textcolor{keyword}{using\ }UnityEngine;}
+\DoxyCodeLine{\Hypertarget{_turn_system_u_i_8cs_source_l00004}00004\ \textcolor{keyword}{using\ }UnityEngine.UI;}
+\DoxyCodeLine{\Hypertarget{_turn_system_u_i_8cs_source_l00005}00005\ \textcolor{keyword}{using\ }TMPro;}
+\DoxyCodeLine{\Hypertarget{_turn_system_u_i_8cs_source_l00006}00006\ }
+\DoxyCodeLine{\Hypertarget{_turn_system_u_i_8cs_source_l00007}\mbox{\hyperlink{class_turn_system_u_i}{00007}}\ \textcolor{keyword}{public}\ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_turn_system_u_i}{TurnSystemUI}}\ :\ MonoBehaviour}
+\DoxyCodeLine{\Hypertarget{_turn_system_u_i_8cs_source_l00008}00008\ \{}
+\DoxyCodeLine{\Hypertarget{_turn_system_u_i_8cs_source_l00009}\mbox{\hyperlink{class_turn_system_u_i_a0973b7fb61d9a597779d296e4519b6e3}{00009}}\ \ \ \ \ [SerializeField]\ \textcolor{keyword}{private}\ Button\ \mbox{\hyperlink{class_turn_system_u_i_a0973b7fb61d9a597779d296e4519b6e3}{endTurnButton}};}
+\DoxyCodeLine{\Hypertarget{_turn_system_u_i_8cs_source_l00010}\mbox{\hyperlink{class_turn_system_u_i_addce87c79fde218fc95c12042bad3b43}{00010}}\ \ \ \ \ [SerializeField]\ \textcolor{keyword}{private}\ TextMeshProUGUI\ \mbox{\hyperlink{class_turn_system_u_i_addce87c79fde218fc95c12042bad3b43}{turnNumberText}};\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ (valinnainen,\ käytä\ SP:ssä)}}
+\DoxyCodeLine{\Hypertarget{_turn_system_u_i_8cs_source_l00011}\mbox{\hyperlink{class_turn_system_u_i_a7559ab1d0a7c1225e239d62200925758}{00011}}\ \ \ \ \ [SerializeField]\ \textcolor{keyword}{private}\ GameObject\ \mbox{\hyperlink{class_turn_system_u_i_a7559ab1d0a7c1225e239d62200925758}{enemyTurnVisualGameObject}};\ \ \ \ \ \ \textcolor{comment}{//\ (valinnainen,\ käytä\ SP:ssä)}}
+\DoxyCodeLine{\Hypertarget{_turn_system_u_i_8cs_source_l00012}00012\ }
+\DoxyCodeLine{\Hypertarget{_turn_system_u_i_8cs_source_l00013}\mbox{\hyperlink{class_turn_system_u_i_a19df9f8c3a2729d48027b43725cba65d}{00013}}\ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{class_turn_system_u_i_a19df9f8c3a2729d48027b43725cba65d}{isCoop}};}
+\DoxyCodeLine{\Hypertarget{_turn_system_u_i_8cs_source_l00014}\mbox{\hyperlink{class_turn_system_u_i_a334009937c4b790531436af547d61d64}{00014}}\ \ \ \ \ \textcolor{keyword}{private}\ \mbox{\hyperlink{class_player_controller}{PlayerController}}\ \mbox{\hyperlink{class_turn_system_u_i_a334009937c4b790531436af547d61d64}{localPlayerController}};}
+\DoxyCodeLine{\Hypertarget{_turn_system_u_i_8cs_source_l00015}00015\ }
+\DoxyCodeLine{\Hypertarget{_turn_system_u_i_8cs_source_l00016}\mbox{\hyperlink{class_turn_system_u_i_aaa58c5d15026aa43affc5842fdb2d642}{00016}}\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_turn_system_u_i_aaa58c5d15026aa43affc5842fdb2d642}{Start}}()}
+\DoxyCodeLine{\Hypertarget{_turn_system_u_i_8cs_source_l00017}00017\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_turn_system_u_i_8cs_source_l00018}00018\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_turn_system_u_i_a19df9f8c3a2729d48027b43725cba65d}{isCoop}}\ =\ \mbox{\hyperlink{class_game_mode_manager_afc91daaebfc32a72c8ec1527857cfab8}{GameModeManager.SelectedMode}}\ ==\ \mbox{\hyperlink{_game_mode_manager_8cs_aaf5ef5a17b53e9997c837b07015589de}{GameMode}}.CoOp;}
+\DoxyCodeLine{\Hypertarget{_turn_system_u_i_8cs_source_l00019}00019\ }
+\DoxyCodeLine{\Hypertarget{_turn_system_u_i_8cs_source_l00020}00020\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ kiinnitä\ handler\ tasan\ kerran}}
+\DoxyCodeLine{\Hypertarget{_turn_system_u_i_8cs_source_l00021}00021\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{class_turn_system_u_i_a0973b7fb61d9a597779d296e4519b6e3}{endTurnButton}}\ !=\ \textcolor{keyword}{null})}
+\DoxyCodeLine{\Hypertarget{_turn_system_u_i_8cs_source_l00022}00022\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_turn_system_u_i_8cs_source_l00023}00023\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_turn_system_u_i_a0973b7fb61d9a597779d296e4519b6e3}{endTurnButton}}.onClick.RemoveAllListeners();}
+\DoxyCodeLine{\Hypertarget{_turn_system_u_i_8cs_source_l00024}00024\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_turn_system_u_i_a0973b7fb61d9a597779d296e4519b6e3}{endTurnButton}}.onClick.AddListener(\mbox{\hyperlink{class_turn_system_u_i_a15760c56cafa6a125dff1d882f82ffff}{OnEndTurnClicked}});}
+\DoxyCodeLine{\Hypertarget{_turn_system_u_i_8cs_source_l00025}00025\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_turn_system_u_i_8cs_source_l00026}00026\ }
+\DoxyCodeLine{\Hypertarget{_turn_system_u_i_8cs_source_l00027}00027\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{class_turn_system_u_i_a19df9f8c3a2729d48027b43725cba65d}{isCoop}})}
+\DoxyCodeLine{\Hypertarget{_turn_system_u_i_8cs_source_l00028}00028\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_turn_system_u_i_8cs_source_l00029}00029\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Co-\/opissa\ nappi\ on\ DISABLED\ kunnes\ serveri\ kertoo\ että\ saa\ toimia}}
+\DoxyCodeLine{\Hypertarget{_turn_system_u_i_8cs_source_l00030}00030\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_turn_system_u_i_a1cba6fa77d0086227db2270e80d9eadf}{SetCanAct}}(\textcolor{keyword}{false});}
+\DoxyCodeLine{\Hypertarget{_turn_system_u_i_8cs_source_l00031}00031\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_turn_system_u_i_8cs_source_l00032}00032\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{\Hypertarget{_turn_system_u_i_8cs_source_l00033}00033\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_turn_system_u_i_8cs_source_l00034}00034\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Singleplayer:\ vanha\ eventti}}
+\DoxyCodeLine{\Hypertarget{_turn_system_u_i_8cs_source_l00035}00035\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{class_turn_system}{TurnSystem}}.\mbox{\hyperlink{class_turn_system_afb88390bd634f5f5d61677c68819ef3b}{Instance}}\ !=\ \textcolor{keyword}{null})}
+\DoxyCodeLine{\Hypertarget{_turn_system_u_i_8cs_source_l00036}00036\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_turn_system_u_i_8cs_source_l00037}00037\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ TurnSystem.Instance.OnTurnChanged\ +=\ \mbox{\hyperlink{class_turn_system_u_i_a31e3952ffbed4cf1823a32cb3b0c4b0e}{TurnSystem\_OnTurnChanged}};}
+\DoxyCodeLine{\Hypertarget{_turn_system_u_i_8cs_source_l00038}00038\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_turn_system_u_i_a3f941f09c639d693328a6f719ff6cf25}{UpdateForSingleplayer}}();}
+\DoxyCodeLine{\Hypertarget{_turn_system_u_i_8cs_source_l00039}00039\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_turn_system_u_i_8cs_source_l00040}00040\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_turn_system_u_i_8cs_source_l00041}00041\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_turn_system_u_i_8cs_source_l00042}00042\ }
+\DoxyCodeLine{\Hypertarget{_turn_system_u_i_8cs_source_l00043}\mbox{\hyperlink{class_turn_system_u_i_a32ae1c21880f66a1d565a19d9084b0d1}{00043}}\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_turn_system_u_i_a32ae1c21880f66a1d565a19d9084b0d1}{OnDisable}}()}
+\DoxyCodeLine{\Hypertarget{_turn_system_u_i_8cs_source_l00044}00044\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_turn_system_u_i_8cs_source_l00045}00045\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!\mbox{\hyperlink{class_turn_system_u_i_a19df9f8c3a2729d48027b43725cba65d}{isCoop}}\ \&\&\ \mbox{\hyperlink{class_turn_system}{TurnSystem}}.\mbox{\hyperlink{class_turn_system_afb88390bd634f5f5d61677c68819ef3b}{Instance}}\ !=\ \textcolor{keyword}{null})}
+\DoxyCodeLine{\Hypertarget{_turn_system_u_i_8cs_source_l00046}00046\ \ \ \ \ \ \ \ \ \ \ \ \ TurnSystem.Instance.OnTurnChanged\ -\/=\ \mbox{\hyperlink{class_turn_system_u_i_a31e3952ffbed4cf1823a32cb3b0c4b0e}{TurnSystem\_OnTurnChanged}};}
+\DoxyCodeLine{\Hypertarget{_turn_system_u_i_8cs_source_l00047}00047\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_turn_system_u_i_8cs_source_l00048}00048\ }
+\DoxyCodeLine{\Hypertarget{_turn_system_u_i_8cs_source_l00049}00049\ \ \ \ \ \textcolor{comment}{//\ ======\ julkinen\ kutsu\ PlayerController.TargetNotifyCanAct:ista\ ======}}
+\DoxyCodeLine{\Hypertarget{_turn_system_u_i_8cs_source_l00050}\mbox{\hyperlink{class_turn_system_u_i_a1cba6fa77d0086227db2270e80d9eadf}{00050}}\ \ \ \ \ \textcolor{keyword}{public}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_turn_system_u_i_a1cba6fa77d0086227db2270e80d9eadf}{SetCanAct}}(\textcolor{keywordtype}{bool}\ canAct)}
+\DoxyCodeLine{\Hypertarget{_turn_system_u_i_8cs_source_l00051}00051\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_turn_system_u_i_8cs_source_l00052}00052\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{class_turn_system_u_i_a0973b7fb61d9a597779d296e4519b6e3}{endTurnButton}}\ ==\ \textcolor{keyword}{null})\ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{\Hypertarget{_turn_system_u_i_8cs_source_l00053}00053\ }
+\DoxyCodeLine{\Hypertarget{_turn_system_u_i_8cs_source_l00054}00054\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_turn_system_u_i_a0973b7fb61d9a597779d296e4519b6e3}{endTurnButton}}.onClick.RemoveListener(\mbox{\hyperlink{class_turn_system_u_i_a15760c56cafa6a125dff1d882f82ffff}{OnEndTurnClicked}});}
+\DoxyCodeLine{\Hypertarget{_turn_system_u_i_8cs_source_l00055}00055\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (canAct)\ \mbox{\hyperlink{class_turn_system_u_i_a0973b7fb61d9a597779d296e4519b6e3}{endTurnButton}}.onClick.AddListener(\mbox{\hyperlink{class_turn_system_u_i_a15760c56cafa6a125dff1d882f82ffff}{OnEndTurnClicked}});}
+\DoxyCodeLine{\Hypertarget{_turn_system_u_i_8cs_source_l00056}00056\ }
+\DoxyCodeLine{\Hypertarget{_turn_system_u_i_8cs_source_l00057}00057\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_turn_system_u_i_a0973b7fb61d9a597779d296e4519b6e3}{endTurnButton}}.gameObject.SetActive(canAct);\ \ \ \textcolor{comment}{//\ jos\ haluat\ pitää\ aina\ näkyvissä,\ vaihda\ SetActive(true)}}
+\DoxyCodeLine{\Hypertarget{_turn_system_u_i_8cs_source_l00058}00058\ \ \ \ \ \ \ \ \ endTurnButton.interactable\ =\ canAct;}
+\DoxyCodeLine{\Hypertarget{_turn_system_u_i_8cs_source_l00059}00059\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_turn_system_u_i_8cs_source_l00060}00060\ }
+\DoxyCodeLine{\Hypertarget{_turn_system_u_i_8cs_source_l00061}00061\ \ \ \ \ \textcolor{comment}{//\ ======\ nappi\ ======}}
+\DoxyCodeLine{\Hypertarget{_turn_system_u_i_8cs_source_l00062}\mbox{\hyperlink{class_turn_system_u_i_a15760c56cafa6a125dff1d882f82ffff}{00062}}\ \ \ \ \ \textcolor{keyword}{private}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_turn_system_u_i_a15760c56cafa6a125dff1d882f82ffff}{OnEndTurnClicked}}()}
+\DoxyCodeLine{\Hypertarget{_turn_system_u_i_8cs_source_l00063}00063\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_turn_system_u_i_8cs_source_l00064}00064\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Päättele\ co-\/op\ -\/tila\ tilannekohtaisesti\ (ei\ SelectedMode)}}
+\DoxyCodeLine{\Hypertarget{_turn_system_u_i_8cs_source_l00065}00065\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ isCoopNow\ =}
+\DoxyCodeLine{\Hypertarget{_turn_system_u_i_8cs_source_l00066}00066\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_coop_turn_coordinator_aa75bc0f1443921e38125193b898a0e9d}{CoopTurnCoordinator.Instance}}\ !=\ \textcolor{keyword}{null}\ \&\&}
+\DoxyCodeLine{\Hypertarget{_turn_system_u_i_8cs_source_l00067}00067\ \ \ \ \ \ \ \ \ \ \ \ \ (NetworkServer.active\ ||\ NetworkClient.isConnected);}
+\DoxyCodeLine{\Hypertarget{_turn_system_u_i_8cs_source_l00068}00068\ }
+\DoxyCodeLine{\Hypertarget{_turn_system_u_i_8cs_source_l00069}00069\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!isCoopNow)}
+\DoxyCodeLine{\Hypertarget{_turn_system_u_i_8cs_source_l00070}00070\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_turn_system_u_i_8cs_source_l00071}00071\ \ \ \ \ \ \ \ \ \ \ \ \ Debug.Log(\textcolor{stringliteral}{"{}[UI]\ EndTurn\ clicked\ (SP)"{}});}
+\DoxyCodeLine{\Hypertarget{_turn_system_u_i_8cs_source_l00072}00072\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{class_turn_system}{TurnSystem}}.\mbox{\hyperlink{class_turn_system_afb88390bd634f5f5d61677c68819ef3b}{Instance}}\ !=\ \textcolor{keyword}{null})}
+\DoxyCodeLine{\Hypertarget{_turn_system_u_i_8cs_source_l00073}00073\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_turn_system_u_i_8cs_source_l00074}00074\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_turn_system}{TurnSystem}}.\mbox{\hyperlink{class_turn_system_afb88390bd634f5f5d61677c68819ef3b}{Instance}}.\mbox{\hyperlink{class_turn_system_a1d01c677281cb15fbfcf758f8727c548}{NextTurn}}();}
+\DoxyCodeLine{\Hypertarget{_turn_system_u_i_8cs_source_l00075}00075\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_turn_system_u_i_8cs_source_l00076}00076\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{\Hypertarget{_turn_system_u_i_8cs_source_l00077}00077\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_turn_system_u_i_8cs_source_l00078}00078\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Debug.LogWarning(\textcolor{stringliteral}{"{}[UI]\ TurnSystem.Instance\ is\ null"{}});}
+\DoxyCodeLine{\Hypertarget{_turn_system_u_i_8cs_source_l00079}00079\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_turn_system_u_i_8cs_source_l00080}00080\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{\Hypertarget{_turn_system_u_i_8cs_source_l00081}00081\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_turn_system_u_i_8cs_source_l00082}00082\ }
+\DoxyCodeLine{\Hypertarget{_turn_system_u_i_8cs_source_l00083}00083\ \ \ \ \ \ \ \ \ Debug.Log(\textcolor{stringliteral}{"{}[UI]\ EndTurn\ clicked\ (Co-\/op)"{}});}
+\DoxyCodeLine{\Hypertarget{_turn_system_u_i_8cs_source_l00084}00084\ }
+\DoxyCodeLine{\Hypertarget{_turn_system_u_i_8cs_source_l00085}00085\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_turn_system_u_i_a86a0d290c1e9f87b891ec4d999f003c8}{CacheLocalPlayerController}}();}
+\DoxyCodeLine{\Hypertarget{_turn_system_u_i_8cs_source_l00086}00086\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{class_turn_system_u_i_a334009937c4b790531436af547d61d64}{localPlayerController}}\ ==\ \textcolor{keyword}{null})}
+\DoxyCodeLine{\Hypertarget{_turn_system_u_i_8cs_source_l00087}00087\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_turn_system_u_i_8cs_source_l00088}00088\ \ \ \ \ \ \ \ \ \ \ \ \ Debug.LogWarning(\textcolor{stringliteral}{"{}[UI]\ Local\ PlayerController\ not\ found"{}});}
+\DoxyCodeLine{\Hypertarget{_turn_system_u_i_8cs_source_l00089}00089\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{\Hypertarget{_turn_system_u_i_8cs_source_l00090}00090\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_turn_system_u_i_8cs_source_l00091}00091\ }
+\DoxyCodeLine{\Hypertarget{_turn_system_u_i_8cs_source_l00092}00092\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Estä\ tuplaklikki}}
+\DoxyCodeLine{\Hypertarget{_turn_system_u_i_8cs_source_l00093}00093\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_turn_system_u_i_a1cba6fa77d0086227db2270e80d9eadf}{SetCanAct}}(\textcolor{keyword}{false});}
+\DoxyCodeLine{\Hypertarget{_turn_system_u_i_8cs_source_l00094}00094\ }
+\DoxyCodeLine{\Hypertarget{_turn_system_u_i_8cs_source_l00095}00095\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Lähetä\ serverille}}
+\DoxyCodeLine{\Hypertarget{_turn_system_u_i_8cs_source_l00096}00096\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_turn_system_u_i_a334009937c4b790531436af547d61d64}{localPlayerController}}.ClickEndTurn();}
+\DoxyCodeLine{\Hypertarget{_turn_system_u_i_8cs_source_l00097}00097\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_turn_system_u_i_8cs_source_l00098}00098\ }
+\DoxyCodeLine{\Hypertarget{_turn_system_u_i_8cs_source_l00099}\mbox{\hyperlink{class_turn_system_u_i_a86a0d290c1e9f87b891ec4d999f003c8}{00099}}\ \ \ \ \ \textcolor{keyword}{private}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_turn_system_u_i_a86a0d290c1e9f87b891ec4d999f003c8}{CacheLocalPlayerController}}()}
+\DoxyCodeLine{\Hypertarget{_turn_system_u_i_8cs_source_l00100}00100\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_turn_system_u_i_8cs_source_l00101}00101\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{class_turn_system_u_i_a334009937c4b790531436af547d61d64}{localPlayerController}}\ ==\ \textcolor{keyword}{null})}
+\DoxyCodeLine{\Hypertarget{_turn_system_u_i_8cs_source_l00102}00102\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_turn_system_u_i_8cs_source_l00103}00103\ \ \ \ \ \ \ \ \ \ \ \ \ var\ conn\ =\ NetworkClient.connection;}
+\DoxyCodeLine{\Hypertarget{_turn_system_u_i_8cs_source_l00104}00104\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (conn\ !=\ \textcolor{keyword}{null}\ \&\&\ conn.identity\ !=\ \textcolor{keyword}{null})}
+\DoxyCodeLine{\Hypertarget{_turn_system_u_i_8cs_source_l00105}00105\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_turn_system_u_i_8cs_source_l00106}00106\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_turn_system_u_i_a334009937c4b790531436af547d61d64}{localPlayerController}}\ =\ conn.identity.GetComponent<\mbox{\hyperlink{class_player_controller}{PlayerController}}>();}
+\DoxyCodeLine{\Hypertarget{_turn_system_u_i_8cs_source_l00107}00107\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_turn_system_u_i_8cs_source_l00108}00108\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_turn_system_u_i_8cs_source_l00109}00109\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_turn_system_u_i_8cs_source_l00110}00110\ }
+\DoxyCodeLine{\Hypertarget{_turn_system_u_i_8cs_source_l00111}00111\ \ \ \ \ \textcolor{comment}{//\ ======\ singleplayer\ UI\ (valinnainen)\ ======}}
+\DoxyCodeLine{\Hypertarget{_turn_system_u_i_8cs_source_l00112}\mbox{\hyperlink{class_turn_system_u_i_a31e3952ffbed4cf1823a32cb3b0c4b0e}{00112}}\ \ \ \ \ \textcolor{keyword}{private}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_turn_system_u_i_a31e3952ffbed4cf1823a32cb3b0c4b0e}{TurnSystem\_OnTurnChanged}}(\textcolor{keywordtype}{object}\ s,\ EventArgs\ e)\ =>\ \mbox{\hyperlink{class_turn_system_u_i_a3f941f09c639d693328a6f719ff6cf25}{UpdateForSingleplayer}}();}
+\DoxyCodeLine{\Hypertarget{_turn_system_u_i_8cs_source_l00113}00113\ }
+\DoxyCodeLine{\Hypertarget{_turn_system_u_i_8cs_source_l00114}\mbox{\hyperlink{class_turn_system_u_i_a3f941f09c639d693328a6f719ff6cf25}{00114}}\ \ \ \ \ \textcolor{keyword}{private}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_turn_system_u_i_a3f941f09c639d693328a6f719ff6cf25}{UpdateForSingleplayer}}()}
+\DoxyCodeLine{\Hypertarget{_turn_system_u_i_8cs_source_l00115}00115\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_turn_system_u_i_8cs_source_l00116}00116\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{class_turn_system_u_i_addce87c79fde218fc95c12042bad3b43}{turnNumberText}}\ !=\ \textcolor{keyword}{null})}
+\DoxyCodeLine{\Hypertarget{_turn_system_u_i_8cs_source_l00117}00117\ \ \ \ \ \ \ \ \ \ \ \ \ turnNumberText.text\ =\ \textcolor{stringliteral}{"{}Turn:\ "{}}\ +\ \mbox{\hyperlink{class_turn_system}{TurnSystem}}.\mbox{\hyperlink{class_turn_system_afb88390bd634f5f5d61677c68819ef3b}{Instance}}.\mbox{\hyperlink{class_turn_system_ab5dc35083f1a9831cddde97453289da0}{GetTurnNumber}}();}
+\DoxyCodeLine{\Hypertarget{_turn_system_u_i_8cs_source_l00118}00118\ }
+\DoxyCodeLine{\Hypertarget{_turn_system_u_i_8cs_source_l00119}00119\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{class_turn_system_u_i_a7559ab1d0a7c1225e239d62200925758}{enemyTurnVisualGameObject}}\ !=\ \textcolor{keyword}{null})}
+\DoxyCodeLine{\Hypertarget{_turn_system_u_i_8cs_source_l00120}00120\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_turn_system_u_i_a7559ab1d0a7c1225e239d62200925758}{enemyTurnVisualGameObject}}.SetActive(!\mbox{\hyperlink{class_turn_system}{TurnSystem}}.\mbox{\hyperlink{class_turn_system_afb88390bd634f5f5d61677c68819ef3b}{Instance}}.\mbox{\hyperlink{class_turn_system_a0cd72934034eb02591fb17a108db3e94}{IsPlayerTurn}}());}
+\DoxyCodeLine{\Hypertarget{_turn_system_u_i_8cs_source_l00121}00121\ }
+\DoxyCodeLine{\Hypertarget{_turn_system_u_i_8cs_source_l00122}00122\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{class_turn_system_u_i_a0973b7fb61d9a597779d296e4519b6e3}{endTurnButton}}\ !=\ \textcolor{keyword}{null})}
+\DoxyCodeLine{\Hypertarget{_turn_system_u_i_8cs_source_l00123}00123\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_turn_system_u_i_a0973b7fb61d9a597779d296e4519b6e3}{endTurnButton}}.gameObject.SetActive(\mbox{\hyperlink{class_turn_system}{TurnSystem}}.\mbox{\hyperlink{class_turn_system_afb88390bd634f5f5d61677c68819ef3b}{Instance}}.\mbox{\hyperlink{class_turn_system_a0cd72934034eb02591fb17a108db3e94}{IsPlayerTurn}}());}
+\DoxyCodeLine{\Hypertarget{_turn_system_u_i_8cs_source_l00124}00124\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_turn_system_u_i_8cs_source_l00125}00125\ \}}
+
+\end{DoxyCode}

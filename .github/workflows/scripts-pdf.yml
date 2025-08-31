@@ -1,0 +1,50 @@
+name: Build Scripts PDF
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build-pdf:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Restore
+        run: dotnet restore Tools/ScriptsPdf/ScriptsPdf.csproj
+
+      - name: Generate PDF
+        run: |
+          dotnet run --project Tools/ScriptsPdf -- "Assets/scripts" "Docs/AllScripts.pdf"
+          ls -la Docs
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: AllScripts-pdf
+          path: Docs/AllScripts.pdf
+
+            # ... edelliset stepit päälle
+      - name: Commit PDF back to repo
+        if: github.actor != 'github-actions[bot]'   # estää commit-loopin
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          # Commit only if changed
+          git add Docs/AllScripts.pdf
+          if git diff --cached --quiet; then
+            echo "No changes in PDF."
+            exit 0
+          fi
+
+          git commit -m "chore(docs): update AllScripts.pdf [skip ci]"
+          git push

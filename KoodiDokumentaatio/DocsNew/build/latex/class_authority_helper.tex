@@ -1,0 +1,43 @@
+\doxysection{Authority\+Helper Class Reference}
+\hypertarget{class_authority_helper}{}\label{class_authority_helper}\index{AuthorityHelper@{AuthorityHelper}}
+\doxysubsubsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+static bool \mbox{\hyperlink{class_authority_helper_aafe06aef56c71ab1f2e690e2a383a1ad}{Has\+Local\+Control}} (Network\+Behaviour net\+Behaviour)
+\begin{DoxyCompactList}\small\item\em Checks if the given Network\+Behaviour has local control. Prevents the player from controlling the object if they are not the owner. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+
+
+Definition at line \mbox{\hyperlink{_authority_helper_8cs_source_l00003}{3}} of file \mbox{\hyperlink{_authority_helper_8cs_source}{Authority\+Helper.\+cs}}.
+
+
+
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_authority_helper_aafe06aef56c71ab1f2e690e2a383a1ad}\index{AuthorityHelper@{AuthorityHelper}!HasLocalControl@{HasLocalControl}}
+\index{HasLocalControl@{HasLocalControl}!AuthorityHelper@{AuthorityHelper}}
+\doxysubsubsection{\texorpdfstring{HasLocalControl()}{HasLocalControl()}}
+{\footnotesize\ttfamily \label{class_authority_helper_aafe06aef56c71ab1f2e690e2a383a1ad} 
+static bool Authority\+Helper.\+Has\+Local\+Control (\begin{DoxyParamCaption}\item[{Network\+Behaviour}]{net\+Behaviour}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+Checks if the given Network\+Behaviour has local control. Prevents the player from controlling the object if they are not the owner. 
+
+
+
+Definition at line \mbox{\hyperlink{_authority_helper_8cs_source_l00009}{9}} of file \mbox{\hyperlink{_authority_helper_8cs_source}{Authority\+Helper.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00010\ \ \ \ \ \{}
+\DoxyCodeLine{00011\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ NetworkClient.isConnected\ \&\&\ !netBehaviour.isOwned;}
+\DoxyCodeLine{00012\ \ \ \ \ \}}
+
+\end{DoxyCode}
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+D\+:/\+Unity/\+Rogue\+Shooter/\+Rogue\+Shooter/\+Assets/\+Scripts/\+Helpers/\mbox{\hyperlink{_authority_helper_8cs}{Authority\+Helper.\+cs}}\end{DoxyCompactItemize}

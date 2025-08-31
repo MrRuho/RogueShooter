@@ -1,0 +1,269 @@
+\doxysection{Camera\+Controller Class Reference}
+\hypertarget{class_camera_controller}{}\label{class_camera_controller}\index{CameraController@{CameraController}}
+Inheritance diagram for Camera\+Controller\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{class_camera_controller}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Private Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{class_camera_controller_ad4a238c6f7db3ee003302a245d860860}{Start}} ()
+\item 
+void \mbox{\hyperlink{class_camera_controller_a7c4f486f4bcbd1d54a346fdce9707bd5}{Update}} ()
+\item 
+void \mbox{\hyperlink{class_camera_controller_a72927886feda6a2ee259b5949560fa37}{Handle\+Movement}} (float \mbox{\hyperlink{class_camera_controller_a8979cceb75638fe3caf62c8516ec4bc6}{move\+Speed}})
+\item 
+void \mbox{\hyperlink{class_camera_controller_a2313c90f530f8b7e016241b53b432798}{Handle\+Rotation}} (float \mbox{\hyperlink{class_camera_controller_a7421ca30c2a0259ba4d03ee4562df9c9}{rotation\+Speed}})
+\item 
+void \mbox{\hyperlink{class_camera_controller_a5d4a60bb4513e0c8375b9fe58efdf3c0}{Handle\+Zoom}} (float \mbox{\hyperlink{class_camera_controller_ac5e7f931dc646e4a643f850da622c7c1}{zoom\+Speed}})
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+Cinemachine\+Camera \mbox{\hyperlink{class_camera_controller_aa0a9518a856dd5d39b0f0cdbbf162f0e}{cinemachine\+Camera}}
+\item 
+Cinemachine\+Follow \mbox{\hyperlink{class_camera_controller_a10241db0fd7b4ad565937995b503f317}{cinemachine\+Follow}}
+\item 
+Vector3 \mbox{\hyperlink{class_camera_controller_aca88b6fe744d78ec1e3b994387dd6319}{target\+Follow\+Offset}}
+\item 
+float \mbox{\hyperlink{class_camera_controller_a8979cceb75638fe3caf62c8516ec4bc6}{move\+Speed}} = 10f
+\item 
+float \mbox{\hyperlink{class_camera_controller_a7421ca30c2a0259ba4d03ee4562df9c9}{rotation\+Speed}} = 100f
+\item 
+float \mbox{\hyperlink{class_camera_controller_ac5e7f931dc646e4a643f850da622c7c1}{zoom\+Speed}} = 5f
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Static Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+const float \mbox{\hyperlink{class_camera_controller_ac8c25976166746ba0d7a12e49a5fc986}{MIN\+\_\+\+FOLLOW\+\_\+\+Y\+\_\+\+OFFSET}} = 2f
+\item 
+const float \mbox{\hyperlink{class_camera_controller_a693f23114eec25c934fed2dcc7846408}{MAX\+\_\+\+FOLLOW\+\_\+\+Y\+\_\+\+OFFSET}} = 12f
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+
+
+Definition at line \mbox{\hyperlink{_camera_controller_8cs_source_l00009}{9}} of file \mbox{\hyperlink{_camera_controller_8cs_source}{Camera\+Controller.\+cs}}.
+
+
+
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_camera_controller_a72927886feda6a2ee259b5949560fa37}\index{CameraController@{CameraController}!HandleMovement@{HandleMovement}}
+\index{HandleMovement@{HandleMovement}!CameraController@{CameraController}}
+\doxysubsubsection{\texorpdfstring{HandleMovement()}{HandleMovement()}}
+{\footnotesize\ttfamily \label{class_camera_controller_a72927886feda6a2ee259b5949560fa37} 
+void Camera\+Controller.\+Handle\+Movement (\begin{DoxyParamCaption}\item[{float}]{move\+Speed}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_camera_controller_8cs_source_l00035}{35}} of file \mbox{\hyperlink{_camera_controller_8cs_source}{Camera\+Controller.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00036\ \ \ \ \ \{}
+\DoxyCodeLine{00037\ \ \ \ \ \ \ \ \ Vector3\ inputMoveDirection\ =\ \textcolor{keyword}{new}\ Vector3(0,0,0);}
+\DoxyCodeLine{00038\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (Input.GetKey(KeyCode.W))}
+\DoxyCodeLine{00039\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00040\ \ \ \ \ \ \ \ \ \ \ \ \ inputMoveDirection.z\ =\ +1f;}
+\DoxyCodeLine{00041\ \ \ \ \ \ \ \ \ \}\ \ }
+\DoxyCodeLine{00042\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (Input.GetKey(KeyCode.S))}
+\DoxyCodeLine{00043\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00044\ \ \ \ \ \ \ \ \ \ \ \ \ inputMoveDirection.z\ =\ -\/1f;}
+\DoxyCodeLine{00045\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00046\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (Input.GetKey(KeyCode.A))}
+\DoxyCodeLine{00047\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00048\ \ \ \ \ \ \ \ \ \ \ \ \ inputMoveDirection.x\ =\ -\/1f;}
+\DoxyCodeLine{00049\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00050\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (Input.GetKey(KeyCode.D))}
+\DoxyCodeLine{00051\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00052\ \ \ \ \ \ \ \ \ \ \ \ \ inputMoveDirection.x\ =\ +1f;}
+\DoxyCodeLine{00053\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00054\ }
+\DoxyCodeLine{00055\ \ \ \ \ \ \ \ \ Vector3\ moveVector\ =\ transform.forward\ *\ inputMoveDirection.z\ +\ transform.right\ *\ inputMoveDirection.x;}
+\DoxyCodeLine{00056\ \ \ \ \ \ \ \ \ transform.position\ +=\ \mbox{\hyperlink{class_camera_controller_a8979cceb75638fe3caf62c8516ec4bc6}{moveSpeed}}\ *\ Time.deltaTime\ *\ moveVector;}
+\DoxyCodeLine{00057\ \ \ \ \ \}}
+
+\end{DoxyCode}
+\Hypertarget{class_camera_controller_a2313c90f530f8b7e016241b53b432798}\index{CameraController@{CameraController}!HandleRotation@{HandleRotation}}
+\index{HandleRotation@{HandleRotation}!CameraController@{CameraController}}
+\doxysubsubsection{\texorpdfstring{HandleRotation()}{HandleRotation()}}
+{\footnotesize\ttfamily \label{class_camera_controller_a2313c90f530f8b7e016241b53b432798} 
+void Camera\+Controller.\+Handle\+Rotation (\begin{DoxyParamCaption}\item[{float}]{rotation\+Speed}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_camera_controller_8cs_source_l00059}{59}} of file \mbox{\hyperlink{_camera_controller_8cs_source}{Camera\+Controller.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00060\ \ \ \ \ \{}
+\DoxyCodeLine{00061\ \ \ \ \ \ \ \ \ Vector3\ rotationVector\ =\ \textcolor{keyword}{new}\ Vector3(0,\ 0,\ 0);}
+\DoxyCodeLine{00062\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (Input.GetKey(KeyCode.Q))}
+\DoxyCodeLine{00063\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00064\ \ \ \ \ \ \ \ \ \ \ \ \ rotationVector.y\ =\ -\/1f;}
+\DoxyCodeLine{00065\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00066\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (Input.GetKey(KeyCode.E))}
+\DoxyCodeLine{00067\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00068\ \ \ \ \ \ \ \ \ \ \ \ \ rotationVector.y\ =\ +1f;}
+\DoxyCodeLine{00069\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00070\ }
+\DoxyCodeLine{00071\ \ \ \ \ \ \ \ \ transform.eulerAngles\ +=\ \mbox{\hyperlink{class_camera_controller_a7421ca30c2a0259ba4d03ee4562df9c9}{rotationSpeed}}\ *\ Time.deltaTime\ *\ rotationVector;}
+\DoxyCodeLine{00072\ \ \ \ \ \}}
+
+\end{DoxyCode}
+\Hypertarget{class_camera_controller_a5d4a60bb4513e0c8375b9fe58efdf3c0}\index{CameraController@{CameraController}!HandleZoom@{HandleZoom}}
+\index{HandleZoom@{HandleZoom}!CameraController@{CameraController}}
+\doxysubsubsection{\texorpdfstring{HandleZoom()}{HandleZoom()}}
+{\footnotesize\ttfamily \label{class_camera_controller_a5d4a60bb4513e0c8375b9fe58efdf3c0} 
+void Camera\+Controller.\+Handle\+Zoom (\begin{DoxyParamCaption}\item[{float}]{zoom\+Speed}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_camera_controller_8cs_source_l00074}{74}} of file \mbox{\hyperlink{_camera_controller_8cs_source}{Camera\+Controller.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00075\ \ \ \ \ \{}
+\DoxyCodeLine{00076\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ zoomAmount\ =\ 1f;}
+\DoxyCodeLine{00077\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}(Input.mouseScrollDelta.y\ >\ 0)\ }
+\DoxyCodeLine{00078\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00079\ \ \ \ \ \ \ \ \ \ \ \ \ targetFollowOffset.y\ -\/=\ zoomAmount;}
+\DoxyCodeLine{00080\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00081\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}(Input.mouseScrollDelta.y\ <\ 0)\ }
+\DoxyCodeLine{00082\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00083\ \ \ \ \ \ \ \ \ \ \ \ \ targetFollowOffset.y\ +=\ zoomAmount;}
+\DoxyCodeLine{00084\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00085\ }
+\DoxyCodeLine{00086\ \ \ \ \ \ \ \ \ targetFollowOffset.y\ =\ Mathf.Clamp(\mbox{\hyperlink{class_camera_controller_aca88b6fe744d78ec1e3b994387dd6319}{targetFollowOffset}}.y,\ \mbox{\hyperlink{class_camera_controller_ac8c25976166746ba0d7a12e49a5fc986}{MIN\_FOLLOW\_Y\_OFFSET}},\ \mbox{\hyperlink{class_camera_controller_a693f23114eec25c934fed2dcc7846408}{MAX\_FOLLOW\_Y\_OFFSET}});}
+\DoxyCodeLine{00087\ \ \ \ \ \ \ \ \ cinemachineFollow.FollowOffset\ =\ Vector3.Lerp(\mbox{\hyperlink{class_camera_controller_a10241db0fd7b4ad565937995b503f317}{cinemachineFollow}}.FollowOffset,\ \mbox{\hyperlink{class_camera_controller_aca88b6fe744d78ec1e3b994387dd6319}{targetFollowOffset}},\ Time.deltaTime\ *\ \mbox{\hyperlink{class_camera_controller_ac5e7f931dc646e4a643f850da622c7c1}{zoomSpeed}});}
+\DoxyCodeLine{00088\ \ \ \ \ \}}
+
+\end{DoxyCode}
+\Hypertarget{class_camera_controller_ad4a238c6f7db3ee003302a245d860860}\index{CameraController@{CameraController}!Start@{Start}}
+\index{Start@{Start}!CameraController@{CameraController}}
+\doxysubsubsection{\texorpdfstring{Start()}{Start()}}
+{\footnotesize\ttfamily \label{class_camera_controller_ad4a238c6f7db3ee003302a245d860860} 
+void Camera\+Controller.\+Start (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_camera_controller_8cs_source_l00022}{22}} of file \mbox{\hyperlink{_camera_controller_8cs_source}{Camera\+Controller.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00023\ \ \ \ \ \{}
+\DoxyCodeLine{00024\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_camera_controller_a10241db0fd7b4ad565937995b503f317}{cinemachineFollow}}\ =\ \mbox{\hyperlink{class_camera_controller_aa0a9518a856dd5d39b0f0cdbbf162f0e}{cinemachineCamera}}.GetComponent<CinemachineFollow>();}
+\DoxyCodeLine{00025\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_camera_controller_aca88b6fe744d78ec1e3b994387dd6319}{targetFollowOffset}}\ =\ \mbox{\hyperlink{class_camera_controller_a10241db0fd7b4ad565937995b503f317}{cinemachineFollow}}.FollowOffset;}
+\DoxyCodeLine{00026\ \ \ \ \ \}}
+
+\end{DoxyCode}
+\Hypertarget{class_camera_controller_a7c4f486f4bcbd1d54a346fdce9707bd5}\index{CameraController@{CameraController}!Update@{Update}}
+\index{Update@{Update}!CameraController@{CameraController}}
+\doxysubsubsection{\texorpdfstring{Update()}{Update()}}
+{\footnotesize\ttfamily \label{class_camera_controller_a7c4f486f4bcbd1d54a346fdce9707bd5} 
+void Camera\+Controller.\+Update (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_camera_controller_8cs_source_l00028}{28}} of file \mbox{\hyperlink{_camera_controller_8cs_source}{Camera\+Controller.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00029\ \ \ \ \ \{}
+\DoxyCodeLine{00030\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_camera_controller_a72927886feda6a2ee259b5949560fa37}{HandleMovement}}(\mbox{\hyperlink{class_camera_controller_a8979cceb75638fe3caf62c8516ec4bc6}{moveSpeed}});}
+\DoxyCodeLine{00031\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_camera_controller_a2313c90f530f8b7e016241b53b432798}{HandleRotation}}(\mbox{\hyperlink{class_camera_controller_a7421ca30c2a0259ba4d03ee4562df9c9}{rotationSpeed}});}
+\DoxyCodeLine{00032\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_camera_controller_a5d4a60bb4513e0c8375b9fe58efdf3c0}{HandleZoom}}(\mbox{\hyperlink{class_camera_controller_ac5e7f931dc646e4a643f850da622c7c1}{zoomSpeed}});}
+\DoxyCodeLine{00033\ \ \ \ \ \}}
+
+\end{DoxyCode}
+
+
+\doxysubsection{Member Data Documentation}
+\Hypertarget{class_camera_controller_aa0a9518a856dd5d39b0f0cdbbf162f0e}\index{CameraController@{CameraController}!cinemachineCamera@{cinemachineCamera}}
+\index{cinemachineCamera@{cinemachineCamera}!CameraController@{CameraController}}
+\doxysubsubsection{\texorpdfstring{cinemachineCamera}{cinemachineCamera}}
+{\footnotesize\ttfamily \label{class_camera_controller_aa0a9518a856dd5d39b0f0cdbbf162f0e} 
+Cinemachine\+Camera Camera\+Controller.\+cinemachine\+Camera\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_camera_controller_8cs_source_l00013}{13}} of file \mbox{\hyperlink{_camera_controller_8cs_source}{Camera\+Controller.\+cs}}.
+
+\Hypertarget{class_camera_controller_a10241db0fd7b4ad565937995b503f317}\index{CameraController@{CameraController}!cinemachineFollow@{cinemachineFollow}}
+\index{cinemachineFollow@{cinemachineFollow}!CameraController@{CameraController}}
+\doxysubsubsection{\texorpdfstring{cinemachineFollow}{cinemachineFollow}}
+{\footnotesize\ttfamily \label{class_camera_controller_a10241db0fd7b4ad565937995b503f317} 
+Cinemachine\+Follow Camera\+Controller.\+cinemachine\+Follow\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_camera_controller_8cs_source_l00015}{15}} of file \mbox{\hyperlink{_camera_controller_8cs_source}{Camera\+Controller.\+cs}}.
+
+\Hypertarget{class_camera_controller_a693f23114eec25c934fed2dcc7846408}\index{CameraController@{CameraController}!MAX\_FOLLOW\_Y\_OFFSET@{MAX\_FOLLOW\_Y\_OFFSET}}
+\index{MAX\_FOLLOW\_Y\_OFFSET@{MAX\_FOLLOW\_Y\_OFFSET}!CameraController@{CameraController}}
+\doxysubsubsection{\texorpdfstring{MAX\_FOLLOW\_Y\_OFFSET}{MAX\_FOLLOW\_Y\_OFFSET}}
+{\footnotesize\ttfamily \label{class_camera_controller_a693f23114eec25c934fed2dcc7846408} 
+const float Camera\+Controller.\+MAX\+\_\+\+FOLLOW\+\_\+\+Y\+\_\+\+OFFSET = 12f\hspace{0.3cm}{\ttfamily [static]}, {\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_camera_controller_8cs_source_l00012}{12}} of file \mbox{\hyperlink{_camera_controller_8cs_source}{Camera\+Controller.\+cs}}.
+
+\Hypertarget{class_camera_controller_ac8c25976166746ba0d7a12e49a5fc986}\index{CameraController@{CameraController}!MIN\_FOLLOW\_Y\_OFFSET@{MIN\_FOLLOW\_Y\_OFFSET}}
+\index{MIN\_FOLLOW\_Y\_OFFSET@{MIN\_FOLLOW\_Y\_OFFSET}!CameraController@{CameraController}}
+\doxysubsubsection{\texorpdfstring{MIN\_FOLLOW\_Y\_OFFSET}{MIN\_FOLLOW\_Y\_OFFSET}}
+{\footnotesize\ttfamily \label{class_camera_controller_ac8c25976166746ba0d7a12e49a5fc986} 
+const float Camera\+Controller.\+MIN\+\_\+\+FOLLOW\+\_\+\+Y\+\_\+\+OFFSET = 2f\hspace{0.3cm}{\ttfamily [static]}, {\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_camera_controller_8cs_source_l00011}{11}} of file \mbox{\hyperlink{_camera_controller_8cs_source}{Camera\+Controller.\+cs}}.
+
+\Hypertarget{class_camera_controller_a8979cceb75638fe3caf62c8516ec4bc6}\index{CameraController@{CameraController}!moveSpeed@{moveSpeed}}
+\index{moveSpeed@{moveSpeed}!CameraController@{CameraController}}
+\doxysubsubsection{\texorpdfstring{moveSpeed}{moveSpeed}}
+{\footnotesize\ttfamily \label{class_camera_controller_a8979cceb75638fe3caf62c8516ec4bc6} 
+float Camera\+Controller.\+move\+Speed = 10f\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_camera_controller_8cs_source_l00018}{18}} of file \mbox{\hyperlink{_camera_controller_8cs_source}{Camera\+Controller.\+cs}}.
+
+\Hypertarget{class_camera_controller_a7421ca30c2a0259ba4d03ee4562df9c9}\index{CameraController@{CameraController}!rotationSpeed@{rotationSpeed}}
+\index{rotationSpeed@{rotationSpeed}!CameraController@{CameraController}}
+\doxysubsubsection{\texorpdfstring{rotationSpeed}{rotationSpeed}}
+{\footnotesize\ttfamily \label{class_camera_controller_a7421ca30c2a0259ba4d03ee4562df9c9} 
+float Camera\+Controller.\+rotation\+Speed = 100f\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_camera_controller_8cs_source_l00019}{19}} of file \mbox{\hyperlink{_camera_controller_8cs_source}{Camera\+Controller.\+cs}}.
+
+\Hypertarget{class_camera_controller_aca88b6fe744d78ec1e3b994387dd6319}\index{CameraController@{CameraController}!targetFollowOffset@{targetFollowOffset}}
+\index{targetFollowOffset@{targetFollowOffset}!CameraController@{CameraController}}
+\doxysubsubsection{\texorpdfstring{targetFollowOffset}{targetFollowOffset}}
+{\footnotesize\ttfamily \label{class_camera_controller_aca88b6fe744d78ec1e3b994387dd6319} 
+Vector3 Camera\+Controller.\+target\+Follow\+Offset\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_camera_controller_8cs_source_l00016}{16}} of file \mbox{\hyperlink{_camera_controller_8cs_source}{Camera\+Controller.\+cs}}.
+
+\Hypertarget{class_camera_controller_ac5e7f931dc646e4a643f850da622c7c1}\index{CameraController@{CameraController}!zoomSpeed@{zoomSpeed}}
+\index{zoomSpeed@{zoomSpeed}!CameraController@{CameraController}}
+\doxysubsubsection{\texorpdfstring{zoomSpeed}{zoomSpeed}}
+{\footnotesize\ttfamily \label{class_camera_controller_ac5e7f931dc646e4a643f850da622c7c1} 
+float Camera\+Controller.\+zoom\+Speed = 5f\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_camera_controller_8cs_source_l00020}{20}} of file \mbox{\hyperlink{_camera_controller_8cs_source}{Camera\+Controller.\+cs}}.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+D\+:/\+Unity/\+Rogue\+Shooter/\+Rogue\+Shooter/\+Assets/\+Scripts/\+Game\+Logic/\mbox{\hyperlink{_camera_controller_8cs}{Camera\+Controller.\+cs}}\end{DoxyCompactItemize}

@@ -1,0 +1,356 @@
+\doxysection{Coop\+Turn\+Coordinator Class Reference}
+\hypertarget{class_coop_turn_coordinator}{}\label{class_coop_turn_coordinator}\index{CoopTurnCoordinator@{CoopTurnCoordinator}}
+Inheritance diagram for Coop\+Turn\+Coordinator\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{class_coop_turn_coordinator}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+override void \mbox{\hyperlink{class_coop_turn_coordinator_a63cca7ee0ba99f005734eb11fdadf3ad}{On\+Start\+Server}} ()
+\item 
+void \mbox{\hyperlink{class_coop_turn_coordinator_a6ca0c812e993e8d8ae6979024ca7a0a0}{Server\+Update\+Required\+Count}} (int players\+Now)
+\item 
+void \mbox{\hyperlink{class_coop_turn_coordinator_a36e501e44e629d7109dcaf2f8340a7e4}{Server\+Player\+Ended\+Turn}} (uint player\+Net\+Id)
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{_coop_turn_coordinator_8cs_a18940d82e778610ed3bc4500893bbab0}{Turn\+Phase}} \mbox{\hyperlink{class_coop_turn_coordinator_a5acd5e9359947942df79de8e802e1cac}{phase}} = \mbox{\hyperlink{_coop_turn_coordinator_8cs_a18940d82e778610ed3bc4500893bbab0a93ec972c68d5caca43370a9746a08cea}{Turn\+Phase.\+Players}}
+\item 
+int \mbox{\hyperlink{class_coop_turn_coordinator_a05888926c73b45109296b66943ef71c8}{turn\+Number}} = 1
+\item 
+int \mbox{\hyperlink{class_coop_turn_coordinator_aa8149d7a65ff5d75dc816e2eaceb37c1}{ended\+Count}} = 0
+\item 
+int \mbox{\hyperlink{class_coop_turn_coordinator_acb1453d443057967b0278065eb2ac802}{required\+Count}} = 0
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Properties}
+\begin{DoxyCompactItemize}
+\item 
+static \mbox{\hyperlink{class_coop_turn_coordinator}{Coop\+Turn\+Coordinator}} \mbox{\hyperlink{class_coop_turn_coordinator_aa75bc0f1443921e38125193b898a0e9d}{Instance}}\hspace{0.3cm}{\ttfamily  \mbox{[}get, private set\mbox{]}}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Private Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{class_coop_turn_coordinator_a826abe059c90c17d9b8a182e27636e8f}{Awake}} ()
+\item 
+void \mbox{\hyperlink{class_coop_turn_coordinator_aea037c8877744adc91e043bdaae9eb75}{Try\+Advance\+If\+Ready}} ()
+\item 
+IEnumerator \mbox{\hyperlink{class_coop_turn_coordinator_ab45542403ff635cfcb3004ba12b519bc}{Server\+Enemy\+Turn\+Then\+Next\+Players}} ()
+\item 
+IEnumerator \mbox{\hyperlink{class_coop_turn_coordinator_aa8aac2f89bdba4da842fa2c87d721341}{Run\+Enemy\+AI}} ()
+\item 
+void \mbox{\hyperlink{class_coop_turn_coordinator_aece99c647b739adbdc78dad638b7e72f}{Reset\+Turn\+State}} ()
+\item 
+void \mbox{\hyperlink{class_coop_turn_coordinator_a9e3750f864ccb5a2113b072ba2dc3d99}{Rpc\+Turn\+Phase\+Changed}} (\mbox{\hyperlink{_coop_turn_coordinator_8cs_a18940d82e778610ed3bc4500893bbab0}{Turn\+Phase}} new\+Phase, int turn\+No)
+\item 
+void \mbox{\hyperlink{class_coop_turn_coordinator_ab9f23fa317d5400602c2214c4989377a}{Rpc\+Update\+Waiting}} (int have, int need)
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+readonly Hash\+Set$<$ uint $>$ \mbox{\hyperlink{class_coop_turn_coordinator_a48a8b80d8dfbfbd396bab3412defe495}{ended\+Players}} = new Hash\+Set$<$uint$>$()
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+
+
+Definition at line \mbox{\hyperlink{_coop_turn_coordinator_8cs_source_l00008}{8}} of file \mbox{\hyperlink{_coop_turn_coordinator_8cs_source}{Coop\+Turn\+Coordinator.\+cs}}.
+
+
+
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_coop_turn_coordinator_a826abe059c90c17d9b8a182e27636e8f}\index{CoopTurnCoordinator@{CoopTurnCoordinator}!Awake@{Awake}}
+\index{Awake@{Awake}!CoopTurnCoordinator@{CoopTurnCoordinator}}
+\doxysubsubsection{\texorpdfstring{Awake()}{Awake()}}
+{\footnotesize\ttfamily \label{class_coop_turn_coordinator_a826abe059c90c17d9b8a182e27636e8f} 
+void Coop\+Turn\+Coordinator.\+Awake (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_coop_turn_coordinator_8cs_source_l00020}{20}} of file \mbox{\hyperlink{_coop_turn_coordinator_8cs_source}{Coop\+Turn\+Coordinator.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00021\ \ \ \ \ \{}
+\DoxyCodeLine{00022\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{class_coop_turn_coordinator_aa75bc0f1443921e38125193b898a0e9d}{Instance}}\ !=\ \textcolor{keyword}{null}\ \&\&\ \mbox{\hyperlink{class_coop_turn_coordinator_aa75bc0f1443921e38125193b898a0e9d}{Instance}}\ !=\ \textcolor{keyword}{this})\ \{\ Destroy(gameObject);\ \textcolor{keywordflow}{return};\ \}}
+\DoxyCodeLine{00023\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_coop_turn_coordinator_aa75bc0f1443921e38125193b898a0e9d}{Instance}}\ =\ \textcolor{keyword}{this};}
+\DoxyCodeLine{00024\ \ \ \ \ \}}
+
+\end{DoxyCode}
+\Hypertarget{class_coop_turn_coordinator_a63cca7ee0ba99f005734eb11fdadf3ad}\index{CoopTurnCoordinator@{CoopTurnCoordinator}!OnStartServer@{OnStartServer}}
+\index{OnStartServer@{OnStartServer}!CoopTurnCoordinator@{CoopTurnCoordinator}}
+\doxysubsubsection{\texorpdfstring{OnStartServer()}{OnStartServer()}}
+{\footnotesize\ttfamily \label{class_coop_turn_coordinator_a63cca7ee0ba99f005734eb11fdadf3ad} 
+override void Coop\+Turn\+Coordinator.\+On\+Start\+Server (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line \mbox{\hyperlink{_coop_turn_coordinator_8cs_source_l00026}{26}} of file \mbox{\hyperlink{_coop_turn_coordinator_8cs_source}{Coop\+Turn\+Coordinator.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00027\ \ \ \ \ \{}
+\DoxyCodeLine{00028\ \ \ \ \ \ \ \ \ base.OnStartServer();}
+\DoxyCodeLine{00029\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_coop_turn_coordinator_aece99c647b739adbdc78dad638b7e72f}{ResetTurnState}}();}
+\DoxyCodeLine{00030\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ jos\ haluat\ lukita\ kahteen\ pelaajaan\ protoa\ varten:}}
+\DoxyCodeLine{00031\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (GameModeManager.SelectedMode\ ==\ \mbox{\hyperlink{_game_mode_manager_8cs_aaf5ef5a17b53e9997c837b07015589de}{GameMode}}.CoOp)\ \mbox{\hyperlink{class_coop_turn_coordinator_acb1453d443057967b0278065eb2ac802}{requiredCount}}\ =\ 2;}
+\DoxyCodeLine{00032\ \ \ \ \ \ \ \ \ Debug.Log(\$\textcolor{stringliteral}{"{}[TURN][SERVER]\ Start,\ requiredCount=\{requiredCount\}"{}});}
+\DoxyCodeLine{00033\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00034\ \ \ \ \ \}}
+
+\end{DoxyCode}
+\Hypertarget{class_coop_turn_coordinator_aece99c647b739adbdc78dad638b7e72f}\index{CoopTurnCoordinator@{CoopTurnCoordinator}!ResetTurnState@{ResetTurnState}}
+\index{ResetTurnState@{ResetTurnState}!CoopTurnCoordinator@{CoopTurnCoordinator}}
+\doxysubsubsection{\texorpdfstring{ResetTurnState()}{ResetTurnState()}}
+{\footnotesize\ttfamily \label{class_coop_turn_coordinator_aece99c647b739adbdc78dad638b7e72f} 
+void Coop\+Turn\+Coordinator.\+Reset\+Turn\+State (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_coop_turn_coordinator_8cs_source_l00091}{91}} of file \mbox{\hyperlink{_coop_turn_coordinator_8cs_source}{Coop\+Turn\+Coordinator.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00092\ \ \ \ \ \{}
+\DoxyCodeLine{00093\ \ \ \ \ \ \ \ \ Debug.Log(\textcolor{stringliteral}{"{}[TURN][SERVER]\ ResetTurnState"{}});}
+\DoxyCodeLine{00094\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_coop_turn_coordinator_a5acd5e9359947942df79de8e802e1cac}{phase}}\ =\ \mbox{\hyperlink{_coop_turn_coordinator_8cs_a18940d82e778610ed3bc4500893bbab0}{TurnPhase}}.Players;}
+\DoxyCodeLine{00095\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_coop_turn_coordinator_a48a8b80d8dfbfbd396bab3412defe495}{endedPlayers}}.Clear();}
+\DoxyCodeLine{00096\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_coop_turn_coordinator_aa8149d7a65ff5d75dc816e2eaceb37c1}{endedCount}}\ =\ 0;}
+\DoxyCodeLine{00097\ }
+\DoxyCodeLine{00098\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ nollaa\ kaikilta\ pelaajilta\ ‘hasEndedThisTurn’}}
+\DoxyCodeLine{00099\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{foreach}\ (var\ kvp\ \textcolor{keywordflow}{in}\ NetworkServer.connections)}
+\DoxyCodeLine{00100\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00101\ \ \ \ \ \ \ \ \ \ \ \ \ var\ \textcolor{keywordtype}{id}\ =\ kvp.Value.identity;}
+\DoxyCodeLine{00102\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!\textcolor{keywordtype}{id})\ \textcolor{keywordflow}{continue};}
+\DoxyCodeLine{00103\ \ \ \ \ \ \ \ \ \ \ \ \ var\ pc\ =\ \textcolor{keywordtype}{id}.GetComponent<PlayerController>();}
+\DoxyCodeLine{00104\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (pc)\ pc.ServerSetHasEnded(\textcolor{keyword}{false});\ \ \textcolor{comment}{//\ <<<\ TÄRKEIN\ RIVI}}
+\DoxyCodeLine{00105\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00106\ }
+\DoxyCodeLine{00107\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_coop_turn_coordinator_ab9f23fa317d5400602c2214c4989377a}{RpcUpdateWaiting}}(\mbox{\hyperlink{class_coop_turn_coordinator_aa8149d7a65ff5d75dc816e2eaceb37c1}{endedCount}},\ \mbox{\hyperlink{class_coop_turn_coordinator_acb1453d443057967b0278065eb2ac802}{requiredCount}});}
+\DoxyCodeLine{00108\ \ \ \ \ \}}
+
+\end{DoxyCode}
+\Hypertarget{class_coop_turn_coordinator_a9e3750f864ccb5a2113b072ba2dc3d99}\index{CoopTurnCoordinator@{CoopTurnCoordinator}!RpcTurnPhaseChanged@{RpcTurnPhaseChanged}}
+\index{RpcTurnPhaseChanged@{RpcTurnPhaseChanged}!CoopTurnCoordinator@{CoopTurnCoordinator}}
+\doxysubsubsection{\texorpdfstring{RpcTurnPhaseChanged()}{RpcTurnPhaseChanged()}}
+{\footnotesize\ttfamily \label{class_coop_turn_coordinator_a9e3750f864ccb5a2113b072ba2dc3d99} 
+void Coop\+Turn\+Coordinator.\+Rpc\+Turn\+Phase\+Changed (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{_coop_turn_coordinator_8cs_a18940d82e778610ed3bc4500893bbab0}{Turn\+Phase}}}]{new\+Phase}{, }\item[{int}]{turn\+No}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_coop_turn_coordinator_8cs_source_l00112}{112}} of file \mbox{\hyperlink{_coop_turn_coordinator_8cs_source}{Coop\+Turn\+Coordinator.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00113\ \ \ \ \ \{}
+\DoxyCodeLine{00114\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Päivitä\ UI\ (esim.\ "{}Enemy\ Turn"{},\ "{}Players\ Turn\ \#X"{})}}
+\DoxyCodeLine{00115\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Voit\ myös\ täältä\ disabloida/enabloida\ ohjausta\ jos\ haluat}}
+\DoxyCodeLine{00116\ \ \ \ \ \}}
+
+\end{DoxyCode}
+\Hypertarget{class_coop_turn_coordinator_ab9f23fa317d5400602c2214c4989377a}\index{CoopTurnCoordinator@{CoopTurnCoordinator}!RpcUpdateWaiting@{RpcUpdateWaiting}}
+\index{RpcUpdateWaiting@{RpcUpdateWaiting}!CoopTurnCoordinator@{CoopTurnCoordinator}}
+\doxysubsubsection{\texorpdfstring{RpcUpdateWaiting()}{RpcUpdateWaiting()}}
+{\footnotesize\ttfamily \label{class_coop_turn_coordinator_ab9f23fa317d5400602c2214c4989377a} 
+void Coop\+Turn\+Coordinator.\+Rpc\+Update\+Waiting (\begin{DoxyParamCaption}\item[{int}]{have}{, }\item[{int}]{need}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_coop_turn_coordinator_8cs_source_l00119}{119}} of file \mbox{\hyperlink{_coop_turn_coordinator_8cs_source}{Coop\+Turn\+Coordinator.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00120\ \ \ \ \ \{}
+\DoxyCodeLine{00121\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ UI:\ "{}Waiting\ for\ teammate:\ have/need"{}}}
+\DoxyCodeLine{00122\ \ \ \ \ \}}
+
+\end{DoxyCode}
+\Hypertarget{class_coop_turn_coordinator_aa8aac2f89bdba4da842fa2c87d721341}\index{CoopTurnCoordinator@{CoopTurnCoordinator}!RunEnemyAI@{RunEnemyAI}}
+\index{RunEnemyAI@{RunEnemyAI}!CoopTurnCoordinator@{CoopTurnCoordinator}}
+\doxysubsubsection{\texorpdfstring{RunEnemyAI()}{RunEnemyAI()}}
+{\footnotesize\ttfamily \label{class_coop_turn_coordinator_aa8aac2f89bdba4da842fa2c87d721341} 
+IEnumerator Coop\+Turn\+Coordinator.\+Run\+Enemy\+AI (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_coop_turn_coordinator_8cs_source_l00083}{83}} of file \mbox{\hyperlink{_coop_turn_coordinator_8cs_source}{Coop\+Turn\+Coordinator.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00084\ \ \ \ \ \{}
+\DoxyCodeLine{00085\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ TODO:\ korvaa\ omalla\ AI-\/logiikallasi\ (varmista,\ että\ se\ on\ server-\/authoritatiivinen)}}
+\DoxyCodeLine{00086\ \ \ \ \ \ \ \ \ Debug.Log(\textcolor{stringliteral}{"{}[TURN][SERVER]\ (Simulating\ enemy\ AI\ turn...)"{}});}
+\DoxyCodeLine{00087\ \ \ \ \ \ \ \ \ yield\ \textcolor{keywordflow}{return}\ \textcolor{keyword}{new}\ WaitForSeconds(0.25f);}
+\DoxyCodeLine{00088\ \ \ \ \ \}}
+
+\end{DoxyCode}
+\Hypertarget{class_coop_turn_coordinator_ab45542403ff635cfcb3004ba12b519bc}\index{CoopTurnCoordinator@{CoopTurnCoordinator}!ServerEnemyTurnThenNextPlayers@{ServerEnemyTurnThenNextPlayers}}
+\index{ServerEnemyTurnThenNextPlayers@{ServerEnemyTurnThenNextPlayers}!CoopTurnCoordinator@{CoopTurnCoordinator}}
+\doxysubsubsection{\texorpdfstring{ServerEnemyTurnThenNextPlayers()}{ServerEnemyTurnThenNextPlayers()}}
+{\footnotesize\ttfamily \label{class_coop_turn_coordinator_ab45542403ff635cfcb3004ba12b519bc} 
+IEnumerator Coop\+Turn\+Coordinator.\+Server\+Enemy\+Turn\+Then\+Next\+Players (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_coop_turn_coordinator_8cs_source_l00068}{68}} of file \mbox{\hyperlink{_coop_turn_coordinator_8cs_source}{Coop\+Turn\+Coordinator.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00069\ \ \ \ \ \{}
+\DoxyCodeLine{00070\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_coop_turn_coordinator_a5acd5e9359947942df79de8e802e1cac}{phase}}\ =\ \mbox{\hyperlink{_coop_turn_coordinator_8cs_a18940d82e778610ed3bc4500893bbab0}{TurnPhase}}.Enemy;}
+\DoxyCodeLine{00071\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_coop_turn_coordinator_a9e3750f864ccb5a2113b072ba2dc3d99}{RpcTurnPhaseChanged}}(\mbox{\hyperlink{class_coop_turn_coordinator_a5acd5e9359947942df79de8e802e1cac}{phase}},\ \mbox{\hyperlink{class_coop_turn_coordinator_a05888926c73b45109296b66943ef71c8}{turnNumber}});}
+\DoxyCodeLine{00072\ }
+\DoxyCodeLine{00073\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ ***\ AJA\ AI-\/VUORO\ TÄSSÄ\ ***}}
+\DoxyCodeLine{00074\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Kutsu\ omaa\ AI-\/manageriasi;\ tässä\ vain\ simuloidaan\ pienenä\ viiveenä.}}
+\DoxyCodeLine{00075\ \ \ \ \ \ \ \ \ yield\ \textcolor{keywordflow}{return}\ StartCoroutine(\mbox{\hyperlink{class_coop_turn_coordinator_aa8aac2f89bdba4da842fa2c87d721341}{RunEnemyAI}}());}
+\DoxyCodeLine{00076\ \ \ \ \ \ \ \ \ Debug.Log(\textcolor{stringliteral}{"{}[TURN][SERVER]\ Enemy\ turn\ ended\ →\ next\ players'\ turn"{}});}
+\DoxyCodeLine{00077\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_coop_turn_coordinator_a05888926c73b45109296b66943ef71c8}{turnNumber}}++;}
+\DoxyCodeLine{00078\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_coop_turn_coordinator_aece99c647b739adbdc78dad638b7e72f}{ResetTurnState}}();\ \textcolor{comment}{//\ takaisin\ pelaajille}}
+\DoxyCodeLine{00079\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_coop_turn_coordinator_a9e3750f864ccb5a2113b072ba2dc3d99}{RpcTurnPhaseChanged}}(\mbox{\hyperlink{class_coop_turn_coordinator_a5acd5e9359947942df79de8e802e1cac}{phase}},\ \mbox{\hyperlink{class_coop_turn_coordinator_a05888926c73b45109296b66943ef71c8}{turnNumber}});}
+\DoxyCodeLine{00080\ \ \ \ \ \}}
+
+\end{DoxyCode}
+\Hypertarget{class_coop_turn_coordinator_a36e501e44e629d7109dcaf2f8340a7e4}\index{CoopTurnCoordinator@{CoopTurnCoordinator}!ServerPlayerEndedTurn@{ServerPlayerEndedTurn}}
+\index{ServerPlayerEndedTurn@{ServerPlayerEndedTurn}!CoopTurnCoordinator@{CoopTurnCoordinator}}
+\doxysubsubsection{\texorpdfstring{ServerPlayerEndedTurn()}{ServerPlayerEndedTurn()}}
+{\footnotesize\ttfamily \label{class_coop_turn_coordinator_a36e501e44e629d7109dcaf2f8340a7e4} 
+void Coop\+Turn\+Coordinator.\+Server\+Player\+Ended\+Turn (\begin{DoxyParamCaption}\item[{uint}]{player\+Net\+Id}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line \mbox{\hyperlink{_coop_turn_coordinator_8cs_source_l00045}{45}} of file \mbox{\hyperlink{_coop_turn_coordinator_8cs_source}{Coop\+Turn\+Coordinator.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00046\ \ \ \ \ \{}
+\DoxyCodeLine{00047\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{class_coop_turn_coordinator_a5acd5e9359947942df79de8e802e1cac}{phase}}\ !=\ \mbox{\hyperlink{_coop_turn_coordinator_8cs_a18940d82e778610ed3bc4500893bbab0}{TurnPhase}}.Players)\ \textcolor{keywordflow}{return};\ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ ei\ lasketa\ jos\ ei\ pelaajavuoro}}
+\DoxyCodeLine{00048\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!\mbox{\hyperlink{class_coop_turn_coordinator_a48a8b80d8dfbfbd396bab3412defe495}{endedPlayers}}.Add(playerNetId))\ \textcolor{keywordflow}{return};\ \ \ \ \ \ \textcolor{comment}{//\ älä\ laske\ tuplia}}
+\DoxyCodeLine{00049\ }
+\DoxyCodeLine{00050\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_coop_turn_coordinator_aa8149d7a65ff5d75dc816e2eaceb37c1}{endedCount}}\ =\ \mbox{\hyperlink{class_coop_turn_coordinator_a48a8b80d8dfbfbd396bab3412defe495}{endedPlayers}}.Count;}
+\DoxyCodeLine{00051\ \ \ \ \ \ \ \ \ Debug.Log(\$\textcolor{stringliteral}{"{}[TURN][SERVER]\ Player\ \{playerNetId\}\ ended.\ \{endedCount\}/\{requiredCount\}"{}});}
+\DoxyCodeLine{00052\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_coop_turn_coordinator_ab9f23fa317d5400602c2214c4989377a}{RpcUpdateWaiting}}(\mbox{\hyperlink{class_coop_turn_coordinator_aa8149d7a65ff5d75dc816e2eaceb37c1}{endedCount}},\ \mbox{\hyperlink{class_coop_turn_coordinator_acb1453d443057967b0278065eb2ac802}{requiredCount}});\ \ \ \ \ \textcolor{comment}{//\ UI:lle\ "{}odotetaan\ X/Y"{}}}
+\DoxyCodeLine{00053\ }
+\DoxyCodeLine{00054\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_coop_turn_coordinator_aea037c8877744adc91e043bdaae9eb75}{TryAdvanceIfReady}}();}
+\DoxyCodeLine{00055\ \ \ \ \ \}}
+
+\end{DoxyCode}
+\Hypertarget{class_coop_turn_coordinator_a6ca0c812e993e8d8ae6979024ca7a0a0}\index{CoopTurnCoordinator@{CoopTurnCoordinator}!ServerUpdateRequiredCount@{ServerUpdateRequiredCount}}
+\index{ServerUpdateRequiredCount@{ServerUpdateRequiredCount}!CoopTurnCoordinator@{CoopTurnCoordinator}}
+\doxysubsubsection{\texorpdfstring{ServerUpdateRequiredCount()}{ServerUpdateRequiredCount()}}
+{\footnotesize\ttfamily \label{class_coop_turn_coordinator_a6ca0c812e993e8d8ae6979024ca7a0a0} 
+void Coop\+Turn\+Coordinator.\+Server\+Update\+Required\+Count (\begin{DoxyParamCaption}\item[{int}]{players\+Now}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line \mbox{\hyperlink{_coop_turn_coordinator_8cs_source_l00037}{37}} of file \mbox{\hyperlink{_coop_turn_coordinator_8cs_source}{Coop\+Turn\+Coordinator.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00038\ \ \ \ \ \{}
+\DoxyCodeLine{00039\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_coop_turn_coordinator_acb1453d443057967b0278065eb2ac802}{requiredCount}}\ =\ Mathf.Max(1,\ playersNow);\ \textcolor{comment}{//\ Co-\/opissa\ yleensä\ 2}}
+\DoxyCodeLine{00040\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ jos\ yksi\ poistui\ kesken\ odotuksen,\ tarkista\ täyttyikö\ ehto\ nyt}}
+\DoxyCodeLine{00041\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_coop_turn_coordinator_aea037c8877744adc91e043bdaae9eb75}{TryAdvanceIfReady}}();}
+\DoxyCodeLine{00042\ \ \ \ \ \}}
+
+\end{DoxyCode}
+\Hypertarget{class_coop_turn_coordinator_aea037c8877744adc91e043bdaae9eb75}\index{CoopTurnCoordinator@{CoopTurnCoordinator}!TryAdvanceIfReady@{TryAdvanceIfReady}}
+\index{TryAdvanceIfReady@{TryAdvanceIfReady}!CoopTurnCoordinator@{CoopTurnCoordinator}}
+\doxysubsubsection{\texorpdfstring{TryAdvanceIfReady()}{TryAdvanceIfReady()}}
+{\footnotesize\ttfamily \label{class_coop_turn_coordinator_aea037c8877744adc91e043bdaae9eb75} 
+void Coop\+Turn\+Coordinator.\+Try\+Advance\+If\+Ready (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_coop_turn_coordinator_8cs_source_l00058}{58}} of file \mbox{\hyperlink{_coop_turn_coordinator_8cs_source}{Coop\+Turn\+Coordinator.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00059\ \ \ \ \ \{}
+\DoxyCodeLine{00060\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{class_coop_turn_coordinator_a5acd5e9359947942df79de8e802e1cac}{phase}}\ ==\ \mbox{\hyperlink{_coop_turn_coordinator_8cs_a18940d82e778610ed3bc4500893bbab0}{TurnPhase}}.Players\ \&\&\ \mbox{\hyperlink{class_coop_turn_coordinator_a48a8b80d8dfbfbd396bab3412defe495}{endedPlayers}}.Count\ >=\ Mathf.Max(1,\ \mbox{\hyperlink{class_coop_turn_coordinator_acb1453d443057967b0278065eb2ac802}{requiredCount}}))}
+\DoxyCodeLine{00061\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00062\ \ \ \ \ \ \ \ \ \ \ \ \ Debug.Log(\textcolor{stringliteral}{"{}[TURN][SERVER]\ All\ players\ ready\ →\ enemy\ turn"{}});}
+\DoxyCodeLine{00063\ \ \ \ \ \ \ \ \ \ \ \ \ StartCoroutine(\mbox{\hyperlink{class_coop_turn_coordinator_ab45542403ff635cfcb3004ba12b519bc}{ServerEnemyTurnThenNextPlayers}}());}
+\DoxyCodeLine{00064\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00065\ \ \ \ \ \}}
+
+\end{DoxyCode}
+
+
+\doxysubsection{Member Data Documentation}
+\Hypertarget{class_coop_turn_coordinator_aa8149d7a65ff5d75dc816e2eaceb37c1}\index{CoopTurnCoordinator@{CoopTurnCoordinator}!endedCount@{endedCount}}
+\index{endedCount@{endedCount}!CoopTurnCoordinator@{CoopTurnCoordinator}}
+\doxysubsubsection{\texorpdfstring{endedCount}{endedCount}}
+{\footnotesize\ttfamily \label{class_coop_turn_coordinator_aa8149d7a65ff5d75dc816e2eaceb37c1} 
+int Coop\+Turn\+Coordinator.\+ended\+Count = 0}
+
+
+
+Definition at line \mbox{\hyperlink{_coop_turn_coordinator_8cs_source_l00014}{14}} of file \mbox{\hyperlink{_coop_turn_coordinator_8cs_source}{Coop\+Turn\+Coordinator.\+cs}}.
+
+\Hypertarget{class_coop_turn_coordinator_a48a8b80d8dfbfbd396bab3412defe495}\index{CoopTurnCoordinator@{CoopTurnCoordinator}!endedPlayers@{endedPlayers}}
+\index{endedPlayers@{endedPlayers}!CoopTurnCoordinator@{CoopTurnCoordinator}}
+\doxysubsubsection{\texorpdfstring{endedPlayers}{endedPlayers}}
+{\footnotesize\ttfamily \label{class_coop_turn_coordinator_a48a8b80d8dfbfbd396bab3412defe495} 
+readonly Hash\+Set$<$uint$>$ Coop\+Turn\+Coordinator.\+ended\+Players = new Hash\+Set$<$uint$>$()\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_coop_turn_coordinator_8cs_source_l00018}{18}} of file \mbox{\hyperlink{_coop_turn_coordinator_8cs_source}{Coop\+Turn\+Coordinator.\+cs}}.
+
+\Hypertarget{class_coop_turn_coordinator_a5acd5e9359947942df79de8e802e1cac}\index{CoopTurnCoordinator@{CoopTurnCoordinator}!phase@{phase}}
+\index{phase@{phase}!CoopTurnCoordinator@{CoopTurnCoordinator}}
+\doxysubsubsection{\texorpdfstring{phase}{phase}}
+{\footnotesize\ttfamily \label{class_coop_turn_coordinator_a5acd5e9359947942df79de8e802e1cac} 
+\mbox{\hyperlink{_coop_turn_coordinator_8cs_a18940d82e778610ed3bc4500893bbab0}{Turn\+Phase}} Coop\+Turn\+Coordinator.\+phase = \mbox{\hyperlink{_coop_turn_coordinator_8cs_a18940d82e778610ed3bc4500893bbab0a93ec972c68d5caca43370a9746a08cea}{Turn\+Phase.\+Players}}}
+
+
+
+Definition at line \mbox{\hyperlink{_coop_turn_coordinator_8cs_source_l00012}{12}} of file \mbox{\hyperlink{_coop_turn_coordinator_8cs_source}{Coop\+Turn\+Coordinator.\+cs}}.
+
+\Hypertarget{class_coop_turn_coordinator_acb1453d443057967b0278065eb2ac802}\index{CoopTurnCoordinator@{CoopTurnCoordinator}!requiredCount@{requiredCount}}
+\index{requiredCount@{requiredCount}!CoopTurnCoordinator@{CoopTurnCoordinator}}
+\doxysubsubsection{\texorpdfstring{requiredCount}{requiredCount}}
+{\footnotesize\ttfamily \label{class_coop_turn_coordinator_acb1453d443057967b0278065eb2ac802} 
+int Coop\+Turn\+Coordinator.\+required\+Count = 0}
+
+
+
+Definition at line \mbox{\hyperlink{_coop_turn_coordinator_8cs_source_l00015}{15}} of file \mbox{\hyperlink{_coop_turn_coordinator_8cs_source}{Coop\+Turn\+Coordinator.\+cs}}.
+
+\Hypertarget{class_coop_turn_coordinator_a05888926c73b45109296b66943ef71c8}\index{CoopTurnCoordinator@{CoopTurnCoordinator}!turnNumber@{turnNumber}}
+\index{turnNumber@{turnNumber}!CoopTurnCoordinator@{CoopTurnCoordinator}}
+\doxysubsubsection{\texorpdfstring{turnNumber}{turnNumber}}
+{\footnotesize\ttfamily \label{class_coop_turn_coordinator_a05888926c73b45109296b66943ef71c8} 
+int Coop\+Turn\+Coordinator.\+turn\+Number = 1}
+
+
+
+Definition at line \mbox{\hyperlink{_coop_turn_coordinator_8cs_source_l00013}{13}} of file \mbox{\hyperlink{_coop_turn_coordinator_8cs_source}{Coop\+Turn\+Coordinator.\+cs}}.
+
+
+
+\doxysubsection{Property Documentation}
+\Hypertarget{class_coop_turn_coordinator_aa75bc0f1443921e38125193b898a0e9d}\index{CoopTurnCoordinator@{CoopTurnCoordinator}!Instance@{Instance}}
+\index{Instance@{Instance}!CoopTurnCoordinator@{CoopTurnCoordinator}}
+\doxysubsubsection{\texorpdfstring{Instance}{Instance}}
+{\footnotesize\ttfamily \label{class_coop_turn_coordinator_aa75bc0f1443921e38125193b898a0e9d} 
+\mbox{\hyperlink{class_coop_turn_coordinator}{Coop\+Turn\+Coordinator}} Coop\+Turn\+Coordinator.\+Instance\hspace{0.3cm}{\ttfamily [static]}, {\ttfamily [get]}, {\ttfamily [private set]}}
+
+
+
+Definition at line \mbox{\hyperlink{_coop_turn_coordinator_8cs_source_l00010}{10}} of file \mbox{\hyperlink{_coop_turn_coordinator_8cs_source}{Coop\+Turn\+Coordinator.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00010\ \{\ \textcolor{keyword}{get};\ \textcolor{keyword}{private}\ \textcolor{keyword}{set};\ \}}
+
+\end{DoxyCode}
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+D\+:/\+Unity/\+Rogue\+Shooter/\+Rogue\+Shooter/\+Assets/\+Scripts/\+Oneline/\mbox{\hyperlink{_coop_turn_coordinator_8cs}{Coop\+Turn\+Coordinator.\+cs}}\end{DoxyCompactItemize}

@@ -1,0 +1,38 @@
+\doxysection{Field\+Cleaner.\+cs}
+\hypertarget{_field_cleaner_8cs_source}{}\label{_field_cleaner_8cs_source}\index{D:/Unity/RogueShooter/RogueShooter/Assets/Scripts/FieldCleaner.cs@{D:/Unity/RogueShooter/RogueShooter/Assets/Scripts/FieldCleaner.cs}}
+\mbox{\hyperlink{_field_cleaner_8cs}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\Hypertarget{_field_cleaner_8cs_source_l00001}00001\ \textcolor{keyword}{using\ }System.Linq;}
+\DoxyCodeLine{\Hypertarget{_field_cleaner_8cs_source_l00002}00002\ \textcolor{keyword}{using\ }Mirror;}
+\DoxyCodeLine{\Hypertarget{_field_cleaner_8cs_source_l00003}00003\ \textcolor{keyword}{using\ }UnityEngine;}
+\DoxyCodeLine{\Hypertarget{_field_cleaner_8cs_source_l00004}00004\ }
+\DoxyCodeLine{\Hypertarget{_field_cleaner_8cs_source_l00005}\mbox{\hyperlink{class_field_cleaner}{00005}}\ \textcolor{keyword}{public}\ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_field_cleaner}{FieldCleaner}}\ :\ MonoBehaviour}
+\DoxyCodeLine{\Hypertarget{_field_cleaner_8cs_source_l00006}00006\ \{}
+\DoxyCodeLine{\Hypertarget{_field_cleaner_8cs_source_l00007}\mbox{\hyperlink{class_field_cleaner_a8e9cb4d829d6b6b64009594ae087014d}{00007}}\ \ \ \ \ \textcolor{keyword}{public}\ \textcolor{keyword}{static}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_field_cleaner_a8e9cb4d829d6b6b64009594ae087014d}{ClearAll}}()}
+\DoxyCodeLine{\Hypertarget{_field_cleaner_8cs_source_l00008}00008\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_field_cleaner_8cs_source_l00009}00009\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{_field_cleaner_8cs_source_l00010}00010\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Find\ all\ friendly\ and\ enemy\ units\ (also\ inactive,\ just\ in\ case)}}
+\DoxyCodeLine{\Hypertarget{_field_cleaner_8cs_source_l00011}00011\ \ \ \ \ \ \ \ \ var\ friendlies\ =\ Resources.FindObjectsOfTypeAll<\mbox{\hyperlink{class_friendly_unit}{FriendlyUnit}}>()}
+\DoxyCodeLine{\Hypertarget{_field_cleaner_8cs_source_l00012}00012\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ .Where(u\ =>\ u\ !=\ \textcolor{keyword}{null}\ \&\&\ u.gameObject.scene.IsValid());}
+\DoxyCodeLine{\Hypertarget{_field_cleaner_8cs_source_l00013}00013\ \ \ \ \ \ \ \ \ var\ enemies\ \ \ \ =\ Resources.FindObjectsOfTypeAll<\mbox{\hyperlink{class_enemy_unit}{EnemyUnit}}>()}
+\DoxyCodeLine{\Hypertarget{_field_cleaner_8cs_source_l00014}00014\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ .Where(u\ =>\ u\ !=\ \textcolor{keyword}{null}\ \&\&\ u.gameObject.scene.IsValid());}
+\DoxyCodeLine{\Hypertarget{_field_cleaner_8cs_source_l00015}00015\ }
+\DoxyCodeLine{\Hypertarget{_field_cleaner_8cs_source_l00016}00016\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{foreach}\ (var\ u\ \textcolor{keywordflow}{in}\ friendlies)\ \mbox{\hyperlink{class_field_cleaner_aebeddca35bd900a0e1ab13b93da733b3}{Despawn}}(u.gameObject);}
+\DoxyCodeLine{\Hypertarget{_field_cleaner_8cs_source_l00017}00017\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{foreach}\ (var\ e\ \textcolor{keywordflow}{in}\ enemies)\ \ \ \ \mbox{\hyperlink{class_field_cleaner_aebeddca35bd900a0e1ab13b93da733b3}{Despawn}}(e.gameObject);}
+\DoxyCodeLine{\Hypertarget{_field_cleaner_8cs_source_l00018}00018\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_field_cleaner_8cs_source_l00019}00019\ }
+\DoxyCodeLine{\Hypertarget{_field_cleaner_8cs_source_l00020}\mbox{\hyperlink{class_field_cleaner_aebeddca35bd900a0e1ab13b93da733b3}{00020}}\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_field_cleaner_aebeddca35bd900a0e1ab13b93da733b3}{Despawn}}(GameObject\ go)}
+\DoxyCodeLine{\Hypertarget{_field_cleaner_8cs_source_l00021}00021\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_field_cleaner_8cs_source_l00022}00022\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ if\ server\ is\ active,\ use\ Mirror's\ destroy;\ otherwise\ normal\ Unity\ Destroy}}
+\DoxyCodeLine{\Hypertarget{_field_cleaner_8cs_source_l00023}00023\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (NetworkServer.active)}
+\DoxyCodeLine{\Hypertarget{_field_cleaner_8cs_source_l00024}00024\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_field_cleaner_8cs_source_l00025}00025\ \ \ \ \ \ \ \ \ \ \ \ \ NetworkServer.Destroy(go);}
+\DoxyCodeLine{\Hypertarget{_field_cleaner_8cs_source_l00026}00026\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_field_cleaner_8cs_source_l00027}00027\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{\Hypertarget{_field_cleaner_8cs_source_l00028}00028\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_field_cleaner_8cs_source_l00029}00029\ \ \ \ \ \ \ \ \ \ \ \ \ Object.Destroy(go);}
+\DoxyCodeLine{\Hypertarget{_field_cleaner_8cs_source_l00030}00030\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_field_cleaner_8cs_source_l00031}00031\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_field_cleaner_8cs_source_l00032}00032\ \}}
+
+\end{DoxyCode}

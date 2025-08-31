@@ -1,0 +1,129 @@
+\doxysection{Coop\+Turn\+Coordinator.\+cs}
+\hypertarget{_coop_turn_coordinator_8cs_source}{}\label{_coop_turn_coordinator_8cs_source}\index{D:/Unity/RogueShooter/RogueShooter/Assets/Scripts/Oneline/CoopTurnCoordinator.cs@{D:/Unity/RogueShooter/RogueShooter/Assets/Scripts/Oneline/CoopTurnCoordinator.cs}}
+\mbox{\hyperlink{_coop_turn_coordinator_8cs}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\Hypertarget{_coop_turn_coordinator_8cs_source_l00001}00001\ \textcolor{keyword}{using\ }System.Collections;}
+\DoxyCodeLine{\Hypertarget{_coop_turn_coordinator_8cs_source_l00002}00002\ \textcolor{keyword}{using\ }System.Collections.Generic;}
+\DoxyCodeLine{\Hypertarget{_coop_turn_coordinator_8cs_source_l00003}00003\ \textcolor{keyword}{using\ }Mirror;}
+\DoxyCodeLine{\Hypertarget{_coop_turn_coordinator_8cs_source_l00004}00004\ \textcolor{keyword}{using\ }UnityEngine;}
+\DoxyCodeLine{\Hypertarget{_coop_turn_coordinator_8cs_source_l00005}00005\ }
+\DoxyCodeLine{\Hypertarget{_coop_turn_coordinator_8cs_source_l00006}\mbox{\hyperlink{_coop_turn_coordinator_8cs_a18940d82e778610ed3bc4500893bbab0a8c6d21187fb58b7a079d70030686b33e}{00006}}\ \textcolor{keyword}{public}\ \textcolor{keyword}{enum}\ \mbox{\hyperlink{_coop_turn_coordinator_8cs_a18940d82e778610ed3bc4500893bbab0}{TurnPhase}}\ \{\ \mbox{\hyperlink{_coop_turn_coordinator_8cs_a18940d82e778610ed3bc4500893bbab0a93ec972c68d5caca43370a9746a08cea}{Players}},\ \mbox{\hyperlink{_coop_turn_coordinator_8cs_a18940d82e778610ed3bc4500893bbab0a8c6d21187fb58b7a079d70030686b33e}{Enemy}}\ \}}
+\DoxyCodeLine{\Hypertarget{_coop_turn_coordinator_8cs_source_l00007}00007\ }
+\DoxyCodeLine{\Hypertarget{_coop_turn_coordinator_8cs_source_l00008}\mbox{\hyperlink{class_coop_turn_coordinator}{00008}}\ \textcolor{keyword}{public}\ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_coop_turn_coordinator}{CoopTurnCoordinator}}\ :\ NetworkBehaviour}
+\DoxyCodeLine{\Hypertarget{_coop_turn_coordinator_8cs_source_l00009}00009\ \{}
+\DoxyCodeLine{\Hypertarget{_coop_turn_coordinator_8cs_source_l00010}\mbox{\hyperlink{class_coop_turn_coordinator_aa75bc0f1443921e38125193b898a0e9d}{00010}}\ \ \ \ \ \textcolor{keyword}{public}\ \textcolor{keyword}{static}\ \mbox{\hyperlink{class_coop_turn_coordinator}{CoopTurnCoordinator}}\ \mbox{\hyperlink{class_coop_turn_coordinator_aa75bc0f1443921e38125193b898a0e9d}{Instance}}\ \{\ \textcolor{keyword}{get};\ \textcolor{keyword}{private}\ \textcolor{keyword}{set};\ \}}
+\DoxyCodeLine{\Hypertarget{_coop_turn_coordinator_8cs_source_l00011}00011\ }
+\DoxyCodeLine{\Hypertarget{_coop_turn_coordinator_8cs_source_l00012}\mbox{\hyperlink{class_coop_turn_coordinator_a5acd5e9359947942df79de8e802e1cac}{00012}}\ \ \ \ \ [SyncVar]\ \textcolor{keyword}{public}\ \mbox{\hyperlink{_coop_turn_coordinator_8cs_a18940d82e778610ed3bc4500893bbab0}{TurnPhase}}\ \mbox{\hyperlink{class_coop_turn_coordinator_a5acd5e9359947942df79de8e802e1cac}{phase}}\ =\ \mbox{\hyperlink{_coop_turn_coordinator_8cs_a18940d82e778610ed3bc4500893bbab0}{TurnPhase}}.Players;}
+\DoxyCodeLine{\Hypertarget{_coop_turn_coordinator_8cs_source_l00013}\mbox{\hyperlink{class_coop_turn_coordinator_a05888926c73b45109296b66943ef71c8}{00013}}\ \ \ \ \ [SyncVar]\ \textcolor{keyword}{public}\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{class_coop_turn_coordinator_a05888926c73b45109296b66943ef71c8}{turnNumber}}\ =\ 1;}
+\DoxyCodeLine{\Hypertarget{_coop_turn_coordinator_8cs_source_l00014}\mbox{\hyperlink{class_coop_turn_coordinator_aa8149d7a65ff5d75dc816e2eaceb37c1}{00014}}\ \ \ \ \ [SyncVar]\ \textcolor{keyword}{public}\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{class_coop_turn_coordinator_aa8149d7a65ff5d75dc816e2eaceb37c1}{endedCount}}\ =\ 0;}
+\DoxyCodeLine{\Hypertarget{_coop_turn_coordinator_8cs_source_l00015}\mbox{\hyperlink{class_coop_turn_coordinator_acb1453d443057967b0278065eb2ac802}{00015}}\ \ \ \ \ [SyncVar]\ \textcolor{keyword}{public}\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{class_coop_turn_coordinator_acb1453d443057967b0278065eb2ac802}{requiredCount}}\ =\ 0;\ \textcolor{comment}{//\ päivitetään\ kun\ pelaajia\ liittyy/lähtee}}
+\DoxyCodeLine{\Hypertarget{_coop_turn_coordinator_8cs_source_l00016}00016\ }
+\DoxyCodeLine{\Hypertarget{_coop_turn_coordinator_8cs_source_l00017}00017\ \ \ \ \ \textcolor{comment}{//\ Server\ only:\ ketkä\ ovat\ jo\ painaneet\ End\ Turn\ tässä\ kierrossa}}
+\DoxyCodeLine{\Hypertarget{_coop_turn_coordinator_8cs_source_l00018}\mbox{\hyperlink{class_coop_turn_coordinator_a48a8b80d8dfbfbd396bab3412defe495}{00018}}\ \ \ \ \ \textcolor{keyword}{private}\ readonly\ HashSet<uint>\ \mbox{\hyperlink{class_coop_turn_coordinator_a48a8b80d8dfbfbd396bab3412defe495}{endedPlayers}}\ =\ \textcolor{keyword}{new}\ HashSet<uint>();}
+\DoxyCodeLine{\Hypertarget{_coop_turn_coordinator_8cs_source_l00019}00019\ }
+\DoxyCodeLine{\Hypertarget{_coop_turn_coordinator_8cs_source_l00020}\mbox{\hyperlink{class_coop_turn_coordinator_a826abe059c90c17d9b8a182e27636e8f}{00020}}\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_coop_turn_coordinator_a826abe059c90c17d9b8a182e27636e8f}{Awake}}()}
+\DoxyCodeLine{\Hypertarget{_coop_turn_coordinator_8cs_source_l00021}00021\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_coop_turn_coordinator_8cs_source_l00022}00022\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{class_coop_turn_coordinator_aa75bc0f1443921e38125193b898a0e9d}{Instance}}\ !=\ \textcolor{keyword}{null}\ \&\&\ \mbox{\hyperlink{class_coop_turn_coordinator_aa75bc0f1443921e38125193b898a0e9d}{Instance}}\ !=\ \textcolor{keyword}{this})\ \{\ Destroy(gameObject);\ \textcolor{keywordflow}{return};\ \}}
+\DoxyCodeLine{\Hypertarget{_coop_turn_coordinator_8cs_source_l00023}00023\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_coop_turn_coordinator_aa75bc0f1443921e38125193b898a0e9d}{Instance}}\ =\ \textcolor{keyword}{this};}
+\DoxyCodeLine{\Hypertarget{_coop_turn_coordinator_8cs_source_l00024}00024\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_coop_turn_coordinator_8cs_source_l00025}00025\ }
+\DoxyCodeLine{\Hypertarget{_coop_turn_coordinator_8cs_source_l00026}\mbox{\hyperlink{class_coop_turn_coordinator_a63cca7ee0ba99f005734eb11fdadf3ad}{00026}}\ \ \ \ \ \textcolor{keyword}{public}\ \textcolor{keyword}{override}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_coop_turn_coordinator_a63cca7ee0ba99f005734eb11fdadf3ad}{OnStartServer}}()}
+\DoxyCodeLine{\Hypertarget{_coop_turn_coordinator_8cs_source_l00027}00027\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_coop_turn_coordinator_8cs_source_l00028}00028\ \ \ \ \ \ \ \ \ base.OnStartServer();}
+\DoxyCodeLine{\Hypertarget{_coop_turn_coordinator_8cs_source_l00029}00029\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_coop_turn_coordinator_aece99c647b739adbdc78dad638b7e72f}{ResetTurnState}}();}
+\DoxyCodeLine{\Hypertarget{_coop_turn_coordinator_8cs_source_l00030}00030\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ jos\ haluat\ lukita\ kahteen\ pelaajaan\ protoa\ varten:}}
+\DoxyCodeLine{\Hypertarget{_coop_turn_coordinator_8cs_source_l00031}00031\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{class_game_mode_manager}{GameModeManager}}.\mbox{\hyperlink{class_game_mode_manager_afc91daaebfc32a72c8ec1527857cfab8}{SelectedMode}}\ ==\ \mbox{\hyperlink{_game_mode_manager_8cs_aaf5ef5a17b53e9997c837b07015589de}{GameMode}}.CoOp)\ \mbox{\hyperlink{class_coop_turn_coordinator_acb1453d443057967b0278065eb2ac802}{requiredCount}}\ =\ 2;}
+\DoxyCodeLine{\Hypertarget{_coop_turn_coordinator_8cs_source_l00032}00032\ \ \ \ \ \ \ \ \ Debug.Log(\$\textcolor{stringliteral}{"{}[TURN][SERVER]\ Start,\ requiredCount=\{requiredCount\}"{}});}
+\DoxyCodeLine{\Hypertarget{_coop_turn_coordinator_8cs_source_l00033}00033\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{_coop_turn_coordinator_8cs_source_l00034}00034\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_coop_turn_coordinator_8cs_source_l00035}00035\ }
+\DoxyCodeLine{\Hypertarget{_coop_turn_coordinator_8cs_source_l00036}00036\ \ \ \ \ [Server]}
+\DoxyCodeLine{\Hypertarget{_coop_turn_coordinator_8cs_source_l00037}\mbox{\hyperlink{class_coop_turn_coordinator_a6ca0c812e993e8d8ae6979024ca7a0a0}{00037}}\ \ \ \ \ \textcolor{keyword}{public}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_coop_turn_coordinator_a6ca0c812e993e8d8ae6979024ca7a0a0}{ServerUpdateRequiredCount}}(\textcolor{keywordtype}{int}\ playersNow)}
+\DoxyCodeLine{\Hypertarget{_coop_turn_coordinator_8cs_source_l00038}00038\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_coop_turn_coordinator_8cs_source_l00039}00039\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_coop_turn_coordinator_acb1453d443057967b0278065eb2ac802}{requiredCount}}\ =\ Mathf.Max(1,\ playersNow);\ \textcolor{comment}{//\ Co-\/opissa\ yleensä\ 2}}
+\DoxyCodeLine{\Hypertarget{_coop_turn_coordinator_8cs_source_l00040}00040\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ jos\ yksi\ poistui\ kesken\ odotuksen,\ tarkista\ täyttyikö\ ehto\ nyt}}
+\DoxyCodeLine{\Hypertarget{_coop_turn_coordinator_8cs_source_l00041}00041\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_coop_turn_coordinator_aea037c8877744adc91e043bdaae9eb75}{TryAdvanceIfReady}}();}
+\DoxyCodeLine{\Hypertarget{_coop_turn_coordinator_8cs_source_l00042}00042\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_coop_turn_coordinator_8cs_source_l00043}00043\ }
+\DoxyCodeLine{\Hypertarget{_coop_turn_coordinator_8cs_source_l00044}00044\ \ \ \ \ [Server]}
+\DoxyCodeLine{\Hypertarget{_coop_turn_coordinator_8cs_source_l00045}\mbox{\hyperlink{class_coop_turn_coordinator_a36e501e44e629d7109dcaf2f8340a7e4}{00045}}\ \ \ \ \ \textcolor{keyword}{public}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_coop_turn_coordinator_a36e501e44e629d7109dcaf2f8340a7e4}{ServerPlayerEndedTurn}}(uint\ playerNetId)}
+\DoxyCodeLine{\Hypertarget{_coop_turn_coordinator_8cs_source_l00046}00046\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_coop_turn_coordinator_8cs_source_l00047}00047\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{class_coop_turn_coordinator_a5acd5e9359947942df79de8e802e1cac}{phase}}\ !=\ \mbox{\hyperlink{_coop_turn_coordinator_8cs_a18940d82e778610ed3bc4500893bbab0}{TurnPhase}}.Players)\ \textcolor{keywordflow}{return};\ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ ei\ lasketa\ jos\ ei\ pelaajavuoro}}
+\DoxyCodeLine{\Hypertarget{_coop_turn_coordinator_8cs_source_l00048}00048\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!\mbox{\hyperlink{class_coop_turn_coordinator_a48a8b80d8dfbfbd396bab3412defe495}{endedPlayers}}.Add(playerNetId))\ \textcolor{keywordflow}{return};\ \ \ \ \ \ \textcolor{comment}{//\ älä\ laske\ tuplia}}
+\DoxyCodeLine{\Hypertarget{_coop_turn_coordinator_8cs_source_l00049}00049\ }
+\DoxyCodeLine{\Hypertarget{_coop_turn_coordinator_8cs_source_l00050}00050\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_coop_turn_coordinator_aa8149d7a65ff5d75dc816e2eaceb37c1}{endedCount}}\ =\ \mbox{\hyperlink{class_coop_turn_coordinator_a48a8b80d8dfbfbd396bab3412defe495}{endedPlayers}}.Count;}
+\DoxyCodeLine{\Hypertarget{_coop_turn_coordinator_8cs_source_l00051}00051\ \ \ \ \ \ \ \ \ Debug.Log(\$\textcolor{stringliteral}{"{}[TURN][SERVER]\ Player\ \{playerNetId\}\ ended.\ \{endedCount\}/\{requiredCount\}"{}});}
+\DoxyCodeLine{\Hypertarget{_coop_turn_coordinator_8cs_source_l00052}00052\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_coop_turn_coordinator_ab9f23fa317d5400602c2214c4989377a}{RpcUpdateWaiting}}(\mbox{\hyperlink{class_coop_turn_coordinator_aa8149d7a65ff5d75dc816e2eaceb37c1}{endedCount}},\ \mbox{\hyperlink{class_coop_turn_coordinator_acb1453d443057967b0278065eb2ac802}{requiredCount}});\ \ \ \ \ \textcolor{comment}{//\ UI:lle\ "{}odotetaan\ X/Y"{}}}
+\DoxyCodeLine{\Hypertarget{_coop_turn_coordinator_8cs_source_l00053}00053\ }
+\DoxyCodeLine{\Hypertarget{_coop_turn_coordinator_8cs_source_l00054}00054\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_coop_turn_coordinator_aea037c8877744adc91e043bdaae9eb75}{TryAdvanceIfReady}}();}
+\DoxyCodeLine{\Hypertarget{_coop_turn_coordinator_8cs_source_l00055}00055\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_coop_turn_coordinator_8cs_source_l00056}00056\ }
+\DoxyCodeLine{\Hypertarget{_coop_turn_coordinator_8cs_source_l00057}00057\ \ \ \ \ [Server]}
+\DoxyCodeLine{\Hypertarget{_coop_turn_coordinator_8cs_source_l00058}\mbox{\hyperlink{class_coop_turn_coordinator_aea037c8877744adc91e043bdaae9eb75}{00058}}\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_coop_turn_coordinator_aea037c8877744adc91e043bdaae9eb75}{TryAdvanceIfReady}}()}
+\DoxyCodeLine{\Hypertarget{_coop_turn_coordinator_8cs_source_l00059}00059\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_coop_turn_coordinator_8cs_source_l00060}00060\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{class_coop_turn_coordinator_a5acd5e9359947942df79de8e802e1cac}{phase}}\ ==\ \mbox{\hyperlink{_coop_turn_coordinator_8cs_a18940d82e778610ed3bc4500893bbab0}{TurnPhase}}.Players\ \&\&\ \mbox{\hyperlink{class_coop_turn_coordinator_a48a8b80d8dfbfbd396bab3412defe495}{endedPlayers}}.Count\ >=\ Mathf.Max(1,\ \mbox{\hyperlink{class_coop_turn_coordinator_acb1453d443057967b0278065eb2ac802}{requiredCount}}))}
+\DoxyCodeLine{\Hypertarget{_coop_turn_coordinator_8cs_source_l00061}00061\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_coop_turn_coordinator_8cs_source_l00062}00062\ \ \ \ \ \ \ \ \ \ \ \ \ Debug.Log(\textcolor{stringliteral}{"{}[TURN][SERVER]\ All\ players\ ready\ →\ enemy\ turn"{}});}
+\DoxyCodeLine{\Hypertarget{_coop_turn_coordinator_8cs_source_l00063}00063\ \ \ \ \ \ \ \ \ \ \ \ \ StartCoroutine(\mbox{\hyperlink{class_coop_turn_coordinator_ab45542403ff635cfcb3004ba12b519bc}{ServerEnemyTurnThenNextPlayers}}());}
+\DoxyCodeLine{\Hypertarget{_coop_turn_coordinator_8cs_source_l00064}00064\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_coop_turn_coordinator_8cs_source_l00065}00065\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_coop_turn_coordinator_8cs_source_l00066}00066\ }
+\DoxyCodeLine{\Hypertarget{_coop_turn_coordinator_8cs_source_l00067}00067\ \ \ \ \ [Server]}
+\DoxyCodeLine{\Hypertarget{_coop_turn_coordinator_8cs_source_l00068}\mbox{\hyperlink{class_coop_turn_coordinator_ab45542403ff635cfcb3004ba12b519bc}{00068}}\ \ \ \ \ IEnumerator\ \mbox{\hyperlink{class_coop_turn_coordinator_ab45542403ff635cfcb3004ba12b519bc}{ServerEnemyTurnThenNextPlayers}}()}
+\DoxyCodeLine{\Hypertarget{_coop_turn_coordinator_8cs_source_l00069}00069\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_coop_turn_coordinator_8cs_source_l00070}00070\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_coop_turn_coordinator_a5acd5e9359947942df79de8e802e1cac}{phase}}\ =\ \mbox{\hyperlink{_coop_turn_coordinator_8cs_a18940d82e778610ed3bc4500893bbab0}{TurnPhase}}.Enemy;}
+\DoxyCodeLine{\Hypertarget{_coop_turn_coordinator_8cs_source_l00071}00071\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_coop_turn_coordinator_a9e3750f864ccb5a2113b072ba2dc3d99}{RpcTurnPhaseChanged}}(\mbox{\hyperlink{class_coop_turn_coordinator_a5acd5e9359947942df79de8e802e1cac}{phase}},\ \mbox{\hyperlink{class_coop_turn_coordinator_a05888926c73b45109296b66943ef71c8}{turnNumber}});}
+\DoxyCodeLine{\Hypertarget{_coop_turn_coordinator_8cs_source_l00072}00072\ }
+\DoxyCodeLine{\Hypertarget{_coop_turn_coordinator_8cs_source_l00073}00073\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ ***\ AJA\ AI-\/VUORO\ TÄSSÄ\ ***}}
+\DoxyCodeLine{\Hypertarget{_coop_turn_coordinator_8cs_source_l00074}00074\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Kutsu\ omaa\ AI-\/manageriasi;\ tässä\ vain\ simuloidaan\ pienenä\ viiveenä.}}
+\DoxyCodeLine{\Hypertarget{_coop_turn_coordinator_8cs_source_l00075}00075\ \ \ \ \ \ \ \ \ yield\ \textcolor{keywordflow}{return}\ StartCoroutine(\mbox{\hyperlink{class_coop_turn_coordinator_aa8aac2f89bdba4da842fa2c87d721341}{RunEnemyAI}}());}
+\DoxyCodeLine{\Hypertarget{_coop_turn_coordinator_8cs_source_l00076}00076\ \ \ \ \ \ \ \ \ Debug.Log(\textcolor{stringliteral}{"{}[TURN][SERVER]\ Enemy\ turn\ ended\ →\ next\ players'\ turn"{}});}
+\DoxyCodeLine{\Hypertarget{_coop_turn_coordinator_8cs_source_l00077}00077\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_coop_turn_coordinator_a05888926c73b45109296b66943ef71c8}{turnNumber}}++;}
+\DoxyCodeLine{\Hypertarget{_coop_turn_coordinator_8cs_source_l00078}00078\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_coop_turn_coordinator_aece99c647b739adbdc78dad638b7e72f}{ResetTurnState}}();\ \textcolor{comment}{//\ takaisin\ pelaajille}}
+\DoxyCodeLine{\Hypertarget{_coop_turn_coordinator_8cs_source_l00079}00079\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_coop_turn_coordinator_a9e3750f864ccb5a2113b072ba2dc3d99}{RpcTurnPhaseChanged}}(\mbox{\hyperlink{class_coop_turn_coordinator_a5acd5e9359947942df79de8e802e1cac}{phase}},\ \mbox{\hyperlink{class_coop_turn_coordinator_a05888926c73b45109296b66943ef71c8}{turnNumber}});}
+\DoxyCodeLine{\Hypertarget{_coop_turn_coordinator_8cs_source_l00080}00080\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_coop_turn_coordinator_8cs_source_l00081}00081\ }
+\DoxyCodeLine{\Hypertarget{_coop_turn_coordinator_8cs_source_l00082}00082\ \ \ \ \ [Server]}
+\DoxyCodeLine{\Hypertarget{_coop_turn_coordinator_8cs_source_l00083}\mbox{\hyperlink{class_coop_turn_coordinator_aa8aac2f89bdba4da842fa2c87d721341}{00083}}\ \ \ \ \ IEnumerator\ \mbox{\hyperlink{class_coop_turn_coordinator_aa8aac2f89bdba4da842fa2c87d721341}{RunEnemyAI}}()}
+\DoxyCodeLine{\Hypertarget{_coop_turn_coordinator_8cs_source_l00084}00084\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_coop_turn_coordinator_8cs_source_l00085}00085\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ TODO:\ korvaa\ omalla\ AI-\/logiikallasi\ (varmista,\ että\ se\ on\ server-\/authoritatiivinen)}}
+\DoxyCodeLine{\Hypertarget{_coop_turn_coordinator_8cs_source_l00086}00086\ \ \ \ \ \ \ \ \ Debug.Log(\textcolor{stringliteral}{"{}[TURN][SERVER]\ (Simulating\ enemy\ AI\ turn...)"{}});}
+\DoxyCodeLine{\Hypertarget{_coop_turn_coordinator_8cs_source_l00087}00087\ \ \ \ \ \ \ \ \ yield\ \textcolor{keywordflow}{return}\ \textcolor{keyword}{new}\ WaitForSeconds(0.25f);}
+\DoxyCodeLine{\Hypertarget{_coop_turn_coordinator_8cs_source_l00088}00088\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_coop_turn_coordinator_8cs_source_l00089}00089\ }
+\DoxyCodeLine{\Hypertarget{_coop_turn_coordinator_8cs_source_l00090}00090\ \ \ \ \ [Server]}
+\DoxyCodeLine{\Hypertarget{_coop_turn_coordinator_8cs_source_l00091}\mbox{\hyperlink{class_coop_turn_coordinator_aece99c647b739adbdc78dad638b7e72f}{00091}}\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_coop_turn_coordinator_aece99c647b739adbdc78dad638b7e72f}{ResetTurnState}}()}
+\DoxyCodeLine{\Hypertarget{_coop_turn_coordinator_8cs_source_l00092}00092\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_coop_turn_coordinator_8cs_source_l00093}00093\ \ \ \ \ \ \ \ \ Debug.Log(\textcolor{stringliteral}{"{}[TURN][SERVER]\ ResetTurnState"{}});}
+\DoxyCodeLine{\Hypertarget{_coop_turn_coordinator_8cs_source_l00094}00094\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_coop_turn_coordinator_a5acd5e9359947942df79de8e802e1cac}{phase}}\ =\ \mbox{\hyperlink{_coop_turn_coordinator_8cs_a18940d82e778610ed3bc4500893bbab0}{TurnPhase}}.Players;}
+\DoxyCodeLine{\Hypertarget{_coop_turn_coordinator_8cs_source_l00095}00095\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_coop_turn_coordinator_a48a8b80d8dfbfbd396bab3412defe495}{endedPlayers}}.Clear();}
+\DoxyCodeLine{\Hypertarget{_coop_turn_coordinator_8cs_source_l00096}00096\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_coop_turn_coordinator_aa8149d7a65ff5d75dc816e2eaceb37c1}{endedCount}}\ =\ 0;}
+\DoxyCodeLine{\Hypertarget{_coop_turn_coordinator_8cs_source_l00097}00097\ }
+\DoxyCodeLine{\Hypertarget{_coop_turn_coordinator_8cs_source_l00098}00098\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ nollaa\ kaikilta\ pelaajilta\ ‘hasEndedThisTurn’}}
+\DoxyCodeLine{\Hypertarget{_coop_turn_coordinator_8cs_source_l00099}00099\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{foreach}\ (var\ kvp\ \textcolor{keywordflow}{in}\ NetworkServer.connections)}
+\DoxyCodeLine{\Hypertarget{_coop_turn_coordinator_8cs_source_l00100}00100\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_coop_turn_coordinator_8cs_source_l00101}00101\ \ \ \ \ \ \ \ \ \ \ \ \ var\ \textcolor{keywordtype}{id}\ =\ kvp.Value.identity;}
+\DoxyCodeLine{\Hypertarget{_coop_turn_coordinator_8cs_source_l00102}00102\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!\textcolor{keywordtype}{id})\ \textcolor{keywordflow}{continue};}
+\DoxyCodeLine{\Hypertarget{_coop_turn_coordinator_8cs_source_l00103}00103\ \ \ \ \ \ \ \ \ \ \ \ \ var\ pc\ =\ \textcolor{keywordtype}{id}.GetComponent<\mbox{\hyperlink{class_player_controller}{PlayerController}}>();}
+\DoxyCodeLine{\Hypertarget{_coop_turn_coordinator_8cs_source_l00104}00104\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (pc)\ pc.\mbox{\hyperlink{class_player_controller_a596ace97f649ff6b030c081d06a03a54}{ServerSetHasEnded}}(\textcolor{keyword}{false});\ \ \textcolor{comment}{//\ <<<\ TÄRKEIN\ RIVI}}
+\DoxyCodeLine{\Hypertarget{_coop_turn_coordinator_8cs_source_l00105}00105\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_coop_turn_coordinator_8cs_source_l00106}00106\ }
+\DoxyCodeLine{\Hypertarget{_coop_turn_coordinator_8cs_source_l00107}00107\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_coop_turn_coordinator_ab9f23fa317d5400602c2214c4989377a}{RpcUpdateWaiting}}(\mbox{\hyperlink{class_coop_turn_coordinator_aa8149d7a65ff5d75dc816e2eaceb37c1}{endedCount}},\ \mbox{\hyperlink{class_coop_turn_coordinator_acb1453d443057967b0278065eb2ac802}{requiredCount}});}
+\DoxyCodeLine{\Hypertarget{_coop_turn_coordinator_8cs_source_l00108}00108\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_coop_turn_coordinator_8cs_source_l00109}00109\ }
+\DoxyCodeLine{\Hypertarget{_coop_turn_coordinator_8cs_source_l00110}00110\ \ \ \ \ \textcolor{comment}{//\ -\/-\/-\/-\/\ Client-\/notifikaatiot\ UI:lle\ -\/-\/-\/-\/}}
+\DoxyCodeLine{\Hypertarget{_coop_turn_coordinator_8cs_source_l00111}00111\ \ \ \ \ [ClientRpc]}
+\DoxyCodeLine{\Hypertarget{_coop_turn_coordinator_8cs_source_l00112}\mbox{\hyperlink{class_coop_turn_coordinator_a9e3750f864ccb5a2113b072ba2dc3d99}{00112}}\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_coop_turn_coordinator_a9e3750f864ccb5a2113b072ba2dc3d99}{RpcTurnPhaseChanged}}(\mbox{\hyperlink{_coop_turn_coordinator_8cs_a18940d82e778610ed3bc4500893bbab0}{TurnPhase}}\ newPhase,\ \textcolor{keywordtype}{int}\ turnNo)}
+\DoxyCodeLine{\Hypertarget{_coop_turn_coordinator_8cs_source_l00113}00113\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_coop_turn_coordinator_8cs_source_l00114}00114\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Päivitä\ UI\ (esim.\ "{}Enemy\ Turn"{},\ "{}Players\ Turn\ \#X"{})}}
+\DoxyCodeLine{\Hypertarget{_coop_turn_coordinator_8cs_source_l00115}00115\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Voit\ myös\ täältä\ disabloida/enabloida\ ohjausta\ jos\ haluat}}
+\DoxyCodeLine{\Hypertarget{_coop_turn_coordinator_8cs_source_l00116}00116\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_coop_turn_coordinator_8cs_source_l00117}00117\ }
+\DoxyCodeLine{\Hypertarget{_coop_turn_coordinator_8cs_source_l00118}00118\ \ \ \ \ [ClientRpc]}
+\DoxyCodeLine{\Hypertarget{_coop_turn_coordinator_8cs_source_l00119}\mbox{\hyperlink{class_coop_turn_coordinator_ab9f23fa317d5400602c2214c4989377a}{00119}}\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_coop_turn_coordinator_ab9f23fa317d5400602c2214c4989377a}{RpcUpdateWaiting}}(\textcolor{keywordtype}{int}\ have,\ \textcolor{keywordtype}{int}\ need)}
+\DoxyCodeLine{\Hypertarget{_coop_turn_coordinator_8cs_source_l00120}00120\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_coop_turn_coordinator_8cs_source_l00121}00121\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ UI:\ "{}Waiting\ for\ teammate:\ have/need"{}}}
+\DoxyCodeLine{\Hypertarget{_coop_turn_coordinator_8cs_source_l00122}00122\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_coop_turn_coordinator_8cs_source_l00123}00123\ \}}
+
+\end{DoxyCode}

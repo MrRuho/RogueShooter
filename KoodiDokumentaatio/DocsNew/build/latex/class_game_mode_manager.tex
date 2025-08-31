@@ -1,0 +1,413 @@
+\doxysection{Game\+Mode\+Manager Class Reference}
+\hypertarget{class_game_mode_manager}{}\label{class_game_mode_manager}\index{GameModeManager@{GameModeManager}}
+Inheritance diagram for Game\+Mode\+Manager\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{class_game_mode_manager}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{class_game_mode_manager_a74711c7c0223186769558a781e6abc92}{On\+Click\+Single\+Player}} ()
+\item 
+void \mbox{\hyperlink{class_game_mode_manager_a82db1a952f41d7ad80501d0b2d5772f8}{On\+Click\+Co\+Op}} ()
+\item 
+void \mbox{\hyperlink{class_game_mode_manager_a976f9fb2c846f1b9e1d585ecf4616518}{On\+Click\+Versus}} ()
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+static void \mbox{\hyperlink{class_game_mode_manager_a8681a3d39a6aad65cb3e1befc6baecf6}{Set\+Single\+Player}} ()
+\item 
+static void \mbox{\hyperlink{class_game_mode_manager_a5461e35c3020cdd7d9c1304ad59f950c}{Set\+Co\+Op}} ()
+\item 
+static void \mbox{\hyperlink{class_game_mode_manager_a8f80b6ca9129fbec47b18df9dc0d18b6}{Set\+Versus}} ()
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+Game\+Object \mbox{\hyperlink{class_game_mode_manager_a49ba04e0d3a0b76aa13cd3ee7ca06226}{player\+Prefab}}
+\item 
+Game\+Object \mbox{\hyperlink{class_game_mode_manager_a226d98354fce7a3d28f81faf754bae0a}{co\+Op\+Player\+Prefab}}
+\item 
+Game\+Object \mbox{\hyperlink{class_game_mode_manager_a6c479e53d01838519a32f1b8b29e5cef}{enemy\+Prefab}}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Properties}
+\begin{DoxyCompactItemize}
+\item 
+static \mbox{\hyperlink{_game_mode_manager_8cs_aaf5ef5a17b53e9997c837b07015589de}{Game\+Mode}} \mbox{\hyperlink{class_game_mode_manager_afc91daaebfc32a72c8ec1527857cfab8}{Selected\+Mode}} = \mbox{\hyperlink{_game_mode_manager_8cs_aaf5ef5a17b53e9997c837b07015589deabaa1d5d7c2a65312fdc5577125de257a}{Game\+Mode.\+Single\+Player}}\hspace{0.3cm}{\ttfamily  \mbox{[}get, private set\mbox{]}}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Private Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{class_game_mode_manager_a2114a3109fc1d6f4716cdfeb874fc158}{Start}} ()
+\item 
+void \mbox{\hyperlink{class_game_mode_manager_adb0a382f8178538e71d8f0b93d734ed0}{Single\+Player\+Game\+Mode}} ()
+\item 
+void \mbox{\hyperlink{class_game_mode_manager_a70844f50cf5885493aedf1d3a4317045}{Spawn\+Player1\+Units\+Offline}} ()
+\item 
+void \mbox{\hyperlink{class_game_mode_manager_a1c1618960a485cb8399b1a85e78d23d1}{Spawn\+Enemy\+Units\+Offline}} ()
+\item 
+void \mbox{\hyperlink{class_game_mode_manager_a3ae0ca76f9c58900f0c52bd99dae0068}{Spawn\+Player1\+Units}} ()
+\item 
+void \mbox{\hyperlink{class_game_mode_manager_a2d88e069bc781156cdbf40a8e1bf768c}{Spawn\+Player2\+Units}} ()
+\item 
+void \mbox{\hyperlink{class_game_mode_manager_a3bb74e98f2ca99ec1fd58dc96a9f3134}{Spawn\+Enemy\+Units}} ()
+\begin{DoxyCompactList}\small\item\em This method is responsible for spawning enemy units in the game. In online the client will spawn this units. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_game_mode_manager_a52bfe5296fe118209327267b177ae81d}{Server\+Spawn\+Initial\+For\+Selected\+Mode}} ()
+\item 
+void \mbox{\hyperlink{class_game_mode_manager_a3f0e7e1be6c53cda1648da3cd4b05e5e}{Server\+Spawn\+Enemies}} ()
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+
+
+Definition at line \mbox{\hyperlink{_game_mode_manager_8cs_source_l00009}{9}} of file \mbox{\hyperlink{_game_mode_manager_8cs_source}{Game\+Mode\+Manager.\+cs}}.
+
+
+
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_game_mode_manager_a82db1a952f41d7ad80501d0b2d5772f8}\index{GameModeManager@{GameModeManager}!OnClickCoOp@{OnClickCoOp}}
+\index{OnClickCoOp@{OnClickCoOp}!GameModeManager@{GameModeManager}}
+\doxysubsubsection{\texorpdfstring{OnClickCoOp()}{OnClickCoOp()}}
+{\footnotesize\ttfamily \label{class_game_mode_manager_a82db1a952f41d7ad80501d0b2d5772f8} 
+void Game\+Mode\+Manager.\+On\+Click\+Co\+Op (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line \mbox{\hyperlink{_game_mode_manager_8cs_source_l00060}{60}} of file \mbox{\hyperlink{_game_mode_manager_8cs_source}{Game\+Mode\+Manager.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00061\ \ \ \ \ \{}
+\DoxyCodeLine{00062\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_game_mode_manager_afc91daaebfc32a72c8ec1527857cfab8}{SelectedMode}}\ =\ \mbox{\hyperlink{_game_mode_manager_8cs_aaf5ef5a17b53e9997c837b07015589de}{GameMode}}.CoOp;}
+\DoxyCodeLine{00063\ \ \ \ \ \ \ \ \ Debug.Log(\textcolor{stringliteral}{"{}SelectedMode\ set\ to\ CoOp.\ Now\ start\ host\ or\ client."{}});}
+\DoxyCodeLine{00064\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Tässä\ voit\ näyttää\ ConnectCanvasin,\ tai\ käynnistää\ suoraan\ host/clientin:}}
+\DoxyCodeLine{00065\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ NetworkManager.singleton.StartHost();\ //\ host\ napille}}
+\DoxyCodeLine{00066\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ NetworkManager.singleton.StartClient();\ //\ client\ napille}}
+\DoxyCodeLine{00067\ \ \ \ \ \}}
+
+\end{DoxyCode}
+\Hypertarget{class_game_mode_manager_a74711c7c0223186769558a781e6abc92}\index{GameModeManager@{GameModeManager}!OnClickSinglePlayer@{OnClickSinglePlayer}}
+\index{OnClickSinglePlayer@{OnClickSinglePlayer}!GameModeManager@{GameModeManager}}
+\doxysubsubsection{\texorpdfstring{OnClickSinglePlayer()}{OnClickSinglePlayer()}}
+{\footnotesize\ttfamily \label{class_game_mode_manager_a74711c7c0223186769558a781e6abc92} 
+void Game\+Mode\+Manager.\+On\+Click\+Single\+Player (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line \mbox{\hyperlink{_game_mode_manager_8cs_source_l00054}{54}} of file \mbox{\hyperlink{_game_mode_manager_8cs_source}{Game\+Mode\+Manager.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00055\ \ \ \ \ \{}
+\DoxyCodeLine{00056\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_game_mode_manager_afc91daaebfc32a72c8ec1527857cfab8}{SelectedMode}}\ =\ \mbox{\hyperlink{_game_mode_manager_8cs_aaf5ef5a17b53e9997c837b07015589de}{GameMode}}.SinglePlayer;}
+\DoxyCodeLine{00057\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Lataa\ peliscene\ jos\ et\ jo\ siellä,\ tai\ anna\ tämän\ skriptin\ Start()\ hoitaa}}
+\DoxyCodeLine{00058\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ SceneManager.LoadScene("{}Game"{});}}
+\DoxyCodeLine{00059\ \ \ \ \ \}}
+
+\end{DoxyCode}
+\Hypertarget{class_game_mode_manager_a976f9fb2c846f1b9e1d585ecf4616518}\index{GameModeManager@{GameModeManager}!OnClickVersus@{OnClickVersus}}
+\index{OnClickVersus@{OnClickVersus}!GameModeManager@{GameModeManager}}
+\doxysubsubsection{\texorpdfstring{OnClickVersus()}{OnClickVersus()}}
+{\footnotesize\ttfamily \label{class_game_mode_manager_a976f9fb2c846f1b9e1d585ecf4616518} 
+void Game\+Mode\+Manager.\+On\+Click\+Versus (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line \mbox{\hyperlink{_game_mode_manager_8cs_source_l00069}{69}} of file \mbox{\hyperlink{_game_mode_manager_8cs_source}{Game\+Mode\+Manager.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00070\ \ \ \ \ \{\ \ \ }
+\DoxyCodeLine{00071\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_game_mode_manager_afc91daaebfc32a72c8ec1527857cfab8}{SelectedMode}}\ =\ \mbox{\hyperlink{_game_mode_manager_8cs_aaf5ef5a17b53e9997c837b07015589de}{GameMode}}.Versus;}
+\DoxyCodeLine{00072\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Samoin\ kuin\ CoOp}}
+\DoxyCodeLine{00073\ \ \ \ \ \}}
+
+\end{DoxyCode}
+\Hypertarget{class_game_mode_manager_a3f0e7e1be6c53cda1648da3cd4b05e5e}\index{GameModeManager@{GameModeManager}!ServerSpawnEnemies@{ServerSpawnEnemies}}
+\index{ServerSpawnEnemies@{ServerSpawnEnemies}!GameModeManager@{GameModeManager}}
+\doxysubsubsection{\texorpdfstring{ServerSpawnEnemies()}{ServerSpawnEnemies()}}
+{\footnotesize\ttfamily \label{class_game_mode_manager_a3f0e7e1be6c53cda1648da3cd4b05e5e} 
+void Game\+Mode\+Manager.\+Server\+Spawn\+Enemies (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_game_mode_manager_8cs_source_l00148}{148}} of file \mbox{\hyperlink{_game_mode_manager_8cs_source}{Game\+Mode\+Manager.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00149\ \ \ \ \ \{}
+\DoxyCodeLine{00150\ \ \ \ \ \ \ \ \ var\ e1\ =\ Instantiate(\mbox{\hyperlink{class_game_mode_manager_a6c479e53d01838519a32f1b8b29e5cef}{enemyPrefab}},\ \textcolor{keyword}{new}\ Vector3(4,\ 0,\ 6),\ Quaternion.identity);}
+\DoxyCodeLine{00151\ \ \ \ \ \ \ \ \ NetworkServer.Spawn(e1);}
+\DoxyCodeLine{00152\ \ \ \ \ \ \ \ \ var\ e2\ =\ Instantiate(\mbox{\hyperlink{class_game_mode_manager_a6c479e53d01838519a32f1b8b29e5cef}{enemyPrefab}},\ \textcolor{keyword}{new}\ Vector3(6,\ 0,\ 6),\ Quaternion.identity);}
+\DoxyCodeLine{00153\ \ \ \ \ \ \ \ \ NetworkServer.Spawn(e2);}
+\DoxyCodeLine{00154\ \ \ \ \ \}}
+
+\end{DoxyCode}
+\Hypertarget{class_game_mode_manager_a52bfe5296fe118209327267b177ae81d}\index{GameModeManager@{GameModeManager}!ServerSpawnInitialForSelectedMode@{ServerSpawnInitialForSelectedMode}}
+\index{ServerSpawnInitialForSelectedMode@{ServerSpawnInitialForSelectedMode}!GameModeManager@{GameModeManager}}
+\doxysubsubsection{\texorpdfstring{ServerSpawnInitialForSelectedMode()}{ServerSpawnInitialForSelectedMode()}}
+{\footnotesize\ttfamily \label{class_game_mode_manager_a52bfe5296fe118209327267b177ae81d} 
+void Game\+Mode\+Manager.\+Server\+Spawn\+Initial\+For\+Selected\+Mode (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_game_mode_manager_8cs_source_l00130}{130}} of file \mbox{\hyperlink{_game_mode_manager_8cs_source}{Game\+Mode\+Manager.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00131\ \ \ \ \ \{}
+\DoxyCodeLine{00132\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{switch}\ (\mbox{\hyperlink{class_game_mode_manager_afc91daaebfc32a72c8ec1527857cfab8}{SelectedMode}})}
+\DoxyCodeLine{00133\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00134\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ \mbox{\hyperlink{_game_mode_manager_8cs_aaf5ef5a17b53e9997c837b07015589de}{GameMode}}.CoOp:}
+\DoxyCodeLine{00135\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_game_mode_manager_a3f0e7e1be6c53cda1648da3cd4b05e5e}{ServerSpawnEnemies}}();}
+\DoxyCodeLine{00136\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00137\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ \mbox{\hyperlink{_game_mode_manager_8cs_aaf5ef5a17b53e9997c837b07015589de}{GameMode}}.Versus:}
+\DoxyCodeLine{00138\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Versuksessa\ ei\ ehkä\ ole\ AI-\/vihollisia\ -\/>\ jätä\ tyhjäksi\ tai\ spawnaa\ neutraaleja}}
+\DoxyCodeLine{00139\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00140\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ \mbox{\hyperlink{_game_mode_manager_8cs_aaf5ef5a17b53e9997c837b07015589de}{GameMode}}.SinglePlayer:}
+\DoxyCodeLine{00141\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Ei\ pitäisi\ tapahtua\ verkossa,\ mutta\ varmistetaan}}
+\DoxyCodeLine{00142\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_game_mode_manager_a3f0e7e1be6c53cda1648da3cd4b05e5e}{ServerSpawnEnemies}}();}
+\DoxyCodeLine{00143\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00144\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00145\ \ \ \ \ \}}
+
+\end{DoxyCode}
+\Hypertarget{class_game_mode_manager_a5461e35c3020cdd7d9c1304ad59f950c}\index{GameModeManager@{GameModeManager}!SetCoOp@{SetCoOp}}
+\index{SetCoOp@{SetCoOp}!GameModeManager@{GameModeManager}}
+\doxysubsubsection{\texorpdfstring{SetCoOp()}{SetCoOp()}}
+{\footnotesize\ttfamily \label{class_game_mode_manager_a5461e35c3020cdd7d9c1304ad59f950c} 
+static void Game\+Mode\+Manager.\+Set\+Co\+Op (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+\Hypertarget{class_game_mode_manager_a8681a3d39a6aad65cb3e1befc6baecf6}\index{GameModeManager@{GameModeManager}!SetSinglePlayer@{SetSinglePlayer}}
+\index{SetSinglePlayer@{SetSinglePlayer}!GameModeManager@{GameModeManager}}
+\doxysubsubsection{\texorpdfstring{SetSinglePlayer()}{SetSinglePlayer()}}
+{\footnotesize\ttfamily \label{class_game_mode_manager_a8681a3d39a6aad65cb3e1befc6baecf6} 
+static void Game\+Mode\+Manager.\+Set\+Single\+Player (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+\Hypertarget{class_game_mode_manager_a8f80b6ca9129fbec47b18df9dc0d18b6}\index{GameModeManager@{GameModeManager}!SetVersus@{SetVersus}}
+\index{SetVersus@{SetVersus}!GameModeManager@{GameModeManager}}
+\doxysubsubsection{\texorpdfstring{SetVersus()}{SetVersus()}}
+{\footnotesize\ttfamily \label{class_game_mode_manager_a8f80b6ca9129fbec47b18df9dc0d18b6} 
+static void Game\+Mode\+Manager.\+Set\+Versus (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+\Hypertarget{class_game_mode_manager_adb0a382f8178538e71d8f0b93d734ed0}\index{GameModeManager@{GameModeManager}!SinglePlayerGameMode@{SinglePlayerGameMode}}
+\index{SinglePlayerGameMode@{SinglePlayerGameMode}!GameModeManager@{GameModeManager}}
+\doxysubsubsection{\texorpdfstring{SinglePlayerGameMode()}{SinglePlayerGameMode()}}
+{\footnotesize\ttfamily \label{class_game_mode_manager_adb0a382f8178538e71d8f0b93d734ed0} 
+void Game\+Mode\+Manager.\+Single\+Player\+Game\+Mode (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_game_mode_manager_8cs_source_l00076}{76}} of file \mbox{\hyperlink{_game_mode_manager_8cs_source}{Game\+Mode\+Manager.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00077\ \ \ \ \ \{}
+\DoxyCodeLine{00078\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_game_mode_manager_a70844f50cf5885493aedf1d3a4317045}{SpawnPlayer1UnitsOffline}}();}
+\DoxyCodeLine{00079\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_game_mode_manager_a1c1618960a485cb8399b1a85e78d23d1}{SpawnEnemyUnitsOffline}}();\ \ \ }
+\DoxyCodeLine{00080\ \ \ \ \ \}}
+
+\end{DoxyCode}
+\Hypertarget{class_game_mode_manager_a3bb74e98f2ca99ec1fd58dc96a9f3134}\index{GameModeManager@{GameModeManager}!SpawnEnemyUnits@{SpawnEnemyUnits}}
+\index{SpawnEnemyUnits@{SpawnEnemyUnits}!GameModeManager@{GameModeManager}}
+\doxysubsubsection{\texorpdfstring{SpawnEnemyUnits()}{SpawnEnemyUnits()}}
+{\footnotesize\ttfamily \label{class_game_mode_manager_a3bb74e98f2ca99ec1fd58dc96a9f3134} 
+void Game\+Mode\+Manager.\+Spawn\+Enemy\+Units (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [private]}}
+
+
+
+This method is responsible for spawning enemy units in the game. In online the client will spawn this units. 
+
+
+
+Definition at line \mbox{\hyperlink{_game_mode_manager_8cs_source_l00119}{119}} of file \mbox{\hyperlink{_game_mode_manager_8cs_source}{Game\+Mode\+Manager.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00120\ \ \ \ \ \{}
+\DoxyCodeLine{00121\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Create\ enemy\ units\ in\ the\ scene}}
+\DoxyCodeLine{00122\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Instantiate\ the\ enemy\ prefab\ at\ the\ specified\ position\ and\ rotation}}
+\DoxyCodeLine{00123\ \ \ \ \ \ \ \ \ Instantiate(\mbox{\hyperlink{class_game_mode_manager_a6c479e53d01838519a32f1b8b29e5cef}{enemyPrefab}},\ \textcolor{keyword}{new}\ Vector3(4,\ 0,\ 6),\ Quaternion.identity);}
+\DoxyCodeLine{00124\ }
+\DoxyCodeLine{00125\ \ \ \ \ \ \ \ \ Instantiate(\mbox{\hyperlink{class_game_mode_manager_a6c479e53d01838519a32f1b8b29e5cef}{enemyPrefab}},\ \textcolor{keyword}{new}\ Vector3(6,\ 0,\ 6),\ Quaternion.identity);}
+\DoxyCodeLine{00126\ \ \ \ \ \}}
+
+\end{DoxyCode}
+\Hypertarget{class_game_mode_manager_a1c1618960a485cb8399b1a85e78d23d1}\index{GameModeManager@{GameModeManager}!SpawnEnemyUnitsOffline@{SpawnEnemyUnitsOffline}}
+\index{SpawnEnemyUnitsOffline@{SpawnEnemyUnitsOffline}!GameModeManager@{GameModeManager}}
+\doxysubsubsection{\texorpdfstring{SpawnEnemyUnitsOffline()}{SpawnEnemyUnitsOffline()}}
+{\footnotesize\ttfamily \label{class_game_mode_manager_a1c1618960a485cb8399b1a85e78d23d1} 
+void Game\+Mode\+Manager.\+Spawn\+Enemy\+Units\+Offline (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_game_mode_manager_8cs_source_l00088}{88}} of file \mbox{\hyperlink{_game_mode_manager_8cs_source}{Game\+Mode\+Manager.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00089\ \ \ \ \ \{}
+\DoxyCodeLine{00090\ \ \ \ \ \ \ \ \ Instantiate(\mbox{\hyperlink{class_game_mode_manager_a6c479e53d01838519a32f1b8b29e5cef}{enemyPrefab}},\ \textcolor{keyword}{new}\ Vector3(4,\ 0,\ 8),\ Quaternion.identity);}
+\DoxyCodeLine{00091\ \ \ \ \ \ \ \ \ Instantiate(\mbox{\hyperlink{class_game_mode_manager_a6c479e53d01838519a32f1b8b29e5cef}{enemyPrefab}},\ \textcolor{keyword}{new}\ Vector3(6,\ 0,\ 8),\ Quaternion.identity);}
+\DoxyCodeLine{00092\ \ \ \ \ \}}
+
+\end{DoxyCode}
+\Hypertarget{class_game_mode_manager_a3ae0ca76f9c58900f0c52bd99dae0068}\index{GameModeManager@{GameModeManager}!SpawnPlayer1Units@{SpawnPlayer1Units}}
+\index{SpawnPlayer1Units@{SpawnPlayer1Units}!GameModeManager@{GameModeManager}}
+\doxysubsubsection{\texorpdfstring{SpawnPlayer1Units()}{SpawnPlayer1Units()}}
+{\footnotesize\ttfamily \label{class_game_mode_manager_a3ae0ca76f9c58900f0c52bd99dae0068} 
+void Game\+Mode\+Manager.\+Spawn\+Player1\+Units (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [private]}}
+
+This method is responsible for spawning units in the game. In online the host will spawn this units. 
+
+Definition at line \mbox{\hyperlink{_game_mode_manager_8cs_source_l00098}{98}} of file \mbox{\hyperlink{_game_mode_manager_8cs_source}{Game\+Mode\+Manager.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00099\ \ \ \ \ \{}
+\DoxyCodeLine{00100\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Create\ units\ in\ the\ scene}}
+\DoxyCodeLine{00101\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Instantiate\ the\ player\ prefab\ at\ the\ specified\ position\ and\ rotation}}
+\DoxyCodeLine{00102\ \ \ \ \ \ \ \ \ Instantiate(\mbox{\hyperlink{class_game_mode_manager_a49ba04e0d3a0b76aa13cd3ee7ca06226}{playerPrefab}},\ \textcolor{keyword}{new}\ Vector3(0,\ 0,\ 0),\ Quaternion.identity);}
+\DoxyCodeLine{00103\ }
+\DoxyCodeLine{00104\ \ \ \ \ \ \ \ \ Instantiate(\mbox{\hyperlink{class_game_mode_manager_a49ba04e0d3a0b76aa13cd3ee7ca06226}{playerPrefab}},\ \textcolor{keyword}{new}\ Vector3(2,\ 0,\ 0),\ Quaternion.identity);}
+\DoxyCodeLine{00105\ \ \ \ \ \}}
+
+\end{DoxyCode}
+\Hypertarget{class_game_mode_manager_a70844f50cf5885493aedf1d3a4317045}\index{GameModeManager@{GameModeManager}!SpawnPlayer1UnitsOffline@{SpawnPlayer1UnitsOffline}}
+\index{SpawnPlayer1UnitsOffline@{SpawnPlayer1UnitsOffline}!GameModeManager@{GameModeManager}}
+\doxysubsubsection{\texorpdfstring{SpawnPlayer1UnitsOffline()}{SpawnPlayer1UnitsOffline()}}
+{\footnotesize\ttfamily \label{class_game_mode_manager_a70844f50cf5885493aedf1d3a4317045} 
+void Game\+Mode\+Manager.\+Spawn\+Player1\+Units\+Offline (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_game_mode_manager_8cs_source_l00082}{82}} of file \mbox{\hyperlink{_game_mode_manager_8cs_source}{Game\+Mode\+Manager.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00083\ \ \ \ \ \{}
+\DoxyCodeLine{00084\ \ \ \ \ \ \ \ \ Instantiate(\mbox{\hyperlink{class_game_mode_manager_a49ba04e0d3a0b76aa13cd3ee7ca06226}{playerPrefab}},\ \textcolor{keyword}{new}\ Vector3(0,\ 0,\ 0),\ Quaternion.identity);}
+\DoxyCodeLine{00085\ \ \ \ \ \ \ \ \ Instantiate(\mbox{\hyperlink{class_game_mode_manager_a49ba04e0d3a0b76aa13cd3ee7ca06226}{playerPrefab}},\ \textcolor{keyword}{new}\ Vector3(2,\ 0,\ 0),\ Quaternion.identity);}
+\DoxyCodeLine{00086\ \ \ \ \ \}}
+
+\end{DoxyCode}
+\Hypertarget{class_game_mode_manager_a2d88e069bc781156cdbf40a8e1bf768c}\index{GameModeManager@{GameModeManager}!SpawnPlayer2Units@{SpawnPlayer2Units}}
+\index{SpawnPlayer2Units@{SpawnPlayer2Units}!GameModeManager@{GameModeManager}}
+\doxysubsubsection{\texorpdfstring{SpawnPlayer2Units()}{SpawnPlayer2Units()}}
+{\footnotesize\ttfamily \label{class_game_mode_manager_a2d88e069bc781156cdbf40a8e1bf768c} 
+void Game\+Mode\+Manager.\+Spawn\+Player2\+Units (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_game_mode_manager_8cs_source_l00107}{107}} of file \mbox{\hyperlink{_game_mode_manager_8cs_source}{Game\+Mode\+Manager.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00108\ \ \ \ \ \{}
+\DoxyCodeLine{00109\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Create\ units\ in\ the\ scene}}
+\DoxyCodeLine{00110\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Instantiate\ the\ player\ prefab\ at\ the\ specified\ position\ and\ rotation}}
+\DoxyCodeLine{00111\ \ \ \ \ \ \ \ \ Instantiate(\mbox{\hyperlink{class_game_mode_manager_a226d98354fce7a3d28f81faf754bae0a}{coOpPlayerPrefab}},\ \textcolor{keyword}{new}\ Vector3(4,\ 0,\ 0),\ Quaternion.identity);}
+\DoxyCodeLine{00112\ }
+\DoxyCodeLine{00113\ \ \ \ \ \ \ \ \ Instantiate(\mbox{\hyperlink{class_game_mode_manager_a226d98354fce7a3d28f81faf754bae0a}{coOpPlayerPrefab}},\ \textcolor{keyword}{new}\ Vector3(6,\ 0,\ 0),\ Quaternion.identity);}
+\DoxyCodeLine{00114\ \ \ \ \ \}}
+
+\end{DoxyCode}
+\Hypertarget{class_game_mode_manager_a2114a3109fc1d6f4716cdfeb874fc158}\index{GameModeManager@{GameModeManager}!Start@{Start}}
+\index{Start@{Start}!GameModeManager@{GameModeManager}}
+\doxysubsubsection{\texorpdfstring{Start()}{Start()}}
+{\footnotesize\ttfamily \label{class_game_mode_manager_a2114a3109fc1d6f4716cdfeb874fc158} 
+void Game\+Mode\+Manager.\+Start (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_game_mode_manager_8cs_source_l00025}{25}} of file \mbox{\hyperlink{_game_mode_manager_8cs_source}{Game\+Mode\+Manager.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00026\ \ \ \ \ \{}
+\DoxyCodeLine{00027\ }
+\DoxyCodeLine{00028\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ OFFLINE:\ Singleplayer\ -\/>\ instanssoi\ heti}}
+\DoxyCodeLine{00029\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!NetworkClient.isConnected\ \&\&\ !NetworkServer.active)}
+\DoxyCodeLine{00030\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00031\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{class_game_mode_manager_afc91daaebfc32a72c8ec1527857cfab8}{SelectedMode}}\ ==\ \mbox{\hyperlink{_game_mode_manager_8cs_aaf5ef5a17b53e9997c837b07015589de}{GameMode}}.SinglePlayer)}
+\DoxyCodeLine{00032\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00033\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Debug.Log(\textcolor{stringliteral}{"{}Game\ is\ offline,\ spawning\ singleplayer\ units."{}});}
+\DoxyCodeLine{00034\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_game_mode_manager_adb0a382f8178538e71d8f0b93d734ed0}{SinglePlayerGameMode}}();}
+\DoxyCodeLine{00035\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{00036\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00037\ }
+\DoxyCodeLine{00038\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Jos\ tänne\ päädytään\ ja\ tila\ on\ CoOp/Versus,\ se\ tarkoittaa}}
+\DoxyCodeLine{00039\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ että\ UI\ ei\ vielä\ käynnistänyt\ verkkoa.\ Ei\ spawnailla\ mitään.}}
+\DoxyCodeLine{00040\ \ \ \ \ \ \ \ \ \ \ \ \ Debug.Log(\textcolor{stringliteral}{"{}Selected\ online\ mode\ without\ network\ active.\ Waiting\ for\ host/client."{}});}
+\DoxyCodeLine{00041\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{00042\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00043\ }
+\DoxyCodeLine{00044\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ ONLINE:\ Server\ hoitaa\ spawnaamisen,\ clientit\ eivät\ tee\ mitään\ Startissa}}
+\DoxyCodeLine{00045\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (NetworkServer.active)}
+\DoxyCodeLine{00046\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00047\ \ \ \ \ \ \ \ \ \ \ \ \ Debug.Log(\$\textcolor{stringliteral}{"{}Server\ online\ in\ \{SelectedMode\}\ mode.\ Server\ will\ spawn\ enemies."{}});}
+\DoxyCodeLine{00048\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Pelaaja-\/objektit\ tulevat\ NetworkManager.OnServerAddPlayerissa.}}
+\DoxyCodeLine{00049\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_game_mode_manager_a52bfe5296fe118209327267b177ae81d}{ServerSpawnInitialForSelectedMode}}();}
+\DoxyCodeLine{00050\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00051\ \ \ \ \ \}}
+
+\end{DoxyCode}
+
+
+\doxysubsection{Member Data Documentation}
+\Hypertarget{class_game_mode_manager_a226d98354fce7a3d28f81faf754bae0a}\index{GameModeManager@{GameModeManager}!coOpPlayerPrefab@{coOpPlayerPrefab}}
+\index{coOpPlayerPrefab@{coOpPlayerPrefab}!GameModeManager@{GameModeManager}}
+\doxysubsubsection{\texorpdfstring{coOpPlayerPrefab}{coOpPlayerPrefab}}
+{\footnotesize\ttfamily \label{class_game_mode_manager_a226d98354fce7a3d28f81faf754bae0a} 
+Game\+Object Game\+Mode\+Manager.\+co\+Op\+Player\+Prefab}
+
+
+
+Definition at line \mbox{\hyperlink{_game_mode_manager_8cs_source_l00021}{21}} of file \mbox{\hyperlink{_game_mode_manager_8cs_source}{Game\+Mode\+Manager.\+cs}}.
+
+\Hypertarget{class_game_mode_manager_a6c479e53d01838519a32f1b8b29e5cef}\index{GameModeManager@{GameModeManager}!enemyPrefab@{enemyPrefab}}
+\index{enemyPrefab@{enemyPrefab}!GameModeManager@{GameModeManager}}
+\doxysubsubsection{\texorpdfstring{enemyPrefab}{enemyPrefab}}
+{\footnotesize\ttfamily \label{class_game_mode_manager_a6c479e53d01838519a32f1b8b29e5cef} 
+Game\+Object Game\+Mode\+Manager.\+enemy\+Prefab}
+
+
+
+Definition at line \mbox{\hyperlink{_game_mode_manager_8cs_source_l00023}{23}} of file \mbox{\hyperlink{_game_mode_manager_8cs_source}{Game\+Mode\+Manager.\+cs}}.
+
+\Hypertarget{class_game_mode_manager_a49ba04e0d3a0b76aa13cd3ee7ca06226}\index{GameModeManager@{GameModeManager}!playerPrefab@{playerPrefab}}
+\index{playerPrefab@{playerPrefab}!GameModeManager@{GameModeManager}}
+\doxysubsubsection{\texorpdfstring{playerPrefab}{playerPrefab}}
+{\footnotesize\ttfamily \label{class_game_mode_manager_a49ba04e0d3a0b76aa13cd3ee7ca06226} 
+Game\+Object Game\+Mode\+Manager.\+player\+Prefab}
+
+
+
+Definition at line \mbox{\hyperlink{_game_mode_manager_8cs_source_l00019}{19}} of file \mbox{\hyperlink{_game_mode_manager_8cs_source}{Game\+Mode\+Manager.\+cs}}.
+
+
+
+\doxysubsection{Property Documentation}
+\Hypertarget{class_game_mode_manager_afc91daaebfc32a72c8ec1527857cfab8}\index{GameModeManager@{GameModeManager}!SelectedMode@{SelectedMode}}
+\index{SelectedMode@{SelectedMode}!GameModeManager@{GameModeManager}}
+\doxysubsubsection{\texorpdfstring{SelectedMode}{SelectedMode}}
+{\footnotesize\ttfamily \label{class_game_mode_manager_afc91daaebfc32a72c8ec1527857cfab8} 
+\mbox{\hyperlink{_game_mode_manager_8cs_aaf5ef5a17b53e9997c837b07015589de}{Game\+Mode}} Game\+Mode\+Manager.\+Selected\+Mode = \mbox{\hyperlink{_game_mode_manager_8cs_aaf5ef5a17b53e9997c837b07015589deabaa1d5d7c2a65312fdc5577125de257a}{Game\+Mode.\+Single\+Player}}\hspace{0.3cm}{\ttfamily [static]}, {\ttfamily [get]}, {\ttfamily [private set]}}
+
+
+
+Definition at line \mbox{\hyperlink{_game_mode_manager_8cs_source_l00011}{11}} of file \mbox{\hyperlink{_game_mode_manager_8cs_source}{Game\+Mode\+Manager.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00011\ \{\ \textcolor{keyword}{get};\ \textcolor{keyword}{private}\ \textcolor{keyword}{set};\ \}\ =\ \mbox{\hyperlink{_game_mode_manager_8cs_aaf5ef5a17b53e9997c837b07015589de}{GameMode}}.SinglePlayer;}
+
+\end{DoxyCode}
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+D\+:/\+Unity/\+Rogue\+Shooter/\+Rogue\+Shooter/\+Assets/\+Scripts/\+Game\+Modes/\mbox{\hyperlink{_game_mode_manager_8cs}{Game\+Mode\+Manager.\+cs}}\end{DoxyCompactItemize}

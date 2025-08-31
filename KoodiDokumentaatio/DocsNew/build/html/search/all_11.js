@@ -1,0 +1,26 @@
+var searchData=
+[
+  ['takeaction_0',['TakeAction',['../class_base_action.html#a302a7e513098704184a28fb8f523569e',1,'BaseAction.TakeAction()'],['../class_move_action.html#ad64fd44dd3dcf195dfeaf4ce5a02a33f',1,'MoveAction.TakeAction()'],['../class_shoot_action.html#a7e01b5ec188ee5ffce733148e30be951',1,'ShootAction.TakeAction()'],['../class_spin_action.html#a166500f478c0b8c21df2655e9fee09e6',1,'SpinAction.TakeAction()']]],
+  ['targetfollowoffset_1',['targetFollowOffset',['../class_camera_controller.html#aca88b6fe744d78ec1e3b994387dd6319',1,'CameraController']]],
+  ['targetnotifycanact_2',['TargetNotifyCanAct',['../class_player_controller.html#a1e8c4f16bef76f370546f31e23a8c7e9',1,'PlayerController']]],
+  ['targetposition_3',['targetPosition',['../class_move_action.html#a2dbfdbe2aa282af76a72a8f27c1b2419',1,'MoveAction']]],
+  ['targetunit_4',['targetUnit',['../class_shoot_action.html#af746f75a7751084d5257d87e99c229c0',1,'ShootAction']]],
+  ['testing_5',['Testing',['../class_testing.html',1,'']]],
+  ['testing_2ecs_6',['Testing.cs',['../_testing_8cs.html',1,'']]],
+  ['text_7',['text',['../class_screen_logger.html#a9c8810ddbd401e1a963153913acb043e',1,'ScreenLogger']]],
+  ['textmeshpro_8',['textMeshPro',['../class_grid_debug_object.html#acae9afcaa68dedec356a531ad8420918',1,'GridDebugObject.textMeshPro'],['../class_unit_action_button_u_i.html#ada6cf7e56a57730c533b33a136b6525a',1,'UnitActionButtonUI.textMeshPro']]],
+  ['timer_9',['timer',['../class_enemy_a_i.html#a914490ed23e56d57769ce86ff36eefb8',1,'EnemyAI']]],
+  ['tostring_10',['ToString',['../class_grid_object.html#a5d56757f9e3c2c5a06d0513356fe316d',1,'GridObject.ToString()'],['../struct_grid_position.html#ae1aacc75fedc04dcbd99029711591da4',1,'GridPosition.ToString()']]],
+  ['totalspinamount_11',['totalSpinAmount',['../class_spin_action.html#ac9cae05fbb9ee180f91a3e4399c446a3',1,'SpinAction']]],
+  ['tryadvanceifready_12',['TryAdvanceIfReady',['../class_coop_turn_coordinator.html#aea037c8877744adc91e043bdaae9eb75',1,'CoopTurnCoordinator']]],
+  ['tryhandleunitselection_13',['TryHandleUnitSelection',['../class_unit_action_system.html#ac59bb619a2cd7e2014b1a285737e1062',1,'UnitActionSystem']]],
+  ['tryspendactionpointstotakeaction_14',['TrySpendActionPointsToTakeAction',['../class_unit.html#afd8995267e93ddb4b652dd3dfead1fd4',1,'Unit']]],
+  ['turnnumber_15',['turnNumber',['../class_turn_system.html#ab6863e239320f2b4fc69f687f5a19d72',1,'TurnSystem.turnNumber'],['../class_coop_turn_coordinator.html#a05888926c73b45109296b66943ef71c8',1,'CoopTurnCoordinator.turnNumber']]],
+  ['turnnumbertext_16',['turnNumberText',['../class_turn_system_u_i.html#addce87c79fde218fc95c12042bad3b43',1,'TurnSystemUI']]],
+  ['turnphase_17',['TurnPhase',['../_coop_turn_coordinator_8cs.html#a18940d82e778610ed3bc4500893bbab0',1,'CoopTurnCoordinator.cs']]],
+  ['turnsystem_18',['TurnSystem',['../class_turn_system.html',1,'']]],
+  ['turnsystem_2ecs_19',['TurnSystem.cs',['../_turn_system_8cs.html',1,'']]],
+  ['turnsystem_5fonturnchanged_20',['TurnSystem_OnTurnChanged',['../class_enemy_a_i.html#afcb6b82062ba57c0016c2b85e161db41',1,'EnemyAI.TurnSystem_OnTurnChanged()'],['../class_unit.html#a4035fa9d4cf49a5f267901bbbd0cc674',1,'Unit.TurnSystem_OnTurnChanged()'],['../class_turn_system_u_i.html#a31e3952ffbed4cf1823a32cb3b0c4b0e',1,'TurnSystemUI.TurnSystem_OnTurnChanged()'],['../class_unit_action_system_u_i.html#ad8bf68a69aaff5ed8541da8dceb6f536',1,'UnitActionSystemUI.TurnSystem_OnTurnChanged()']]],
+  ['turnsystemui_21',['TurnSystemUI',['../class_turn_system_u_i.html',1,'']]],
+  ['turnsystemui_2ecs_22',['TurnSystemUI.cs',['../_turn_system_u_i_8cs.html',1,'']]]
+];

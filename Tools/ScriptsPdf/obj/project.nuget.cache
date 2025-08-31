@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "pI2aPm7v8Wk=",
+  "success": true,
+  "projectFilePath": "D:\\Unity\\RogueShooter\\RogueShooter\\Tools\\ScriptsPdf\\ScriptsPdf.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\paaja\\.nuget\\packages\\questpdf\\2024.7.0\\questpdf.2024.7.0.nupkg.sha512"
+  ],
+  "logs": []
+}

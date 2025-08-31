@@ -1,0 +1,28 @@
+# Perus
+PROJECT_NAME           = "RogueShooter Code Docs"
+OUTPUT_DIRECTORY       = ./build
+INPUT                  = D:\Unity\RogueShooter\RogueShooter\Assets\Scripts
+RECURSIVE              = YES
+FILE_PATTERNS          = *.cs *.md
+OPTIMIZE_OUTPUT_FOR_CSHARP = YES
+
+# Näytä koko koodi dokumentissa
+EXTRACT_ALL            = YES
+EXTRACT_PRIVATE        = YES
+EXTRACT_STATIC         = YES
+SOURCE_BROWSER         = YES
+INLINE_SOURCES         = YES
+VERBATIM_HEADERS       = YES
+
+# Rakenne & navigaatio
+GENERATE_TREEVIEW      = YES
+USE_MDFILE_AS_MAINPAGE = ../README.md
+
+# PDF ulos
+GENERATE_LATEX         = YES
+LATEX_BATCHMODE        = YES
+
+# (valinnainen, jos haluat kaavioita – vaatii Graphvizin)
+HAVE_DOT               = NO
+CALL_GRAPH             = NO
+CALLER_GRAPH           = NO

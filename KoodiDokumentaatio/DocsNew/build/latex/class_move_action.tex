@@ -1,0 +1,260 @@
+\doxysection{Move\+Action Class Reference}
+\hypertarget{class_move_action}{}\label{class_move_action}\index{MoveAction@{MoveAction}}
+
+
+The \doxylink{class_move_action}{Move\+Action} class is responsible for handling the movement of a unit in the game. It allows the unit to move to a target position, and it calculates valid move grid positions based on the unit\textquotesingle{}s current position.  
+
+
+Inheritance diagram for Move\+Action\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=3.000000cm]{class_move_action}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+override void \mbox{\hyperlink{class_move_action_ad64fd44dd3dcf195dfeaf4ce5a02a33f}{Take\+Action}} (\mbox{\hyperlink{struct_grid_position}{Grid\+Position}} grid\+Position, Action \mbox{\hyperlink{class_base_action_aea9027870bb7315f76f6ebc194ad2eda}{on\+Action\+Complete}})
+\item 
+override List$<$ \mbox{\hyperlink{struct_grid_position}{Grid\+Position}} $>$ \mbox{\hyperlink{class_move_action_af000a3860682e4609d37bd287bc14d86}{Get\+Valid\+Grid\+Position\+List}} ()
+\item 
+override string \mbox{\hyperlink{class_move_action_a2a4bbe1e1e1fce4e375345cf67827d90}{Get\+Action\+Name}} ()
+\end{DoxyCompactItemize}
+\doxysubsection*{Public Member Functions inherited from \mbox{\hyperlink{class_base_action}{Base\+Action}}}
+\begin{DoxyCompactItemize}
+\item 
+string \mbox{\hyperlink{class_base_action_a2d6fa85bf05cac68709a9578acad4b94}{Get\+Action\+Name}} ()
+\item 
+void \mbox{\hyperlink{class_base_action_a302a7e513098704184a28fb8f523569e}{Take\+Action}} (\mbox{\hyperlink{struct_grid_position}{Grid\+Position}} grid\+Position, Action \mbox{\hyperlink{class_base_action_aea9027870bb7315f76f6ebc194ad2eda}{on\+Action\+Complete}})
+\item 
+virtual bool \mbox{\hyperlink{class_base_action_ab306ccf6269e27160855c436dd0cb641}{Is\+Valid\+Grid\+Position}} (\mbox{\hyperlink{struct_grid_position}{Grid\+Position}} grid\+Position)
+\item 
+List$<$ \mbox{\hyperlink{struct_grid_position}{Grid\+Position}} $>$ \mbox{\hyperlink{class_base_action_a8328209505521544f18c0cba00e38a69}{Get\+Valid\+Grid\+Position\+List}} ()
+\item 
+virtual int \mbox{\hyperlink{class_base_action_a20cc796d15b41abbe6ea0da8604692fa}{Get\+Action\+Points\+Cost}} ()
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Protected Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+override void \mbox{\hyperlink{class_move_action_a821930520e8301302c92908cf2de52eb}{Awake}} ()
+\end{DoxyCompactItemize}
+\doxysubsection*{Protected Member Functions inherited from \mbox{\hyperlink{class_base_action}{Base\+Action}}}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{class_base_action_a3820f80b1d1064524d4d5bf0563a1447}{Action\+Start}} (Action \mbox{\hyperlink{class_base_action_aea9027870bb7315f76f6ebc194ad2eda}{on\+Action\+Complete}})
+\item 
+void \mbox{\hyperlink{class_base_action_a3447bafb2a0f3a7b65e48275afcd818e}{Action\+Complete}} ()
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Private Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{class_move_action_a3ac154bc877dc43e272e5cc993ebd47d}{Update}} ()
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+Animator \mbox{\hyperlink{class_move_action_ae2534e7458f3439202b3044b7777c4aa}{unit\+Animator}}
+\item 
+int \mbox{\hyperlink{class_move_action_a06991e324b451c7ac98b8d1437b075e8}{max\+Move\+Distance}} = 4
+\item 
+Vector3 \mbox{\hyperlink{class_move_action_a2dbfdbe2aa282af76a72a8f27c1b2419}{target\+Position}}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Additional Inherited Members}
+\doxysubsection*{Protected Attributes inherited from \mbox{\hyperlink{class_base_action}{Base\+Action}}}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{class_unit}{Unit}} \mbox{\hyperlink{class_base_action_abfd5ebd13630a017e31a4f6cd720dace}{unit}}
+\item 
+bool \mbox{\hyperlink{class_base_action_a6e99c6e9b79dd10395d595916cc0bd72}{is\+Active}}
+\item 
+Action \mbox{\hyperlink{class_base_action_aea9027870bb7315f76f6ebc194ad2eda}{on\+Action\+Complete}}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+The \doxylink{class_move_action}{Move\+Action} class is responsible for handling the movement of a unit in the game. It allows the unit to move to a target position, and it calculates valid move grid positions based on the unit\textquotesingle{}s current position. 
+
+Definition at line \mbox{\hyperlink{_move_action_8cs_source_l00011}{11}} of file \mbox{\hyperlink{_move_action_8cs_source}{Move\+Action.\+cs}}.
+
+
+
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_move_action_a821930520e8301302c92908cf2de52eb}\index{MoveAction@{MoveAction}!Awake@{Awake}}
+\index{Awake@{Awake}!MoveAction@{MoveAction}}
+\doxysubsubsection{\texorpdfstring{Awake()}{Awake()}}
+{\footnotesize\ttfamily \label{class_move_action_a821930520e8301302c92908cf2de52eb} 
+override void Move\+Action.\+Awake (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [protected]}, {\ttfamily [virtual]}}
+
+
+
+Reimplemented from \mbox{\hyperlink{class_base_action_a16d4eba1b197769cc78a275f23bd8c63}{Base\+Action}}.
+
+
+
+Definition at line \mbox{\hyperlink{_move_action_8cs_source_l00017}{17}} of file \mbox{\hyperlink{_move_action_8cs_source}{Move\+Action.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00018\ \ \ \ \ \{}
+\DoxyCodeLine{00019\ \ \ \ \ \ \ \ \ base.Awake();}
+\DoxyCodeLine{00020\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_move_action_a2dbfdbe2aa282af76a72a8f27c1b2419}{targetPosition}}\ =\ transform.position;}
+\DoxyCodeLine{00021\ \ \ \ \ \}}
+
+\end{DoxyCode}
+\Hypertarget{class_move_action_a2a4bbe1e1e1fce4e375345cf67827d90}\index{MoveAction@{MoveAction}!GetActionName@{GetActionName}}
+\index{GetActionName@{GetActionName}!MoveAction@{MoveAction}}
+\doxysubsubsection{\texorpdfstring{GetActionName()}{GetActionName()}}
+{\footnotesize\ttfamily \label{class_move_action_a2a4bbe1e1e1fce4e375345cf67827d90} 
+override string Move\+Action.\+Get\+Action\+Name (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line \mbox{\hyperlink{_move_action_8cs_source_l00090}{90}} of file \mbox{\hyperlink{_move_action_8cs_source}{Move\+Action.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00091\ \ \ \ \ \{}
+\DoxyCodeLine{00092\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{stringliteral}{"{}Move"{}};}
+\DoxyCodeLine{00093\ \ \ \ \ \}}
+
+\end{DoxyCode}
+\Hypertarget{class_move_action_af000a3860682e4609d37bd287bc14d86}\index{MoveAction@{MoveAction}!GetValidGridPositionList@{GetValidGridPositionList}}
+\index{GetValidGridPositionList@{GetValidGridPositionList}!MoveAction@{MoveAction}}
+\doxysubsubsection{\texorpdfstring{GetValidGridPositionList()}{GetValidGridPositionList()}}
+{\footnotesize\ttfamily \label{class_move_action_af000a3860682e4609d37bd287bc14d86} 
+override List$<$ \mbox{\hyperlink{struct_grid_position}{Grid\+Position}} $>$ Move\+Action.\+Get\+Valid\+Grid\+Position\+List (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line \mbox{\hyperlink{_move_action_8cs_source_l00062}{62}} of file \mbox{\hyperlink{_move_action_8cs_source}{Move\+Action.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00063\ \ \ \ \ \{}
+\DoxyCodeLine{00064\ \ \ \ \ \ \ \ \ List<GridPosition>\ validGridPositionList\ =\ \textcolor{keyword}{new}();}
+\DoxyCodeLine{00065\ }
+\DoxyCodeLine{00066\ \ \ \ \ \ \ \ \ GridPosition\ unitGridPosition\ =\ \mbox{\hyperlink{class_base_action_abfd5ebd13630a017e31a4f6cd720dace}{unit}}.GetGridPosition();}
+\DoxyCodeLine{00067\ }
+\DoxyCodeLine{00068\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ x\ =\ -\/\ \mbox{\hyperlink{class_move_action_a06991e324b451c7ac98b8d1437b075e8}{maxMoveDistance}};\ x\ <=\ \mbox{\hyperlink{class_move_action_a06991e324b451c7ac98b8d1437b075e8}{maxMoveDistance}};\ x++)}
+\DoxyCodeLine{00069\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00070\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ z\ =\ -\/\mbox{\hyperlink{class_move_action_a06991e324b451c7ac98b8d1437b075e8}{maxMoveDistance}};\ z\ <=\ \mbox{\hyperlink{class_move_action_a06991e324b451c7ac98b8d1437b075e8}{maxMoveDistance}};\ z++)}
+\DoxyCodeLine{00071\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00072\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ GridPosition\ offsetGridPosition\ =\ \textcolor{keyword}{new}(x,\ z);}
+\DoxyCodeLine{00073\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ GridPosition\ testGridPosition\ =\ unitGridPosition\ +\ offsetGridPosition;}
+\DoxyCodeLine{00074\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00075\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Check\ if\ the\ test\ grid\ position\ is\ within\ the\ valid\ range\ and\ not\ occupied\ by\ another\ unit}}
+\DoxyCodeLine{00076\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}(!LevelGrid.Instance.IsValidGridPosition(testGridPosition)\ ||\ }
+\DoxyCodeLine{00077\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ unitGridPosition\ ==\ testGridPosition\ ||\ }
+\DoxyCodeLine{00078\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ LevelGrid.Instance.HasAnyUnitOnGridPosition(testGridPosition))\ \textcolor{keywordflow}{continue};}
+\DoxyCodeLine{00079\ }
+\DoxyCodeLine{00080\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ validGridPositionList.Add(testGridPosition);}
+\DoxyCodeLine{00081\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Debug.Log(\$"{}Testing\ grid\ position:\ \{testGridPosition\}"{});}}
+\DoxyCodeLine{00082\ }
+\DoxyCodeLine{00083\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00084\ }
+\DoxyCodeLine{00085\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00086\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00087\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ validGridPositionList;}
+\DoxyCodeLine{00088\ \ \ \ \ \}}
+
+\end{DoxyCode}
+\Hypertarget{class_move_action_ad64fd44dd3dcf195dfeaf4ce5a02a33f}\index{MoveAction@{MoveAction}!TakeAction@{TakeAction}}
+\index{TakeAction@{TakeAction}!MoveAction@{MoveAction}}
+\doxysubsubsection{\texorpdfstring{TakeAction()}{TakeAction()}}
+{\footnotesize\ttfamily \label{class_move_action_ad64fd44dd3dcf195dfeaf4ce5a02a33f} 
+override void Move\+Action.\+Take\+Action (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{struct_grid_position}{Grid\+Position}}}]{grid\+Position}{, }\item[{Action}]{on\+Action\+Complete}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line \mbox{\hyperlink{_move_action_8cs_source_l00053}{53}} of file \mbox{\hyperlink{_move_action_8cs_source}{Move\+Action.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00054\ \ \ \ \ \{}
+\DoxyCodeLine{00055\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_base_action_a3820f80b1d1064524d4d5bf0563a1447}{ActionStart}}(\mbox{\hyperlink{class_base_action_aea9027870bb7315f76f6ebc194ad2eda}{onActionComplete}});}
+\DoxyCodeLine{00056\ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00057\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_move_action_a2dbfdbe2aa282af76a72a8f27c1b2419}{targetPosition}}\ =\ LevelGrid.Instance.GetWorldPosition(gridPosition);}
+\DoxyCodeLine{00058\ \ \ \ }
+\DoxyCodeLine{00059\ \ \ \ \ \}}
+
+\end{DoxyCode}
+\Hypertarget{class_move_action_a3ac154bc877dc43e272e5cc993ebd47d}\index{MoveAction@{MoveAction}!Update@{Update}}
+\index{Update@{Update}!MoveAction@{MoveAction}}
+\doxysubsubsection{\texorpdfstring{Update()}{Update()}}
+{\footnotesize\ttfamily \label{class_move_action_a3ac154bc877dc43e272e5cc993ebd47d} 
+void Move\+Action.\+Update (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_move_action_8cs_source_l00023}{23}} of file \mbox{\hyperlink{_move_action_8cs_source}{Move\+Action.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00024\ \ \ \ \ \{}
+\DoxyCodeLine{00025\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}(AuthorityHelper.HasLocalControl(\textcolor{keyword}{this}))\ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{00026\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}(!\mbox{\hyperlink{class_base_action_a6e99c6e9b79dd10395d595916cc0bd72}{isActive}})\ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{00027\ \ \ \ \ \ \ \ \ Vector3\ moveDirection\ =\ (\mbox{\hyperlink{class_move_action_a2dbfdbe2aa282af76a72a8f27c1b2419}{targetPosition}}\ -\/\ transform.position).normalized;}
+\DoxyCodeLine{00028\ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00029\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ stoppingDistance\ =\ 0.2f;}
+\DoxyCodeLine{00030\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (Vector3.Distance(transform.position,\ \mbox{\hyperlink{class_move_action_a2dbfdbe2aa282af76a72a8f27c1b2419}{targetPosition}})\ >\ stoppingDistance)}
+\DoxyCodeLine{00031\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00032\ }
+\DoxyCodeLine{00033\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Move\ towards\ the\ target\ position}}
+\DoxyCodeLine{00034\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Vector3\ moveDirection\ =\ (targetPosition\ -\/\ transform.position).normalized;}}
+\DoxyCodeLine{00035\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ moveSpeed\ =\ 4f;}
+\DoxyCodeLine{00036\ \ \ \ \ \ \ \ \ \ \ \ \ transform.position\ +=\ moveSpeed\ *\ Time.deltaTime\ *\ moveDirection;}
+\DoxyCodeLine{00037\ }
+\DoxyCodeLine{00038\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Rotate\ towards\ the\ target\ position}}
+\DoxyCodeLine{00039\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ rotationSpeed\ =\ 10f;}
+\DoxyCodeLine{00040\ \ \ \ \ \ \ \ \ \ \ \ \ transform.forward\ =\ Vector3.Lerp(transform.forward,\ moveDirection,\ Time.deltaTime\ *\ rotationSpeed);}
+\DoxyCodeLine{00041\ }
+\DoxyCodeLine{00042\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_move_action_ae2534e7458f3439202b3044b7777c4aa}{unitAnimator}}.SetBool(\textcolor{stringliteral}{"{}IsRunning"{}},\ \textcolor{keyword}{true});}
+\DoxyCodeLine{00043\ }
+\DoxyCodeLine{00044\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00045\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00046\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00047\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_move_action_ae2534e7458f3439202b3044b7777c4aa}{unitAnimator}}.SetBool(\textcolor{stringliteral}{"{}IsRunning"{}},\ \textcolor{keyword}{false});}
+\DoxyCodeLine{00048\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_base_action_a3447bafb2a0f3a7b65e48275afcd818e}{ActionComplete}}();}
+\DoxyCodeLine{00049\ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00050\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00051\ \ \ \ \ \}}
+
+\end{DoxyCode}
+
+
+\doxysubsection{Member Data Documentation}
+\Hypertarget{class_move_action_a06991e324b451c7ac98b8d1437b075e8}\index{MoveAction@{MoveAction}!maxMoveDistance@{maxMoveDistance}}
+\index{maxMoveDistance@{maxMoveDistance}!MoveAction@{MoveAction}}
+\doxysubsubsection{\texorpdfstring{maxMoveDistance}{maxMoveDistance}}
+{\footnotesize\ttfamily \label{class_move_action_a06991e324b451c7ac98b8d1437b075e8} 
+int Move\+Action.\+max\+Move\+Distance = 4\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_move_action_8cs_source_l00014}{14}} of file \mbox{\hyperlink{_move_action_8cs_source}{Move\+Action.\+cs}}.
+
+\Hypertarget{class_move_action_a2dbfdbe2aa282af76a72a8f27c1b2419}\index{MoveAction@{MoveAction}!targetPosition@{targetPosition}}
+\index{targetPosition@{targetPosition}!MoveAction@{MoveAction}}
+\doxysubsubsection{\texorpdfstring{targetPosition}{targetPosition}}
+{\footnotesize\ttfamily \label{class_move_action_a2dbfdbe2aa282af76a72a8f27c1b2419} 
+Vector3 Move\+Action.\+target\+Position\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_move_action_8cs_source_l00015}{15}} of file \mbox{\hyperlink{_move_action_8cs_source}{Move\+Action.\+cs}}.
+
+\Hypertarget{class_move_action_ae2534e7458f3439202b3044b7777c4aa}\index{MoveAction@{MoveAction}!unitAnimator@{unitAnimator}}
+\index{unitAnimator@{unitAnimator}!MoveAction@{MoveAction}}
+\doxysubsubsection{\texorpdfstring{unitAnimator}{unitAnimator}}
+{\footnotesize\ttfamily \label{class_move_action_ae2534e7458f3439202b3044b7777c4aa} 
+Animator Move\+Action.\+unit\+Animator\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_move_action_8cs_source_l00013}{13}} of file \mbox{\hyperlink{_move_action_8cs_source}{Move\+Action.\+cs}}.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+D\+:/\+Unity/\+Rogue\+Shooter/\+Rogue\+Shooter/\+Assets/\+Scripts/\+Player\+Units/\+Unit\+Actions/\mbox{\hyperlink{_move_action_8cs}{Move\+Action.\+cs}}\end{DoxyCompactItemize}

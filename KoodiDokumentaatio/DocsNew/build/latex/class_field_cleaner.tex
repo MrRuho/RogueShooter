@@ -1,0 +1,83 @@
+\doxysection{Field\+Cleaner Class Reference}
+\hypertarget{class_field_cleaner}{}\label{class_field_cleaner}\index{FieldCleaner@{FieldCleaner}}
+Inheritance diagram for Field\+Cleaner\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{class_field_cleaner}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+static void \mbox{\hyperlink{class_field_cleaner_a8e9cb4d829d6b6b64009594ae087014d}{Clear\+All}} ()
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Static Private Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+static void \mbox{\hyperlink{class_field_cleaner_aebeddca35bd900a0e1ab13b93da733b3}{Despawn}} (Game\+Object go)
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+
+
+Definition at line \mbox{\hyperlink{_field_cleaner_8cs_source_l00005}{5}} of file \mbox{\hyperlink{_field_cleaner_8cs_source}{Field\+Cleaner.\+cs}}.
+
+
+
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_field_cleaner_a8e9cb4d829d6b6b64009594ae087014d}\index{FieldCleaner@{FieldCleaner}!ClearAll@{ClearAll}}
+\index{ClearAll@{ClearAll}!FieldCleaner@{FieldCleaner}}
+\doxysubsubsection{\texorpdfstring{ClearAll()}{ClearAll()}}
+{\footnotesize\ttfamily \label{class_field_cleaner_a8e9cb4d829d6b6b64009594ae087014d} 
+static void Field\+Cleaner.\+Clear\+All (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+Definition at line \mbox{\hyperlink{_field_cleaner_8cs_source_l00007}{7}} of file \mbox{\hyperlink{_field_cleaner_8cs_source}{Field\+Cleaner.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00008\ \ \ \ \ \{}
+\DoxyCodeLine{00009\ \ \ \ \ }
+\DoxyCodeLine{00010\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Find\ all\ friendly\ and\ enemy\ units\ (also\ inactive,\ just\ in\ case)}}
+\DoxyCodeLine{00011\ \ \ \ \ \ \ \ \ var\ friendlies\ =\ Resources.FindObjectsOfTypeAll<FriendlyUnit>()}
+\DoxyCodeLine{00012\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ .Where(u\ =>\ u\ !=\ \textcolor{keyword}{null}\ \&\&\ u.gameObject.scene.IsValid());}
+\DoxyCodeLine{00013\ \ \ \ \ \ \ \ \ var\ enemies\ \ \ \ =\ Resources.FindObjectsOfTypeAll<EnemyUnit>()}
+\DoxyCodeLine{00014\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ .Where(u\ =>\ u\ !=\ \textcolor{keyword}{null}\ \&\&\ u.gameObject.scene.IsValid());}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{foreach}\ (var\ u\ \textcolor{keywordflow}{in}\ friendlies)\ \mbox{\hyperlink{class_field_cleaner_aebeddca35bd900a0e1ab13b93da733b3}{Despawn}}(u.gameObject);}
+\DoxyCodeLine{00017\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{foreach}\ (var\ e\ \textcolor{keywordflow}{in}\ enemies)\ \ \ \ \mbox{\hyperlink{class_field_cleaner_aebeddca35bd900a0e1ab13b93da733b3}{Despawn}}(e.gameObject);}
+\DoxyCodeLine{00018\ \ \ \ \ \}}
+
+\end{DoxyCode}
+\Hypertarget{class_field_cleaner_aebeddca35bd900a0e1ab13b93da733b3}\index{FieldCleaner@{FieldCleaner}!Despawn@{Despawn}}
+\index{Despawn@{Despawn}!FieldCleaner@{FieldCleaner}}
+\doxysubsubsection{\texorpdfstring{Despawn()}{Despawn()}}
+{\footnotesize\ttfamily \label{class_field_cleaner_aebeddca35bd900a0e1ab13b93da733b3} 
+static void Field\+Cleaner.\+Despawn (\begin{DoxyParamCaption}\item[{Game\+Object}]{go}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}, {\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_field_cleaner_8cs_source_l00020}{20}} of file \mbox{\hyperlink{_field_cleaner_8cs_source}{Field\+Cleaner.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00021\ \ \ \ \ \{}
+\DoxyCodeLine{00022\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ if\ server\ is\ active,\ use\ Mirror's\ destroy;\ otherwise\ normal\ Unity\ Destroy}}
+\DoxyCodeLine{00023\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (NetworkServer.active)}
+\DoxyCodeLine{00024\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00025\ \ \ \ \ \ \ \ \ \ \ \ \ NetworkServer.Destroy(go);}
+\DoxyCodeLine{00026\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00027\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}}
+\DoxyCodeLine{00028\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00029\ \ \ \ \ \ \ \ \ \ \ \ \ Object.Destroy(go);}
+\DoxyCodeLine{00030\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00031\ \ \ \ \ \}}
+
+\end{DoxyCode}
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+D\+:/\+Unity/\+Rogue\+Shooter/\+Rogue\+Shooter/\+Assets/\+Scripts/\mbox{\hyperlink{_field_cleaner_8cs}{Field\+Cleaner.\+cs}}\end{DoxyCompactItemize}

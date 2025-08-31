@@ -1,0 +1,93 @@
+\doxysection{Testing Class Reference}
+\hypertarget{class_testing}{}\label{class_testing}\index{Testing@{Testing}}
+
+
+This class is responsible for testing the grid system and unit actions in the game. It provides functionality to visualize the grid positions and interact with unit actions.  
+
+
+Inheritance diagram for Testing\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{class_testing}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Private Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{class_testing_ac8ae8aee7209f1e9b97efdb1b9ccffbe}{Start}} ()
+\item 
+void \mbox{\hyperlink{class_testing_a2f1c7168fdb819c19bbe59e25ac14983}{Update}} ()
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{class_unit}{Unit}} \mbox{\hyperlink{class_testing_ab15ab8ba52ca1d4d8d2ebc5cccc82664}{unit}}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+This class is responsible for testing the grid system and unit actions in the game. It provides functionality to visualize the grid positions and interact with unit actions. 
+
+Definition at line \mbox{\hyperlink{_testing_8cs_source_l00007}{7}} of file \mbox{\hyperlink{_testing_8cs_source}{Testing.\+cs}}.
+
+
+
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_testing_ac8ae8aee7209f1e9b97efdb1b9ccffbe}\index{Testing@{Testing}!Start@{Start}}
+\index{Start@{Start}!Testing@{Testing}}
+\doxysubsubsection{\texorpdfstring{Start()}{Start()}}
+{\footnotesize\ttfamily \label{class_testing_ac8ae8aee7209f1e9b97efdb1b9ccffbe} 
+void Testing.\+Start (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_testing_8cs_source_l00011}{11}} of file \mbox{\hyperlink{_testing_8cs_source}{Testing.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00012\ \ \ \ \ \{}
+\DoxyCodeLine{00013\ \ \ \ \ \ }
+\DoxyCodeLine{00014\ \ \ \ \ \}}
+
+\end{DoxyCode}
+\Hypertarget{class_testing_a2f1c7168fdb819c19bbe59e25ac14983}\index{Testing@{Testing}!Update@{Update}}
+\index{Update@{Update}!Testing@{Testing}}
+\doxysubsubsection{\texorpdfstring{Update()}{Update()}}
+{\footnotesize\ttfamily \label{class_testing_a2f1c7168fdb819c19bbe59e25ac14983} 
+void Testing.\+Update (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_testing_8cs_source_l00016}{16}} of file \mbox{\hyperlink{_testing_8cs_source}{Testing.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00017\ \ \ \ \ \{}
+\DoxyCodeLine{00018\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (Input.GetKeyDown(KeyCode.T))}
+\DoxyCodeLine{00019\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00020\ \ \ \ \ \ \ \ \ \ \ \ \ GridSystemVisual.Instance.HideAllGridPositions();}
+\DoxyCodeLine{00021\ \ \ \ \ \ \ \ \ \ \ \ \ GridSystemVisual.Instance.ShowGridPositionList(}
+\DoxyCodeLine{00022\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_testing_ab15ab8ba52ca1d4d8d2ebc5cccc82664}{unit}}.GetMoveAction().}
+\DoxyCodeLine{00023\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ GetValidGridPositionList());}
+\DoxyCodeLine{00024\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00025\ \ \ \ \ \}}
+
+\end{DoxyCode}
+
+
+\doxysubsection{Member Data Documentation}
+\Hypertarget{class_testing_ab15ab8ba52ca1d4d8d2ebc5cccc82664}\index{Testing@{Testing}!unit@{unit}}
+\index{unit@{unit}!Testing@{Testing}}
+\doxysubsubsection{\texorpdfstring{unit}{unit}}
+{\footnotesize\ttfamily \label{class_testing_ab15ab8ba52ca1d4d8d2ebc5cccc82664} 
+\mbox{\hyperlink{class_unit}{Unit}} Testing.\+unit\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_testing_8cs_source_l00010}{10}} of file \mbox{\hyperlink{_testing_8cs_source}{Testing.\+cs}}.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+D\+:/\+Unity/\+Rogue\+Shooter/\+Rogue\+Shooter/\+Assets/\+Scripts/\mbox{\hyperlink{_testing_8cs}{Testing.\+cs}}\end{DoxyCompactItemize}

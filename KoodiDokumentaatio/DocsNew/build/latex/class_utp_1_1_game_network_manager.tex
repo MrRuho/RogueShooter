@@ -1,0 +1,658 @@
+\doxysection{Utp.\+Game\+Network\+Manager Class Reference}
+\hypertarget{class_utp_1_1_game_network_manager}{}\label{class_utp_1_1_game_network_manager}\index{Utp.GameNetworkManager@{Utp.GameNetworkManager}}
+Inheritance diagram for Utp.\+Game\+Network\+Manager\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{class_utp_1_1_game_network_manager}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+override void \mbox{\hyperlink{class_utp_1_1_game_network_manager_a3f150882edc267070f854d443e4669c4}{Awake}} ()
+\item 
+override void \mbox{\hyperlink{class_utp_1_1_game_network_manager_a83a812fbaa33ee991e57105f436e6247}{On\+Start\+Server}} ()
+\item 
+ushort \mbox{\hyperlink{class_utp_1_1_game_network_manager_a9c929e80ee2c971d9f8acf578b92a80d}{Get\+Port}} ()
+\begin{DoxyCompactList}\small\item\em Get the port the server is listening on. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{class_utp_1_1_game_network_manager_a161c8dd8c57b6537d267317a20a78cf6}{Is\+Relay\+Enabled}} ()
+\begin{DoxyCompactList}\small\item\em Get whether Relay is enabled or not. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_utp_1_1_game_network_manager_a68a97199de54271b3be64695bd251156}{Start\+Standard\+Server}} ()
+\begin{DoxyCompactList}\small\item\em Ensures Relay is disabled. Starts the server, listening for incoming connections. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_utp_1_1_game_network_manager_a68242d621b5bf1dd460fa21811f74aa9}{Start\+Standard\+Host}} ()
+\begin{DoxyCompactList}\small\item\em Ensures Relay is disabled. Starts a network "{}host"{} -\/ a server and client in the same application. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_utp_1_1_game_network_manager_a81293d7e743d0246a5f1c77f90e84720}{Get\+Relay\+Regions}} (Action$<$ List$<$ Region $>$ $>$ on\+Success, Action on\+Failure)
+\begin{DoxyCompactList}\small\item\em Gets available Relay regions. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_utp_1_1_game_network_manager_aca938a2366a7b98ecebf35f0577867fc}{Start\+Relay\+Host}} (int max\+Players, string region\+Id=null)
+\begin{DoxyCompactList}\small\item\em Ensures Relay is enabled. Starts a network "{}host"{} -\/ a server and client in the same application. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_utp_1_1_game_network_manager_a5e9c1102189935f79d83f2953355da2e}{Join\+Standard\+Server}} ()
+\begin{DoxyCompactList}\small\item\em Ensures Relay is disabled. Starts the client, connects it to the server with network\+Address. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_utp_1_1_game_network_manager_a7805737216c7ca958dd768a56c57c5cd}{Join\+Relay\+Server}} ()
+\begin{DoxyCompactList}\small\item\em Ensures Relay is enabled. Starts the client, connects to the server with the relay\+Join\+Code. \end{DoxyCompactList}\item 
+override void \mbox{\hyperlink{class_utp_1_1_game_network_manager_a2dbc3c032303d37697b8dfe6d041c69d}{On\+Validate}} ()
+\item 
+override void \mbox{\hyperlink{class_utp_1_1_game_network_manager_a437f0978818d82eb29fa9ab51172071f}{On\+Server\+Add\+Player}} (Network\+Connection\+To\+Client conn)
+\begin{DoxyCompactList}\small\item\em Tämä metodi spawnaa jokaiselle clientille oman Unitin ja tekee siitä heidän ohjattavan yksikkönsä. \end{DoxyCompactList}\item 
+override void \mbox{\hyperlink{class_utp_1_1_game_network_manager_a9f68e0fa060e313fe84964d96a26b33c}{On\+Server\+Disconnect}} (Network\+Connection\+To\+Client conn)
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+Game\+Object \mbox{\hyperlink{class_utp_1_1_game_network_manager_ada73898e30f510ceac43b244f7923e77}{unit\+Host\+Prefab}}
+\item 
+Game\+Object \mbox{\hyperlink{class_utp_1_1_game_network_manager_a35051b4fbe7ec84c262ca59015e1effe}{unit\+Client\+Prefab}}
+\item 
+Game\+Object \mbox{\hyperlink{class_utp_1_1_game_network_manager_a9fe452542079c4056cc74aac51a36a04}{enemy\+Prefab}}
+\item 
+Vector3\mbox{[}$\,$\mbox{]} \mbox{\hyperlink{class_utp_1_1_game_network_manager_a3aec177c7824f0307fddcbfca19bd9c8}{host\+Spawn\+Positions}}
+\item 
+Vector3\mbox{[}$\,$\mbox{]} \mbox{\hyperlink{class_utp_1_1_game_network_manager_a885c9695643927d008ab76ea75eafd74}{client\+Spawn\+Positions}}
+\item 
+Vector3\mbox{[}$\,$\mbox{]} \mbox{\hyperlink{class_utp_1_1_game_network_manager_a6e011535f015e855cdb3829790b9dd07}{enemy\+Spawn\+Positions}}
+\item 
+string \mbox{\hyperlink{class_utp_1_1_game_network_manager_aed5cf785240f329fb393ab9035b75188}{relay\+Join\+Code}} = "{}"{}
+\begin{DoxyCompactList}\small\item\em Server\textquotesingle{}s join code if using Relay. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Private Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{class_utp_1_1_game_network_manager_a96c352fb109dd5547c904a77e8e524d1}{Server\+Spawn\+Enemies}} ()
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+bool \mbox{\hyperlink{class_utp_1_1_game_network_manager_a77e71bf4eaf49620fe553a3be714b318}{enemies\+Spawned}}
+\item 
+Utp\+Transport \mbox{\hyperlink{class_utp_1_1_game_network_manager_a55cc86f5a06126e8bbf1243d7114e34d}{utp\+Transport}}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+
+
+Definition at line \mbox{\hyperlink{_game_network_manager_8cs_source_l00011}{11}} of file \mbox{\hyperlink{_game_network_manager_8cs_source}{Game\+Network\+Manager.\+cs}}.
+
+
+
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_utp_1_1_game_network_manager_a3f150882edc267070f854d443e4669c4}\index{Utp.GameNetworkManager@{Utp.GameNetworkManager}!Awake@{Awake}}
+\index{Awake@{Awake}!Utp.GameNetworkManager@{Utp.GameNetworkManager}}
+\doxysubsubsection{\texorpdfstring{Awake()}{Awake()}}
+{\footnotesize\ttfamily \label{class_utp_1_1_game_network_manager_a3f150882edc267070f854d443e4669c4} 
+override void Utp.\+Game\+Network\+Manager.\+Awake (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line \mbox{\hyperlink{_game_network_manager_8cs_source_l00045}{45}} of file \mbox{\hyperlink{_game_network_manager_8cs_source}{Game\+Network\+Manager.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00046\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00047\ \ \ \ \ \ \ \ \ \ \ \ \ base.Awake();}
+\DoxyCodeLine{00048\ }
+\DoxyCodeLine{00049\ \ \ \ \ \ \ \ \ \ \ \ \ utpTransport\ =\ GetComponent<UtpTransport>();}
+\DoxyCodeLine{00050\ }
+\DoxyCodeLine{00051\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{string}[]\ args\ =\ System.Environment.GetCommandLineArgs();}
+\DoxyCodeLine{00052\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ key\ =\ 0;\ key\ <\ args.Length;\ key++)}
+\DoxyCodeLine{00053\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00054\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (args[key]\ ==\ \textcolor{stringliteral}{"{}-\/port"{}})}
+\DoxyCodeLine{00055\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00056\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (key\ +\ 1\ <\ args.Length)}
+\DoxyCodeLine{00057\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00058\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{string}\ value\ =\ args[key\ +\ 1];}
+\DoxyCodeLine{00059\ }
+\DoxyCodeLine{00060\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{try}}
+\DoxyCodeLine{00061\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00062\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ utpTransport.Port\ =\ ushort.Parse(value);}
+\DoxyCodeLine{00063\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00064\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{catch}}
+\DoxyCodeLine{00065\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00066\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ UtpLog.Warning(\$\textcolor{stringliteral}{"{}Unable\ to\ parse\ \{value\}\ into\ transport\ Port"{}});}
+\DoxyCodeLine{00067\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00068\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00069\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00070\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00071\ \ \ \ \ \ \ \ \ \}}
+
+\end{DoxyCode}
+\Hypertarget{class_utp_1_1_game_network_manager_a9c929e80ee2c971d9f8acf578b92a80d}\index{Utp.GameNetworkManager@{Utp.GameNetworkManager}!GetPort@{GetPort}}
+\index{GetPort@{GetPort}!Utp.GameNetworkManager@{Utp.GameNetworkManager}}
+\doxysubsubsection{\texorpdfstring{GetPort()}{GetPort()}}
+{\footnotesize\ttfamily \label{class_utp_1_1_game_network_manager_a9c929e80ee2c971d9f8acf578b92a80d} 
+ushort Utp.\+Game\+Network\+Manager.\+Get\+Port (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get the port the server is listening on. 
+
+\begin{DoxyReturn}{Returns}
+The port.
+\end{DoxyReturn}
+
+
+Definition at line \mbox{\hyperlink{_game_network_manager_8cs_source_l00089}{89}} of file \mbox{\hyperlink{_game_network_manager_8cs_source}{Game\+Network\+Manager.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00090\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00091\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ utpTransport.Port;}
+\DoxyCodeLine{00092\ \ \ \ \ \ \ \ \ \}}
+
+\end{DoxyCode}
+\Hypertarget{class_utp_1_1_game_network_manager_a81293d7e743d0246a5f1c77f90e84720}\index{Utp.GameNetworkManager@{Utp.GameNetworkManager}!GetRelayRegions@{GetRelayRegions}}
+\index{GetRelayRegions@{GetRelayRegions}!Utp.GameNetworkManager@{Utp.GameNetworkManager}}
+\doxysubsubsection{\texorpdfstring{GetRelayRegions()}{GetRelayRegions()}}
+{\footnotesize\ttfamily \label{class_utp_1_1_game_network_manager_a81293d7e743d0246a5f1c77f90e84720} 
+void Utp.\+Game\+Network\+Manager.\+Get\+Relay\+Regions (\begin{DoxyParamCaption}\item[{Action$<$ List$<$ Region $>$ $>$}]{on\+Success}{, }\item[{Action}]{on\+Failure}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Gets available Relay regions. 
+
+
+
+Definition at line \mbox{\hyperlink{_game_network_manager_8cs_source_l00135}{135}} of file \mbox{\hyperlink{_game_network_manager_8cs_source}{Game\+Network\+Manager.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00136\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00137\ \ \ \ \ \ \ \ \ \ \ \ \ utpTransport.GetRelayRegions(onSuccess,\ onFailure);}
+\DoxyCodeLine{00138\ \ \ \ \ \ \ \ \ \}}
+
+\end{DoxyCode}
+\Hypertarget{class_utp_1_1_game_network_manager_a161c8dd8c57b6537d267317a20a78cf6}\index{Utp.GameNetworkManager@{Utp.GameNetworkManager}!IsRelayEnabled@{IsRelayEnabled}}
+\index{IsRelayEnabled@{IsRelayEnabled}!Utp.GameNetworkManager@{Utp.GameNetworkManager}}
+\doxysubsubsection{\texorpdfstring{IsRelayEnabled()}{IsRelayEnabled()}}
+{\footnotesize\ttfamily \label{class_utp_1_1_game_network_manager_a161c8dd8c57b6537d267317a20a78cf6} 
+bool Utp.\+Game\+Network\+Manager.\+Is\+Relay\+Enabled (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Get whether Relay is enabled or not. 
+
+\begin{DoxyReturn}{Returns}
+True if enabled, false otherwise.
+\end{DoxyReturn}
+
+
+Definition at line \mbox{\hyperlink{_game_network_manager_8cs_source_l00098}{98}} of file \mbox{\hyperlink{_game_network_manager_8cs_source}{Game\+Network\+Manager.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00099\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00100\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ utpTransport.useRelay;}
+\DoxyCodeLine{00101\ \ \ \ \ \ \ \ \ \}}
+
+\end{DoxyCode}
+\Hypertarget{class_utp_1_1_game_network_manager_a7805737216c7ca958dd768a56c57c5cd}\index{Utp.GameNetworkManager@{Utp.GameNetworkManager}!JoinRelayServer@{JoinRelayServer}}
+\index{JoinRelayServer@{JoinRelayServer}!Utp.GameNetworkManager@{Utp.GameNetworkManager}}
+\doxysubsubsection{\texorpdfstring{JoinRelayServer()}{JoinRelayServer()}}
+{\footnotesize\ttfamily \label{class_utp_1_1_game_network_manager_a7805737216c7ca958dd768a56c57c5cd} 
+void Utp.\+Game\+Network\+Manager.\+Join\+Relay\+Server (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Ensures Relay is enabled. Starts the client, connects to the server with the relay\+Join\+Code. 
+
+
+
+Definition at line \mbox{\hyperlink{_game_network_manager_8cs_source_l00191}{191}} of file \mbox{\hyperlink{_game_network_manager_8cs_source}{Game\+Network\+Manager.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00192\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00193\ \ \ \ \ \ \ \ \ \ \ \ \ utpTransport.useRelay\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00194\ \ \ \ \ \ \ \ \ \ \ \ \ utpTransport.ConfigureClientWithJoinCode(relayJoinCode,}
+\DoxyCodeLine{00195\ \ \ \ \ \ \ \ \ \ \ \ \ ()\ =>}
+\DoxyCodeLine{00196\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00197\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ StartClient();}
+\DoxyCodeLine{00198\ \ \ \ \ \ \ \ \ \ \ \ \ \},}
+\DoxyCodeLine{00199\ \ \ \ \ \ \ \ \ \ \ \ \ ()\ =>}
+\DoxyCodeLine{00200\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00201\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ UtpLog.Error(\$\textcolor{stringliteral}{"{}Failed\ to\ join\ Relay\ server."{}});}
+\DoxyCodeLine{00202\ \ \ \ \ \ \ \ \ \ \ \ \ \});}
+\DoxyCodeLine{00203\ \ \ \ \ \ \ \ \ \}}
+
+\end{DoxyCode}
+\Hypertarget{class_utp_1_1_game_network_manager_a5e9c1102189935f79d83f2953355da2e}\index{Utp.GameNetworkManager@{Utp.GameNetworkManager}!JoinStandardServer@{JoinStandardServer}}
+\index{JoinStandardServer@{JoinStandardServer}!Utp.GameNetworkManager@{Utp.GameNetworkManager}}
+\doxysubsubsection{\texorpdfstring{JoinStandardServer()}{JoinStandardServer()}}
+{\footnotesize\ttfamily \label{class_utp_1_1_game_network_manager_a5e9c1102189935f79d83f2953355da2e} 
+void Utp.\+Game\+Network\+Manager.\+Join\+Standard\+Server (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Ensures Relay is disabled. Starts the client, connects it to the server with network\+Address. 
+
+
+
+Definition at line \mbox{\hyperlink{_game_network_manager_8cs_source_l00182}{182}} of file \mbox{\hyperlink{_game_network_manager_8cs_source}{Game\+Network\+Manager.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00183\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00184\ \ \ \ \ \ \ \ \ \ \ \ \ utpTransport.useRelay\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00185\ \ \ \ \ \ \ \ \ \ \ \ \ StartClient();}
+\DoxyCodeLine{00186\ \ \ \ \ \ \ \ \ \}}
+
+\end{DoxyCode}
+\Hypertarget{class_utp_1_1_game_network_manager_a437f0978818d82eb29fa9ab51172071f}\index{Utp.GameNetworkManager@{Utp.GameNetworkManager}!OnServerAddPlayer@{OnServerAddPlayer}}
+\index{OnServerAddPlayer@{OnServerAddPlayer}!Utp.GameNetworkManager@{Utp.GameNetworkManager}}
+\doxysubsubsection{\texorpdfstring{OnServerAddPlayer()}{OnServerAddPlayer()}}
+{\footnotesize\ttfamily \label{class_utp_1_1_game_network_manager_a437f0978818d82eb29fa9ab51172071f} 
+override void Utp.\+Game\+Network\+Manager.\+On\+Server\+Add\+Player (\begin{DoxyParamCaption}\item[{Network\+Connection\+To\+Client}]{conn}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Tämä metodi spawnaa jokaiselle clientille oman Unitin ja tekee siitä heidän ohjattavan yksikkönsä. 
+
+
+
+Definition at line \mbox{\hyperlink{_game_network_manager_8cs_source_l00215}{215}} of file \mbox{\hyperlink{_game_network_manager_8cs_source}{Game\+Network\+Manager.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00216\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00217\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00218\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ Transform\ startPos\ =\ GetStartPosition();\ //\ Spawn\ position\ (valinnainen) }}
+\DoxyCodeLine{00219\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ Vector3\ spawnPosition\ =\ startPos\ !=\ null\ ?\ startPos.position\ :\ Vector3.zero; }}
+\DoxyCodeLine{00220\ \textcolor{comment}{}}
+\DoxyCodeLine{00221\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ GameObject\ player\ =\ Instantiate(playerPrefab,\ spawnPosition,\ Quaternion.identity); }}
+\DoxyCodeLine{00222\ \textcolor{comment}{}}
+\DoxyCodeLine{00223\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ NetworkServer.AddPlayerForConnection(conn,\ player);\ //\ antaa\ authorityn\ clientille }}
+\DoxyCodeLine{00224\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00225\ }
+\DoxyCodeLine{00226\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ 1)\ Luo\ Mirrorin\ "{}player\ object"{}\ (EmptySquad)\ playerPrefab-\/slotista:}}
+\DoxyCodeLine{00227\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ 1)\ luo\ player-\/object\ (EmptySquad)}}
+\DoxyCodeLine{00228\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (playerPrefab\ ==\ \textcolor{keyword}{null})}
+\DoxyCodeLine{00229\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00230\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Debug.LogError(\textcolor{stringliteral}{"{}[NM]\ Player\ Prefab\ (EmptySquad)\ puuttuu!"{}});}
+\DoxyCodeLine{00231\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{00232\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00233\ \ \ \ \ \ \ \ \ \ \ \ \ base.OnServerAddPlayer(conn);}
+\DoxyCodeLine{00234\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00235\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ 2)\ päätä\ host\ vs\ client}}
+\DoxyCodeLine{00236\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ isHost\ =\ conn.connectionId\ ==\ 0;}
+\DoxyCodeLine{00237\ }
+\DoxyCodeLine{00238\ \ \ \ \ \ \ \ \ \ \ \ \ GameObject\ unitPrefab\ =\ isHost\ ?\ unitHostPrefab\ :\ unitClientPrefab;}
+\DoxyCodeLine{00239\ \ \ \ \ \ \ \ \ \ \ \ \ Vector3[]\ spawnPoints\ =\ isHost\ ?\ hostSpawnPositions\ :\ clientSpawnPositions;}
+\DoxyCodeLine{00240\ }
+\DoxyCodeLine{00241\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (unitPrefab\ ==\ \textcolor{keyword}{null})}
+\DoxyCodeLine{00242\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00243\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Debug.LogError(\$\textcolor{stringliteral}{"{}[NM]\ \{(isHost\ ?\ "{}}unitHostPrefab\textcolor{stringliteral}{"{}\ :\ "{}}unitClientPrefab\textcolor{stringliteral}{"{})\}\ puuttuu!"{}});}
+\DoxyCodeLine{00244\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{00245\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00246\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (spawnPoints\ ==\ \textcolor{keyword}{null}\ ||\ spawnPoints.Length\ ==\ 0)}
+\DoxyCodeLine{00247\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00248\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Debug.LogError(\$\textcolor{stringliteral}{"{}[NM]\ \{(isHost\ ?\ "{}}hostSpawnPositions\textcolor{stringliteral}{"{}\ :\ "{}}clientSpawnPositions\textcolor{stringliteral}{"{})\}\ ei\ ole\ asetettu!"{}});}
+\DoxyCodeLine{00249\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{00250\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00251\ }
+\DoxyCodeLine{00252\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{foreach}\ (var\ pos\ \textcolor{keywordflow}{in}\ spawnPoints)}
+\DoxyCodeLine{00253\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00254\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ var\ go\ =\ Instantiate(unitPrefab,\ pos,\ Quaternion.identity);}
+\DoxyCodeLine{00255\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ NetworkServer.Spawn(go,\ conn);\ \textcolor{comment}{//\ authority\ tälle\ pelaajalle}}
+\DoxyCodeLine{00256\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00257\ }
+\DoxyCodeLine{00258\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (GameModeManager.SelectedMode\ ==\ \mbox{\hyperlink{_game_mode_manager_8cs_aaf5ef5a17b53e9997c837b07015589de}{GameMode}}.CoOp\ \&\&\ !enemiesSpawned)}
+\DoxyCodeLine{00259\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00260\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Debug.Log(\textcolor{stringliteral}{"{}Spawning\ enemies\ for\ Co-\/op."{}});}
+\DoxyCodeLine{00261\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ServerSpawnEnemies();}
+\DoxyCodeLine{00262\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00263\ \ \ \ \ \ \ \ \ \ \ \ \ var\ coord\ =\ CoopTurnCoordinator.Instance;}
+\DoxyCodeLine{00264\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (coord\ !=\ \textcolor{keyword}{null})}
+\DoxyCodeLine{00265\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ coord.ServerUpdateRequiredCount(NetworkServer.connections.Count);}
+\DoxyCodeLine{00266\ }
+\DoxyCodeLine{00267\ \ \ \ \ \ \ \ \ \}}
+
+\end{DoxyCode}
+\Hypertarget{class_utp_1_1_game_network_manager_a9f68e0fa060e313fe84964d96a26b33c}\index{Utp.GameNetworkManager@{Utp.GameNetworkManager}!OnServerDisconnect@{OnServerDisconnect}}
+\index{OnServerDisconnect@{OnServerDisconnect}!Utp.GameNetworkManager@{Utp.GameNetworkManager}}
+\doxysubsubsection{\texorpdfstring{OnServerDisconnect()}{OnServerDisconnect()}}
+{\footnotesize\ttfamily \label{class_utp_1_1_game_network_manager_a9f68e0fa060e313fe84964d96a26b33c} 
+override void Utp.\+Game\+Network\+Manager.\+On\+Server\+Disconnect (\begin{DoxyParamCaption}\item[{Network\+Connection\+To\+Client}]{conn}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line \mbox{\hyperlink{_game_network_manager_8cs_source_l00289}{289}} of file \mbox{\hyperlink{_game_network_manager_8cs_source}{Game\+Network\+Manager.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00290\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00291\ \ \ \ \ \ \ \ \ \ \ \ \ base.OnServerDisconnect(conn);}
+\DoxyCodeLine{00292\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ päivitä\ pelaajamäärä\ koordinaattorille}}
+\DoxyCodeLine{00293\ \ \ \ \ \ \ \ \ \ \ \ \ var\ coord\ =\ CoopTurnCoordinator.Instance;}
+\DoxyCodeLine{00294\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (coord\ !=\ \textcolor{keyword}{null})}
+\DoxyCodeLine{00295\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ coord.ServerUpdateRequiredCount(NetworkServer.connections.Count);}
+\DoxyCodeLine{00296\ \ \ \ \ \ \ \ \ \}}
+
+\end{DoxyCode}
+\Hypertarget{class_utp_1_1_game_network_manager_a83a812fbaa33ee991e57105f436e6247}\index{Utp.GameNetworkManager@{Utp.GameNetworkManager}!OnStartServer@{OnStartServer}}
+\index{OnStartServer@{OnStartServer}!Utp.GameNetworkManager@{Utp.GameNetworkManager}}
+\doxysubsubsection{\texorpdfstring{OnStartServer()}{OnStartServer()}}
+{\footnotesize\ttfamily \label{class_utp_1_1_game_network_manager_a83a812fbaa33ee991e57105f436e6247} 
+override void Utp.\+Game\+Network\+Manager.\+On\+Start\+Server (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line \mbox{\hyperlink{_game_network_manager_8cs_source_l00073}{73}} of file \mbox{\hyperlink{_game_network_manager_8cs_source}{Game\+Network\+Manager.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00074\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00075\ \ \ \ \ \ \ \ \ \ \ \ \ base.OnStartServer();}
+\DoxyCodeLine{00076\ \ \ \ \ \ \ \ \ \ \ \ \ enemiesSpawned\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00077\ \ \ \ \ \ \ \ \ \ \ \ \ Debug.Log(\textcolor{stringliteral}{"{}[NM]\ OnStartServer()\ called.\ Mode="{}}\ +\ GameModeManager.SelectedMode);}
+\DoxyCodeLine{00078\ }
+\DoxyCodeLine{00079\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (GameModeManager.SelectedMode\ ==\ \mbox{\hyperlink{_game_mode_manager_8cs_aaf5ef5a17b53e9997c837b07015589de}{GameMode}}.CoOp)}
+\DoxyCodeLine{00080\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00081\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ServerSpawnEnemies();}
+\DoxyCodeLine{00082\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00083\ \ \ \ \ \ \ \ \ \}}
+
+\end{DoxyCode}
+\Hypertarget{class_utp_1_1_game_network_manager_a2dbc3c032303d37697b8dfe6d041c69d}\index{Utp.GameNetworkManager@{Utp.GameNetworkManager}!OnValidate@{OnValidate}}
+\index{OnValidate@{OnValidate}!Utp.GameNetworkManager@{Utp.GameNetworkManager}}
+\doxysubsubsection{\texorpdfstring{OnValidate()}{OnValidate()}}
+{\footnotesize\ttfamily \label{class_utp_1_1_game_network_manager_a2dbc3c032303d37697b8dfe6d041c69d} 
+override void Utp.\+Game\+Network\+Manager.\+On\+Validate (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Definition at line \mbox{\hyperlink{_game_network_manager_8cs_source_l00205}{205}} of file \mbox{\hyperlink{_game_network_manager_8cs_source}{Game\+Network\+Manager.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00206\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00207\ \ \ \ \ \ \ \ \ \ \ \ \ base.OnValidate();}
+\DoxyCodeLine{00208\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (utpTransport\ ==\ \textcolor{keyword}{null})}
+\DoxyCodeLine{00209\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ utpTransport\ =\ GetComponent<UtpTransport>();}
+\DoxyCodeLine{00210\ \ \ \ \ \ \ \ \ \}}
+
+\end{DoxyCode}
+\Hypertarget{class_utp_1_1_game_network_manager_a96c352fb109dd5547c904a77e8e524d1}\index{Utp.GameNetworkManager@{Utp.GameNetworkManager}!ServerSpawnEnemies@{ServerSpawnEnemies}}
+\index{ServerSpawnEnemies@{ServerSpawnEnemies}!Utp.GameNetworkManager@{Utp.GameNetworkManager}}
+\doxysubsubsection{\texorpdfstring{ServerSpawnEnemies()}{ServerSpawnEnemies()}}
+{\footnotesize\ttfamily \label{class_utp_1_1_game_network_manager_a96c352fb109dd5547c904a77e8e524d1} 
+void Utp.\+Game\+Network\+Manager.\+Server\+Spawn\+Enemies (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_game_network_manager_8cs_source_l00270}{270}} of file \mbox{\hyperlink{_game_network_manager_8cs_source}{Game\+Network\+Manager.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00271\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00272\ \ \ \ \ \ \ \ \ \ \ \ \ Debug.Log(\textcolor{stringliteral}{"{}[NM]\ ServerSpawnEnemies()\ called."{}});}
+\DoxyCodeLine{00273\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!enemyPrefab\ ||\ enemySpawnPositions\ ==\ \textcolor{keyword}{null}\ ||\ enemySpawnPositions.Length\ ==\ 0)}
+\DoxyCodeLine{00274\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00275\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Debug.LogWarning(\textcolor{stringliteral}{"{}[NM]\ EnemyPrefab/positions\ puuttuu"{}});}
+\DoxyCodeLine{00276\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{00277\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00278\ }
+\DoxyCodeLine{00279\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{foreach}\ (var\ pos\ \textcolor{keywordflow}{in}\ enemySpawnPositions)}
+\DoxyCodeLine{00280\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00281\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ var\ e\ =\ Instantiate(enemyPrefab,\ pos,\ Quaternion.identity);}
+\DoxyCodeLine{00282\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ NetworkServer.Spawn(e);}
+\DoxyCodeLine{00283\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Debug.Log(\textcolor{stringliteral}{"{}Enemy\ spawned\ at\ "{}}\ +\ pos);}
+\DoxyCodeLine{00284\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00285\ }
+\DoxyCodeLine{00286\ \ \ \ \ \ \ \ \ \ \ \ \ enemiesSpawned\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00287\ \ \ \ \ \ \ \ \ \}}
+
+\end{DoxyCode}
+\Hypertarget{class_utp_1_1_game_network_manager_aca938a2366a7b98ecebf35f0577867fc}\index{Utp.GameNetworkManager@{Utp.GameNetworkManager}!StartRelayHost@{StartRelayHost}}
+\index{StartRelayHost@{StartRelayHost}!Utp.GameNetworkManager@{Utp.GameNetworkManager}}
+\doxysubsubsection{\texorpdfstring{StartRelayHost()}{StartRelayHost()}}
+{\footnotesize\ttfamily \label{class_utp_1_1_game_network_manager_aca938a2366a7b98ecebf35f0577867fc} 
+void Utp.\+Game\+Network\+Manager.\+Start\+Relay\+Host (\begin{DoxyParamCaption}\item[{int}]{max\+Players}{, }\item[{string}]{region\+Id}{ = {\ttfamily null}}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Ensures Relay is enabled. Starts a network "{}host"{} -\/ a server and client in the same application. 
+
+
+
+Definition at line \mbox{\hyperlink{_game_network_manager_8cs_source_l00143}{143}} of file \mbox{\hyperlink{_game_network_manager_8cs_source}{Game\+Network\+Manager.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00144\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00145\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (utpTransport\ ==\ \textcolor{keyword}{null})}
+\DoxyCodeLine{00146\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00147\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ utpTransport\ =\ GetComponent<UtpTransport>();}
+\DoxyCodeLine{00148\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (utpTransport\ ==\ \textcolor{keyword}{null})}
+\DoxyCodeLine{00149\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00150\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Debug.LogError(\textcolor{stringliteral}{"{}[NM]\ UtpTransport\ puuttuu\ samalta\ GameObjectilta!"{}});}
+\DoxyCodeLine{00151\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{00152\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00153\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00154\ }
+\DoxyCodeLine{00155\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (utpTransport\ ==\ \textcolor{keyword}{null})}
+\DoxyCodeLine{00156\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00157\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ utpTransport\ =\ GetComponent<UtpTransport>();}
+\DoxyCodeLine{00158\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (utpTransport\ ==\ \textcolor{keyword}{null})}
+\DoxyCodeLine{00159\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00160\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Debug.LogError(\textcolor{stringliteral}{"{}[NM]\ UtpTransport\ puuttuu\ samalta\ GameObjectilta!"{}});}
+\DoxyCodeLine{00161\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{00162\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00163\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00164\ }
+\DoxyCodeLine{00165\ \ \ \ \ \ \ \ \ \ \ \ \ utpTransport.useRelay\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00166\ \ \ \ \ \ \ \ \ \ \ \ \ utpTransport.AllocateRelayServer(maxPlayers,\ regionId,}
+\DoxyCodeLine{00167\ \ \ \ \ \ \ \ \ \ \ \ \ (\textcolor{keywordtype}{string}\ joinCode)\ =>}
+\DoxyCodeLine{00168\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00169\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ relayJoinCode\ =\ joinCode;}
+\DoxyCodeLine{00170\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Debug.LogError(\$\textcolor{stringliteral}{"{}Relay\ join\ code:\ \{joinCode\}"{}});}
+\DoxyCodeLine{00171\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ StartHost();}
+\DoxyCodeLine{00172\ \ \ \ \ \ \ \ \ \ \ \ \ \},}
+\DoxyCodeLine{00173\ \ \ \ \ \ \ \ \ \ \ \ \ ()\ =>}
+\DoxyCodeLine{00174\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00175\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ UtpLog.Error(\$\textcolor{stringliteral}{"{}Failed\ to\ start\ a\ Relay\ host."{}});}
+\DoxyCodeLine{00176\ \ \ \ \ \ \ \ \ \ \ \ \ \});}
+\DoxyCodeLine{00177\ \ \ \ \ \ \ \ \ \}}
+
+\end{DoxyCode}
+\Hypertarget{class_utp_1_1_game_network_manager_a68242d621b5bf1dd460fa21811f74aa9}\index{Utp.GameNetworkManager@{Utp.GameNetworkManager}!StartStandardHost@{StartStandardHost}}
+\index{StartStandardHost@{StartStandardHost}!Utp.GameNetworkManager@{Utp.GameNetworkManager}}
+\doxysubsubsection{\texorpdfstring{StartStandardHost()}{StartStandardHost()}}
+{\footnotesize\ttfamily \label{class_utp_1_1_game_network_manager_a68242d621b5bf1dd460fa21811f74aa9} 
+void Utp.\+Game\+Network\+Manager.\+Start\+Standard\+Host (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Ensures Relay is disabled. Starts a network "{}host"{} -\/ a server and client in the same application. 
+
+
+
+Definition at line \mbox{\hyperlink{_game_network_manager_8cs_source_l00115}{115}} of file \mbox{\hyperlink{_game_network_manager_8cs_source}{Game\+Network\+Manager.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00116\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00117\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (utpTransport\ ==\ \textcolor{keyword}{null})}
+\DoxyCodeLine{00118\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00119\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ utpTransport\ =\ GetComponent<UtpTransport>();}
+\DoxyCodeLine{00120\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (utpTransport\ ==\ \textcolor{keyword}{null})}
+\DoxyCodeLine{00121\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00122\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Debug.LogError(\textcolor{stringliteral}{"{}[NM]\ UtpTransport\ puuttuu\ samalta\ GameObjectilta!"{}});}
+\DoxyCodeLine{00123\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{00124\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00125\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00126\ }
+\DoxyCodeLine{00127\ \ \ \ \ \ \ \ \ \ \ \ \ utpTransport.useRelay\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00128\ \ \ \ \ \ \ \ \ \ \ \ \ StartHost();}
+\DoxyCodeLine{00129\ \ \ \ \ \ \ \ \ \}}
+
+\end{DoxyCode}
+\Hypertarget{class_utp_1_1_game_network_manager_a68a97199de54271b3be64695bd251156}\index{Utp.GameNetworkManager@{Utp.GameNetworkManager}!StartStandardServer@{StartStandardServer}}
+\index{StartStandardServer@{StartStandardServer}!Utp.GameNetworkManager@{Utp.GameNetworkManager}}
+\doxysubsubsection{\texorpdfstring{StartStandardServer()}{StartStandardServer()}}
+{\footnotesize\ttfamily \label{class_utp_1_1_game_network_manager_a68a97199de54271b3be64695bd251156} 
+void Utp.\+Game\+Network\+Manager.\+Start\+Standard\+Server (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Ensures Relay is disabled. Starts the server, listening for incoming connections. 
+
+
+
+Definition at line \mbox{\hyperlink{_game_network_manager_8cs_source_l00106}{106}} of file \mbox{\hyperlink{_game_network_manager_8cs_source}{Game\+Network\+Manager.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00107\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00108\ \ \ \ \ \ \ \ \ \ \ \ \ utpTransport.useRelay\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00109\ \ \ \ \ \ \ \ \ \ \ \ \ StartServer();}
+\DoxyCodeLine{00110\ \ \ \ \ \ \ \ \ \}}
+
+\end{DoxyCode}
+
+
+\doxysubsection{Member Data Documentation}
+\Hypertarget{class_utp_1_1_game_network_manager_a885c9695643927d008ab76ea75eafd74}\index{Utp.GameNetworkManager@{Utp.GameNetworkManager}!clientSpawnPositions@{clientSpawnPositions}}
+\index{clientSpawnPositions@{clientSpawnPositions}!Utp.GameNetworkManager@{Utp.GameNetworkManager}}
+\doxysubsubsection{\texorpdfstring{clientSpawnPositions}{clientSpawnPositions}}
+{\footnotesize\ttfamily \label{class_utp_1_1_game_network_manager_a885c9695643927d008ab76ea75eafd74} 
+Vector3 \mbox{[}$\,$\mbox{]} Utp.\+Game\+Network\+Manager.\+client\+Spawn\+Positions}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{=\ \{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{new}\ Vector3(0,\ 0,\ 6),}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{new}\ Vector3(2,\ 0,\ 6),}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \}}
+
+\end{DoxyCode}
+
+
+Definition at line \mbox{\hyperlink{_game_network_manager_8cs_source_l00028}{28}} of file \mbox{\hyperlink{_game_network_manager_8cs_source}{Game\+Network\+Manager.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00028\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00029\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{new}\ Vector3(0,\ 0,\ 6),}
+\DoxyCodeLine{00030\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{new}\ Vector3(2,\ 0,\ 6),}
+\DoxyCodeLine{00031\ \ \ \ \ \ \ \ \ \};}
+
+\end{DoxyCode}
+\Hypertarget{class_utp_1_1_game_network_manager_a77e71bf4eaf49620fe553a3be714b318}\index{Utp.GameNetworkManager@{Utp.GameNetworkManager}!enemiesSpawned@{enemiesSpawned}}
+\index{enemiesSpawned@{enemiesSpawned}!Utp.GameNetworkManager@{Utp.GameNetworkManager}}
+\doxysubsubsection{\texorpdfstring{enemiesSpawned}{enemiesSpawned}}
+{\footnotesize\ttfamily \label{class_utp_1_1_game_network_manager_a77e71bf4eaf49620fe553a3be714b318} 
+bool Utp.\+Game\+Network\+Manager.\+enemies\+Spawned\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_game_network_manager_8cs_source_l00013}{13}} of file \mbox{\hyperlink{_game_network_manager_8cs_source}{Game\+Network\+Manager.\+cs}}.
+
+\Hypertarget{class_utp_1_1_game_network_manager_a9fe452542079c4056cc74aac51a36a04}\index{Utp.GameNetworkManager@{Utp.GameNetworkManager}!enemyPrefab@{enemyPrefab}}
+\index{enemyPrefab@{enemyPrefab}!Utp.GameNetworkManager@{Utp.GameNetworkManager}}
+\doxysubsubsection{\texorpdfstring{enemyPrefab}{enemyPrefab}}
+{\footnotesize\ttfamily \label{class_utp_1_1_game_network_manager_a9fe452542079c4056cc74aac51a36a04} 
+Game\+Object Utp.\+Game\+Network\+Manager.\+enemy\+Prefab}
+
+
+
+Definition at line \mbox{\hyperlink{_game_network_manager_8cs_source_l00021}{21}} of file \mbox{\hyperlink{_game_network_manager_8cs_source}{Game\+Network\+Manager.\+cs}}.
+
+\Hypertarget{class_utp_1_1_game_network_manager_a6e011535f015e855cdb3829790b9dd07}\index{Utp.GameNetworkManager@{Utp.GameNetworkManager}!enemySpawnPositions@{enemySpawnPositions}}
+\index{enemySpawnPositions@{enemySpawnPositions}!Utp.GameNetworkManager@{Utp.GameNetworkManager}}
+\doxysubsubsection{\texorpdfstring{enemySpawnPositions}{enemySpawnPositions}}
+{\footnotesize\ttfamily \label{class_utp_1_1_game_network_manager_a6e011535f015e855cdb3829790b9dd07} 
+Vector3 \mbox{[}$\,$\mbox{]} Utp.\+Game\+Network\+Manager.\+enemy\+Spawn\+Positions}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{=\ \{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{new}\ Vector3(4,\ 0,\ 8),}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{new}\ Vector3(6,\ 0,\ 8),}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \}}
+
+\end{DoxyCode}
+
+
+Definition at line \mbox{\hyperlink{_game_network_manager_8cs_source_l00032}{32}} of file \mbox{\hyperlink{_game_network_manager_8cs_source}{Game\+Network\+Manager.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00032\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00033\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{new}\ Vector3(4,\ 0,\ 8),}
+\DoxyCodeLine{00034\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{new}\ Vector3(6,\ 0,\ 8),}
+\DoxyCodeLine{00035\ \ \ \ \ \ \ \ \ \};}
+
+\end{DoxyCode}
+\Hypertarget{class_utp_1_1_game_network_manager_a3aec177c7824f0307fddcbfca19bd9c8}\index{Utp.GameNetworkManager@{Utp.GameNetworkManager}!hostSpawnPositions@{hostSpawnPositions}}
+\index{hostSpawnPositions@{hostSpawnPositions}!Utp.GameNetworkManager@{Utp.GameNetworkManager}}
+\doxysubsubsection{\texorpdfstring{hostSpawnPositions}{hostSpawnPositions}}
+{\footnotesize\ttfamily \label{class_utp_1_1_game_network_manager_a3aec177c7824f0307fddcbfca19bd9c8} 
+Vector3 \mbox{[}$\,$\mbox{]} Utp.\+Game\+Network\+Manager.\+host\+Spawn\+Positions}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{=\ \{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{new}\ Vector3(0,\ 0,\ 0),}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{new}\ Vector3(2,\ 0,\ 0),}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \}}
+
+\end{DoxyCode}
+
+
+Definition at line \mbox{\hyperlink{_game_network_manager_8cs_source_l00024}{24}} of file \mbox{\hyperlink{_game_network_manager_8cs_source}{Game\+Network\+Manager.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00024\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00025\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{new}\ Vector3(0,\ 0,\ 0),}
+\DoxyCodeLine{00026\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{new}\ Vector3(2,\ 0,\ 0),}
+\DoxyCodeLine{00027\ \ \ \ \ \ \ \ \ \};}
+
+\end{DoxyCode}
+\Hypertarget{class_utp_1_1_game_network_manager_aed5cf785240f329fb393ab9035b75188}\index{Utp.GameNetworkManager@{Utp.GameNetworkManager}!relayJoinCode@{relayJoinCode}}
+\index{relayJoinCode@{relayJoinCode}!Utp.GameNetworkManager@{Utp.GameNetworkManager}}
+\doxysubsubsection{\texorpdfstring{relayJoinCode}{relayJoinCode}}
+{\footnotesize\ttfamily \label{class_utp_1_1_game_network_manager_aed5cf785240f329fb393ab9035b75188} 
+string Utp.\+Game\+Network\+Manager.\+relay\+Join\+Code = "{}"{}}
+
+
+
+Server\textquotesingle{}s join code if using Relay. 
+
+
+
+Definition at line \mbox{\hyperlink{_game_network_manager_8cs_source_l00043}{43}} of file \mbox{\hyperlink{_game_network_manager_8cs_source}{Game\+Network\+Manager.\+cs}}.
+
+\Hypertarget{class_utp_1_1_game_network_manager_a35051b4fbe7ec84c262ca59015e1effe}\index{Utp.GameNetworkManager@{Utp.GameNetworkManager}!unitClientPrefab@{unitClientPrefab}}
+\index{unitClientPrefab@{unitClientPrefab}!Utp.GameNetworkManager@{Utp.GameNetworkManager}}
+\doxysubsubsection{\texorpdfstring{unitClientPrefab}{unitClientPrefab}}
+{\footnotesize\ttfamily \label{class_utp_1_1_game_network_manager_a35051b4fbe7ec84c262ca59015e1effe} 
+Game\+Object Utp.\+Game\+Network\+Manager.\+unit\+Client\+Prefab}
+
+
+
+Definition at line \mbox{\hyperlink{_game_network_manager_8cs_source_l00018}{18}} of file \mbox{\hyperlink{_game_network_manager_8cs_source}{Game\+Network\+Manager.\+cs}}.
+
+\Hypertarget{class_utp_1_1_game_network_manager_ada73898e30f510ceac43b244f7923e77}\index{Utp.GameNetworkManager@{Utp.GameNetworkManager}!unitHostPrefab@{unitHostPrefab}}
+\index{unitHostPrefab@{unitHostPrefab}!Utp.GameNetworkManager@{Utp.GameNetworkManager}}
+\doxysubsubsection{\texorpdfstring{unitHostPrefab}{unitHostPrefab}}
+{\footnotesize\ttfamily \label{class_utp_1_1_game_network_manager_ada73898e30f510ceac43b244f7923e77} 
+Game\+Object Utp.\+Game\+Network\+Manager.\+unit\+Host\+Prefab}
+
+
+
+Definition at line \mbox{\hyperlink{_game_network_manager_8cs_source_l00017}{17}} of file \mbox{\hyperlink{_game_network_manager_8cs_source}{Game\+Network\+Manager.\+cs}}.
+
+\Hypertarget{class_utp_1_1_game_network_manager_a55cc86f5a06126e8bbf1243d7114e34d}\index{Utp.GameNetworkManager@{Utp.GameNetworkManager}!utpTransport@{utpTransport}}
+\index{utpTransport@{utpTransport}!Utp.GameNetworkManager@{Utp.GameNetworkManager}}
+\doxysubsubsection{\texorpdfstring{utpTransport}{utpTransport}}
+{\footnotesize\ttfamily \label{class_utp_1_1_game_network_manager_a55cc86f5a06126e8bbf1243d7114e34d} 
+Utp\+Transport Utp.\+Game\+Network\+Manager.\+utp\+Transport\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+Definition at line \mbox{\hyperlink{_game_network_manager_8cs_source_l00038}{38}} of file \mbox{\hyperlink{_game_network_manager_8cs_source}{Game\+Network\+Manager.\+cs}}.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+D\+:/\+Unity/\+Rogue\+Shooter/\+Rogue\+Shooter/\+Assets/\+Scripts/\+Oneline/\mbox{\hyperlink{_game_network_manager_8cs}{Game\+Network\+Manager.\+cs}}\end{DoxyCompactItemize}

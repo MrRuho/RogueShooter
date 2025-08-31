@@ -1,0 +1,206 @@
+\doxysection{Base\+Action Class Reference}
+\hypertarget{class_base_action}{}\label{class_base_action}\index{BaseAction@{BaseAction}}
+
+
+Base class for all unit actions in the game. This class inherits from Network\+Behaviour and provides common functionality for unit actions.  
+
+
+Inheritance diagram for Base\+Action\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=3.000000cm]{class_base_action}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+string \mbox{\hyperlink{class_base_action_a2d6fa85bf05cac68709a9578acad4b94}{Get\+Action\+Name}} ()
+\item 
+void \mbox{\hyperlink{class_base_action_a302a7e513098704184a28fb8f523569e}{Take\+Action}} (\mbox{\hyperlink{struct_grid_position}{Grid\+Position}} grid\+Position, Action \mbox{\hyperlink{class_base_action_aea9027870bb7315f76f6ebc194ad2eda}{on\+Action\+Complete}})
+\item 
+virtual bool \mbox{\hyperlink{class_base_action_ab306ccf6269e27160855c436dd0cb641}{Is\+Valid\+Grid\+Position}} (\mbox{\hyperlink{struct_grid_position}{Grid\+Position}} grid\+Position)
+\item 
+List$<$ \mbox{\hyperlink{struct_grid_position}{Grid\+Position}} $>$ \mbox{\hyperlink{class_base_action_a8328209505521544f18c0cba00e38a69}{Get\+Valid\+Grid\+Position\+List}} ()
+\item 
+virtual int \mbox{\hyperlink{class_base_action_a20cc796d15b41abbe6ea0da8604692fa}{Get\+Action\+Points\+Cost}} ()
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Protected Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+virtual void \mbox{\hyperlink{class_base_action_a16d4eba1b197769cc78a275f23bd8c63}{Awake}} ()
+\item 
+void \mbox{\hyperlink{class_base_action_a3820f80b1d1064524d4d5bf0563a1447}{Action\+Start}} (Action \mbox{\hyperlink{class_base_action_aea9027870bb7315f76f6ebc194ad2eda}{on\+Action\+Complete}})
+\item 
+void \mbox{\hyperlink{class_base_action_a3447bafb2a0f3a7b65e48275afcd818e}{Action\+Complete}} ()
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Protected Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{class_unit}{Unit}} \mbox{\hyperlink{class_base_action_abfd5ebd13630a017e31a4f6cd720dace}{unit}}
+\item 
+bool \mbox{\hyperlink{class_base_action_a6e99c6e9b79dd10395d595916cc0bd72}{is\+Active}}
+\item 
+Action \mbox{\hyperlink{class_base_action_aea9027870bb7315f76f6ebc194ad2eda}{on\+Action\+Complete}}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Base class for all unit actions in the game. This class inherits from Network\+Behaviour and provides common functionality for unit actions. 
+
+Definition at line \mbox{\hyperlink{_base_action_8cs_source_l00010}{10}} of file \mbox{\hyperlink{_base_action_8cs_source}{Base\+Action.\+cs}}.
+
+
+
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_base_action_a3447bafb2a0f3a7b65e48275afcd818e}\index{BaseAction@{BaseAction}!ActionComplete@{ActionComplete}}
+\index{ActionComplete@{ActionComplete}!BaseAction@{BaseAction}}
+\doxysubsubsection{\texorpdfstring{ActionComplete()}{ActionComplete()}}
+{\footnotesize\ttfamily \label{class_base_action_a3447bafb2a0f3a7b65e48275afcd818e} 
+void Base\+Action.\+Action\+Complete (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [protected]}}
+
+
+
+Definition at line \mbox{\hyperlink{_base_action_8cs_source_l00044}{44}} of file \mbox{\hyperlink{_base_action_8cs_source}{Base\+Action.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00045\ \ \ \ \ \{}
+\DoxyCodeLine{00046\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_base_action_a6e99c6e9b79dd10395d595916cc0bd72}{isActive}}\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00047\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_base_action_aea9027870bb7315f76f6ebc194ad2eda}{onActionComplete}}();}
+\DoxyCodeLine{00048\ \ \ \ \ \}}
+
+\end{DoxyCode}
+\Hypertarget{class_base_action_a3820f80b1d1064524d4d5bf0563a1447}\index{BaseAction@{BaseAction}!ActionStart@{ActionStart}}
+\index{ActionStart@{ActionStart}!BaseAction@{BaseAction}}
+\doxysubsubsection{\texorpdfstring{ActionStart()}{ActionStart()}}
+{\footnotesize\ttfamily \label{class_base_action_a3820f80b1d1064524d4d5bf0563a1447} 
+void Base\+Action.\+Action\+Start (\begin{DoxyParamCaption}\item[{Action}]{on\+Action\+Complete}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [protected]}}
+
+
+
+Definition at line \mbox{\hyperlink{_base_action_8cs_source_l00038}{38}} of file \mbox{\hyperlink{_base_action_8cs_source}{Base\+Action.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00039\ \ \ \ \ \{}
+\DoxyCodeLine{00040\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_base_action_a6e99c6e9b79dd10395d595916cc0bd72}{isActive}}\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00041\ \ \ \ \ \ \ \ \ this.onActionComplete\ =\ \mbox{\hyperlink{class_base_action_aea9027870bb7315f76f6ebc194ad2eda}{onActionComplete}};}
+\DoxyCodeLine{00042\ \ \ \ \ \}}
+
+\end{DoxyCode}
+\Hypertarget{class_base_action_a16d4eba1b197769cc78a275f23bd8c63}\index{BaseAction@{BaseAction}!Awake@{Awake}}
+\index{Awake@{Awake}!BaseAction@{BaseAction}}
+\doxysubsubsection{\texorpdfstring{Awake()}{Awake()}}
+{\footnotesize\ttfamily \label{class_base_action_a16d4eba1b197769cc78a275f23bd8c63} 
+virtual void Base\+Action.\+Awake (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [protected]}, {\ttfamily [virtual]}}
+
+
+
+Reimplemented in \mbox{\hyperlink{class_move_action_a821930520e8301302c92908cf2de52eb}{Move\+Action}}.
+
+
+
+Definition at line \mbox{\hyperlink{_base_action_8cs_source_l00016}{16}} of file \mbox{\hyperlink{_base_action_8cs_source}{Base\+Action.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00017\ \ \ \ \ \{}
+\DoxyCodeLine{00018\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_base_action_abfd5ebd13630a017e31a4f6cd720dace}{unit}}\ =\ GetComponent<Unit>();}
+\DoxyCodeLine{00019\ \ \ \ \ \}}
+
+\end{DoxyCode}
+\Hypertarget{class_base_action_a2d6fa85bf05cac68709a9578acad4b94}\index{BaseAction@{BaseAction}!GetActionName@{GetActionName}}
+\index{GetActionName@{GetActionName}!BaseAction@{BaseAction}}
+\doxysubsubsection{\texorpdfstring{GetActionName()}{GetActionName()}}
+{\footnotesize\ttfamily \label{class_base_action_a2d6fa85bf05cac68709a9578acad4b94} 
+string Base\+Action.\+Get\+Action\+Name (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [abstract]}}
+
+\Hypertarget{class_base_action_a20cc796d15b41abbe6ea0da8604692fa}\index{BaseAction@{BaseAction}!GetActionPointsCost@{GetActionPointsCost}}
+\index{GetActionPointsCost@{GetActionPointsCost}!BaseAction@{BaseAction}}
+\doxysubsubsection{\texorpdfstring{GetActionPointsCost()}{GetActionPointsCost()}}
+{\footnotesize\ttfamily \label{class_base_action_a20cc796d15b41abbe6ea0da8604692fa} 
+virtual int Base\+Action.\+Get\+Action\+Points\+Cost (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [virtual]}}
+
+
+
+Reimplemented in \mbox{\hyperlink{class_shoot_action_a152a32b8f731d1015630cea40433f7bf}{Shoot\+Action}}, and \mbox{\hyperlink{class_spin_action_adfa8aac568625b85208b55ad1c32cb39}{Spin\+Action}}.
+
+
+
+Definition at line \mbox{\hyperlink{_base_action_8cs_source_l00033}{33}} of file \mbox{\hyperlink{_base_action_8cs_source}{Base\+Action.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00034\ \ \ \ \ \{}
+\DoxyCodeLine{00035\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 1;}
+\DoxyCodeLine{00036\ \ \ \ \ \}}
+
+\end{DoxyCode}
+\Hypertarget{class_base_action_a8328209505521544f18c0cba00e38a69}\index{BaseAction@{BaseAction}!GetValidGridPositionList@{GetValidGridPositionList}}
+\index{GetValidGridPositionList@{GetValidGridPositionList}!BaseAction@{BaseAction}}
+\doxysubsubsection{\texorpdfstring{GetValidGridPositionList()}{GetValidGridPositionList()}}
+{\footnotesize\ttfamily \label{class_base_action_a8328209505521544f18c0cba00e38a69} 
+List$<$ \mbox{\hyperlink{struct_grid_position}{Grid\+Position}} $>$ Base\+Action.\+Get\+Valid\+Grid\+Position\+List (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [abstract]}}
+
+\Hypertarget{class_base_action_ab306ccf6269e27160855c436dd0cb641}\index{BaseAction@{BaseAction}!IsValidGridPosition@{IsValidGridPosition}}
+\index{IsValidGridPosition@{IsValidGridPosition}!BaseAction@{BaseAction}}
+\doxysubsubsection{\texorpdfstring{IsValidGridPosition()}{IsValidGridPosition()}}
+{\footnotesize\ttfamily \label{class_base_action_ab306ccf6269e27160855c436dd0cb641} 
+virtual bool Base\+Action.\+Is\+Valid\+Grid\+Position (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{struct_grid_position}{Grid\+Position}}}]{grid\+Position}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [virtual]}}
+
+
+
+Definition at line \mbox{\hyperlink{_base_action_8cs_source_l00025}{25}} of file \mbox{\hyperlink{_base_action_8cs_source}{Base\+Action.\+cs}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00026\ \ \ \ \ \{}
+\DoxyCodeLine{00027\ \ \ \ \ \ \ \ \ List<GridPosition>\ validGridPositionsList\ =\ \mbox{\hyperlink{class_base_action_a8328209505521544f18c0cba00e38a69}{GetValidGridPositionList}}();}
+\DoxyCodeLine{00028\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ validGridPositionsList.Contains(gridPosition);}
+\DoxyCodeLine{00029\ \ \ \ \ \}}
+
+\end{DoxyCode}
+\Hypertarget{class_base_action_a302a7e513098704184a28fb8f523569e}\index{BaseAction@{BaseAction}!TakeAction@{TakeAction}}
+\index{TakeAction@{TakeAction}!BaseAction@{BaseAction}}
+\doxysubsubsection{\texorpdfstring{TakeAction()}{TakeAction()}}
+{\footnotesize\ttfamily \label{class_base_action_a302a7e513098704184a28fb8f523569e} 
+void Base\+Action.\+Take\+Action (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{struct_grid_position}{Grid\+Position}}}]{grid\+Position}{, }\item[{Action}]{on\+Action\+Complete}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [abstract]}}
+
+
+
+\doxysubsection{Member Data Documentation}
+\Hypertarget{class_base_action_a6e99c6e9b79dd10395d595916cc0bd72}\index{BaseAction@{BaseAction}!isActive@{isActive}}
+\index{isActive@{isActive}!BaseAction@{BaseAction}}
+\doxysubsubsection{\texorpdfstring{isActive}{isActive}}
+{\footnotesize\ttfamily \label{class_base_action_a6e99c6e9b79dd10395d595916cc0bd72} 
+bool Base\+Action.\+is\+Active\hspace{0.3cm}{\ttfamily [protected]}}
+
+
+
+Definition at line \mbox{\hyperlink{_base_action_8cs_source_l00013}{13}} of file \mbox{\hyperlink{_base_action_8cs_source}{Base\+Action.\+cs}}.
+
+\Hypertarget{class_base_action_aea9027870bb7315f76f6ebc194ad2eda}\index{BaseAction@{BaseAction}!onActionComplete@{onActionComplete}}
+\index{onActionComplete@{onActionComplete}!BaseAction@{BaseAction}}
+\doxysubsubsection{\texorpdfstring{onActionComplete}{onActionComplete}}
+{\footnotesize\ttfamily \label{class_base_action_aea9027870bb7315f76f6ebc194ad2eda} 
+Action Base\+Action.\+on\+Action\+Complete\hspace{0.3cm}{\ttfamily [protected]}}
+
+
+
+Definition at line \mbox{\hyperlink{_base_action_8cs_source_l00014}{14}} of file \mbox{\hyperlink{_base_action_8cs_source}{Base\+Action.\+cs}}.
+
+\Hypertarget{class_base_action_abfd5ebd13630a017e31a4f6cd720dace}\index{BaseAction@{BaseAction}!unit@{unit}}
+\index{unit@{unit}!BaseAction@{BaseAction}}
+\doxysubsubsection{\texorpdfstring{unit}{unit}}
+{\footnotesize\ttfamily \label{class_base_action_abfd5ebd13630a017e31a4f6cd720dace} 
+\mbox{\hyperlink{class_unit}{Unit}} Base\+Action.\+unit\hspace{0.3cm}{\ttfamily [protected]}}
+
+
+
+Definition at line \mbox{\hyperlink{_base_action_8cs_source_l00012}{12}} of file \mbox{\hyperlink{_base_action_8cs_source}{Base\+Action.\+cs}}.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+D\+:/\+Unity/\+Rogue\+Shooter/\+Rogue\+Shooter/\+Assets/\+Scripts/\+Player\+Units/\+Unit\+Actions/\mbox{\hyperlink{_base_action_8cs}{Base\+Action.\+cs}}\end{DoxyCompactItemize}

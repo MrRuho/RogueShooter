@@ -1,0 +1,27 @@
+\doxysection{Mouse\+World.\+cs}
+\hypertarget{_mouse_world_8cs_source}{}\label{_mouse_world_8cs_source}\index{D:/Unity/RogueShooter/RogueShooter/Assets/Scripts/GameLogic/MouseWorld.cs@{D:/Unity/RogueShooter/RogueShooter/Assets/Scripts/GameLogic/MouseWorld.cs}}
+\mbox{\hyperlink{_mouse_world_8cs}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\Hypertarget{_mouse_world_8cs_source_l00001}00001\ \textcolor{keyword}{using\ }UnityEngine;}
+\DoxyCodeLine{\Hypertarget{_mouse_world_8cs_source_l00002}00002\ }
+\DoxyCodeLine{\Hypertarget{_mouse_world_8cs_source_l00007}00007\ }
+\DoxyCodeLine{\Hypertarget{_mouse_world_8cs_source_l00008}\mbox{\hyperlink{class_mouse_world}{00008}}\ \textcolor{keyword}{public}\ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_mouse_world}{MouseWorld}}\ :\ MonoBehaviour}
+\DoxyCodeLine{\Hypertarget{_mouse_world_8cs_source_l00009}00009\ \{}
+\DoxyCodeLine{\Hypertarget{_mouse_world_8cs_source_l00010}\mbox{\hyperlink{class_mouse_world_a85074ee2ad6f846166fad1c134cb164e}{00010}}\ \ \ \ \ \textcolor{keyword}{private}\ \textcolor{keyword}{static}\ \mbox{\hyperlink{class_mouse_world}{MouseWorld}}\ \mbox{\hyperlink{class_mouse_world_a85074ee2ad6f846166fad1c134cb164e}{instance}};}
+\DoxyCodeLine{\Hypertarget{_mouse_world_8cs_source_l00011}\mbox{\hyperlink{class_mouse_world_a4af0eb9ae30d3d33ae12fabdadb24a58}{00011}}\ \ \ \ \ [SerializeField]\ \textcolor{keyword}{private}\ LayerMask\ \mbox{\hyperlink{class_mouse_world_a4af0eb9ae30d3d33ae12fabdadb24a58}{mousePlaneLayerMask}};}
+\DoxyCodeLine{\Hypertarget{_mouse_world_8cs_source_l00012}00012\ }
+\DoxyCodeLine{\Hypertarget{_mouse_world_8cs_source_l00013}\mbox{\hyperlink{class_mouse_world_a4189d22dc31f6357e3a95a62f10ec704}{00013}}\ \ \ \ \ \textcolor{keyword}{private}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_mouse_world_a4189d22dc31f6357e3a95a62f10ec704}{Awake}}()}
+\DoxyCodeLine{\Hypertarget{_mouse_world_8cs_source_l00014}00014\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_mouse_world_8cs_source_l00015}00015\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{class_mouse_world_a85074ee2ad6f846166fad1c134cb164e}{instance}}\ =\ \textcolor{keyword}{this};}
+\DoxyCodeLine{\Hypertarget{_mouse_world_8cs_source_l00016}00016\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_mouse_world_8cs_source_l00017}00017\ \ \ \ \ }
+\DoxyCodeLine{\Hypertarget{_mouse_world_8cs_source_l00018}\mbox{\hyperlink{class_mouse_world_a184cc1cee246290c6eeec982616ead4a}{00018}}\ \ \ \ \ \textcolor{keyword}{public}\ \textcolor{keyword}{static}\ Vector3\ \mbox{\hyperlink{class_mouse_world_a184cc1cee246290c6eeec982616ead4a}{GetMouseWorldPosition}}()}
+\DoxyCodeLine{\Hypertarget{_mouse_world_8cs_source_l00019}00019\ \ \ \ \ \{}
+\DoxyCodeLine{\Hypertarget{_mouse_world_8cs_source_l00020}00020\ \ \ \ \ \ \ \ \ Ray\ ray\ =\ Camera.main.ScreenPointToRay(Input.mousePosition);}
+\DoxyCodeLine{\Hypertarget{_mouse_world_8cs_source_l00021}00021\ \ \ \ \ \ \ \ \ Physics.Raycast(ray,\ out\ RaycastHit\ raycastHit,\ \textcolor{keywordtype}{float}.MaxValue,\ \mbox{\hyperlink{class_mouse_world_a85074ee2ad6f846166fad1c134cb164e}{instance}}.mousePlaneLayerMask);}
+\DoxyCodeLine{\Hypertarget{_mouse_world_8cs_source_l00022}00022\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ raycastHit.point;}
+\DoxyCodeLine{\Hypertarget{_mouse_world_8cs_source_l00023}00023\ \ \ \ \ \}}
+\DoxyCodeLine{\Hypertarget{_mouse_world_8cs_source_l00024}00024\ }
+\DoxyCodeLine{\Hypertarget{_mouse_world_8cs_source_l00025}00025\ \}}
+
+\end{DoxyCode}
