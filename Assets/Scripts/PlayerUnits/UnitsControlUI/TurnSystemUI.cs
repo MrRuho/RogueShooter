@@ -7,16 +7,17 @@ using TMPro;
 public class TurnSystemUI : MonoBehaviour
 {
     [SerializeField] private Button endTurnButton;
-    [SerializeField] private TextMeshProUGUI turnNumberText;
-    [SerializeField] private GameObject enemyTurnVisualGameObject;
+    [SerializeField] private TextMeshProUGUI turnNumberText;            // (valinnainen, käytä SP:ssä)
+    [SerializeField] private GameObject enemyTurnVisualGameObject;      // (valinnainen, käytä SP:ssä)
 
-    private bool isCoop;
+    bool isCoop;
+    private PlayerController localPlayerController;
 
     void Start()
     {
         isCoop = GameModeManager.SelectedMode == GameMode.CoOp;
 
-        // aina yksi reitti nappiin
+        // kiinnitä handler tasan kerran
         if (endTurnButton != null)
         {
             endTurnButton.onClick.RemoveAllListeners();
@@ -25,13 +26,12 @@ public class TurnSystemUI : MonoBehaviour
 
         if (isCoop)
         {
-            // päivitä heti ja sitten säännöllisesti
-            UpdateForCoop();
-            InvokeRepeating(nameof(UpdateForCoop), 0.1f, 0.2f);
+            // Co-opissa nappi on DISABLED kunnes serveri kertoo että saa toimia
+            SetCanAct(false);
         }
         else
         {
-            // singleplayer: käytä vanhaa eventtiä
+            // Singleplayer: vanha eventti
             if (TurnSystem.Instance != null)
             {
                 TurnSystem.Instance.OnTurnChanged += TurnSystem_OnTurnChanged;
@@ -44,52 +44,72 @@ public class TurnSystemUI : MonoBehaviour
     {
         if (!isCoop && TurnSystem.Instance != null)
             TurnSystem.Instance.OnTurnChanged -= TurnSystem_OnTurnChanged;
-
-        if (IsInvoking(nameof(UpdateForCoop)))
-            CancelInvoke(nameof(UpdateForCoop));
     }
 
-    // ---------- Nappilogiikka: yksi reitti kaikille moodeille ----------
+    // ====== julkinen kutsu PlayerController.TargetNotifyCanAct:ista ======
+    public void SetCanAct(bool canAct)
+    {
+        if (endTurnButton == null) return;
+
+        endTurnButton.onClick.RemoveListener(OnEndTurnClicked);
+        if (canAct) endTurnButton.onClick.AddListener(OnEndTurnClicked);
+
+        endTurnButton.gameObject.SetActive(canAct);   // jos haluat pitää aina näkyvissä, vaihda SetActive(true)
+        endTurnButton.interactable = canAct;
+    }
+
+    // ====== nappi ======
     private void OnEndTurnClicked()
     {
-        if (GameModeManager.SelectedMode == GameMode.CoOp)
-        {
-            Debug.Log("[UI] EndTurn clicked (Co-op)");
+        // Päättele co-op -tila tilannekohtaisesti (ei SelectedMode)
+        bool isCoopNow =
+            CoopTurnCoordinator.Instance != null &&
+            (NetworkServer.active || NetworkClient.isConnected);
 
-            var conn = Mirror.NetworkClient.connection;
-            if (conn == null)
-            {
-                Debug.LogWarning("[UI] NetworkClient.connection is null");
-                return;
-            }
-
-            var id = conn.identity;
-            if (id == null)
-            {
-                Debug.LogWarning("[UI] Local NetworkIdentity not ready yet");
-                return;
-            }
-
-            PlayerController me;
-            if (!id.TryGetComponent<PlayerController>(out me))
-            {
-                Debug.LogWarning("[UI] PlayerController missing on local player");
-                return;
-            }
-
-            me.ClickEndTurn();   // -> CmdEndTurn -> server koordinoi
-            UpdateForCoop();     // päivitä nappi/teksti heti
-        }
-        else
+        if (!isCoopNow)
         {
             Debug.Log("[UI] EndTurn clicked (SP)");
             if (TurnSystem.Instance != null)
+            {
                 TurnSystem.Instance.NextTurn();
+            }
+            else
+            {
+                Debug.LogWarning("[UI] TurnSystem.Instance is null");
+            }
+            return;
+        }
+
+        Debug.Log("[UI] EndTurn clicked (Co-op)");
+
+        CacheLocalPlayerController();
+        if (localPlayerController == null)
+        {
+            Debug.LogWarning("[UI] Local PlayerController not found");
+            return;
+        }
+
+        // Estä tuplaklikki
+        SetCanAct(false);
+
+        // Lähetä serverille
+        localPlayerController.ClickEndTurn();
+    }
+
+    private void CacheLocalPlayerController()
+    {
+        if (localPlayerController == null)
+        {
+            var conn = NetworkClient.connection;
+            if (conn != null && conn.identity != null)
+            {
+                localPlayerController = conn.identity.GetComponent<PlayerController>();
+            }
         }
     }
 
-    // ---------- SINGLEPLAYER UI ----------
-    private void TurnSystem_OnTurnChanged(object sender, EventArgs e) => UpdateForSingleplayer();
+    // ====== singleplayer UI (valinnainen) ======
+    private void TurnSystem_OnTurnChanged(object s, EventArgs e) => UpdateForSingleplayer();
 
     private void UpdateForSingleplayer()
     {
@@ -101,50 +121,5 @@ public class TurnSystemUI : MonoBehaviour
 
         if (endTurnButton != null)
             endTurnButton.gameObject.SetActive(TurnSystem.Instance.IsPlayerTurn());
-    }
-
-    // ---------- CO-OP UI ----------
-    private void UpdateForCoop()
-    {
-        var coord = CoopTurnCoordinator.Instance;
-
-        // Turn-numero + (X/Y) odotus
-        if (turnNumberText != null)
-        {
-            if (coord != null)
-            {
-                string extra = (coord.phase == TurnPhase.Players &&
-                                coord.endedCount < Math.Max(1, coord.requiredCount))
-                             ? $"  ({coord.endedCount}/{coord.requiredCount})"
-                             : "";
-                turnNumberText.text = $"Turn: {Mathf.Max(1, coord.turnNumber)}{extra}";
-            }
-            else
-            {
-                turnNumberText.text = "Turn: -";
-            }
-        }
-
-        // Enemy overlay
-        if (enemyTurnVisualGameObject != null)
-            enemyTurnVisualGameObject.SetActive(coord != null && coord.phase == TurnPhase.Enemy);
-
-        // EndTurn-napin näkyvyys / interaktio
-        if (endTurnButton != null)
-        {
-            bool canShow = coord != null && coord.phase == TurnPhase.Players;
-
-            bool canPress = false;
-            var conn = NetworkClient.connection;
-            if (conn != null && conn.identity != null)
-            {
-                var me = conn.identity.GetComponent<PlayerController>();
-                if (me != null)
-                    canPress = canShow && !me.hasEndedThisTurn;
-            }
-
-            endTurnButton.gameObject.SetActive(canShow);
-            endTurnButton.interactable = canPress;
-        }
     }
 }

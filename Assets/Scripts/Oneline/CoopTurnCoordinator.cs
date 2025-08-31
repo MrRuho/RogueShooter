@@ -73,7 +73,7 @@ public class CoopTurnCoordinator : NetworkBehaviour
         // *** AJA AI-VUORO TÄSSÄ ***
         // Kutsu omaa AI-manageriasi; tässä vain simuloidaan pienenä viiveenä.
         yield return StartCoroutine(RunEnemyAI());
-
+        Debug.Log("[TURN][SERVER] Enemy turn ended → next players' turn");
         turnNumber++;
         ResetTurnState(); // takaisin pelaajille
         RpcTurnPhaseChanged(phase, turnNumber);
@@ -83,12 +83,14 @@ public class CoopTurnCoordinator : NetworkBehaviour
     IEnumerator RunEnemyAI()
     {
         // TODO: korvaa omalla AI-logiikallasi (varmista, että se on server-authoritatiivinen)
+        Debug.Log("[TURN][SERVER] (Simulating enemy AI turn...)");
         yield return new WaitForSeconds(0.25f);
     }
 
     [Server]
     void ResetTurnState()
     {
+        Debug.Log("[TURN][SERVER] ResetTurnState");
         phase = TurnPhase.Players;
         endedPlayers.Clear();
         endedCount = 0;
@@ -96,10 +98,12 @@ public class CoopTurnCoordinator : NetworkBehaviour
         // nollaa kaikilta pelaajilta ‘hasEndedThisTurn’
         foreach (var kvp in NetworkServer.connections)
         {
-            var conn = kvp.Value;
-            var pc = conn.identity ? conn.identity.GetComponent<PlayerController>() : null;
-            if (pc) pc.ServerSetHasEnded(false);
+            var id = kvp.Value.identity;
+            if (!id) continue;
+            var pc = id.GetComponent<PlayerController>();
+            if (pc) pc.ServerSetHasEnded(false);  // <<< TÄRKEIN RIVI
         }
+
         RpcUpdateWaiting(endedCount, requiredCount);
     }
 

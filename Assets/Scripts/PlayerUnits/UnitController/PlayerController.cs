@@ -31,13 +31,17 @@ public class PlayerController : NetworkBehaviour
     public void ServerSetHasEnded(bool v)
     {
         hasEndedThisTurn = v;
+        Debug.Log($"[PC][SERVER] ServerSetHasEnded({v}) for player {netId}");
         TargetNotifyCanAct(connectionToClient, !v);
     }
-    
+
     [TargetRpc]
     void TargetNotifyCanAct(NetworkConnectionToClient __, bool canAct)
     {
-        // Täällä voit disabloida ohjauksen/EndTurn-napin kun v==true
-        // esim. UIEndTurnButton.interactable = canAct;
+        Debug.Log($"[PC][CLIENT] TargetNotifyCanAct({canAct})");
+        // UIEndTurnButton.interactable = canAct;
+        var ui = FindFirstObjectByType<TurnSystemUI>();
+        if (ui != null)
+        ui.SetCanAct(canAct);
     }
 }
