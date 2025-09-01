@@ -32,14 +32,45 @@ class Program
         Directory.CreateDirectory(Path.GetDirectoryName(output)!);
         QuestPDF.Settings.License = LicenseType.Community;
 
+        var now = DateTimeOffset.UtcNow;
+        var sha = Environment.GetEnvironmentVariable("GITHUB_SHA") ?? "";
+        var shortSha = sha.Length >= 7 ? sha[..7] : sha;
+        var repo = Environment.GetEnvironmentVariable("GITHUB_REPOSITORY") ?? "";
+        var branch = Environment.GetEnvironmentVariable("GITHUB_REF_NAME") ?? "";
+        var fileCount = files.Count;
+        var scanned = string.Join("; ", inputDirs);
+
         var doc = Document.Create(container =>
         {
+            // Kansisivu
             container.Page(page =>
             {
-                page.Size(PageSizes.A4);
+                page.Size(PageSizes.A4.Landscape());
+                page.Margin(40);
+                page.Content().Column(col =>
+                {
+                    col.Item().Text("RogueShooter – All Scripts").SemiBold().FontSize(24);
+
+                    // Rivikohtainen fonttikoko:
+                    col.Item().Text(txt =>
+                    {
+                        txt.Line($"Generated: {now:yyyy-MM-dd HH:mm} UTC").FontSize(12);
+                        if (!string.IsNullOrWhiteSpace(repo))     txt.Line($"Repo: {repo}").FontSize(12);
+                        if (!string.IsNullOrWhiteSpace(branch))   txt.Line($"Branch: {branch}").FontSize(12);
+                        if (!string.IsNullOrWhiteSpace(shortSha)) txt.Line($"Commit: {shortSha}").FontSize(12);
+                        txt.Line($"Files: {fileCount}").FontSize(12);
+                        txt.Line($"Scanned: {scanned}").FontSize(12);
+                    });
+                });
+            });
+
+            // Varsinaiset sivut
+            container.Page(page =>
+            {
+                page.Size(PageSizes.A4.Landscape());
                 page.Margin(30);
                 page.DefaultTextStyle(ts => ts.FontSize(9));
-                page.Header().Text("RogueShooter – All Scripts").SemiBold().FontSize(14);
+                page.Header().Text("RogueShooter – All Scripts").SemiBold().FontSize(12);
                 page.Footer().AlignCenter().Text(x =>
                 {
                     x.CurrentPageNumber();
@@ -47,41 +78,23 @@ class Program
                     x.TotalPages();
                 });
 
-                page.Content().PaddingTop(10).Column(col =>
+                page.Content().PaddingTop(8).Column(col =>
                 {
                     foreach (var path in files)
                     {
                         var rel = path.Replace('\\', '/');
                         string code;
-                        try
-                        {
-                            code = File.ReadAllText(path, new UTF8Encoding(encoderShouldEmitUTF8Identifier: false, throwOnInvalidBytes: false));
-                        }
-                        catch
-                        {
-                            code = "// [READ ERROR]";
-                        }
+                        try { code = File.ReadAllText(path, new UTF8Encoding(false, false)); }
+                        catch { code = "// [READ ERROR]"; }
 
-                        // Otsikko
-                        col.Item()
-                           .PaddingBottom(4)
-                           .Text(rel)
-                           .SemiBold()
-                           .FontSize(11);
+                        col.Item().PaddingBottom(4).Text(rel).SemiBold().FontSize(11);
 
-                        // Koodilohko
                         col.Item()
-                           .Border(1)
-                           .Padding(6)
-                           .Background(Colors.Grey.Lighten4)
+                           .Border(1).Padding(6).Background(Colors.Grey.Lighten4)
                            .DefaultTextStyle(ts => ts.FontFamily("Consolas").FontSize(8))
-                           .Text(t =>
-                           {
-                               // Pitkät rivit eivät katkea luonnostaan -> WrapAnywhere auttaa
-                               t.Span(code).WrapAnywhere();
-                           });
+                           // 2024.3+: WrapAnywhere on poistettu -> annetaan layoutin hoitaa rivinvaihdot
+                           .Text(t => t.Span(code));
 
-                        // Sivunvaihto seuraavaa tiedostoa kohti
                         col.Item().PageBreak();
                     }
                 });
@@ -89,7 +102,12 @@ class Program
         });
 
         doc.GeneratePdf(output);
-        Console.WriteLine($"OK: {output}");
+
+        var full = Path.GetFullPath(output);
+        Console.WriteLine(File.Exists(output)
+            ? $"OK: {full}"
+            : $"FAILED: File not found after generation: {full}");
+
         return 0;
     }
 }

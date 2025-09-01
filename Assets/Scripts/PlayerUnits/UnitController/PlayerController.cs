@@ -16,13 +16,20 @@ public class PlayerController : NetworkBehaviour
         CmdEndTurn();
     }
 
-    [Command]
+    [Command(requiresAuthority = true)]
+ 
     void CmdEndTurn()
     {
+        Debug.Log($"[PC][SERVER] CmdEndTurn called by player {netId}");
         if (hasEndedThisTurn) return;
         hasEndedThisTurn = true;
         Debug.Log("[PC][SERVER] CmdEndTurn received");
-        // Ilmoita koordinaattorille (serverissä)
+        // Varmista myös että koordinaattori löytyy serveripuolelta:
+        if (CoopTurnCoordinator.Instance == null)
+        {
+            Debug.LogWarning("[PC][SERVER] CoopTurnCoordinator.Instance is NULL on server!");
+            return;
+        }
         CoopTurnCoordinator.Instance.ServerPlayerEndedTurn(netIdentity.netId);
     }
 

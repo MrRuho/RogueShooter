@@ -65,26 +65,34 @@ public class CoopTurnCoordinator : NetworkBehaviour
     }
 
     [Server]
-    IEnumerator ServerEnemyTurnThenNextPlayers()
+    private IEnumerator ServerEnemyTurnThenNextPlayers()
     {
         phase = TurnPhase.Enemy;
         RpcTurnPhaseChanged(phase, turnNumber);
 
-        // *** AJA AI-VUORO TÄSSÄ ***
-        // Kutsu omaa AI-manageriasi; tässä vain simuloidaan pienenä viiveenä.
-        yield return StartCoroutine(RunEnemyAI());
-        Debug.Log("[TURN][SERVER] Enemy turn ended → next players' turn");
+        // Silta Unit-luokalle (AP-logiikka jne.)
+        if (TurnSystem.Instance != null)
+            TurnSystem.Instance.ForcePhase(isPlayerTurn: false, incrementTurnNumber: false);
+
+        // Aja SP-AI uudelleenkäyttönä
+        yield return RunEnemyAI();
+
+        // Takaisin pelaajille + uusi turn-numero
         turnNumber++;
-        ResetTurnState(); // takaisin pelaajille
+        ResetTurnState();
+        if (TurnSystem.Instance != null)
+            TurnSystem.Instance.ForcePhase(isPlayerTurn: true, incrementTurnNumber: false);
+
         RpcTurnPhaseChanged(phase, turnNumber);
     }
 
     [Server]
     IEnumerator RunEnemyAI()
     {
-        // TODO: korvaa omalla AI-logiikallasi (varmista, että se on server-authoritatiivinen)
-        Debug.Log("[TURN][SERVER] (Simulating enemy AI turn...)");
-        yield return new WaitForSeconds(0.25f);
+        if (EnemyAI.Instance != null)
+            yield return EnemyAI.Instance.RunEnemyTurnCoroutine();
+        else
+            yield return new WaitForSeconds(2f); // fallback, ettei ketju katkea
     }
 
     [Server]

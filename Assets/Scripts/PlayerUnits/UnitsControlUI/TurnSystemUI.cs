@@ -31,7 +31,7 @@ public class TurnSystemUI : MonoBehaviour
         }
         else
         {
-            // Singleplayer: vanha eventti
+            // Singleplayerissa kuuntele vuoron vaihtumista
             if (TurnSystem.Instance != null)
             {
                 TurnSystem.Instance.OnTurnChanged += TurnSystem_OnTurnChanged;

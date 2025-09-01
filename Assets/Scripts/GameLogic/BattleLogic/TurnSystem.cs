@@ -56,5 +56,12 @@ public class TurnSystem : MonoBehaviour
     {
         return isPlayerTurn;
     }
+
+    public void ForcePhase(bool isPlayerTurn, bool incrementTurnNumber)
+    {
+        if (incrementTurnNumber) turnNumber++;
+        this.isPlayerTurn = isPlayerTurn;
+        OnTurnChanged?.Invoke(this, EventArgs.Empty);
+    }
     
 }
