@@ -119,9 +119,11 @@ public class CoopTurnCoordinator : NetworkBehaviour
     [ClientRpc]
     void RpcTurnPhaseChanged(TurnPhase newPhase, int turnNo)
     {
-        // Päivitä UI (esim. "Enemy Turn", "Players Turn #X")
-        // Voit myös täältä disabloida/enabloida ohjausta jos haluat
-    }
+        // Päivitä clientin paikallinen TurnSystem → laukaisee OnTurnChanged
+        bool isPlayers = newPhase == TurnPhase.Players;
+        if (TurnSystem.Instance != null)
+            TurnSystem.Instance.ForcePhase(isPlayers, incrementTurnNumber: false);
+        }
 
     [ClientRpc]
     void RpcUpdateWaiting(int have, int need)
