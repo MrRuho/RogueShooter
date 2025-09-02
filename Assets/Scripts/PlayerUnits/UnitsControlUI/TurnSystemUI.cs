@@ -88,10 +88,13 @@ public class TurnSystemUI : MonoBehaviour
             Debug.LogWarning("[UI] Local PlayerController not found");
             return;
         }
-
-        // Estä tuplaklikki
+        // Istantly lock input
+        if (UnitActionSystem.Instance != null)
+        {
+            UnitActionSystem.Instance.LockInput();
+        }
+        // Prevent double clicks
         SetCanAct(false);
-
         // Lähetä serverille
         localPlayerController.ClickEndTurn();
     }

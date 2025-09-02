@@ -17,13 +17,16 @@ public class PlayerController : NetworkBehaviour
     }
 
     [Command(requiresAuthority = true)]
- 
     void CmdEndTurn()
     {
         Debug.Log($"[PC][SERVER] CmdEndTurn called by player {netId}");
         if (hasEndedThisTurn) return;
         hasEndedThisTurn = true;
         Debug.Log("[PC][SERVER] CmdEndTurn received");
+
+        // Estä kaikki toiminnot clientillä
+        TargetNotifyCanAct(connectionToClient, false);
+
         // Varmista myös että koordinaattori löytyy serveripuolelta:
         if (CoopTurnCoordinator.Instance == null)
         {
@@ -32,6 +35,8 @@ public class PlayerController : NetworkBehaviour
         }
         CoopTurnCoordinator.Instance.ServerPlayerEndedTurn(netIdentity.netId);
     }
+
+    
 
     // Server kutsuu tämän kierroksen alussa nollatakseen tilan
     [Server]
@@ -46,9 +51,16 @@ public class PlayerController : NetworkBehaviour
     void TargetNotifyCanAct(NetworkConnectionToClient __, bool canAct)
     {
         Debug.Log($"[PC][CLIENT] TargetNotifyCanAct({canAct})");
-        // UIEndTurnButton.interactable = canAct;
+        // Update End Turn Button
         var ui = FindFirstObjectByType<TurnSystemUI>();
         if (ui != null)
-        ui.SetCanAct(canAct);
+            ui.SetCanAct(canAct);
+
+        // Lock/Unlock UnitActionSystem input
+        if (UnitActionSystem.Instance != null)
+        {
+            if (canAct) UnitActionSystem.Instance.UnlockInput();
+            else        UnitActionSystem.Instance.LockInput();
+        }
     }
 }
