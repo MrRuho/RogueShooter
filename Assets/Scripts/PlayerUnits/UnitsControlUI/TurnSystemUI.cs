@@ -9,6 +9,7 @@ public class TurnSystemUI : MonoBehaviour
     [SerializeField] private Button endTurnButton;
     [SerializeField] private TextMeshProUGUI turnNumberText;            // (valinnainen, käytä SP:ssä)
     [SerializeField] private GameObject enemyTurnVisualGameObject;      // (valinnainen, käytä SP:ssä)
+    [SerializeField] private TextMeshProUGUI playerReadyText;          // (Online)
 
     bool isCoop;
     private PlayerController localPlayerController;
@@ -39,6 +40,8 @@ public class TurnSystemUI : MonoBehaviour
                 UpdateForSingleplayer();
             }
         }
+
+        if (playerReadyText) playerReadyText.gameObject.SetActive(false);
     }
 
     void OnDisable()
@@ -98,6 +101,8 @@ public class TurnSystemUI : MonoBehaviour
         SetCanAct(false);
         // Lähetä serverille
         localPlayerController.ClickEndTurn();
+
+        //Päivitä player ready hud
     }
 
     private void CacheLocalPlayerController()
@@ -125,5 +130,20 @@ public class TurnSystemUI : MonoBehaviour
 
         if (endTurnButton != null)
             endTurnButton.gameObject.SetActive(TurnSystem.Instance.IsPlayerTurn());
+    }
+
+    // Kutsutaan verkosta:
+    public void SetTeammateReady(bool visible, string whoLabel = null)
+    {
+        if (!playerReadyText) return;
+        if (visible)
+        {
+            playerReadyText.text = $"{whoLabel} READY";
+            playerReadyText.gameObject.SetActive(true);
+        }
+        else
+        {
+            playerReadyText.gameObject.SetActive(false);
+        }
     }
 }

@@ -63,12 +63,13 @@ public class PlayerController : NetworkBehaviour
         var ui = FindFirstObjectByType<TurnSystemUI>();
         if (ui != null)
             ui.SetCanAct(canAct);
+            if (!canAct) ui.SetTeammateReady(false, null);
 
         // Lock/Unlock UnitActionSystem input
         if (UnitActionSystem.Instance != null)
         {
             if (canAct) UnitActionSystem.Instance.UnlockInput();
-            else        UnitActionSystem.Instance.LockInput();
+            else UnitActionSystem.Instance.LockInput();
         }
     }
 }

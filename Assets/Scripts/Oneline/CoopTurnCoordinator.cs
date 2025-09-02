@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Mirror;
 using UnityEngine;
 
@@ -11,6 +12,8 @@ public class CoopTurnCoordinator : NetworkBehaviour
 
     [SyncVar] public TurnPhase phase = TurnPhase.Players;
     [SyncVar] public int turnNumber = 1;
+
+    // Seurannat (server)
     [SyncVar] public int endedCount = 0;
     [SyncVar] public int requiredCount = 0; // päivitetään kun pelaajia liittyy/lähtee
 
@@ -30,7 +33,6 @@ public class CoopTurnCoordinator : NetworkBehaviour
         // jos haluat lukita kahteen pelaajaan protoa varten:
         if (GameModeManager.SelectedMode == GameMode.CoOp) requiredCount = 2;
         Debug.Log($"[TURN][SERVER] Start, requiredCount={requiredCount}");
-        
     }
 
     [Server]
@@ -49,7 +51,12 @@ public class CoopTurnCoordinator : NetworkBehaviour
 
         endedCount = endedPlayers.Count;
         Debug.Log($"[TURN][SERVER] Player {playerNetId} ended. {endedCount}/{requiredCount}");
-        RpcUpdateWaiting(endedCount, requiredCount);     // UI:lle "odotetaan X/Y"
+
+        // Ilmoita kaikille, KUKA on valmis → UI näyttää "Player X READY" toisella pelaajalla
+        RpcUpdateReadyStatus(
+            endedPlayers.Select(id => (int)id).ToArray(),
+            BuildEndedLabels()
+        );
 
         TryAdvanceIfReady();
     }
@@ -73,7 +80,7 @@ public class CoopTurnCoordinator : NetworkBehaviour
 
         // Silta unit/AP-logiikalle (sama kuin nyt)
         if (TurnSystem.Instance != null)
-        { 
+        {
             TurnSystem.Instance.ForcePhase(isPlayerTurn: false, incrementTurnNumber: false);
         }
 
@@ -82,7 +89,7 @@ public class CoopTurnCoordinator : NetworkBehaviour
 
         // 2) Paluu pelaajille + turn-numero + resetit
         turnNumber++;                  // kasvata serverillä
-        ResetTurnState();
+        ResetTurnState();              // nollaa endedit + UI “ready” pois
         if (TurnSystem.Instance != null)
         {
             TurnSystem.Instance.ForcePhase(isPlayerTurn: true, incrementTurnNumber: false);
@@ -93,8 +100,6 @@ public class CoopTurnCoordinator : NetworkBehaviour
 
         // 3) Lähetä *kaikille* (host + clientit) HUD-päivitys SP-logiikan kautta
         RpcTurnPhaseChanged(phase, turnNumber, true);
-
-        // HUOM: ei enää TurnSystem.Instance.NextTurn();  (se teki HUDin vain hostilla)
     }
 
     [Server]
@@ -123,7 +128,8 @@ public class CoopTurnCoordinator : NetworkBehaviour
             if (pc) pc.ServerSetHasEnded(false);  // <<< TÄRKEIN RIVI
         }
 
-        RpcUpdateWaiting(endedCount, requiredCount);
+        // Tyhjennä "Player X READY" -teksti kaikilta
+        RpcUpdateReadyStatus(System.Array.Empty<int>(), System.Array.Empty<string>());
     }
 
     // ---- Client-notifikaatiot UI:lle ----
@@ -133,11 +139,57 @@ public class CoopTurnCoordinator : NetworkBehaviour
         // Päivitä paikallinen SP-UI-luuppi (ei Mirror-kutsuja)
         if (TurnSystem.Instance != null)
             TurnSystem.Instance.SetHudFromNetwork(newTurnNumber, isPlayersPhase);
+
+        // Vaihe vaihtui → varmuuden vuoksi piilota mahdollinen "READY" -teksti
+        var ui = FindFirstObjectByType<TurnSystemUI>();
+        if (ui != null) ui.SetTeammateReady(false, null);
     }
 
+    // Näyttää toiselle pelaajalle "Player X READY"
     [ClientRpc]
-    void RpcUpdateWaiting(int have, int need)
+    void RpcUpdateReadyStatus(int[] whoEndedIds, string[] whoEndedLabels)
     {
-        // UI: "Waiting for teammate: have/need"
+        var ui = FindFirstObjectByType<TurnSystemUI>();
+        if (ui == null) return;
+
+        // Selvitä oma netId
+        uint localId = 0;
+        if (NetworkClient.connection != null && NetworkClient.connection.identity)
+            localId = NetworkClient.connection.identity.netId;
+
+        bool show = false;
+        string label = null;
+
+        // Jos joku muu kuin minä on valmis → näytä hänen labelinsa
+        for (int i = 0; i < whoEndedIds.Length; i++)
+        {
+            if ((uint)whoEndedIds[i] != localId)
+            {
+                show = true;
+                label = (i < whoEndedLabels.Length) ? whoEndedLabels[i] : "Teammate";
+                break;
+            }
+        }
+
+        ui.SetTeammateReady(show, label);
+    }
+
+    // ---- Server-apurit ----
+    [Server] string GetLabelByNetId(uint id)
+    {
+        foreach (var kvp in NetworkServer.connections)
+        {
+            var conn = kvp.Value;
+            if (conn != null && conn.identity && conn.identity.netId == id)
+                return conn.connectionId == 0 ? "Player 1" : "Player 2";
+        }
+        return "Teammate";
+    }
+
+    [Server]
+    string[] BuildEndedLabels()
+    {
+        // HashSetin järjestys ei ole merkityksellinen, näytetään mikä tahansa toinen
+        return endedPlayers.Select(id => GetLabelByNetId(id)).ToArray();
     }
 }
