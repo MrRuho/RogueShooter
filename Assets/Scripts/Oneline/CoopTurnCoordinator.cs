@@ -67,23 +67,34 @@ public class CoopTurnCoordinator : NetworkBehaviour
     [Server]
     private IEnumerator ServerEnemyTurnThenNextPlayers()
     {
+        // 1) Vihollisvuoro alkaa
         phase = TurnPhase.Enemy;
-        RpcTurnPhaseChanged(phase, turnNumber);
+        RpcTurnPhaseChanged(phase, turnNumber, false);
 
-        // Silta Unit-luokalle (AP-logiikka jne.)
+        // Silta unit/AP-logiikalle (sama kuin nyt)
         if (TurnSystem.Instance != null)
+        { 
             TurnSystem.Instance.ForcePhase(isPlayerTurn: false, incrementTurnNumber: false);
+        }
 
-        // Aja SP-AI uudelleenkäyttönä
+        // Aja AI
         yield return RunEnemyAI();
 
-        // Takaisin pelaajille + uusi turn-numero
-        turnNumber++;
+        // 2) Paluu pelaajille + turn-numero + resetit
+        turnNumber++;                  // kasvata serverillä
         ResetTurnState();
         if (TurnSystem.Instance != null)
+        {
             TurnSystem.Instance.ForcePhase(isPlayerTurn: true, incrementTurnNumber: false);
+        }
 
-        RpcTurnPhaseChanged(phase, turnNumber);
+        // TÄRKEÄ: vaihda phase takaisin Players ENNEN RPC:tä
+        phase = TurnPhase.Players;
+
+        // 3) Lähetä *kaikille* (host + clientit) HUD-päivitys SP-logiikan kautta
+        RpcTurnPhaseChanged(phase, turnNumber, true);
+
+        // HUOM: ei enää TurnSystem.Instance.NextTurn();  (se teki HUDin vain hostilla)
     }
 
     [Server]
@@ -92,7 +103,7 @@ public class CoopTurnCoordinator : NetworkBehaviour
         if (EnemyAI.Instance != null)
             yield return EnemyAI.Instance.RunEnemyTurnCoroutine();
         else
-            yield return new WaitForSeconds(2f); // fallback, ettei ketju katkea
+            yield return null; // fallback, ettei ketju katkea
     }
 
     [Server]
@@ -117,13 +128,12 @@ public class CoopTurnCoordinator : NetworkBehaviour
 
     // ---- Client-notifikaatiot UI:lle ----
     [ClientRpc]
-    void RpcTurnPhaseChanged(TurnPhase newPhase, int turnNo)
+    void RpcTurnPhaseChanged(TurnPhase newPhase, int newTurnNumber, bool isPlayersPhase)
     {
-        // Päivitä clientin paikallinen TurnSystem → laukaisee OnTurnChanged
-        bool isPlayers = newPhase == TurnPhase.Players;
+        // Päivitä paikallinen SP-UI-luuppi (ei Mirror-kutsuja)
         if (TurnSystem.Instance != null)
-            TurnSystem.Instance.ForcePhase(isPlayers, incrementTurnNumber: false);
-        }
+            TurnSystem.Instance.SetHudFromNetwork(newTurnNumber, isPlayersPhase);
+    }
 
     [ClientRpc]
     void RpcUpdateWaiting(int have, int need)

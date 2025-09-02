@@ -24,6 +24,7 @@ public class TurnSystem : MonoBehaviour
 
     public void NextTurn()
     {
+
         // Tarkista pelimoodi
         if (GameModeManager.SelectedMode == GameMode.SinglePlayer)
         {
@@ -57,11 +58,20 @@ public class TurnSystem : MonoBehaviour
         return isPlayerTurn;
     }
 
+    // ForcePhase on serverin kutsuma. Päivittää vuoron ja kutsuu OnTurnChanged
     public void ForcePhase(bool isPlayerTurn, bool incrementTurnNumber)
     {
         if (incrementTurnNumber) turnNumber++;
         this.isPlayerTurn = isPlayerTurn;
         OnTurnChanged?.Invoke(this, EventArgs.Empty);
+    }
+    
+    // Päivitä HUD verkon kautta (co-op)
+    public void SetHudFromNetwork(int newTurnNumber, bool isPlayersPhase)
+    {
+        turnNumber = newTurnNumber;
+        isPlayerTurn = isPlayersPhase;
+        OnTurnChanged?.Invoke(this, EventArgs.Empty); // <- päivitää HUDin kuten SP:ssä
     }
     
 }

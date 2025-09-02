@@ -6,6 +6,14 @@ public class PlayerController : NetworkBehaviour
 {
     [SyncVar] public bool hasEndedThisTurn;
 
+    public static PlayerController Local; // helppo viittaus UI:lle
+
+    public override void OnStartLocalPlayer()
+    {
+        base.OnStartLocalPlayer();
+        Local = this;
+    }
+
     // UI-nappi kutsuu tätä (vain local player)
     public void ClickEndTurn()
     {

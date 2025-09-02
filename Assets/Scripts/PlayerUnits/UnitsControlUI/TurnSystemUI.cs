@@ -27,6 +27,7 @@ public class TurnSystemUI : MonoBehaviour
         if (isCoop)
         {
             // Co-opissa nappi on DISABLED kunnes serveri kertoo että saa toimia
+            TurnSystem.Instance.OnTurnChanged += TurnSystem_OnTurnChanged;
             SetCanAct(false);
         }
         else
