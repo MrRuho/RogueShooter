@@ -184,9 +184,10 @@ namespace Utp
 			{
 				NetworkServer.Spawn(unit, conn); // authority tälle pelaajalle
 			}
-			
+
 			// päivitä pelaajamäärä koordinaattorille
-			var coord = CoopTurnCoordinator.Instance;
+			var coord =NetTurnManager.Instance;
+			//var coord = CoopTurnCoordinator.Instance;
 			if (coord != null)
 				coord.ServerUpdateRequiredCount(NetworkServer.connections.Count);
 
@@ -216,7 +217,8 @@ namespace Utp
 		{
 			base.OnServerDisconnect(conn);
 			// päivitä pelaajamäärä koordinaattorille
-			var coord = CoopTurnCoordinator.Instance;
+			var coord =NetTurnManager.Instance;
+			//var coord = CoopTurnCoordinator.Instance;
 			if (coord != null)
 				coord.ServerUpdateRequiredCount(NetworkServer.connections.Count);
 		}

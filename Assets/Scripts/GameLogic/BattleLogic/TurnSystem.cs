@@ -72,6 +72,5 @@ public class TurnSystem : MonoBehaviour
         turnNumber = newTurnNumber;
         isPlayerTurn = isPlayersPhase;
         OnTurnChanged?.Invoke(this, EventArgs.Empty); // <- päivitää HUDin kuten SP:ssä
-    }
-    
+    }  
 }

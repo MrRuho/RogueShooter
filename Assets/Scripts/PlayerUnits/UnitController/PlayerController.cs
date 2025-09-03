@@ -18,8 +18,9 @@ public class PlayerController : NetworkBehaviour
     public void ClickEndTurn()
     {
         if (!isLocalPlayer) return;
-        if (hasEndedThisTurn) return;             // ei tuplia
-        if (CoopTurnCoordinator.Instance && CoopTurnCoordinator.Instance.phase != TurnPhase.Players) return;
+        if (hasEndedThisTurn) return;
+        if (NetTurnManager.Instance && NetTurnManager.Instance.phase != TurnPhase.Players) return;
+      //  if (CoopTurnCoordinator.Instance && CoopTurnCoordinator.Instance.phase != TurnPhase.Players) return;
         Debug.Log("[PC] ClickEndTurn → CmdEndTurn()");
         CmdEndTurn();
     }
@@ -36,12 +37,13 @@ public class PlayerController : NetworkBehaviour
         TargetNotifyCanAct(connectionToClient, false);
 
         // Varmista myös että koordinaattori löytyy serveripuolelta:
-        if (CoopTurnCoordinator.Instance == null)
+        if (NetTurnManager.Instance == null)
         {
-            Debug.LogWarning("[PC][SERVER] CoopTurnCoordinator.Instance is NULL on server!");
+            Debug.LogWarning("[PC][SERVER] NetTurnManager.Instance is NULL on server!");
             return;
         }
-        CoopTurnCoordinator.Instance.ServerPlayerEndedTurn(netIdentity.netId);
+        //CoopTurnCoordinator.Instance.ServerPlayerEndedTurn(netIdentity.netId);
+        NetTurnManager.Instance.ServerPlayerEndedTurn(netIdentity.netId);
     }
 
     

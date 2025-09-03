@@ -4,21 +4,11 @@ using System.Linq;
 using Mirror;
 using UnityEngine;
 
-public enum TurnPhase { Players, Enemy }
+//public enum TurnPhase { Players, Enemy }
 
 public class CoopTurnCoordinator : NetworkBehaviour
 {
     public static CoopTurnCoordinator Instance { get; private set; }
-
-    [SyncVar] public TurnPhase phase = TurnPhase.Players;
-    [SyncVar] public int turnNumber = 1;
-
-    // Seurannat (server)
-    [SyncVar] public int endedCount = 0;
-    [SyncVar] public int requiredCount = 0; // päivitetään kun pelaajia liittyy/lähtee
-
-    // Server only: ketkä ovat jo painaneet End Turn tässä kierrossa
-    private readonly HashSet<uint> endedPlayers = new HashSet<uint>();
 
     void Awake()
     {
@@ -26,45 +16,11 @@ public class CoopTurnCoordinator : NetworkBehaviour
         Instance = this;
     }
 
-    public override void OnStartServer()
-    {
-        base.OnStartServer();
-        ResetTurnState();
-        // jos haluat lukita kahteen pelaajaan protoa varten:
-        if (GameModeManager.SelectedMode == GameMode.CoOp) requiredCount = 2;
-        Debug.Log($"[TURN][SERVER] Start, requiredCount={requiredCount}");
-    }
 
     [Server]
-    public void ServerUpdateRequiredCount(int playersNow)
+    public void TryAdvanceIfReady()
     {
-        requiredCount = Mathf.Max(1, playersNow); // Co-opissa yleensä 2
-        // jos yksi poistui kesken odotuksen, tarkista täyttyikö ehto nyt
-        TryAdvanceIfReady();
-    }
-
-    [Server]
-    public void ServerPlayerEndedTurn(uint playerNetId)
-    {
-        if (phase != TurnPhase.Players) return;          // ei lasketa jos ei pelaajavuoro
-        if (!endedPlayers.Add(playerNetId)) return;      // älä laske tuplia
-
-        endedCount = endedPlayers.Count;
-        Debug.Log($"[TURN][SERVER] Player {playerNetId} ended. {endedCount}/{requiredCount}");
-
-        // Ilmoita kaikille, KUKA on valmis → UI näyttää "Player X READY" toisella pelaajalla
-        RpcUpdateReadyStatus(
-            endedPlayers.Select(id => (int)id).ToArray(),
-            BuildEndedLabels()
-        );
-
-        TryAdvanceIfReady();
-    }
-
-    [Server]
-    void TryAdvanceIfReady()
-    {
-        if (phase == TurnPhase.Players && endedPlayers.Count >= Mathf.Max(1, requiredCount))
+        if (NetTurnManager.Instance.phase == TurnPhase.Players && NetTurnManager.Instance.endedPlayers.Count >= Mathf.Max(1, NetTurnManager.Instance.requiredCount))
         {
             Debug.Log("[TURN][SERVER] All players ready → enemy turn");
             StartCoroutine(ServerEnemyTurnThenNextPlayers());
@@ -75,8 +31,8 @@ public class CoopTurnCoordinator : NetworkBehaviour
     private IEnumerator ServerEnemyTurnThenNextPlayers()
     {
         // 1) Vihollisvuoro alkaa
-        phase = TurnPhase.Enemy;
-        RpcTurnPhaseChanged(phase, turnNumber, false);
+        //phase = TurnPhase.Enemy;
+        RpcTurnPhaseChanged(NetTurnManager.Instance.phase = TurnPhase.Enemy, NetTurnManager.Instance.turnNumber, false);
 
         // Silta unit/AP-logiikalle (sama kuin nyt)
         if (TurnSystem.Instance != null)
@@ -88,18 +44,18 @@ public class CoopTurnCoordinator : NetworkBehaviour
         yield return RunEnemyAI();
 
         // 2) Paluu pelaajille + turn-numero + resetit
-        turnNumber++;                  // kasvata serverillä
-        ResetTurnState();              // nollaa endedit + UI “ready” pois
+        NetTurnManager.Instance.turnNumber++;                  // kasvata serverillä
+        NetTurnManager.Instance.ResetTurnState();              // nollaa endedit + UI “ready” pois
         if (TurnSystem.Instance != null)
         {
             TurnSystem.Instance.ForcePhase(isPlayerTurn: true, incrementTurnNumber: false);
         }
 
         // TÄRKEÄ: vaihda phase takaisin Players ENNEN RPC:tä
-        phase = TurnPhase.Players;
+     //   phase = TurnPhase.Players;
 
         // 3) Lähetä *kaikille* (host + clientit) HUD-päivitys SP-logiikan kautta
-        RpcTurnPhaseChanged(phase, turnNumber, true);
+        RpcTurnPhaseChanged(NetTurnManager.Instance.phase = TurnPhase.Players, NetTurnManager.Instance.turnNumber, true);
     }
 
     [Server]
@@ -109,27 +65,6 @@ public class CoopTurnCoordinator : NetworkBehaviour
             yield return EnemyAI.Instance.RunEnemyTurnCoroutine();
         else
             yield return null; // fallback, ettei ketju katkea
-    }
-
-    [Server]
-    void ResetTurnState()
-    {
-        Debug.Log("[TURN][SERVER] ResetTurnState");
-        phase = TurnPhase.Players;
-        endedPlayers.Clear();
-        endedCount = 0;
-
-        // nollaa kaikilta pelaajilta ‘hasEndedThisTurn’
-        foreach (var kvp in NetworkServer.connections)
-        {
-            var id = kvp.Value.identity;
-            if (!id) continue;
-            var pc = id.GetComponent<PlayerController>();
-            if (pc) pc.ServerSetHasEnded(false);  // <<< TÄRKEIN RIVI
-        }
-
-        // Tyhjennä "Player X READY" -teksti kaikilta
-        RpcUpdateReadyStatus(System.Array.Empty<int>(), System.Array.Empty<string>());
     }
 
     // ---- Client-notifikaatiot UI:lle ----
@@ -145,9 +80,10 @@ public class CoopTurnCoordinator : NetworkBehaviour
         if (ui != null) ui.SetTeammateReady(false, null);
     }
 
+
     // Näyttää toiselle pelaajalle "Player X READY"
     [ClientRpc]
-    void RpcUpdateReadyStatus(int[] whoEndedIds, string[] whoEndedLabels)
+    public void RpcUpdateReadyStatus(int[] whoEndedIds, string[] whoEndedLabels)
     {
         var ui = FindFirstObjectByType<TurnSystemUI>();
         if (ui == null) return;
@@ -187,9 +123,10 @@ public class CoopTurnCoordinator : NetworkBehaviour
     }
 
     [Server]
-    string[] BuildEndedLabels()
+    public string[] BuildEndedLabels()
     {
+        Debug.Log($"[TURN][SERVER] BuildEndedLabels for {NetTurnManager.Instance.endedPlayers.Count} players");
         // HashSetin järjestys ei ole merkityksellinen, näytetään mikä tahansa toinen
-        return endedPlayers.Select(id => GetLabelByNetId(id)).ToArray();
+        return NetTurnManager.Instance.endedPlayers.Select(id => GetLabelByNetId(id)).ToArray();
     }
 }

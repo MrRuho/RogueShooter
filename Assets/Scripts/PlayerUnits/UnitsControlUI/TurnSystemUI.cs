@@ -65,12 +65,12 @@ public class TurnSystemUI : MonoBehaviour
     // ====== nappi ======
     private void OnEndTurnClicked()
     {
-        // Päättele co-op -tila tilannekohtaisesti (ei SelectedMode)
-        bool isCoopNow =
-            CoopTurnCoordinator.Instance != null &&
+        // Päättele co-op -tila tilannekohtaisesti (ei SelectedMode) 
+        bool isOnline =
+            NetTurnManager.Instance != null &&
             (NetworkServer.active || NetworkClient.isConnected);
 
-        if (!isCoopNow)
+        if (!isOnline)
         {
             Debug.Log("[UI] EndTurn clicked (SP)");
             if (TurnSystem.Instance != null)
@@ -84,7 +84,7 @@ public class TurnSystemUI : MonoBehaviour
             return;
         }
 
-        Debug.Log("[UI] EndTurn clicked (Co-op)");
+        Debug.Log("[UI] EndTurn clicked (Online)");
 
         CacheLocalPlayerController();
         if (localPlayerController == null)
@@ -122,6 +122,7 @@ public class TurnSystemUI : MonoBehaviour
 
     private void UpdateForSingleplayer()
     {
+
         if (turnNumberText != null)
             turnNumberText.text = "Turn: " + TurnSystem.Instance.GetTurnNumber();
 
@@ -132,7 +133,7 @@ public class TurnSystemUI : MonoBehaviour
             endTurnButton.gameObject.SetActive(TurnSystem.Instance.IsPlayerTurn());
     }
 
-    // Kutsutaan verkosta:
+    // Kutsutaan verkosta: DODO Siirrrä tämä CoopTurnCoordinatoriin?
     public void SetTeammateReady(bool visible, string whoLabel = null)
     {
         if (!playerReadyText) return;
