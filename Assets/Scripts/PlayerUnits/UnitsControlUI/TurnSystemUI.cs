@@ -1,8 +1,8 @@
 using System;
-using Mirror;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using Utp;
 
 public class TurnSystemUI : MonoBehaviour
 {
@@ -68,8 +68,7 @@ public class TurnSystemUI : MonoBehaviour
         // Päättele co-op -tila tilannekohtaisesti (ei SelectedMode) 
         bool isOnline =
             NetTurnManager.Instance != null &&
-            (NetworkServer.active || NetworkClient.isConnected);
-
+            (GameNetworkManager.Instance.GetNetWorkServerActive() || GameNetworkManager.Instance.GetNetWorkClientConnected());
         if (!isOnline)
         {
             Debug.Log("[UI] EndTurn clicked (SP)");
@@ -109,7 +108,7 @@ public class TurnSystemUI : MonoBehaviour
     {
         if (localPlayerController == null)
         {
-            var conn = NetworkClient.connection;
+            var conn = GameNetworkManager.Instance.NetWorkClientConnection();
             if (conn != null && conn.identity != null)
             {
                 localPlayerController = conn.identity.GetComponent<PlayerController>();
@@ -133,7 +132,7 @@ public class TurnSystemUI : MonoBehaviour
             endTurnButton.gameObject.SetActive(TurnSystem.Instance.IsPlayerTurn());
     }
 
-    // Kutsutaan verkosta: DODO Siirrrä tämä CoopTurnCoordinatoriin?
+    // Kutsutaan verkosta
     public void SetTeammateReady(bool visible, string whoLabel = null)
     {
         if (!playerReadyText) return;

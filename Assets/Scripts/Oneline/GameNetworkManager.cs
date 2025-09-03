@@ -9,7 +9,7 @@ namespace Utp
 	[RequireComponent(typeof(UtpTransport))]
 	public class GameNetworkManager : NetworkManager
 	{
-
+		public static GameNetworkManager Instance { get; private set; }
 		private UtpTransport utpTransport;
 
 		/// <summary>
@@ -20,6 +20,13 @@ namespace Utp
 
 		public override void Awake()
 		{
+			if (Instance != null && Instance != this)
+			{
+				Destroy(gameObject);
+				return;
+			}
+			Instance = this;
+
 			base.Awake();
 
 			utpTransport = GetComponent<UtpTransport>();
@@ -186,13 +193,13 @@ namespace Utp
 			}
 
 			// päivitä pelaajamäärä koordinaattorille
-			var coord =NetTurnManager.Instance;
+			var coord = NetTurnManager.Instance;
 			//var coord = CoopTurnCoordinator.Instance;
 			if (coord != null)
 				coord.ServerUpdateRequiredCount(NetworkServer.connections.Count);
 
 		}
-	
+
 		[Server]
 		void ServerSpawnEnemies()
 		{
@@ -217,10 +224,30 @@ namespace Utp
 		{
 			base.OnServerDisconnect(conn);
 			// päivitä pelaajamäärä koordinaattorille
-			var coord =NetTurnManager.Instance;
+			var coord = NetTurnManager.Instance;
 			//var coord = CoopTurnCoordinator.Instance;
 			if (coord != null)
 				coord.ServerUpdateRequiredCount(NetworkServer.connections.Count);
+		}
+
+		public bool IsNetworkActive()
+		{
+			return GetNetWorkServerActive() || GetNetWorkClientConnected();
+		}
+
+		public bool GetNetWorkServerActive()
+		{
+			return NetworkServer.active;
+		}
+
+		public bool GetNetWorkClientConnected()
+		{
+			return NetworkClient.isConnected;
+		}
+		
+		public NetworkConnection NetWorkClientConnection()
+		{
+			return NetworkClient.connection;
 		}
 	}
 }
