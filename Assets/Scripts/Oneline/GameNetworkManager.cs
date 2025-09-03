@@ -1,39 +1,14 @@
 using System;
 using System.Collections.Generic;
-
 using Mirror;
-
 using UnityEngine;
 using Unity.Services.Relay.Models;
 
 namespace Utp
 {
+	[RequireComponent(typeof(UtpTransport))]
 	public class GameNetworkManager : NetworkManager
 	{
-		private bool enemiesSpawned;
-
-		// --- Lisää luokan alkuun kentät ---
-		[Header("Co-op squad prefabs")]
-		public GameObject unitHostPrefab;      // -> UnitSolo
-		public GameObject unitClientPrefab;    // -> UnitSolo Player 2
-
-		[Header("Enemy spawn (Co-op)")]
-		public GameObject enemyPrefab;
-
-		[Header("Spawn positions (world coords on your grid)")]
-		public Vector3[] hostSpawnPositions = {
-			new Vector3(0, 0, 0),
-			new Vector3(2, 0, 0),
-		};
-		public Vector3[] clientSpawnPositions = {
-			new Vector3(0, 0, 6),
-			new Vector3(2, 0, 6),
-		};
-		public Vector3[] enemySpawnPositions = {
-			new Vector3(4, 0, 8),
-			new Vector3(6, 0, 8),
-		};
-		// --- --------------------------------
 
 		private UtpTransport utpTransport;
 
@@ -42,13 +17,14 @@ namespace Utp
 		/// </summary>
 		public string relayJoinCode = "";
 
+
 		public override void Awake()
 		{
 			base.Awake();
 
 			utpTransport = GetComponent<UtpTransport>();
 
-			string[] args = System.Environment.GetCommandLineArgs();
+			string[] args = Environment.GetCommandLineArgs();
 			for (int key = 0; key < args.Length; key++)
 			{
 				if (args[key] == "-port")
@@ -73,13 +49,22 @@ namespace Utp
 		public override void OnStartServer()
 		{
 			base.OnStartServer();
-			enemiesSpawned = false;
+			SpawnUnitsCoordinator.Instance.SetEnemiesSpawned(false);
 			Debug.Log("[NM] OnStartServer() called. Mode=" + GameModeManager.SelectedMode);
 
 			if (GameModeManager.SelectedMode == GameMode.CoOp)
 			{
 				ServerSpawnEnemies();
 			}
+
+			// DODO PvP pelin käynnistys
+			else if (GameModeManager.SelectedMode == GameMode.Versus)
+			{
+				// Isäntä pelaaja aloittaa ja host yksiköt ovat vihollisia
+				// Isännän lopetettua vuoronsa asiakas pelaaja aloittaa ja isäntä yksiköt ovat vihollisia
+			}
+
+
 		}
 
 		/// <summary>
@@ -114,16 +99,6 @@ namespace Utp
 		/// </summary>
 		public void StartStandardHost()
 		{
-			if (utpTransport == null)
-			{
-				utpTransport = GetComponent<UtpTransport>();
-				if (utpTransport == null)
-				{
-					Debug.LogError("[NM] UtpTransport puuttuu samalta GameObjectilta!");
-					return;
-				}
-			}
-
 			utpTransport.useRelay = false;
 			StartHost();
 		}
@@ -142,26 +117,6 @@ namespace Utp
 		/// </summary>
 		public void StartRelayHost(int maxPlayers, string regionId = null)
 		{
-			if (utpTransport == null)
-			{
-				utpTransport = GetComponent<UtpTransport>();
-				if (utpTransport == null)
-				{
-					Debug.LogError("[NM] UtpTransport puuttuu samalta GameObjectilta!");
-					return;
-				}
-			}
-
-			if (utpTransport == null)
-			{
-				utpTransport = GetComponent<UtpTransport>();
-				if (utpTransport == null)
-				{
-					Debug.LogError("[NM] UtpTransport puuttuu samalta GameObjectilta!");
-					return;
-				}
-			}
-
 			utpTransport.useRelay = true;
 			utpTransport.AllocateRelayServer(maxPlayers, regionId,
 			(string joinCode) =>
@@ -205,8 +160,6 @@ namespace Utp
 		public override void OnValidate()
 		{
 			base.OnValidate();
-			if (utpTransport == null)
-				utpTransport = GetComponent<UtpTransport>();
 		}
 
 		/// <summary>
@@ -214,78 +167,51 @@ namespace Utp
 		/// </summary>
 		public override void OnServerAddPlayer(NetworkConnectionToClient conn)
 		{
-			/*
-			Transform startPos = GetStartPosition(); // Spawn position (valinnainen)
-			Vector3 spawnPosition = startPos != null ? startPos.position : Vector3.zero;
 
-			GameObject player = Instantiate(playerPrefab, spawnPosition, Quaternion.identity);
-
-			NetworkServer.AddPlayerForConnection(conn, player); // antaa authorityn clientille
-			*/
-
-			// 1) Luo Mirrorin "player object" (EmptySquad) playerPrefab-slotista:
-			// 1) luo player-object (EmptySquad)
 			if (playerPrefab == null)
 			{
 				Debug.LogError("[NM] Player Prefab (EmptySquad) puuttuu!");
 				return;
 			}
 			base.OnServerAddPlayer(conn);
-		
+
 			// 2) päätä host vs client
 			bool isHost = conn.connectionId == 0;
 
-			GameObject unitPrefab = isHost ? unitHostPrefab : unitClientPrefab;
-			Vector3[] spawnPoints = isHost ? hostSpawnPositions : clientSpawnPositions;
-
-			if (unitPrefab == null)
+			// 3) spawnaa pelaajan yksiköt ja anna authority niihin
+			var units = SpawnUnitsCoordinator.Instance.SpawnPlayersForNetwork(isHost);
+			foreach (var unit in units)
 			{
-				Debug.LogError($"[NM] {(isHost ? "unitHostPrefab" : "unitClientPrefab")} puuttuu!");
-				return;
+				NetworkServer.Spawn(unit, conn); // authority tälle pelaajalle
 			}
-			if (spawnPoints == null || spawnPoints.Length == 0)
-			{
-				Debug.LogError($"[NM] {(isHost ? "hostSpawnPositions" : "clientSpawnPositions")} ei ole asetettu!");
-				return;
-			}
-
-			foreach (var pos in spawnPoints)
-			{
-				var go = Instantiate(unitPrefab, pos, Quaternion.identity);
-				NetworkServer.Spawn(go, conn); // authority tälle pelaajalle
-			}
-
-			if (GameModeManager.SelectedMode == GameMode.CoOp && !enemiesSpawned)
-			{
-				Debug.Log("Spawning enemies for Co-op.");
-				ServerSpawnEnemies();
-			}
+			
+			// päivitä pelaajamäärä koordinaattorille
 			var coord = CoopTurnCoordinator.Instance;
 			if (coord != null)
 				coord.ServerUpdateRequiredCount(NetworkServer.connections.Count);
 
 		}
-
+	
 		[Server]
 		void ServerSpawnEnemies()
 		{
-			Debug.Log("[NM] ServerSpawnEnemies() called.");
-			if (!enemyPrefab || enemySpawnPositions == null || enemySpawnPositions.Length == 0)
-			{
-				Debug.LogWarning("[NM] EnemyPrefab/positions puuttuu");
-				return;
-			}
+			Debug.Log("[NM] Delegating enemy spawn to SpawnUnitsCoordinator.");
 
-			foreach (var pos in enemySpawnPositions)
-			{
-				var e = Instantiate(enemyPrefab, pos, Quaternion.identity);
-				NetworkServer.Spawn(e);
-				Debug.Log("Enemy spawned at " + pos);
-			}
+			// Pyydä SpawnUnitsCoordinatoria luomaan viholliset
+			var enemies = SpawnUnitsCoordinator.Instance.SpawnEnemies();
 
-			enemiesSpawned = true;
+			// Synkronoi viholliset verkkoon Mirrorin avulla
+			foreach (var enemy in enemies)
+			{
+				if (enemy != null)
+				{
+					NetworkServer.Spawn(enemy);
+					Debug.Log($"[NM] Enemy spawned on network: {enemy.transform.position}");
+				}
+			}
 		}
-		
+
+
 		public override void OnServerDisconnect(NetworkConnectionToClient conn)
 		{
 			base.OnServerDisconnect(conn);

@@ -1414,6 +1414,62 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 402793183}
   m_CullTransparentMesh: 1
+--- !u!1 &430157627
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 430157629}
+  - component: {fileID: 430157628}
+  m_Layer: 0
+  m_Name: SpawnUnitsCoordinator
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &430157628
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 430157627}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0fb8fd811df4a4c4ca6ce565bd9c79f0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  unitHostPrefab: {fileID: 3233335089446238902, guid: 9eade25f7fc5b7d439428c63bd6bec87, type: 3}
+  unitClientPrefab: {fileID: 3233335089446238902, guid: c1fabc22cb3fe3342b99b69d6f52be4a, type: 3}
+  enemyPrefab: {fileID: 2865685898167604431, guid: 41aec1e113703724788b065317256a18, type: 3}
+  hostSpawnPositions:
+  - {x: 0, y: 0, z: 0}
+  - {x: 2, y: 0, z: 0}
+  clientSpawnPositions:
+  - {x: 0, y: 0, z: 6}
+  - {x: 2, y: 0, z: 6}
+  enemySpawnPositions:
+  - {x: 4, y: 0, z: 8}
+  - {x: 6, y: 0, z: 8}
+--- !u!4 &430157629
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 430157627}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &481241216
 GameObject:
   m_ObjectHideFlags: 0
@@ -2377,7 +2433,7 @@ MonoBehaviour:
   enemySpawnPositions:
   - {x: 4, y: 0, z: 8}
   - {x: 6, y: 0, z: 8}
-  relayJoinCode: DN6MJN
+  relayJoinCode: RLP78B
 --- !u!4 &753069689
 Transform:
   m_ObjectHideFlags: 0
@@ -4828,9 +4884,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ba89c47be371eb14fa01e2bbadbd7326, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerPrefab: {fileID: 3233335089446238902, guid: 9eade25f7fc5b7d439428c63bd6bec87, type: 3}
-  coOpPlayerPrefab: {fileID: 3233335089446238902, guid: c1fabc22cb3fe3342b99b69d6f52be4a, type: 3}
-  enemyPrefab: {fileID: 2865685898167604431, guid: 41aec1e113703724788b065317256a18, type: 3}
 --- !u!4 &1831356334
 Transform:
   m_ObjectHideFlags: 0
@@ -5656,3 +5709,4 @@ SceneRoots:
   - {fileID: 753069689}
   - {fileID: 1920620112}
   - {fileID: 550643078}
+  - {fileID: 430157629}
