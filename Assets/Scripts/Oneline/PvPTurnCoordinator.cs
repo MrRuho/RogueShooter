@@ -33,6 +33,8 @@ public class PvPTurnCoordinator : NetworkBehaviour
         {
             // Myöhemmin liittynyt (client) – lukitaan kunnes hänen vuoronsa alkaa
             pc.ServerSetHasEnded(true);
+
+            TargetBootstrapTurn(pc.connectionToClient, GetTurnNumber(), currentOwnerNetId);
         }
     }
 
@@ -42,7 +44,7 @@ public class PvPTurnCoordinator : NetworkBehaviour
     {
         var players = GetAllPlayers().ToList();
         var ended = players.FirstOrDefault(p => p.netId == whoEndedNetId);
-        var next  = players.FirstOrDefault(p => p.netId != whoEndedNetId);
+        var next = players.FirstOrDefault(p => p.netId != whoEndedNetId);
         if (next == null) return; // ei vastustajaa vielä
 
         // Nosta vuorolaskuria (kierrätetään olemassaolevaa turnNumberia)
@@ -82,4 +84,17 @@ public class PvPTurnCoordinator : NetworkBehaviour
             if (pc) yield return pc;
         }
     }
+    
+    [TargetRpc]
+    void TargetBootstrapTurn(NetworkConnectionToClient __, int turnNo, uint ownerNetId)
+    {
+        bool isMyTurn = false;
+        if (NetworkClient.connection != null && NetworkClient.connection.identity != null)
+            isMyTurn = NetworkClient.connection.identity.netId == ownerNetId;
+
+        // Päivitä paikallinen UI + IsPlayerTurn heti
+        if (TurnSystem.Instance != null)
+            TurnSystem.Instance.SetHudFromNetwork(turnNo, isMyTurn);
+    }
+
 }
