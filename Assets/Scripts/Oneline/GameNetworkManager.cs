@@ -67,8 +67,7 @@ namespace Utp
 			// DODO PvP pelin käynnistys
 			else if (GameModeManager.SelectedMode == GameMode.Versus)
 			{
-				// Isäntä pelaaja aloittaa ja host yksiköt ovat vihollisia
-				// Isännän lopetettua vuoronsa asiakas pelaaja aloittaa ja isäntä yksiköt ovat vihollisia
+				
 			}
 
 
@@ -197,6 +196,21 @@ namespace Utp
 			//var coord = CoopTurnCoordinator.Instance;
 			if (coord != null)
 				coord.ServerUpdateRequiredCount(NetworkServer.connections.Count);
+
+			// --- VERSUS (PvP) — host aloittaa ---
+			if (GameModeManager.SelectedMode == GameMode.Versus)
+			{
+				var pc = conn.identity != null ? conn.identity.GetComponent<PlayerController>() : null;
+				if (pc != null && PvPTurnCoordinator.Instance != null)
+				{
+					// Rekisteröi pelaaja PvP-vuoroon (host saa aloitusvuoron PvPTurnCoordinatorissa)
+					PvPTurnCoordinator.Instance.ServerRegisterPlayer(pc);
+				}
+				else
+				{
+					Debug.LogWarning("[NM] PvP rekisteröinti epäonnistui: PlayerController tai PvPTurnCoordinator puuttuu.");
+				}
+			}
 
 		}
 

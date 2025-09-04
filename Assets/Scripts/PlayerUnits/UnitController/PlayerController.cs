@@ -2,8 +2,14 @@ using System;
 using Mirror;
 using UnityEngine;
 
+///<sumary>
+/// PLayerController handles per-player state in a networked game.
+/// Each connected player has one PlayerController instance attached to emptySquad GameObject.
+/// It tracks whether the player has ended their turn and communicates with the UI.
+///</sumary>
 public class PlayerController : NetworkBehaviour
 {
+
     [SyncVar] public bool hasEndedThisTurn;
 
     public static PlayerController Local; // helppo viittaus UI:lle
@@ -20,7 +26,6 @@ public class PlayerController : NetworkBehaviour
         if (!isLocalPlayer) return;
         if (hasEndedThisTurn) return;
         if (NetTurnManager.Instance && NetTurnManager.Instance.phase != TurnPhase.Players) return;
-      //  if (CoopTurnCoordinator.Instance && CoopTurnCoordinator.Instance.phase != TurnPhase.Players) return;
         Debug.Log("[PC] ClickEndTurn → CmdEndTurn()");
         CmdEndTurn();
     }
@@ -46,7 +51,7 @@ public class PlayerController : NetworkBehaviour
         NetTurnManager.Instance.ServerPlayerEndedTurn(netIdentity.netId);
     }
 
-    
+
 
     // Server kutsuu tämän kierroksen alussa nollatakseen tilan
     [Server]
@@ -65,7 +70,7 @@ public class PlayerController : NetworkBehaviour
         var ui = FindFirstObjectByType<TurnSystemUI>();
         if (ui != null)
             ui.SetCanAct(canAct);
-            if (!canAct) ui.SetTeammateReady(false, null);
+        if (!canAct) ui.SetTeammateReady(false, null);
 
         // Lock/Unlock UnitActionSystem input
         if (UnitActionSystem.Instance != null)
@@ -74,4 +79,5 @@ public class PlayerController : NetworkBehaviour
             else UnitActionSystem.Instance.LockInput();
         }
     }
+
 }

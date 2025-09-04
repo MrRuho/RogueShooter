@@ -26,10 +26,24 @@ public class UnitActionSystemUI : MonoBehaviour
 
     private void Start()
     {
-        UnitActionSystem.Instance.OnSelectedUnitChanged += UnitActionSystem_OnSelectedUnitChanged;
-        UnitActionSystem.Instance.OnSelectedActionChanged += UnitActionSystem_OnSelectedActionChanged;
-        UnitActionSystem.Instance.OnActionStarted += UnitActionSystem_OnActionStarted;
-        TurnSystem.Instance.OnTurnChanged += TurnSystem_OnTurnChanged;
+        if (UnitActionSystem.Instance != null)
+        {   
+            UnitActionSystem.Instance.OnSelectedUnitChanged += UnitActionSystem_OnSelectedUnitChanged;
+            UnitActionSystem.Instance.OnSelectedActionChanged += UnitActionSystem_OnSelectedActionChanged;
+            UnitActionSystem.Instance.OnActionStarted += UnitActionSystem_OnActionStarted;
+          
+        } else
+        {
+            Debug.Log("UnitActionSystem instance found.");
+        }
+        if (TurnSystem.Instance != null)
+        { 
+            TurnSystem.Instance.OnTurnChanged += TurnSystem_OnTurnChanged;
+        } else
+        {
+            Debug.Log("TurnSystem instance not found.");
+        }
+       
         Unit.OnAnyActionPointsChanged += Unit_OnAnyActionPointsChanged;
     }
 
@@ -90,7 +104,21 @@ public class UnitActionSystemUI : MonoBehaviour
 
     private void UpdateActionPointsVisual()
     {
+        // Jos tekstiä ei ole kytketty Inspectorissa, poistu siististi
+        if (actionPointsText == null) return;
+
+        // Jos järjestelmä ei ole vielä valmis, näytä viiva
+        if (UnitActionSystem.Instance == null)
+        {
+            actionPointsText.text = "Action Points: -";
+            return;
+        }
         Unit selectedUnit = UnitActionSystem.Instance.GetSelectedUnit();
+        if (selectedUnit == null)
+        {
+            actionPointsText.text = "Action Points: -";
+            return;
+        }
         actionPointsText.text = "Action Points: " + selectedUnit.GetActionPoints();
     }
 

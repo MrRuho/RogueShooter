@@ -4,6 +4,12 @@ using UnityEngine.UI;
 using TMPro;
 using Utp;
 
+///<sumary>
+/// TurnSystemUI manages the turn system user interface.
+/// It handles both singleplayer and multiplayer modes.
+/// In multiplayer, it interacts with PlayerController to manage turn ending.
+/// It also updates UI elements based on the current turn state.
+///</sumary>
 public class TurnSystemUI : MonoBehaviour
 {
     [SerializeField] private Button endTurnButton;
@@ -106,15 +112,33 @@ public class TurnSystemUI : MonoBehaviour
 
     private void CacheLocalPlayerController()
     {
-        if (localPlayerController == null)
+        if (localPlayerController != null) return;
+
+        // 1) Varmista helpoimman kautta
+        if (PlayerController.Local != null)
         {
-            var conn = GameNetworkManager.Instance.NetWorkClientConnection();
-            if (conn != null && conn.identity != null)
-            {
-                localPlayerController = conn.identity.GetComponent<PlayerController>();
-            }
+            localPlayerController = PlayerController.Local;
+            return;
+        }
+
+        // 2) Fallback: Mirrorin client-yhteyden identity
+        var conn = GameNetworkManager.Instance != null
+            ? GameNetworkManager.Instance.NetWorkClientConnection()
+            : null;
+        if (conn != null && conn.identity != null)
+        {
+            localPlayerController = conn.identity.GetComponent<PlayerController>();
+            if (localPlayerController != null) return;
+        }
+
+        // 3) Viimeinen oljenkorsi: etsi skenestä local-pelaaja
+        var pcs = FindObjectsByType<PlayerController>(FindObjectsSortMode.InstanceID);
+        foreach (var pc in pcs)
+        {
+            if (pc.isLocalPlayer) { localPlayerController = pc; break; }
         }
     }
+
 
     // ====== singleplayer UI (valinnainen) ======
     private void TurnSystem_OnTurnChanged(object s, EventArgs e) => UpdateForSingleplayer();

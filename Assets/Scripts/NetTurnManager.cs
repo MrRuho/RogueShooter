@@ -3,7 +3,10 @@ using Mirror;
 using System.Collections.Generic;
 using System.Collections;
 using System.Linq;
-
+///<sumary>
+/// NetTurnManager coordinates turn phases in a networked multiplayer game.
+/// It tracks which players have ended their turns and advances the game phase accordingly. 
+///</sumary>
 public enum TurnPhase { Players, Enemy }
 public class NetTurnManager : NetworkBehaviour
 {
@@ -59,6 +62,14 @@ public class NetTurnManager : NetworkBehaviour
     [Server]
     public void ServerPlayerEndedTurn(uint playerNetId)
     {
+        // PvP: siirrä vuoro heti vastustajalle
+        if (GameModeManager.SelectedMode == GameMode.Versus)
+        {
+            if (PvPTurnCoordinator.Instance)
+                PvPTurnCoordinator.Instance.ServerHandlePlayerEndedTurn(playerNetId);
+            return;
+        }
+        
         if (phase != TurnPhase.Players) return;          // ei lasketa jos ei pelaajavuoro
         if (!endedPlayers.Add(playerNetId)) return;      // älä laske tuplia
 
