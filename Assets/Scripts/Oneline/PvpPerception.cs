@@ -1,54 +1,43 @@
-using System.Linq;
+using System.Reflection;
 using Mirror;
 using UnityEngine;
 
-/// <summary>
-/// Client-puolen apu, joka merkitsee yksiköt vihollisiksi oman näkökulman mukaan.
-/// Oletus:
-/// - Jokaisella Unitilla on NetworkIdentity
-/// - Omistus tarkistetaan: unit.netIdentity.hasAuthority (tai sinulla on oma OwnerNetId-kenttä)
-/// - Unitissa on public bool isEnemy (tai SetEnemy(bool)) jota käytetään lyöntilogiikassa
-/// </summary>
 public class PvpPerception : MonoBehaviour
 {
-     public static void ApplyEnemyFlagsLocally()
+    // Kutsu tätä aina kun vuoro vaihtuu (ja bootstrapissa)
+    public static void ApplyEnemyFlagsLocally(bool isMyTurn)
     {
-        // Hae kaikki Unitit skenestä
         var units = FindObjectsByType<Unit>(FindObjectsSortMode.None);
 
         foreach (var u in units)
         {
             var ni = u.GetComponent<NetworkIdentity>();
-            if (ni == null)
-                continue;
+            if (!ni) continue;
 
-            bool unitIsMine = ni.isOwned; // jos käytätte omaa owner-kenttää, korvaa tämä tarkistus
-            bool enemy = !unitIsMine;          // vastustajan yksiköt ovat aina enemy
+            // Onko tämä yksikkö minun (tässä clientissä)?
+            bool unitIsMine = ni.isOwned || ni.isLocalPlayer;
 
-            // Jos haluat pakottaa myös, että "ei oma vuoro" -> omat yksiköt eivät toimi, tee se UI/ohjauksessa.
-            // Täällä vain vihollisuus-näkymä:
+            // Vuorologiikka:
+            // - Jos on MINUN vuoro: vastustajan yksiköt ovat enemy
+            // - Jos EI ole minun vuoro: MINUN omat yksiköt ovat enemy
+            bool enemy = isMyTurn ? !unitIsMine : unitIsMine;
+
             SetUnitEnemyFlag(u, enemy);
         }
     }
 
     static void SetUnitEnemyFlag(Unit u, bool enemy)
     {
-        // Muokkaa nämä nimet sinun Unit-skriptisi mukaan:
-        // 1) property/field
-        var field = typeof(Unit).GetField("isEnemy");
-        if (field != null)
-        {
-            field.SetValue(u, enemy);
-            return;
-        }
+        // Unitissa on [SerializeField] private bool isEnemy; -> käytä BindingFlagsia! :contentReference[oaicite:1]{index=1}
+        var field = typeof(Unit).GetField("isEnemy",
+            BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
+        if (field != null) { field.SetValue(u, enemy); return; }
 
-        // 2) Setteri-metodi
-        var m = typeof(Unit).GetMethod("SetEnemy", new[] { typeof(bool) });
-        if (m != null)
-        {
-            m.Invoke(u, new object[] { enemy });
-            return;
-        }
+        // Varalle, jos joskus lisäät setterin
+        var m = typeof(Unit).GetMethod("SetEnemy",
+            BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic,
+            null, new[] { typeof(bool) }, null);
+        if (m != null) { m.Invoke(u, new object[] { enemy }); return; }
 
         Debug.LogWarning("[PvP] Unitilta puuttuu isEnemy/SetEnemy(bool). Lisää jompikumpi.");
     }

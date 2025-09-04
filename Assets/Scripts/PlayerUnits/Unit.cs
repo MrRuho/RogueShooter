@@ -14,7 +14,7 @@ public class Unit : NetworkBehaviour
 
     public static event EventHandler OnAnyActionPointsChanged;
 
-    [SerializeField] private bool isEnemy;
+    [SerializeField] public bool isEnemy;
 
     private GridPosition gridPosition;
     private MoveAction moveAction;
