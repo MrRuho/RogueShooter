@@ -1,5 +1,5 @@
-using Mirror;
 using UnityEngine;
+using Utp;
 
 /// <summary>
 /// This class is responsible for managing the game mode and spawning units in the game.
@@ -17,10 +17,11 @@ public class GameModeManager : MonoBehaviour
     void Start()
     {
         // if game is offline, spawn singleplayer units
-        if (!NetworkClient.isConnected && !NetworkServer.active)
+        if (!GameNetworkManager.Instance.IsNetworkActive())
         {
             SpawnUnits();
-        } else
+        }
+        else
         {
             Debug.Log("Game is online, waiting for host/client to spawn units.");
         }

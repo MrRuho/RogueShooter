@@ -1,6 +1,6 @@
 using System.Linq;
-using Mirror;
 using UnityEngine;
+using Utp;
 
 public class FieldCleaner : MonoBehaviour
 {
@@ -20,13 +20,13 @@ public class FieldCleaner : MonoBehaviour
     static void Despawn(GameObject go)
     {
         // if server is active, use Mirror's destroy; otherwise normal Unity Destroy
-        if (NetworkServer.active)
+        if (GameNetworkManager.Instance.GetNetWorkServerActive())
+        { 
+            GameNetworkManager.Instance.NetworkDestroy(go);
+        } else
         {
-            NetworkServer.Destroy(go);
+            Destroy(go);
         }
-        else
-        {
-            Object.Destroy(go);
-        }
+       
     }
 }

@@ -244,10 +244,15 @@ namespace Utp
 		{
 			return NetworkClient.isConnected;
 		}
-		
+
 		public NetworkConnection NetWorkClientConnection()
 		{
 			return NetworkClient.connection;
+		}
+		
+		public void NetworkDestroy(GameObject go)
+		{
+			NetworkServer.Destroy(go);
 		}
 	}
 }

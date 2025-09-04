@@ -7,6 +7,7 @@ using System.Collections.Generic;
 /// Base class for all unit actions in the game.
 /// This class inherits from NetworkBehaviour and provides common functionality for unit actions.
 /// </summary>
+[RequireComponent(typeof(Unit))]
 public abstract class BaseAction : NetworkBehaviour
 {
     protected Unit unit;
