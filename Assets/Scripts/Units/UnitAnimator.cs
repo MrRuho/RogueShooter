@@ -5,6 +5,8 @@ using System;
 public class UnitAnimator : MonoBehaviour
 {
     [SerializeField] private Animator animator;
+    [SerializeField] private GameObject bulletProjectilePrefab;
+    [SerializeField] private Transform shootPointTransform;
 
     private void Awake()
     {
@@ -30,9 +32,22 @@ public class UnitAnimator : MonoBehaviour
     {
         animator.SetBool("IsRunning", false);
     }
-    
-    private void ShootAction_OnShoot(object sender, EventArgs e)
+
+    private void ShootAction_OnShoot(object sender, ShootAction.OnShootEventArgs e)
     {
         animator.SetTrigger("Shoot");
+
+        GameObject bulletProjectileGameObject =
+            Instantiate(bulletProjectilePrefab, shootPointTransform.position, Quaternion.identity);
+
+        Transform bulletProjectileTransform = bulletProjectileGameObject.transform;
+
+        BulletProjectile  bulletProjectile = bulletProjectileTransform.GetComponent<BulletProjectile>();
+
+        Vector3 targetUnitShootAtPosition = e.targetUnit.GetWorldPosition();
+
+        targetUnitShootAtPosition.y = shootPointTransform.position.y;
+
+        bulletProjectile.Setup(targetUnitShootAtPosition);
     }
 }
