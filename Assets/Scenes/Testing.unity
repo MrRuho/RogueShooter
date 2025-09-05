@@ -1488,7 +1488,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   unitHostPrefab: {fileID: 3233335089446238902, guid: 9eade25f7fc5b7d439428c63bd6bec87, type: 3}
-  unitClientPrefab: {fileID: 3233335089446238902, guid: c1fabc22cb3fe3342b99b69d6f52be4a, type: 3}
+  unitClientPrefab: {fileID: 2224939001662446110, guid: 4faea7329545f5844b6198a92d3e0b0e, type: 3}
   enemyPrefab: {fileID: 2865685898167604431, guid: 41aec1e113703724788b065317256a18, type: 3}
   hostSpawnPositions:
   - {x: 0, y: 0, z: 0}
@@ -2513,8 +2513,8 @@ MonoBehaviour:
   playerSpawnMethod: 0
   spawnPrefabs:
   - {fileID: 3233335089446238902, guid: 9eade25f7fc5b7d439428c63bd6bec87, type: 3}
-  - {fileID: 3233335089446238902, guid: c1fabc22cb3fe3342b99b69d6f52be4a, type: 3}
   - {fileID: 2865685898167604431, guid: 41aec1e113703724788b065317256a18, type: 3}
+  - {fileID: 2224939001662446110, guid: 4faea7329545f5844b6198a92d3e0b0e, type: 3}
   exceptionsDisconnect: 1
   snapshotSettings:
     bufferTimeMultiplier: 2

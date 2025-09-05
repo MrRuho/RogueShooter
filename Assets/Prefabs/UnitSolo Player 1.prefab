@@ -100,6 +100,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   unit: {fileID: -7554651146962723815}
+  meshRenderer: {fileID: 0}
 --- !u!1 &3233335089446238902
 GameObject:
   m_ObjectHideFlags: 0
@@ -118,8 +119,9 @@ GameObject:
   - component: {fileID: 1061650688474466407}
   - component: {fileID: 6634297939630033100}
   - component: {fileID: 4511270037338635811}
+  - component: {fileID: -7356064289643425705}
   m_Layer: 7
-  m_Name: UnitSolo
+  m_Name: UnitSolo Player 1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -262,7 +264,6 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  unitAnimator: {fileID: 8768207507522264542}
   maxMoveDistance: 6
 --- !u!114 &1061650688474466407
 MonoBehaviour:
@@ -309,6 +310,19 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
+--- !u!114 &-7356064289643425705
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3233335089446238902}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3821185373e786e43944fcf4d14687c8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  animator: {fileID: 8768207507522264542}
 --- !u!1001 &3343234419788994428
 PrefabInstance:
   m_ObjectHideFlags: 0

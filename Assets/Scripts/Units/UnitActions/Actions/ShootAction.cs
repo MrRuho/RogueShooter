@@ -4,8 +4,10 @@ using UnityEngine;
 
 public class ShootAction : BaseAction
 {
+    
+    public event EventHandler OnShoot;
     private enum State
-    { 
+    {
         Aiming,
         Shooting,
         Cooloff
@@ -75,6 +77,7 @@ public class ShootAction : BaseAction
 
     private void Shoot()
     {
+        OnShoot?.Invoke(this, EventArgs.Empty);
         Debug.Log("Shoot");
         targetUnit.Damage();
     }
