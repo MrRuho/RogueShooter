@@ -36,7 +36,12 @@ public class UnitAnimator : MonoBehaviour
     private void ShootAction_OnShoot(object sender, ShootAction.OnShootEventArgs e)
     {
         animator.SetTrigger("Shoot");
+        Vector3 target = e.targetUnit.GetWorldPosition();
+        target.y = shootPointTransform.position.y;
+        NetworkSync.SpawnBullet(bulletProjectilePrefab, shootPointTransform.position, target);
 
+
+        /*
         GameObject bulletProjectileGameObject =
             Instantiate(bulletProjectilePrefab, shootPointTransform.position, Quaternion.identity);
 
@@ -49,5 +54,6 @@ public class UnitAnimator : MonoBehaviour
         targetUnitShootAtPosition.y = shootPointTransform.position.y;
 
         bulletProjectile.Setup(targetUnitShootAtPosition);
+        */
     }
 }

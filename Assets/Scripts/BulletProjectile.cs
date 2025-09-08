@@ -1,17 +1,26 @@
+using Mirror;
 using UnityEngine;
 
-public class BulletProjectile : MonoBehaviour
+public class BulletProjectile : NetworkBehaviour
 {
     [SerializeField] private TrailRenderer trailRenderer;
     [SerializeField] private Transform bulletHitVfxPrefab;
 
-    private Vector3 targetPosition;
+    [SyncVar] private Vector3 targetPosition;
 
+    //[Server]
     public void Setup(Vector3 targetPosition)
     {
         this.targetPosition = targetPosition;
         // Implement bullet movement towards the target here
         // For example, you could use a simple linear interpolation or a physics-based approach
+    }
+
+    public override void OnStartClient()
+    {
+        base.OnStartClient();
+        // käynnistä trail kaikilla, jos ei jo päällä
+        if (trailRenderer && !trailRenderer.emitting) trailRenderer.emitting = true;
     }
 
     private void Update()
@@ -21,10 +30,10 @@ public class BulletProjectile : MonoBehaviour
         float distanceBeforeMoving = Vector3.Distance(transform.position, targetPosition);
 
         float moveSpeed = 200f; // Adjust the speed as needed
-        transform.position += moveDirection * moveSpeed * Time.deltaTime;
+        transform.position += moveSpeed * Time.deltaTime * moveDirection;
 
         float distanceAfterMoving = Vector3.Distance(transform.position, targetPosition);
-
+        /*
         if (distanceBeforeMoving < distanceAfterMoving)
         {
             transform.position = targetPosition;
@@ -35,5 +44,23 @@ public class BulletProjectile : MonoBehaviour
 
             Instantiate(bulletHitVfxPrefab, targetPosition, Quaternion.identity);
         }
+        */
+        
+        
+        if (distanceBeforeMoving < distanceAfterMoving)
+        {
+            transform.position = targetPosition;
+
+            if (trailRenderer) trailRenderer.transform.parent = null;
+
+            // Hit-VFX jokaiselle clientille
+            if (bulletHitVfxPrefab)
+                Instantiate(bulletHitVfxPrefab, targetPosition, Quaternion.identity);
+
+            // Tuhoaminen: server tuhoaa verkko-objektin, client paikallisen varalta
+            if (isServer) NetworkServer.Destroy(gameObject);
+            else Destroy(gameObject);
+        }
+        
     }
 }

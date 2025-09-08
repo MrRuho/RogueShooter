@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 5889926238710660759}
   - component: {fileID: -3630091242664463749}
   - component: {fileID: 5657379893922711786}
+  - component: {fileID: 5520632234201627250}
   m_Layer: 0
   m_Name: EmptySquad
   m_TagString: Untagged
@@ -114,3 +115,19 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0
   hasEndedThisTurn: 0
+--- !u!114 &5520632234201627250
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7637091775685802694}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9f47b29359f7f1a45b155e5a5cd2805f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  bulletPrefab: {fileID: 7196073207834334459, guid: d74275857cb5cf14fa64a0672eca7fc7, type: 3}
