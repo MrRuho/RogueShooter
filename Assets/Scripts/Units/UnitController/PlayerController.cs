@@ -4,7 +4,7 @@ using UnityEngine;
 
 ///<sumary>
 /// PLayerController handles per-player state in a networked game.
-/// Each connected player has one PlayerController instance attached to emptySquad GameObject.
+/// Each connected player has one PlayerController instance attached to PlayerController GameObject prefab
 /// It tracks whether the player has ended their turn and communicates with the UI.
 ///</sumary>
 public class PlayerController : NetworkBehaviour

@@ -7,6 +7,9 @@ using UnityEngine;
 ///     Actions can be called on the unit to perform various actions like moving or shooting.
 ///     The class inherits from NetworkBehaviour to support multiplayer functionality.
 /// </summary>
+[RequireComponent(typeof(HealthSystem))]
+[RequireComponent(typeof(MoveAction))]
+[RequireComponent(typeof(SpinAction))]
 public class Unit : NetworkBehaviour
 {
 
@@ -17,6 +20,7 @@ public class Unit : NetworkBehaviour
     [SerializeField] public bool isEnemy;
 
     private GridPosition gridPosition;
+    private HealthSystem healthSystem;
     private MoveAction moveAction;
     private SpinAction spinAction;
 
@@ -26,6 +30,7 @@ public class Unit : NetworkBehaviour
 
     private void Awake()
     {
+        healthSystem = GetComponent<HealthSystem>();
         moveAction = GetComponent<MoveAction>();
         spinAction = GetComponent<SpinAction>();
         baseActionsArray = GetComponents<BaseAction>();
@@ -40,6 +45,8 @@ public class Unit : NetworkBehaviour
         }
 
         TurnSystem.Instance.OnTurnChanged += TurnSystem_OnTurnChanged;
+
+        healthSystem.OnDead += HealthSystem_OnDead;
     }
 
     private void Update()
@@ -92,7 +99,6 @@ public class Unit : NetworkBehaviour
     {
         if (actionPoints >= baseAction.GetActionPointsCost())
         {
-            // actionPoints -= baseAction.GetActionPointsCost();
             return true;
         }
         return false;
@@ -128,9 +134,18 @@ public class Unit : NetworkBehaviour
         return isEnemy;
     }
 
-    public void Damage()
+    public void Damage(int damageAmount)
     {
+        healthSystem.Damage(damageAmount);
         Debug.Log(transform + " took damage");
+    }
+
+    private void HealthSystem_OnDead(object sender, EventArgs e)
+    {
+        if (NetworkServer.active)
+            NetworkServer.Destroy(gameObject);
+        else
+            Destroy(gameObject);
     }
 
     void OnDestroy()

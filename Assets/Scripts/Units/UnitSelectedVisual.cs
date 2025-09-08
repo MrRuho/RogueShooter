@@ -10,12 +10,8 @@ public class UnitSelectedVisual : MonoBehaviour
     [SerializeField] private Unit unit;
     [SerializeField] private MeshRenderer meshRenderer;
 
-    //private MeshRenderer meshRenderer;
-
     private void Awake()
     {
-        // meshRenderer = GetComponent<MeshRenderer>();
-        // meshRenderer.enabled = false;
         if (!meshRenderer) meshRenderer = GetComponentInChildren<MeshRenderer>(true);
         if (meshRenderer) meshRenderer.enabled = false;
     }
@@ -42,19 +38,8 @@ public class UnitSelectedVisual : MonoBehaviour
 
     private void UpdateVisual()
     {
-        /*
-        if (unit == UnitActionSystem.Instance.GetSelectedUnit())
-        {
-            meshRenderer.enabled = true;
-        }
-        else
-        {
-            meshRenderer.enabled = false;
-        }
-        */
         if (!this || meshRenderer == null || UnitActionSystem.Instance == null) return;
         var selected = UnitActionSystem.Instance.GetSelectedUnit();
-        meshRenderer.enabled = (unit != null && selected == unit);
-
+        meshRenderer.enabled = unit != null && selected == unit;
     }
 }

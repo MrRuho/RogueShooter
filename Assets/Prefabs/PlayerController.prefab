@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 5657379893922711786}
   - component: {fileID: 5520632234201627250}
   m_Layer: 0
-  m_Name: EmptySquad
+  m_Name: PlayerController
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
