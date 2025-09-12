@@ -84,7 +84,6 @@ public class UnitActionSystem : MonoBehaviour
     /// </summary>
     private void SetBusy()
     {
-        Debug.Log("UnitActionSystem: SetBusy");
         isBusy = true;
         OnBusyChanged?.Invoke(this, isBusy);
     }
@@ -94,7 +93,6 @@ public class UnitActionSystem : MonoBehaviour
     /// </summary>
     private void ClearBusy()
     {
-        Debug.Log("UnitActionSystem: ClearBusy");
         isBusy = false;
         OnBusyChanged?.Invoke(this, isBusy);
     }

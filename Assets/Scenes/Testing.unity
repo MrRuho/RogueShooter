@@ -2516,6 +2516,9 @@ MonoBehaviour:
   - {fileID: 2865685898167604431, guid: 41aec1e113703724788b065317256a18, type: 3}
   - {fileID: 2224939001662446110, guid: 4faea7329545f5844b6198a92d3e0b0e, type: 3}
   - {fileID: 7196073207834334459, guid: d74275857cb5cf14fa64a0672eca7fc7, type: 3}
+  - {fileID: 3233335089446238902, guid: ebcba67d80965d4498a1e659b057e81a, type: 3}
+  - {fileID: 6451126097255659782, guid: 655eb09c924aa8f4093a75ac6e5ea6b7, type: 3}
+  - {fileID: 7375612249453950360, guid: 503824367a19c7749a4ee396c1388cc4, type: 3}
   exceptionsDisconnect: 1
   snapshotSettings:
     bufferTimeMultiplier: 2
@@ -2575,7 +2578,6 @@ GameObject:
   - component: {fileID: 827221109}
   - component: {fileID: 827221108}
   - component: {fileID: 827221107}
-  - component: {fileID: 827221111}
   m_Layer: 6
   m_Name: Plane
   m_TagString: Untagged
@@ -2673,18 +2675,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &827221111
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 827221106}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c8bd4e285c0964d488c6f2fad5d7b911, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &830777150
 GameObject:
   m_ObjectHideFlags: 0

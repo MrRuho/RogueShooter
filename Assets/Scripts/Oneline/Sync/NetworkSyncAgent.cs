@@ -13,6 +13,7 @@ public class NetworkSyncAgent : NetworkBehaviour
 {
     public static NetworkSyncAgent Local;   // Easy access for NetworkSync static helper
     [SerializeField] private GameObject bulletPrefab; // Prefab for the bullet projectile
+    [SerializeField] private GameObject ragdollPrefab;
 
     public override void OnStartLocalPlayer()
     {
@@ -44,7 +45,7 @@ public class NetworkSyncAgent : NetworkBehaviour
         // Spawn across the network
         NetworkServer.Spawn(go);
     }
-    
+
     /// <summary>
     /// Client → Server: resolve target by netId and apply damage on server.
     /// </summary>
@@ -56,4 +57,17 @@ public class NetworkSyncAgent : NetworkBehaviour
             targetNi.GetComponent<HealthSystem>()?.Damage(amount);
         }
     }
+
+    /// <summary>
+    /// Client → Server: Take ragdollpose from Data and set ragdoll to right position.
+    /// </summary>
+    [Command(requiresAuthority = true)]
+    public void CmdRagdollPoseBinder(uint targetNetId, int amount)
+    {
+        
+    }
+
+
+
+      
 }

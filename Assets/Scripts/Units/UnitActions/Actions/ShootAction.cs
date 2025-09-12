@@ -78,8 +78,6 @@ public class ShootAction : BaseAction
                 ActionComplete();
                 break;
         }
-
-        Debug.Log(state);
     }
 
     private void Shoot()
@@ -90,8 +88,6 @@ public class ShootAction : BaseAction
             shootingUnit = unit
         });
 
-        Debug.Log("Shoot");
-        //targetUnit.Damage(100);
         NetworkSync.ApplyDamage(targetUnit, 100);
     }
 
@@ -151,7 +147,6 @@ public class ShootAction : BaseAction
         
         targetUnit = LevelGrid.Instance.GetUnitAtGridPosition(gridPosition);
 
-        Debug.Log("Aiming");
         state = State.Aiming;
         float aimingStateTime = 1f;
         stateTimer = aimingStateTime;

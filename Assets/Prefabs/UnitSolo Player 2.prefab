@@ -14,8 +14,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3233335089446238902, guid: 9eade25f7fc5b7d439428c63bd6bec87, type: 3}
       propertyPath: m_Name
-      value: UnitSolo Variant
+      value: UnitSolo Player 2
       objectReference: {fileID: 0}
+    - target: {fileID: 6027068296431371701, guid: 9eade25f7fc5b7d439428c63bd6bec87, type: 3}
+      propertyPath: ragdollPrefab
+      value: 
+      objectReference: {fileID: 2248303171213244564, guid: 655eb09c924aa8f4093a75ac6e5ea6b7, type: 3}
     - target: {fileID: 7668381059966303012, guid: 9eade25f7fc5b7d439428c63bd6bec87, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0

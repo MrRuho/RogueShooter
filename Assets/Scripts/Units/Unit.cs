@@ -60,6 +60,19 @@ public class Unit : NetworkBehaviour
         }
     }
 
+    /// <summary>
+    ///     When unit get destroyed, this clears grid system under destroyed unit.
+    ///     
+    /// </summary>
+    void OnDestroy()
+    {
+        if (LevelGrid.Instance != null)
+        {
+            gridPosition = LevelGrid.Instance.GetGridPosition(transform.position);
+            LevelGrid.Instance.RemoveUnitAtGridPosition(gridPosition, this);
+        }
+    }
+
     public MoveAction GetMoveAction()
     {
         return moveAction;
@@ -133,27 +146,18 @@ public class Unit : NetworkBehaviour
     {
         return isEnemy;
     }
-
-    public void Damage(int damageAmount)
-    {
-        healthSystem.Damage(damageAmount);
-        Debug.Log(transform + " took damage");
-    }
-
+    
     private void HealthSystem_OnDead(object sender, EventArgs e)
     {
         if (NetworkServer.active)
-            NetworkServer.Destroy(gameObject);
+            StartCoroutine(DestroyNextFrame(0.05f));
         else
             Destroy(gameObject);
     }
 
-    void OnDestroy()
+    private System.Collections.IEnumerator DestroyNextFrame(float seconds)
     {
-        if (LevelGrid.Instance != null)
-        {
-            gridPosition = LevelGrid.Instance.GetGridPosition(transform.position);
-            LevelGrid.Instance.RemoveUnitAtGridPosition(gridPosition, this);
-        }
+        yield return new WaitForSeconds(seconds);
+        NetworkServer.Destroy(gameObject);
     }
 }

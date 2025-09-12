@@ -14,8 +14,6 @@ public class HealthSystem : MonoBehaviour
             health = 0;
             Die();
         }
-
-        Debug.Log(transform + " took damage, current health: " + health);
     }
     
     private void Die()

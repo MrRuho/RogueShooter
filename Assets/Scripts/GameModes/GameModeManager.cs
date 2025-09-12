@@ -31,7 +31,7 @@ public class GameModeManager : MonoBehaviour
     {
         if (SelectedMode == GameMode.SinglePlayer)
         {
-            Debug.Log("Game is offline, spawning singleplayer units.");
+            
             SpawnUnitsCoordinator.Instance.SpwanSinglePlayerUnits();
             return;
         }

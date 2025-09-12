@@ -81,13 +81,13 @@ public static class NetworkSync
     {
         if (target == null) return;
 
-        if (NetworkServer.active)
+        if (NetworkServer.active) // Online: server or host
         {
             target.GetComponent<HealthSystem>()?.Damage(amount);
             return;
         }
 
-        if (NetworkClient.active)
+        if (NetworkClient.active) // Online: client
         {
             var ni = target.GetComponent<NetworkIdentity>();
             if (ni && NetworkSyncAgent.Local != null)
@@ -100,4 +100,32 @@ public static class NetworkSync
         // Offline fallback
         target.GetComponent<HealthSystem>()?.Damage(amount);
     }
+   
+    public static void SpawnRagdoll(GameObject prefab, Vector3 pos, Quaternion rot, uint sourceUnitNetId, Transform originalRootBone)
+    {
+
+        if (NetworkServer.active)
+        {
+            var go = Object.Instantiate(prefab, pos, rot);
+
+            if (go.TryGetComponent<RagdollPoseBinder>(out var ragdollPoseBinder))
+            {
+                ragdollPoseBinder.sourceUnitNetId = sourceUnitNetId;
+                Debug.Log($"[Ragdoll] Server set binder.sourceUnitNetId={sourceUnitNetId}");
+            }
+            else
+            {
+                Debug.LogWarning("[Ragdoll] Ragdoll prefab lacks RagdollPoseBinder component.");
+            }
+
+            NetworkServer.Spawn(go);
+            return;
+        }
+
+        // offline fallback (sama kuin nyt)
+        var off = Object.Instantiate(prefab, pos, rot);
+        if (off.TryGetComponent<UnitRagdoll>(out var unitRagdoll))
+            unitRagdoll.Setup(originalRootBone);
+    }
+
 }

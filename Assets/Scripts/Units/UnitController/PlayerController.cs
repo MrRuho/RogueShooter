@@ -26,17 +26,14 @@ public class PlayerController : NetworkBehaviour
         if (!isLocalPlayer) return;
         if (hasEndedThisTurn) return;
         if (NetTurnManager.Instance && NetTurnManager.Instance.phase != TurnPhase.Players) return;
-        Debug.Log("[PC] ClickEndTurn → CmdEndTurn()");
         CmdEndTurn();
     }
 
     [Command(requiresAuthority = true)]
     void CmdEndTurn()
     {
-        Debug.Log($"[PC][SERVER] CmdEndTurn called by player {netId}");
         if (hasEndedThisTurn) return;
         hasEndedThisTurn = true;
-        Debug.Log("[PC][SERVER] CmdEndTurn received");
 
         // Estä kaikki toiminnot clientillä
         TargetNotifyCanAct(connectionToClient, false);
@@ -58,14 +55,13 @@ public class PlayerController : NetworkBehaviour
     public void ServerSetHasEnded(bool v)
     {
         hasEndedThisTurn = v;
-        Debug.Log($"[PC][SERVER] ServerSetHasEnded({v}) for player {netId}");
         TargetNotifyCanAct(connectionToClient, !v);
     }
 
     [TargetRpc]
     void TargetNotifyCanAct(NetworkConnectionToClient __, bool canAct)
     {
-        Debug.Log($"[PC][CLIENT] TargetNotifyCanAct({canAct})");
+
         // Update End Turn Button
         var ui = FindFirstObjectByType<TurnSystemUI>();
         if (ui != null)
