@@ -2,6 +2,9 @@ using System.Collections;
 using Mirror;
 using UnityEngine;
 
+/// <summary>
+/// Online: Client need this to get destroyed unit rootbone to create ragdoll form it.
+/// </summary>
 public class RagdollPoseBinder : NetworkBehaviour
 {
     [SyncVar] public uint sourceUnitNetId;

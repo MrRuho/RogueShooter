@@ -1,5 +1,6 @@
 using Mirror;
 using System;
+using System.Collections;
 using UnityEngine;
 
 /// <summary>
@@ -146,18 +147,43 @@ public class Unit : NetworkBehaviour
     {
         return isEnemy;
     }
-    
-    private void HealthSystem_OnDead(object sender, EventArgs e)
+
+    private void HealthSystem_OnDead(object sender, System.EventArgs e)
     {
-        if (NetworkServer.active)
-            StartCoroutine(DestroyNextFrame(0.05f));
-        else
+        if (!NetworkServer.active)
+        {
             Destroy(gameObject);
+            return;
+        }
+
+        // Online: Hide Unit before destroy it, so that client have time to create own ragdoll from orginal Unit pose.
+        // After some time hiden Unit get destroyed. 
+        SetSoftHiddenLocal(true);
+        RpcSetSoftHidden(true);
+        StartCoroutine(DestroyAfter(0.30f));
     }
 
-    private System.Collections.IEnumerator DestroyNextFrame(float seconds)
+    private IEnumerator DestroyAfter(float seconds)
     {
         yield return new WaitForSeconds(seconds);
         NetworkServer.Destroy(gameObject);
+    }
+
+    [ClientRpc]
+    private void RpcSetSoftHidden(bool hidden)
+    {
+        SetSoftHiddenLocal(hidden);
+    }
+
+    private void SetSoftHiddenLocal(bool hidden)
+    {
+        foreach (var r in GetComponentsInChildren<Renderer>(true))
+            r.enabled = !hidden;
+
+        foreach (var c in GetComponentsInChildren<Collider>(true))
+            c.enabled = !hidden;
+
+        if (TryGetComponent<Animator>(out var anim))
+            anim.enabled = !hidden;
     }
 }

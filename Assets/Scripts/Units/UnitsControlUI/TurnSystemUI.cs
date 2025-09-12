@@ -77,7 +77,6 @@ public class TurnSystemUI : MonoBehaviour
             (GameNetworkManager.Instance.GetNetWorkServerActive() || GameNetworkManager.Instance.GetNetWorkClientConnected());
         if (!isOnline)
         {
-            Debug.Log("[UI] EndTurn clicked (SP)");
             if (TurnSystem.Instance != null)
             {
                 TurnSystem.Instance.NextTurn();
@@ -88,8 +87,6 @@ public class TurnSystemUI : MonoBehaviour
             }
             return;
         }
-
-        Debug.Log("[UI] EndTurn clicked (Online)");
 
         CacheLocalPlayerController();
         if (localPlayerController == null)
