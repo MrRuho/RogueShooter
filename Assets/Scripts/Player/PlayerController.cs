@@ -61,7 +61,7 @@ public class PlayerController : NetworkBehaviour
     [TargetRpc]
     void TargetNotifyCanAct(NetworkConnectionToClient __, bool canAct)
     {
-
+        
         // Update End Turn Button
         var ui = FindFirstObjectByType<TurnSystemUI>();
         if (ui != null)

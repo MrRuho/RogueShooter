@@ -86,15 +86,12 @@ public class SpawnUnitsCoordinator : MonoBehaviour
 
     public GameObject[] SpawnEnemies()
     {
-        Debug.Log("[SpawnUnitsCoordinator] Spawning enemies locally.");
-
         var spawnedEnemies = new GameObject[enemySpawnPositions.Length];
 
         for (int i = 0; i < enemySpawnPositions.Length; i++)
         {
             var enemy = Instantiate(GetEnemyPrefab(), enemySpawnPositions[i], Quaternion.identity);
             spawnedEnemies[i] = enemy;
-            Debug.Log($"Enemy instantiated at {enemySpawnPositions[i]}");
         }
 
         SetEnemiesSpawned(true);

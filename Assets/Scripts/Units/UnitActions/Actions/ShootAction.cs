@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class ShootAction : BaseAction
 {
-    
+
     public event EventHandler<OnShootEventArgs> OnShoot;
 
     public class OnShootEventArgs : EventArgs
@@ -46,13 +46,13 @@ public class ShootAction : BaseAction
                 {
                     Shoot();
                     canShootBullet = false;
-                    
-                }  
+
+                }
                 break;
-            case State.Cooloff: 
+            case State.Cooloff:
                 break;
         }
-        
+
         if (stateTimer <= 0f)
         {
             NextState();
@@ -91,11 +91,11 @@ public class ShootAction : BaseAction
         NetworkSync.ApplyDamage(targetUnit, 50);
     }
 
-     public override int GetActionPointsCost()
+    public override int GetActionPointsCost()
     {
         return 1;
     }
-    
+
     public override string GetActionName()
     {
         return "Shoot";
@@ -107,7 +107,7 @@ public class ShootAction : BaseAction
 
         GridPosition unitGridPosition = unit.GetGridPosition();
 
-        for (int x = - maxShootDistance; x <= maxShootDistance; x++)
+        for (int x = -maxShootDistance; x <= maxShootDistance; x++)
         {
             for (int z = -maxShootDistance; z <= maxShootDistance; z++)
             {
@@ -118,7 +118,7 @@ public class ShootAction : BaseAction
                 if (!LevelGrid.Instance.IsValidGridPosition(testGridPosition)) continue;
                 int testDistance = Mathf.Abs(x) + Mathf.Abs(z);
                 if (testDistance > maxShootDistance) continue;
-                
+
                 // DoDo show shooting range even if there are no units to shoot at
                 //validGridPositionList.Add(testGridPosition);
 
@@ -131,20 +131,17 @@ public class ShootAction : BaseAction
                 if (targetUnit.IsEnemy() == unit.IsEnemy()) continue;
 
                 validGridPositionList.Add(testGridPosition);
-               // Debug.Log($"Testing grid position: {testGridPosition}");
-
             }
 
         }
-        
+
         return validGridPositionList;
     }
 
 
     public override void TakeAction(GridPosition gridPosition, Action onActionComplete)
     {
-        ActionStart(onActionComplete);
-        
+
         targetUnit = LevelGrid.Instance.GetUnitAtGridPosition(gridPosition);
 
         state = State.Aiming;
@@ -152,6 +149,18 @@ public class ShootAction : BaseAction
         stateTimer = aimingStateTime;
 
         canShootBullet = true;
+
+        ActionStart(onActionComplete);
+    }
+
+    public Unit GetTargetUnit()
+    {
+        return targetUnit;
+    }
+
+    public void ClearTarget()
+    {
+        targetUnit = null;
     }
 
 }

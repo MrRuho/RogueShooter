@@ -22,8 +22,6 @@ public class RagdollPoseBinder : NetworkBehaviour
         {
             if (TryGetComponent<UnitRagdoll>(out var unitRagdoll))
                 unitRagdoll.Setup(root);
-
-            Debug.Log($"[Ragdoll] Pose applied on client.");
             yield break;
         }
 

@@ -151,7 +151,6 @@ public static class NetworkSync
             if (go.TryGetComponent<RagdollPoseBinder>(out var ragdollPoseBinder))
             {
                 ragdollPoseBinder.sourceUnitNetId = sourceUnitNetId;
-                Debug.Log($"[Ragdoll] Server set binder.sourceUnitNetId={sourceUnitNetId}");
             }
             else
             {

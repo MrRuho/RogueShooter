@@ -38,9 +38,6 @@ public class MoveAction : BaseAction
             // Rotate towards the target position
             float rotationSpeed = 10f;
             transform.forward = Vector3.Lerp(transform.forward, moveDirection, Time.deltaTime * rotationSpeed);
-
-   
-
         }
         else
         {
@@ -51,14 +48,10 @@ public class MoveAction : BaseAction
 
     public override void TakeAction(GridPosition gridPosition, Action onActionComplete)
     {
-        ActionStart(onActionComplete);
-
         targetPosition = LevelGrid.Instance.GetWorldPosition(gridPosition);
-        
         OnStartMoving?.Invoke(this, EventArgs.Empty);
-   
+        ActionStart(onActionComplete);
     }
-
 
     public override List<GridPosition> GetValidGridPositionList()
     {
@@ -79,12 +72,8 @@ public class MoveAction : BaseAction
                 LevelGrid.Instance.HasAnyUnitOnGridPosition(testGridPosition)) continue;
 
                 validGridPositionList.Add(testGridPosition);
-               // Debug.Log($"Testing grid position: {testGridPosition}");
-
             }
-
-        }
-        
+        }      
         return validGridPositionList;
     }
 

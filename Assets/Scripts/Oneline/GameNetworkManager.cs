@@ -57,7 +57,6 @@ namespace Utp
 		{
 			base.OnStartServer();
 			SpawnUnitsCoordinator.Instance.SetEnemiesSpawned(false);
-			Debug.Log("[NM] OnStartServer() called. Mode=" + GameModeManager.SelectedMode);
 
 			if (GameModeManager.SelectedMode == GameMode.CoOp)
 			{
@@ -217,7 +216,6 @@ namespace Utp
 		[Server]
 		void ServerSpawnEnemies()
 		{
-			Debug.Log("[NM] Delegating enemy spawn to SpawnUnitsCoordinator.");
 
 			// Pyydä SpawnUnitsCoordinatoria luomaan viholliset
 			var enemies = SpawnUnitsCoordinator.Instance.SpawnEnemies();

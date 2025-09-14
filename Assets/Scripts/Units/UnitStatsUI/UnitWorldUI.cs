@@ -37,6 +37,21 @@ public class UnitWorldUI : MonoBehaviour
             OnCanActChanged(PlayerLocalTurnGate.CanAct);
         }
     }
+     private void OnEnable()
+    {
+        PlayerLocalTurnGate.OnCanActChanged += OnCanActChanged;
+    }
+
+    private void OnDisable()
+    {
+        PlayerLocalTurnGate.OnCanActChanged -= OnCanActChanged;
+    }
+
+    private void OnDestroy()
+    {
+        // Varmuuden vuoksi
+        PlayerLocalTurnGate.OnCanActChanged -= OnCanActChanged;
+    }
 
     private void UpdateActionPointsText()
     {
@@ -61,6 +76,12 @@ public class UnitWorldUI : MonoBehaviour
     // Only active player units AP are visible.
     private void OnCanActChanged(bool canAct)
     {
+        // Null/Destroyed-suojaukset (Unityn erikoisnull)
+        if (!this || this == null) return;
+        if (!gameObject) return;
+        if (actionPointsRoot) actionPointsRoot.SetActive(canAct);
+        //
+
         bool unitIsMine;
 
         if (GameModeManager.SelectedMode == GameMode.Versus)
