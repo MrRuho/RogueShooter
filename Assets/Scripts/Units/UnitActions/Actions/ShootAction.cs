@@ -21,7 +21,7 @@ public class ShootAction : BaseAction
     }
 
     private State state;
-    private int maxShootDistance = 7;
+    private int maxShootDistance = 5;
 
     private float stateTimer;
     private Unit targetUnit;
@@ -157,10 +157,15 @@ public class ShootAction : BaseAction
     {
         return targetUnit;
     }
-
+    /*
     public void ClearTarget()
     {
         targetUnit = null;
     }
+    */
 
+    public int GetMaxShootDistance()
+    {
+        return maxShootDistance;
+    }
 }

@@ -56,8 +56,9 @@ public class Unit : NetworkBehaviour
         GridPosition newGridPosition = LevelGrid.Instance.GetGridPosition(transform.position);
         if (newGridPosition != gridPosition)
         {
-            LevelGrid.Instance.UnitMoveToGridPosition(gridPosition, newGridPosition, this);
+            GridPosition oldGridposition = gridPosition;
             gridPosition = newGridPosition;
+            LevelGrid.Instance.UnitMoveToGridPosition(oldGridposition, newGridPosition, this);
         }
     }
 
