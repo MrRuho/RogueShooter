@@ -13,7 +13,6 @@ public class NetworkSyncAgent : NetworkBehaviour
 {
     public static NetworkSyncAgent Local;   // Easy access for NetworkSync static helper
     [SerializeField] private GameObject bulletPrefab; // Prefab for the bullet projectile
-    [SerializeField] private GameObject ragdollPrefab;
 
     public override void OnStartLocalPlayer()
     {
@@ -48,26 +47,73 @@ public class NetworkSyncAgent : NetworkBehaviour
 
     /// <summary>
     /// Client → Server: resolve target by netId and apply damage on server.
+    /// then broadcast the new HP to all clients for UI.
     /// </summary>
     [Command(requiresAuthority = true)]
     public void CmdApplyDamage(uint targetNetId, int amount)
     {
-        if (NetworkServer.spawned.TryGetValue(targetNetId, out var targetNi))
-        {
-            targetNi.GetComponent<HealthSystem>()?.Damage(amount);
-        }
+        if (!NetworkServer.spawned.TryGetValue(targetNetId, out var targetNi) || targetNi == null)
+            return;
+
+        var unit = targetNi.GetComponent<Unit>();
+        var hs = targetNi.GetComponent<HealthSystem>();
+        if (unit == null || hs == null)
+            return;
+
+        // 1) Server tekee damagen (kuten ennenkin)
+        hs.Damage(amount);
+
+        // 2) Heti perään broadcast → kaikki clientit päivittävät oman UI:nsa
+        //    (ServerBroadcastHp kutsuu RpcNotifyHpChanged → hs.ApplyNetworkHealth(..) clientillä)
+        ServerBroadcastHp(unit, hs.GetHealth(), hs.GetHealthMax());
     }
 
-    /// <summary>
-    /// Client → Server: Take ragdollpose from Data and set ragdoll to right position.
-    /// </summary>
-    [Command(requiresAuthority = true)]
-    public void CmdRagdollPoseBinder(uint targetNetId, int amount)
+    // ---- SERVER-puolen helperit: kutsu näitä palvelimelta
+    [Server]
+    public void ServerBroadcastHp(Unit unit, int current, int max)
     {
-        
+        var ni = unit.GetComponent<NetworkIdentity>();
+        if (ni) RpcNotifyHpChanged(ni.netId, current, max);
     }
 
+    [Server]
+    public void ServerBroadcastAp(Unit unit, int ap)
+    {
+        var ni = unit.GetComponent<NetworkIdentity>();
+        if (ni) RpcNotifyApChanged(ni.netId, ap);
+    }
 
+    // ---- SERVER → ALL CLIENTS: HP-muutos ilmoitus
+    [ClientRpc]
+    void RpcNotifyHpChanged(uint unitNetId, int current, int max)
+    {
+        if (!NetworkClient.spawned.TryGetValue(unitNetId, out var id) || id == null) return;
 
-      
+        var hs = id.GetComponent<HealthSystem>();
+        if (hs == null) return;
+
+        hs.ApplyNetworkHealth(current, max);
+    }
+
+    // ---- SERVER → ALL CLIENTS: AP-muutos ilmoitus
+    [ClientRpc]
+    void RpcNotifyApChanged(uint unitNetId, int ap)
+    {
+        ApplyApClient(unitNetId, ap);
+    }
+
+    [Command]
+    public void CmdMirrorAp(uint unitNetId, int ap)
+    {
+        RpcNotifyApChanged(unitNetId, ap);
+    }
+
+    void ApplyApClient(uint unitNetId, int ap)
+    {
+        if (!NetworkClient.spawned.TryGetValue(unitNetId, out var id) || id == null) return;
+        var unit = id.GetComponent<Unit>();
+        if (!unit) return;
+
+        unit.ApplyNetworkActionPoints(ap); // päivittää arvon + triggaa eventin
+    }
 }

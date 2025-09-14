@@ -83,7 +83,11 @@ public static class NetworkSync
 
         if (NetworkServer.active) // Online: server or host
         {
-            target.GetComponent<HealthSystem>()?.Damage(amount);
+            var healthSystem = target.GetComponent<HealthSystem>();
+            if (healthSystem == null) return;
+
+            healthSystem.Damage(amount);
+            UpdateHealthBarUI(healthSystem, target);
             return;
         }
 
@@ -100,7 +104,43 @@ public static class NetworkSync
         // Offline fallback
         target.GetComponent<HealthSystem>()?.Damage(amount);
     }
-   
+
+    private static void UpdateHealthBarUI( HealthSystem healthSystem, Unit target)
+    {
+        // → ilmoita kaikille clienteille, jotta UnitWorldUI saa eventin
+            if (NetworkSyncAgent.Local == null)
+            {
+                // haetaan mikä tahansa agentti serveriltä (voi olla erillinen manageri)
+                var agent = Object.FindFirstObjectByType<NetworkSyncAgent>();
+                if (agent != null)
+                    agent.ServerBroadcastHp(target, healthSystem.GetHealth(), healthSystem.GetHealthMax());
+            }
+            else
+            {
+                NetworkSyncAgent.Local.ServerBroadcastHp(target, healthSystem.GetHealth(), healthSystem.GetHealthMax());
+            }
+    }
+
+    public static void BroadcastActionPoints(Unit unit, int apValue)
+    {
+        if (unit == null) return;
+
+        if (NetworkServer.active)
+        {
+            var agent = Object.FindFirstObjectByType<NetworkSyncAgent>();
+            if (agent != null)
+                agent.ServerBroadcastAp(unit, apValue);
+            return;
+        }
+
+        // CLIENT-haara: lähetä peilauspyyntö serverille
+        if (NetworkClient.active && NetworkSyncAgent.Local != null)
+        {
+            var ni = unit.GetComponent<NetworkIdentity>();
+            if (ni) NetworkSyncAgent.Local.CmdMirrorAp(ni.netId, apValue);
+        }
+    }
+
     public static void SpawnRagdoll(GameObject prefab, Vector3 pos, Quaternion rot, uint sourceUnitNetId, Transform originalRootBone)
     {
 
@@ -122,10 +162,11 @@ public static class NetworkSync
             return;
         }
 
-        // offline fallback (sama kuin nyt)
+        // offline fallback
         var off = Object.Instantiate(prefab, pos, rot);
         if (off.TryGetComponent<UnitRagdoll>(out var unitRagdoll))
             unitRagdoll.Setup(originalRootBone);
     }
 
+    
 }

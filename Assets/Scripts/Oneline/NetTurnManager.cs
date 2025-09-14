@@ -32,13 +32,12 @@ public class NetTurnManager : NetworkBehaviour
         ResetTurnState();
         // jos haluat lukita kahteen pelaajaan protoa varten:
         if (GameModeManager.SelectedMode == GameMode.CoOp) requiredCount = 2;
-        Debug.Log($"[TURN][SERVER] Start, requiredCount={requiredCount}");
     }
 
     [Server]
     public void ResetTurnState()
     {
-        Debug.Log("[TURN][SERVER] ResetTurnState");
+
         phase = TurnPhase.Players;
         endedPlayers.Clear();
         endedCount = 0;
@@ -74,12 +73,10 @@ public class NetTurnManager : NetworkBehaviour
         if (!endedPlayers.Add(playerNetId)) return;      // älä laske tuplia
 
         endedCount = endedPlayers.Count;
-        Debug.Log($"[TURN][SERVER] Player {playerNetId} ended. {endedCount}/{requiredCount}");
 
         // Ilmoita kaikille, KUKA on valmis → UI näyttää "Player X READY" toisella pelaajalla. Käytössä vain Co-opissa
         if (GameModeManager.SelectedMode == GameMode.CoOp)
         {
-            Debug.Log("[TURN][SERVER] RpcUpdateReadyStatus");
             CoopTurnCoordinator.Instance.
             RpcUpdateReadyStatus(
             endedPlayers.Select(id => (int)id).ToArray(),

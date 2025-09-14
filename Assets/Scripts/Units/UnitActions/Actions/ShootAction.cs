@@ -88,7 +88,7 @@ public class ShootAction : BaseAction
             shootingUnit = unit
         });
 
-        NetworkSync.ApplyDamage(targetUnit, 20);
+        NetworkSync.ApplyDamage(targetUnit, 50);
     }
 
      public override int GetActionPointsCost()

@@ -45,12 +45,10 @@ public class EnemyAI : MonoBehaviour
     }
 
     // UUSI: AI-vuoro koroutiinina (ei NextTurn-kutsua sisällä!)
-   [Mirror.Server]
+    [Mirror.Server]
     public IEnumerator RunEnemyTurnCoroutine()
     {
-        Debug.Log("[AI] Enemy turn started");
         yield return new WaitForSeconds(2f);
-        Debug.Log("[AI] Enemy turn finished");
     }
         
 }

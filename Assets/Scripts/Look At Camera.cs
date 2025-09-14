@@ -15,7 +15,7 @@ public class LookAtCamera : MonoBehaviour
     {
         if (invert)
         {
-            Vector3 dirToCamera = cameraTransform.position - transform.position.normalized;
+            Vector3 dirToCamera = (cameraTransform.position - transform.position).normalized;
             transform.LookAt(transform.position + dirToCamera * -1);
         } else
         {

@@ -123,6 +123,7 @@ public class Unit : NetworkBehaviour
         actionPoints -= amount;
 
         OnAnyActionPointsChanged?.Invoke(this, EventArgs.Empty);
+        NetworkSync.BroadcastActionPoints(this, actionPoints);
     }
 
     public int GetActionPoints()
@@ -135,13 +136,20 @@ public class Unit : NetworkBehaviour
     /// </summary>
     private void TurnSystem_OnTurnChanged(object sender, EventArgs e)
     {
-        if ((isEnemy && !TurnSystem.Instance.IsPlayerTurn()) ||
-        (!isEnemy && TurnSystem.Instance.IsPlayerTurn()))
-        {
-            actionPoints = ACTION_POINTS_MAX;
-            OnAnyActionPointsChanged?.Invoke(this, EventArgs.Empty);
-        }
+        actionPoints = ACTION_POINTS_MAX;
+        OnAnyActionPointsChanged?.Invoke(this, EventArgs.Empty);
     }
+
+    /// <summary>
+    ///    Online: Updating ActionPoints usage to otherplayers. 
+    /// </summary>
+    public void ApplyNetworkActionPoints(int ap)
+    {
+        if (actionPoints == ap) return;
+        actionPoints = ap;
+        OnAnyActionPointsChanged?.Invoke(this, EventArgs.Empty);
+    }
+    
 
     public bool IsEnemy()
     {
@@ -186,4 +194,5 @@ public class Unit : NetworkBehaviour
         if (TryGetComponent<Animator>(out var anim))
             anim.enabled = !hidden;
     }
+
 }

@@ -22,7 +22,6 @@ public class CoopTurnCoordinator : NetworkBehaviour
     {
         if (NetTurnManager.Instance.phase == TurnPhase.Players && NetTurnManager.Instance.endedPlayers.Count >= Mathf.Max(1, NetTurnManager.Instance.requiredCount))
         {
-            Debug.Log("[TURN][SERVER] All players ready → enemy turn");
             StartCoroutine(ServerEnemyTurnThenNextPlayers());
         }
     }
@@ -125,7 +124,6 @@ public class CoopTurnCoordinator : NetworkBehaviour
     [Server]
     public string[] BuildEndedLabels()
     {
-        Debug.Log($"[TURN][SERVER] BuildEndedLabels for {NetTurnManager.Instance.endedPlayers.Count} players");
         // HashSetin järjestys ei ole merkityksellinen, näytetään mikä tahansa toinen
         return NetTurnManager.Instance.endedPlayers.Select(id => GetLabelByNetId(id)).ToArray();
     }

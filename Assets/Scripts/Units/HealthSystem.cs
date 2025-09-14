@@ -5,6 +5,7 @@ public class HealthSystem : MonoBehaviour
 {
     public event EventHandler OnDead;
     public event EventHandler OnDamaged;
+
     [SerializeField] private int health = 100;
     private int healthMax;
 
@@ -32,6 +33,24 @@ public class HealthSystem : MonoBehaviour
 
     public float GetHealthNormalized()
     {
-        return (float) health/ healthMax;
+        return (float)health / healthMax;
+    }
+
+    public int GetHealth()
+    {
+        return health;
+    }
+
+    public int GetHealthMax()
+    {
+        return healthMax;
+    }
+
+
+    public void ApplyNetworkHealth(int current, int max)
+    {
+        healthMax = Mathf.Max(1, max);
+        health    = Mathf.Clamp(current, 0, healthMax);
+        OnDamaged?.Invoke(this, EventArgs.Empty);
     }
 }

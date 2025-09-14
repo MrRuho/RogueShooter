@@ -24,11 +24,9 @@ public class TurnSystem : MonoBehaviour
 
     public void NextTurn()
     {
-
         // Tarkista pelimoodi
         if (GameModeManager.SelectedMode == GameMode.SinglePlayer)
         {
-            Debug.Log("Single Player mode: Proceeding to the next turn.");
             turnNumber++;
             isPlayerTurn = !isPlayerTurn;
 

@@ -44,7 +44,7 @@ public class PlayerController : NetworkBehaviour
             Debug.LogWarning("[PC][SERVER] NetTurnManager.Instance is NULL on server!");
             return;
         }
-        //CoopTurnCoordinator.Instance.ServerPlayerEndedTurn(netIdentity.netId);
+
         NetTurnManager.Instance.ServerPlayerEndedTurn(netIdentity.netId);
     }
 
@@ -74,6 +74,8 @@ public class PlayerController : NetworkBehaviour
             if (canAct) UnitActionSystem.Instance.UnlockInput();
             else UnitActionSystem.Instance.LockInput();
         }
+
+        PlayerLocalTurnGate.Set(canAct);
     }
 
 }
