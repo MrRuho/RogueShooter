@@ -6,27 +6,42 @@ public class FieldCleaner : MonoBehaviour
 {
     public static void ClearAll()
     {
-    
+        // Varmista: älä yritä siivota puhtaalta clientiltä verkossa
+        if (GameNetworkManager.Instance != null &&
+            GameNetworkManager.Instance.GetNetWorkClientConnected() &&
+            !GameNetworkManager.Instance.GetNetWorkServerActive())
+        {
+            Debug.LogWarning("[FieldCleaner] Don't clear field from a pure client.");
+            return;
+        }
+
         // Find all friendly and enemy units (also inactive, just in case)
         var friendlies = Resources.FindObjectsOfTypeAll<FriendlyUnit>()
                           .Where(u => u != null && u.gameObject.scene.IsValid());
-        var enemies    = Resources.FindObjectsOfTypeAll<EnemyUnit>()
+        var enemies = Resources.FindObjectsOfTypeAll<EnemyUnit>()
                           .Where(u => u != null && u.gameObject.scene.IsValid());
 
         foreach (var u in friendlies) Despawn(u.gameObject);
-        foreach (var e in enemies)    Despawn(e.gameObject);
+        foreach (var e in enemies) Despawn(e.gameObject);
+
+        // Tyhjennä UnitManagerin listat (suojattu null-checkillä)
+        UnitManager.Instance?.ClearAllUnitLists();
+
+        // Nollaa myös ruudukon miehitys – sceneen jääneet objektit eivät jää kummittelemaan
+        LevelGrid.Instance?.ClearAllOccupancy();
     }
 
     static void Despawn(GameObject go)
     {
         // if server is active, use Mirror's destroy; otherwise normal Unity Destroy
         if (GameNetworkManager.Instance.GetNetWorkServerActive())
-        { 
+        {
             GameNetworkManager.Instance.NetworkDestroy(go);
-        } else
+        }
+        else
         {
             Destroy(go);
         }
-       
+
     }
 }

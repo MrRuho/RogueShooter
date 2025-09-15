@@ -12,6 +12,14 @@ PrefabInstance:
       propertyPath: isEnemy
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: -7443027622413687500, guid: 9eade25f7fc5b7d439428c63bd6bec87, type: 3}
+      propertyPath: syncInterval
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -7443027622413687500, guid: 9eade25f7fc5b7d439428c63bd6bec87, type: 3}
+      propertyPath: syncDirection
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: -7405714432910276961, guid: 9eade25f7fc5b7d439428c63bd6bec87, type: 3}
       propertyPath: _assetId
       value: 1038515454

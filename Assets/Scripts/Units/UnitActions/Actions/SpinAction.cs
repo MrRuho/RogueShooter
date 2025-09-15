@@ -14,13 +14,14 @@ using UnityEngine;
 public class SpinAction : BaseAction
 {
 
-   // public delegate void SpinCompleteDelegate();
-
-  //  private Action onSpinComplete;
     private float totalSpinAmount = 0f;
     private void Update()
     {
         if(!isActive) return;
+
+        // Aja paikallisesti vain SinglePlayerissa tai jos tämä instanssi on serveri (host)
+        bool driveHere = GameModeManager.SelectedMode == GameMode.SinglePlayer || isServer;
+        if (!driveHere) return;
 
         float spinAddAmmount = 360f * Time.deltaTime;
         transform.eulerAngles += new Vector3(0, spinAddAmmount, 0);
@@ -56,6 +57,6 @@ public class SpinAction : BaseAction
 
     public override int GetActionPointsCost()
     {
-        return 2;
+        return 1;
     }
 }

@@ -17,6 +17,9 @@ public class Unit : NetworkBehaviour
     private const int ACTION_POINTS_MAX = 2;
 
     public static event EventHandler OnAnyActionPointsChanged;
+    public static event EventHandler OnAnyUnitSpawned;
+    public static event EventHandler OnAnyUnitDead;
+
 
     [SerializeField] public bool isEnemy;
 
@@ -48,6 +51,8 @@ public class Unit : NetworkBehaviour
         TurnSystem.Instance.OnTurnChanged += TurnSystem_OnTurnChanged;
 
         healthSystem.OnDead += HealthSystem_OnDead;
+
+        OnAnyUnitSpawned?.Invoke(this, EventArgs.Empty);
     }
 
     private void Update()
@@ -159,6 +164,8 @@ public class Unit : NetworkBehaviour
 
     private void HealthSystem_OnDead(object sender, System.EventArgs e)
     {
+        OnAnyUnitDead?.Invoke(this, EventArgs.Empty);
+        
         if (!NetworkServer.active)
         {
             Destroy(gameObject);
@@ -166,7 +173,8 @@ public class Unit : NetworkBehaviour
         }
 
         // Online: Hide Unit before destroy it, so that client have time to create own ragdoll from orginal Unit pose.
-        // After some time hiden Unit get destroyed. 
+        // After some time hiden Unit get destroyed.
+
         SetSoftHiddenLocal(true);
         RpcSetSoftHidden(true);
         StartCoroutine(DestroyAfter(0.30f));

@@ -43,8 +43,9 @@ public class CoopTurnCoordinator : NetworkBehaviour
         yield return RunEnemyAI();
 
         // 2) Paluu pelaajille + turn-numero + resetit
-        NetTurnManager.Instance.turnNumber++;                  // kasvata serverillä
-        NetTurnManager.Instance.ResetTurnState();              // nollaa endedit + UI “ready” pois
+        NetTurnManager.Instance.turnNumber++;
+        NetTurnManager.Instance.ResetTurnState();
+
         if (TurnSystem.Instance != null)
         {
             TurnSystem.Instance.ForcePhase(isPlayerTurn: true, incrementTurnNumber: false);

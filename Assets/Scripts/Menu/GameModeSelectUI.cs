@@ -20,35 +20,8 @@ public class GameModeSelectUI : MonoBehaviour
         connectCanvas.SetActive(false);
 
         // Add button listeners
-       // coopButton.onClick.AddListener(() => OnModeSelected("Co-op"));
-       // pvpButton.onClick.AddListener(() => OnModeSelected("PvP"));
         coopButton.onClick.AddListener(OnClickCoOp);
         pvpButton.onClick.AddListener(OnClickPvP);
-    }
-
-    private void OnModeSelected(string mode)
-    {
-        // Clear the field of existing units
-        FieldCleaner.ClearAll();
-        // UnitActionSystem.Instance?.SetSelectedUnit(null);
-        StartCoroutine(ResetGridNextFrame());
-
-        Debug.Log($"{mode} mode selected.");
-        // Hide the game mode select canvas and show the connect canvas
-        gameModeSelectCanvas.SetActive(false);
-        connectCanvas.SetActive(true);
-        // Additional logic for handling mode selection can be added here
-
-        // Set the selected game mode in GameModeManager
-        if (mode == "Co-op")
-        {
-            GameModeManager.SetCoOp();
-        }
-        else
-        {
-            GameModeManager.SetVersus();
-        } 
-
     }
 
     public void OnClickCoOp()
