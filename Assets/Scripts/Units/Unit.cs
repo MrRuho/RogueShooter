@@ -16,6 +16,8 @@ public class Unit : NetworkBehaviour
 
     private const int ACTION_POINTS_MAX = 2;
 
+    [SyncVar] public uint OwnerId; 
+
     public static event EventHandler OnAnyActionPointsChanged;
     public static event EventHandler OnAnyUnitSpawned;
     public static event EventHandler OnAnyUnitDead;

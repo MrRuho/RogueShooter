@@ -68,7 +68,7 @@ public class NetTurnManager : NetworkBehaviour
                 PvPTurnCoordinator.Instance.ServerHandlePlayerEndedTurn(playerNetId);
             return;
         }
-        
+
         if (phase != TurnPhase.Players) return;          // ei lasketa jos ei pelaajavuoro
         if (!endedPlayers.Add(playerNetId)) return;      // älä laske tuplia
 
@@ -77,6 +77,9 @@ public class NetTurnManager : NetworkBehaviour
         // Ilmoita kaikille, KUKA on valmis → UI näyttää "Player X READY" toisella pelaajalla. Käytössä vain Co-opissa
         if (GameModeManager.SelectedMode == GameMode.CoOp)
         {
+            // Asettaa yksikoiden UI Näkyvyydet
+            UnitUIBroadcaster.Instance.BroadcastUnitWorldUIVisibility(false);
+
             CoopTurnCoordinator.Instance.
             RpcUpdateReadyStatus(
             endedPlayers.Select(id => (int)id).ToArray(),

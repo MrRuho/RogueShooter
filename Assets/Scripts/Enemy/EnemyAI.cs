@@ -105,21 +105,19 @@ public class EnemyAI : MonoBehaviour
 
     private bool TryTakeEnemyAIAction(Action onEnemyAIActionComplete)
     {
-        Debug.Log("TryTakeEnemyAIAction");
         foreach (Unit enemyUnit in UnitManager.Instance.GetEnemyUnitList())
         {
             if (enemyUnit == null)
             {
-                Debug.Log("Enemy is null!");
+                Debug.LogWarning("[EnemyAI][UnitManager]EnemyUnit list is null:" + enemyUnit);
                 continue;
             }
             if (TryTakeEnemyAIAction(enemyUnit, onEnemyAIActionComplete))
             {
-                Debug.Log(enemyUnit + "Enemy unit in enemy unit list make action!");
                 return true;
             }
         }
-        Debug.Log("Action failde!");
+
         return false;
     }
 
@@ -131,7 +129,6 @@ public class EnemyAI : MonoBehaviour
         if (!spinAction.IsValidGridPosition(actionGridPosition)) return false;
         if (!enemyUnit.TrySpendActionPointsToTakeAction(spinAction)) return false;
         spinAction.TakeAction(actionGridPosition, onEnemyAIActionComplete);
-        Debug.Log("SpinAction and ActionGridPosition are true and make spinaction!");
 
         return true;
     }

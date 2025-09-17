@@ -22,15 +22,26 @@ public class TurnSystem : MonoBehaviour
         Instance = this;
     }
 
+    private void Start()
+    {
+        // Varmista, että alkutila lähetetään kaikille UI:lle
+        PlayerLocalTurnGate.Set(isPlayerTurn); // true = Player turn alussa
+        OnTurnChanged?.Invoke(this, EventArgs.Empty); // jos haluat myös muut UI:t liikkeelle
+    }
+
     public void NextTurn()
     {
         // Tarkista pelimoodi
         if (GameModeManager.SelectedMode == GameMode.SinglePlayer)
         {
+            Debug.Log("SinglePlayer NextTurn");
             turnNumber++;
             isPlayerTurn = !isPlayerTurn;
 
             OnTurnChanged?.Invoke(this, EventArgs.Empty);
+
+            //Set Unit UI visibility
+            PlayerLocalTurnGate.Set(isPlayerTurn);
         }
         else if (GameModeManager.SelectedMode == GameMode.CoOp)
         {
@@ -63,7 +74,7 @@ public class TurnSystem : MonoBehaviour
         this.isPlayerTurn = isPlayerTurn;
         OnTurnChanged?.Invoke(this, EventArgs.Empty);
     }
-    
+
     // Päivitä HUD verkon kautta (co-op)
     public void SetHudFromNetwork(int newTurnNumber, bool isPlayersPhase)
     {

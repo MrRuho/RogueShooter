@@ -1,4 +1,5 @@
 using Mirror;
+using Mirror.Examples.CharacterSelection;
 using UnityEngine;
 
 /// <summary>
@@ -105,20 +106,20 @@ public static class NetworkSync
         target.GetComponent<HealthSystem>()?.Damage(amount);
     }
 
-    private static void UpdateHealthBarUI( HealthSystem healthSystem, Unit target)
+    private static void UpdateHealthBarUI(HealthSystem healthSystem, Unit target)
     {
         // → ilmoita kaikille clienteille, jotta UnitWorldUI saa eventin
-            if (NetworkSyncAgent.Local == null)
-            {
-                // haetaan mikä tahansa agentti serveriltä (voi olla erillinen manageri)
-                var agent = Object.FindFirstObjectByType<NetworkSyncAgent>();
-                if (agent != null)
-                    agent.ServerBroadcastHp(target, healthSystem.GetHealth(), healthSystem.GetHealthMax());
-            }
-            else
-            {
-                NetworkSyncAgent.Local.ServerBroadcastHp(target, healthSystem.GetHealth(), healthSystem.GetHealthMax());
-            }
+        if (NetworkSyncAgent.Local == null)
+        {
+            // haetaan mikä tahansa agentti serveriltä (voi olla erillinen manageri)
+            var agent = Object.FindFirstObjectByType<NetworkSyncAgent>();
+            if (agent != null)
+                agent.ServerBroadcastHp(target, healthSystem.GetHealth(), healthSystem.GetHealthMax());
+        }
+        else
+        {
+            NetworkSyncAgent.Local.ServerBroadcastHp(target, healthSystem.GetHealth(), healthSystem.GetHealthMax());
+        }
     }
 
     public static void BroadcastActionPoints(Unit unit, int apValue)
@@ -140,6 +141,12 @@ public static class NetworkSync
             if (ni) NetworkSyncAgent.Local.CmdMirrorAp(ni.netId, apValue);
         }
     }
+    /// <summary>
+    /// Server: Control when Pleyers can see own and others Unit stats, 
+    /// Like only active player AP(Action Points) are visible.
+    /// When is Enemy turn only Enemy Units Action points are visible.
+    /// Solo and Versus mode handle this localy becouse there is no need syncronisation.
+    /// </summary>
 
     public static void SpawnRagdoll(GameObject prefab, Vector3 pos, Quaternion rot, uint sourceUnitNetId, Transform originalRootBone)
     {
@@ -167,5 +174,4 @@ public static class NetworkSync
             unitRagdoll.Setup(originalRootBone);
     }
 
-    
 }

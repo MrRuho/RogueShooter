@@ -1,5 +1,6 @@
 using System.Linq;
 using UnityEngine;
+using Mirror;
 
 public class SpawnUnitsCoordinator : MonoBehaviour
 {
@@ -34,8 +35,8 @@ public class SpawnUnitsCoordinator : MonoBehaviour
         Instance = this;
     }
 
-    // Spawn player units for networked gamemodes
-    public GameObject[] SpawnPlayersForNetwork(bool isHost)
+
+    public GameObject[] SpawnPlayersForNetwork(NetworkConnectionToClient conn, bool isHost)
     {
         GameObject unitPrefab = GetUnitPrefabForPlayer(isHost);
         Vector3[] spawnPoints = GetSpawnPositionsForPlayer(isHost);
@@ -50,13 +51,14 @@ public class SpawnUnitsCoordinator : MonoBehaviour
             Debug.LogError($"[NM] {(isHost ? "hostSpawnPositions" : "clientSpawnPositions")} ei ole asetettu!");
             return null;
         }
-        
+
         var spawnedPlayersUnit = new GameObject[spawnPoints.Length];
         for (int i = 0; i < spawnPoints.Length; i++)
         {
             var playerUnit = Instantiate(unitPrefab, spawnPoints[i], Quaternion.identity);
+            if (playerUnit.TryGetComponent<Unit>(out var u) && conn.identity != null)
+                u.OwnerId = conn.identity.netId;
             spawnedPlayersUnit[i] = playerUnit;
-            //NetworkServer.Spawn(playerUnit); // authority tälle pelaajalle
         }
 
         return spawnedPlayersUnit;
@@ -147,7 +149,5 @@ public class SpawnUnitsCoordinator : MonoBehaviour
     {
         Instantiate(enemyPrefab, enemySpawnPositions[0], Quaternion.identity);
         Instantiate(enemyPrefab, enemySpawnPositions[1], Quaternion.identity);
-    }
-
-    
+    }   
 }

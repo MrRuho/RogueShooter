@@ -184,7 +184,7 @@ namespace Utp
 			bool isHost = conn.connectionId == 0;
 
 			// 3) spawnaa pelaajan yksiköt ja anna authority niihin
-			var units = SpawnUnitsCoordinator.Instance.SpawnPlayersForNetwork(isHost);
+			var units = SpawnUnitsCoordinator.Instance.SpawnPlayersForNetwork(conn,isHost);
 			foreach (var unit in units)
 			{
 				NetworkServer.Spawn(unit, conn); // authority tälle pelaajalle
@@ -196,6 +196,15 @@ namespace Utp
 			if (coord != null)
 				coord.ServerUpdateRequiredCount(NetworkServer.connections.Count);
 
+			/*
+			// KoOp: päivitä vihollisen AP-näkyvyys heti alussa
+			if (GameModeManager.SelectedMode == GameMode.CoOp)
+			{
+				// Varmista että ollaan Players-phase
+				TurnSystem.Instance?.ForcePhase(isPlayerTurn: true, incrementTurnNumber: false);
+				UnitUIBroadcaster.Instance.BroadcastUnitWorldUIVisibility(false);
+			}
+			*/
 			// --- VERSUS (PvP) — host aloittaa ---
 			if (GameModeManager.SelectedMode == GameMode.Versus)
 			{
@@ -216,7 +225,6 @@ namespace Utp
 		[Server]
 		void ServerSpawnEnemies()
 		{
-
 			// Pyydä SpawnUnitsCoordinatoria luomaan viholliset
 			var enemies = SpawnUnitsCoordinator.Instance.SpawnEnemies();
 
@@ -226,7 +234,6 @@ namespace Utp
 				if (enemy != null)
 				{
 					NetworkServer.Spawn(enemy);
-					Debug.Log($"[NM] Enemy spawned on network: {enemy.transform.position}");
 				}
 			}
 		}

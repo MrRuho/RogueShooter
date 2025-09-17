@@ -4,8 +4,6 @@ using System.Linq;
 using Mirror;
 using UnityEngine;
 
-//public enum TurnPhase { Players, Enemy }
-
 public class CoopTurnCoordinator : NetworkBehaviour
 {
     public static CoopTurnCoordinator Instance { get; private set; }
@@ -29,8 +27,10 @@ public class CoopTurnCoordinator : NetworkBehaviour
     [Server]
     private IEnumerator ServerEnemyTurnThenNextPlayers()
     {
+        // Asettaa vihollisen WordUI: (Action Points) näkyviin.
+        UnitUIBroadcaster.Instance.BroadcastUnitWorldUIVisibility(true);
+
         // 1) Vihollisvuoro alkaa
-        //phase = TurnPhase.Enemy;
         RpcTurnPhaseChanged(NetTurnManager.Instance.phase = TurnPhase.Enemy, NetTurnManager.Instance.turnNumber, false);
 
         // Silta unit/AP-logiikalle (sama kuin nyt)
@@ -51,11 +51,11 @@ public class CoopTurnCoordinator : NetworkBehaviour
             TurnSystem.Instance.ForcePhase(isPlayerTurn: true, incrementTurnNumber: false);
         }
 
-        // TÄRKEÄ: vaihda phase takaisin Players ENNEN RPC:tä
-     //   phase = TurnPhase.Players;
-
         // 3) Lähetä *kaikille* (host + clientit) HUD-päivitys SP-logiikan kautta
         RpcTurnPhaseChanged(NetTurnManager.Instance.phase = TurnPhase.Players, NetTurnManager.Instance.turnNumber, true);
+        
+        // Asettaa pelaajien WordUI: (Action Points) näkyviin.
+        UnitUIBroadcaster.Instance.BroadcastUnitWorldUIVisibility(false);
     }
 
     [Server]

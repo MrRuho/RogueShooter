@@ -48,8 +48,6 @@ public class PlayerController : NetworkBehaviour
         NetTurnManager.Instance.ServerPlayerEndedTurn(netIdentity.netId);
     }
 
-
-
     // Server kutsuu tämän kierroksen alussa nollatakseen tilan
     [Server]
     public void ServerSetHasEnded(bool v)
@@ -75,6 +73,7 @@ public class PlayerController : NetworkBehaviour
             else UnitActionSystem.Instance.LockInput();
         }
 
+        // Set AP visibility in versus game
         PlayerLocalTurnGate.Set(canAct);
     }
 
