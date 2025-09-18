@@ -16,7 +16,7 @@ public class Unit : NetworkBehaviour
 
     private const int ACTION_POINTS_MAX = 2;
 
-    [SyncVar] public uint OwnerId; 
+    [SyncVar] public uint OwnerId;
 
     public static event EventHandler OnAnyActionPointsChanged;
     public static event EventHandler OnAnyUnitSpawned;
@@ -29,6 +29,7 @@ public class Unit : NetworkBehaviour
     private HealthSystem healthSystem;
     private MoveAction moveAction;
     private SpinAction spinAction;
+    private ShootAction shootAction;
 
     private BaseAction[] baseActionsArray;
 
@@ -39,6 +40,7 @@ public class Unit : NetworkBehaviour
         healthSystem = GetComponent<HealthSystem>();
         moveAction = GetComponent<MoveAction>();
         spinAction = GetComponent<SpinAction>();
+        shootAction = GetComponent<ShootAction>();
         baseActionsArray = GetComponents<BaseAction>();
     }
 
@@ -90,6 +92,11 @@ public class Unit : NetworkBehaviour
     public SpinAction GetSpinAction()
     {
         return spinAction;
+    }
+
+    public ShootAction GetShootAction()
+    {
+        return shootAction;
     }
 
     public GridPosition GetGridPosition()
@@ -157,7 +164,7 @@ public class Unit : NetworkBehaviour
         actionPoints = ap;
         OnAnyActionPointsChanged?.Invoke(this, EventArgs.Empty);
     }
-    
+
 
     public bool IsEnemy()
     {
@@ -167,7 +174,7 @@ public class Unit : NetworkBehaviour
     private void HealthSystem_OnDead(object sender, System.EventArgs e)
     {
         OnAnyUnitDead?.Invoke(this, EventArgs.Empty);
-        
+
         if (!NetworkServer.active)
         {
             Destroy(gameObject);
@@ -204,6 +211,11 @@ public class Unit : NetworkBehaviour
 
         if (TryGetComponent<Animator>(out var anim))
             anim.enabled = !hidden;
+    }
+
+    public float GetHealthNormalized()
+    {
+        return healthSystem.GetHealthNormalized();   
     }
 
 }

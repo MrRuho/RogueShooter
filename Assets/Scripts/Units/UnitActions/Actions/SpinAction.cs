@@ -17,7 +17,7 @@ public class SpinAction : BaseAction
     private float totalSpinAmount = 0f;
     private void Update()
     {
-        if(!isActive) return;
+        if (!isActive) return;
 
         // Aja paikallisesti vain SinglePlayerissa tai jos tämä instanssi on serveri (host)
         bool driveHere = GameModeManager.SelectedMode == GameMode.SinglePlayer || isServer;
@@ -29,9 +29,9 @@ public class SpinAction : BaseAction
         totalSpinAmount += spinAddAmmount;
         if (totalSpinAmount >= 360f)
         {
-           ActionComplete();
+            ActionComplete();
         }
-       
+
     }
     public override void TakeAction(GridPosition gridPosition, Action onActionComplete)
     {
@@ -46,7 +46,7 @@ public class SpinAction : BaseAction
 
     public override List<GridPosition> GetValidGridPositionList()
     {
-      
+
         GridPosition unitGridPosition = unit.GetGridPosition();
 
         return new List<GridPosition>()
@@ -58,5 +58,15 @@ public class SpinAction : BaseAction
     public override int GetActionPointsCost()
     {
         return 1;
+    }
+
+    public override EnemyAIAction GetEnemyAIAction(GridPosition gridPosition)
+    {
+        return new EnemyAIAction
+        {
+            gridPosition = gridPosition,
+            actionValue = 0,
+
+        };
     }
 }

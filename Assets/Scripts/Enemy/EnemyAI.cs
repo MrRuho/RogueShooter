@@ -123,6 +123,44 @@ public class EnemyAI : MonoBehaviour
 
     private bool TryTakeEnemyAIAction(Unit enemyUnit, Action onEnemyAIActionComplete)
     {
+        EnemyAIAction bestEnemyAIAction = null;
+        BaseAction bestBaseAction = null;
+
+        // Käy kaikki mahdolliset toiminnot läpi mitä vihollinen voi tehdä ja valitsee niistä parhaimman.
+        foreach (BaseAction baseAction in enemyUnit.GetBaseActionsArray())
+        {
+            if (!enemyUnit.CanSpendActionPointsToTakeAction(baseAction))
+            {
+                // Enemy cannot afford this action.
+                continue;
+            }
+
+            if (bestEnemyAIAction == null)
+            {
+                bestEnemyAIAction = baseAction.GetBestEnemyAIAction();
+                bestBaseAction = baseAction;
+            }
+            else
+            {
+                EnemyAIAction testEnemyAIAction = baseAction.GetBestEnemyAIAction();
+                if (testEnemyAIAction != null && testEnemyAIAction.actionValue > bestEnemyAIAction.actionValue)
+                {
+                    bestEnemyAIAction = baseAction.GetBestEnemyAIAction();
+                    bestBaseAction = baseAction;
+                }
+            }
+        }
+
+        if (bestEnemyAIAction != null && enemyUnit.TrySpendActionPointsToTakeAction(bestBaseAction))
+        {
+            bestBaseAction.TakeAction(bestEnemyAIAction.gridPosition, onEnemyAIActionComplete);
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+        /*
         SpinAction spinAction = enemyUnit.GetSpinAction();
         GridPosition actionGridPosition = enemyUnit.GetGridPosition();
 
@@ -131,6 +169,7 @@ public class EnemyAI : MonoBehaviour
         spinAction.TakeAction(actionGridPosition, onEnemyAIActionComplete);
 
         return true;
+        */
     }
 
     private void TurnSystem_OnTurnChanged(object sender, EventArgs e)

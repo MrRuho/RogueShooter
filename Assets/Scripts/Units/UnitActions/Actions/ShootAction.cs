@@ -88,7 +88,7 @@ public class ShootAction : BaseAction
             shootingUnit = unit
         });
 
-        NetworkSync.ApplyDamage(targetUnit, 50);
+        NetworkSync.ApplyDamage(targetUnit, 30);
     }
 
     public override int GetActionPointsCost()
@@ -103,9 +103,14 @@ public class ShootAction : BaseAction
 
     public override List<GridPosition> GetValidGridPositionList()
     {
-        List<GridPosition> validGridPositionList = new();
-
+        
         GridPosition unitGridPosition = unit.GetGridPosition();
+        return GetValidGridPositionList(unitGridPosition);
+    }
+
+    public List<GridPosition> GetValidGridPositionList(GridPosition unitGridPosition)
+    {
+        List<GridPosition> validGridPositionList = new();
 
         for (int x = -maxShootDistance; x <= maxShootDistance; x++)
         {
@@ -167,5 +172,21 @@ public class ShootAction : BaseAction
     public int GetMaxShootDistance()
     {
         return maxShootDistance;
+    }
+
+    public override EnemyAIAction GetEnemyAIAction(GridPosition gridPosition)
+    {
+        Unit targetUnit = LevelGrid.Instance.GetUnitAtGridPosition(gridPosition);
+
+        return new EnemyAIAction
+        {
+            gridPosition = gridPosition,
+            actionValue = 100 + Mathf.RoundToInt((1 - targetUnit.GetHealthNormalized()) * 100f), //Ampuu sitä jolla on vähiten healhtia
+        };
+    }
+
+    public int GetTargetCountAtPosition(GridPosition gridPosition)
+    {
+        return GetValidGridPositionList(gridPosition).Count;
     }
 }
