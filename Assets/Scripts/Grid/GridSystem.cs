@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 /// <summary>
@@ -6,27 +7,27 @@ using UnityEngine;
 /// and manage grid objects.
 /// </summary>
 
-public class GridSystem
+public class GridSystem<TGridObject>
 {
     private int width;
     private int height;
     private float cellSize;
 
-    private GridObject[,] gridObjectsArray;
-    public GridSystem(int width, int height, float cellSize)
+    private TGridObject[,] gridObjectsArray;
+    public GridSystem(int width, int height, float cellSize, Func<GridSystem<TGridObject>, GridPosition, TGridObject> createGridObject)
     {
         this.width = width;
         this.height = height;
         this.cellSize = cellSize;
 
-        gridObjectsArray = new GridObject[width, height];
+        gridObjectsArray = new TGridObject[width, height];
 
         for (int x = 0; x< width; x++)
         {
             for(int z = 0; z < height; z++)
             {
                 GridPosition gridPosition = new GridPosition(x, z);
-                gridObjectsArray[x, z] = new GridObject(this, gridPosition);
+                gridObjectsArray[x, z] = createGridObject(this, gridPosition);
             }
         }
     }
@@ -57,14 +58,14 @@ public class GridSystem
                 GridPosition gridPosition = new GridPosition(x, z);
                 Transform debugTransform = GameObject.Instantiate(debugPrefab, GetWorldPosition(gridPosition), Quaternion.identity);
                 GridDebugObject gridDebugObject = debugTransform.GetComponent<GridDebugObject>();
-                gridDebugObject.SetGridObject(GetGridObject(gridPosition));
+                gridDebugObject.SetGridObject(GetGridObject(gridPosition) as GridObject);
             }
         }
     }
 
 /// Purpose: This method returns the grid object at a specific grid position.
 /// It is used to get the grid object for a specific position in the grid system.
-    public GridObject GetGridObject(GridPosition gridPosition)
+    public TGridObject GetGridObject(GridPosition gridPosition)
     {
         return gridObjectsArray[gridPosition.x, gridPosition.z];
     }
