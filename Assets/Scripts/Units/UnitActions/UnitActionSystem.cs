@@ -130,7 +130,8 @@ public class UnitActionSystem : MonoBehaviour
     {
         if (unit.IsEnemy()) return;
         selectedUnit = unit;
-        SetSelectedAction(unit.GetMoveAction());
+     //   SetSelectedAction(unit.GetMoveAction());
+        SetSelectedAction(unit.GetAction<MoveAction>());
         OnSelectedUnitChanged?.Invoke(this, EventArgs.Empty);
     }
 

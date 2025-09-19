@@ -76,7 +76,7 @@ public abstract class BaseAction : NetworkBehaviour
 
         if (enemyAIActionList.Count > 0)
         {
-            enemyAIActionList.Sort((EnemyAIAction a, EnemyAIAction b) => b.actionValue - a.actionValue);
+            enemyAIActionList.Sort((a, b) => b.actionValue - a.actionValue);
             return enemyAIActionList[0];
         }
         else

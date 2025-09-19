@@ -105,10 +105,10 @@ public class ShootAction : BaseAction
     {
         
         GridPosition unitGridPosition = unit.GetGridPosition();
-        return GetValidGridPositionList(unitGridPosition);
+        return GetValidActionGridPositionList(unitGridPosition);
     }
 
-    public List<GridPosition> GetValidGridPositionList(GridPosition unitGridPosition)
+    public List<GridPosition> GetValidActionGridPositionList(GridPosition unitGridPosition)
     {
         List<GridPosition> validGridPositionList = new();
 
@@ -123,11 +123,6 @@ public class ShootAction : BaseAction
                 if (!LevelGrid.Instance.IsValidGridPosition(testGridPosition)) continue;
                 int testDistance = Mathf.Abs(x) + Mathf.Abs(z);
                 if (testDistance > maxShootDistance) continue;
-
-                // DoDo show shooting range even if there are no units to shoot at
-                //validGridPositionList.Add(testGridPosition);
-
-
                 if (!LevelGrid.Instance.HasAnyUnitOnGridPosition(testGridPosition)) continue;
 
                 Unit targetUnit = LevelGrid.Instance.GetUnitAtGridPosition(testGridPosition);
@@ -187,6 +182,6 @@ public class ShootAction : BaseAction
 
     public int GetTargetCountAtPosition(GridPosition gridPosition)
     {
-        return GetValidGridPositionList(gridPosition).Count;
+        return GetValidActionGridPositionList(gridPosition).Count;
     }
 }
