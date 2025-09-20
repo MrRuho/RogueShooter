@@ -177,7 +177,7 @@ namespace Utp
 			bool isHost = conn.connectionId == 0;
 
 			// 3) spawnaa pelaajan yksiköt ja anna authority niihin
-			var units = SpawnUnitsCoordinator.Instance.SpawnPlayersForNetwork(conn,isHost);
+			var units = SpawnUnitsCoordinator.Instance.SpawnPlayersForNetwork(conn, isHost);
 			foreach (var unit in units)
 			{
 				NetworkServer.Spawn(unit, conn); // authority tälle pelaajalle
@@ -207,7 +207,7 @@ namespace Utp
 		}
 
 		[Server]
-		void ServerSpawnEnemies()
+		public void ServerSpawnEnemies()
 		{
 			// Pyydä SpawnUnitsCoordinatoria luomaan viholliset
 			var enemies = SpawnUnitsCoordinator.Instance.SpawnEnemies();
@@ -252,10 +252,21 @@ namespace Utp
 		{
 			return NetworkClient.connection;
 		}
-		
+
 		public void NetworkDestroy(GameObject go)
 		{
 			NetworkServer.Destroy(go);
 		}
+
+		public void SetEnemies()
+		{ 
+			SpawnUnitsCoordinator.Instance.SetEnemiesSpawned(false);
+
+			if (GameModeManager.SelectedMode == GameMode.CoOp)
+			{
+				ServerSpawnEnemies();
+			}
+		}
+		
 	}
 }

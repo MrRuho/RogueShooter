@@ -69,7 +69,7 @@ public class CoopTurnCoordinator : NetworkBehaviour
 
     // ---- Client-notifikaatiot UI:lle ----
     [ClientRpc]
-    void RpcTurnPhaseChanged(TurnPhase newPhase, int newTurnNumber, bool isPlayersPhase)
+    public void RpcTurnPhaseChanged(TurnPhase newPhase, int newTurnNumber, bool isPlayersPhase)
     {
         // Päivitä paikallinen SP-UI-luuppi (ei Mirror-kutsuja)
         if (TurnSystem.Instance != null)

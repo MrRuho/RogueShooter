@@ -9,9 +9,9 @@ using System.Diagnostics;
 /// 
 public static class PlayerLocalTurnGate
 {
-   // public static int PlayerReady { get; private set; }
+    // public static int PlayerReady { get; private set; }
 
-   // public static event Action<int> OnPlayerReadyChanged;
+    // public static event Action<int> OnPlayerReadyChanged;
     /// <summary>
     /// Gets whether the local player can currently act.
     /// </summary>
@@ -35,18 +35,10 @@ public static class PlayerLocalTurnGate
         LocalPlayerTurnChanged?.Invoke(LocalPlayerTurn);
     }
 
-    /*
-    public static void AddReady()
+    public static void SetCanAct(bool canAct)
     {
-        PlayerReady++;
-        OnPlayerReadyChanged?.Invoke(PlayerReady);
+        LocalPlayerTurn = canAct;
+        LocalPlayerTurnChanged?.Invoke(LocalPlayerTurn);
     }
-
-    public static void ResetReady()
-    {
-        PlayerReady = 0;
-        OnPlayerReadyChanged?.Invoke(PlayerReady);
-    }
-    */
 
 }

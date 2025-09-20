@@ -36,21 +36,16 @@ public class Testing : MonoBehaviour
 
         //Resetoi pelin alkamaan alusta.
         if (Input.GetKeyDown(KeyCode.R))
-        { 
-            
-            if (Mirror.NetworkServer.active)
-            {
+        {
+            if (Mirror.NetworkServer.active) {
                 ResetService.Instance.HardResetServerAuthoritative();
-            }
-            else if (Mirror.NetworkClient.active)
-            {
+            } else if (Mirror.NetworkClient.active) {
+                // käskytä serveriä
                 ResetService.Instance.CmdRequestHardReset();
-            }
-            else
-            {
-                // Yksinpeli
+            } else {
                 GameReset.HardReloadSceneKeepMode();
             }
-        } 
+        }
+
     }
 }
