@@ -22,15 +22,16 @@ public class EnemyAI : MonoBehaviour
 
         if (Instance != null && Instance != this) { Destroy(gameObject); return; }
         Instance = this;
-        DontDestroyOnLoad(gameObject); // valinnainen
     }
 
     private void Start()
     {
+        
         if (GameModeManager.SelectedMode == GameMode.SinglePlayer)
         {
             TurnSystem.Instance.OnTurnChanged += TurnSystem_OnTurnChanged;
         }
+        
 
         if (GameNetworkManager.Instance != null &&
         GameNetworkManager.Instance.GetNetWorkClientConnected() &&
@@ -39,6 +40,24 @@ public class EnemyAI : MonoBehaviour
             // Co-opissa AI:n ajaa vain serveri koroutinena
             if (GameModeManager.SelectedMode == GameMode.CoOp)
                 enabled = false;
+        }
+    }
+
+    /*
+    void OnEnable()
+    {
+        if (GameModeManager.SelectedMode == GameMode.SinglePlayer)
+        {
+            TurnSystem.Instance.OnTurnChanged += TurnSystem_OnTurnChanged;
+        }
+    }
+    */
+
+    void OnDisable()
+    {
+        if (GameModeManager.SelectedMode == GameMode.SinglePlayer)
+        {
+            TurnSystem.Instance.OnTurnChanged -= TurnSystem_OnTurnChanged;
         }
     }
 
@@ -160,16 +179,6 @@ public class EnemyAI : MonoBehaviour
         {
             return false;
         }
-        /*
-        SpinAction spinAction = enemyUnit.GetSpinAction();
-        GridPosition actionGridPosition = enemyUnit.GetGridPosition();
-
-        if (!spinAction.IsValidGridPosition(actionGridPosition)) return false;
-        if (!enemyUnit.TrySpendActionPointsToTakeAction(spinAction)) return false;
-        spinAction.TakeAction(actionGridPosition, onEnemyAIActionComplete);
-
-        return true;
-        */
     }
 
     private void TurnSystem_OnTurnChanged(object sender, EventArgs e)
@@ -177,7 +186,7 @@ public class EnemyAI : MonoBehaviour
         if (!TurnSystem.Instance.IsPlayerTurn())
         {
             state = State.TakingTurn;
-            timer = 2f; // pieni viive ennen ensimmäistä tekoa
+            timer = 1f; // pieni viive ennen ensimmäistä tekoa
         }
     }
 
@@ -185,7 +194,6 @@ public class EnemyAI : MonoBehaviour
     [Mirror.Server]
     public IEnumerator RunEnemyTurnCoroutine()
     {
-       // if (GameModeManager.SelectedMode == GameMode.Versus) yield break;
 
         // Alusta vihollisvuoro kuten SP:ssä
         SetStateTakingTurn();

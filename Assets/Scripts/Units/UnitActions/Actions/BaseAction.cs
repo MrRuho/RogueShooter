@@ -62,6 +62,9 @@ public abstract class BaseAction : NetworkBehaviour
         return unit;
     }
 
+    //-------------- ENEMY AI ACTIONS -------------
+    public abstract EnemyAIAction GetEnemyAIAction(GridPosition gridPosition);
+
     public EnemyAIAction GetBestEnemyAIAction()
     {
         List<EnemyAIAction> enemyAIActionList = new();
@@ -85,6 +88,4 @@ public abstract class BaseAction : NetworkBehaviour
             return null;
         }
     }
-
-    public abstract EnemyAIAction GetEnemyAIAction(GridPosition gridPosition);
 }

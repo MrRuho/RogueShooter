@@ -52,8 +52,7 @@ public class TurnSystemUI : MonoBehaviour
 
     void OnDisable()
     {
-        if (!isCoop && TurnSystem.Instance != null)
-            TurnSystem.Instance.OnTurnChanged -= TurnSystem_OnTurnChanged;
+        TurnSystem.Instance.OnTurnChanged -= TurnSystem_OnTurnChanged;
     }
 
     // ====== julkinen kutsu PlayerController.TargetNotifyCanAct:ista ======

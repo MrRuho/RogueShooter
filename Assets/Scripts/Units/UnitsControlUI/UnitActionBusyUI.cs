@@ -8,10 +8,19 @@ public class UnitActionBusyUI : MonoBehaviour
     private void Start()
     {
         UnitActionSystem.Instance.OnBusyChanged += UnitActionSystem_OnBusyChanged;
-
         Hide();
-
     }
+
+    void OnEnable()
+    {
+        UnitActionSystem.Instance.OnBusyChanged += UnitActionSystem_OnBusyChanged;
+    }
+
+    void OnDisable()
+    {
+        UnitActionSystem.Instance.OnBusyChanged -= UnitActionSystem_OnBusyChanged;
+    }
+
     private void Show()
     {
         gameObject.SetActive(true);

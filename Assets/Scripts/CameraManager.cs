@@ -5,14 +5,28 @@ public class CameraManager : MonoBehaviour
 {
     [SerializeField] private GameObject actionCameraGameObject;
 
-
+ 
     private void Start()
+    {
+      //  BaseAction.OnAnyActionStarted += BaseAction_OnAnyActionStarted;
+      //  BaseAction.OnAnyActionCompleted += BaseAction_OnAnyActionCompleted;
+
+      //  HideActionCamera();
+    }
+
+    void OnEnable()
     {
         BaseAction.OnAnyActionStarted += BaseAction_OnAnyActionStarted;
         BaseAction.OnAnyActionCompleted += BaseAction_OnAnyActionCompleted;
-
         HideActionCamera();
     }
+
+    void OnDisable()
+    { 
+        BaseAction.OnAnyActionStarted -= BaseAction_OnAnyActionStarted;
+        BaseAction.OnAnyActionCompleted -= BaseAction_OnAnyActionCompleted;
+    }
+
     private void ShowActionCamera()
     {
         actionCameraGameObject.SetActive(true);

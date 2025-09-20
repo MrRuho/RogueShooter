@@ -28,14 +28,6 @@ public class Unit : NetworkBehaviour
     private GridPosition gridPosition;
     private HealthSystem healthSystem;
 
-    // Vanha systeemi
-    /*
-    private MoveAction moveAction;
-    private SpinAction spinAction;
-    private ShootAction shootAction;
-    */
-    // ------------------
-
     private BaseAction[] baseActionsArray;
 
     private int actionPoints = ACTION_POINTS_MAX;
@@ -43,15 +35,6 @@ public class Unit : NetworkBehaviour
     private void Awake()
     {
         healthSystem = GetComponent<HealthSystem>();
-
-        // Vanha systeemi
-        /*
-        moveAction = GetComponent<MoveAction>();
-        spinAction = GetComponent<SpinAction>();
-        shootAction = GetComponent<ShootAction>();
-        */
-        //----------------
-
         baseActionsArray = GetComponents<BaseAction>();
     }
 
@@ -106,26 +89,6 @@ public class Unit : NetworkBehaviour
         }
         return null;
     }
-
-    // Vanha systeemi
-    /*
-    public MoveAction GetMoveAction()
-    {
-        return moveAction;
-    }
-
-    public SpinAction GetSpinAction()
-    {
-        return spinAction;
-    }
-
-    public ShootAction GetShootAction()
-    {
-        return shootAction;
-    
-    }
-    */
-    //---------------------
 
     public GridPosition GetGridPosition()
     {

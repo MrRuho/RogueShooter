@@ -23,6 +23,36 @@ public class UnitAnimator : MonoBehaviour
         }
     }
 
+    /*
+    void OnEnable()
+    {
+        if (TryGetComponent<MoveAction>(out MoveAction moveAction))
+        {
+            moveAction.OnStartMoving += MoveAction_OnStartMoving;
+            moveAction.OnStopMoving += MoveAction_OnStopMoving;
+        }
+
+        if (TryGetComponent<ShootAction>(out ShootAction shootAction))
+        {
+            shootAction.OnShoot += ShootAction_OnShoot;
+        }
+    }
+    */
+    
+    void OnDisable()
+    {
+        if (TryGetComponent<MoveAction>(out MoveAction moveAction))
+        {
+            moveAction.OnStartMoving -= MoveAction_OnStartMoving;
+            moveAction.OnStopMoving -= MoveAction_OnStopMoving;
+        }
+
+        if (TryGetComponent<ShootAction>(out ShootAction shootAction))
+        {
+            shootAction.OnShoot -= ShootAction_OnShoot;
+        }
+    }
+
     private void MoveAction_OnStartMoving(object sender, EventArgs e)
     {
         animator.SetBool("IsRunning", true);
@@ -39,21 +69,5 @@ public class UnitAnimator : MonoBehaviour
         Vector3 target = e.targetUnit.GetWorldPosition();
         target.y = shootPointTransform.position.y;
         NetworkSync.SpawnBullet(bulletProjectilePrefab, shootPointTransform.position, target);
-
-
-        /*
-        GameObject bulletProjectileGameObject =
-            Instantiate(bulletProjectilePrefab, shootPointTransform.position, Quaternion.identity);
-
-        Transform bulletProjectileTransform = bulletProjectileGameObject.transform;
-
-        BulletProjectile  bulletProjectile = bulletProjectileTransform.GetComponent<BulletProjectile>();
-
-        Vector3 targetUnitShootAtPosition = e.targetUnit.GetWorldPosition();
-
-        targetUnitShootAtPosition.y = shootPointTransform.position.y;
-
-        bulletProjectile.Setup(targetUnitShootAtPosition);
-        */
     }
 }

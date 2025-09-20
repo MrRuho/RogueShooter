@@ -16,7 +16,6 @@ public class Testing : MonoBehaviour
 
     private void Update()
     {
-
         if (Input.GetKeyDown(KeyCode.T))
         {
             GridPosition mouseGridPosition = LevelGrid.Instance.GetGridPosition(MouseWorld.GetMouseWorldPosition());
@@ -34,6 +33,24 @@ public class Testing : MonoBehaviour
                 );
             }
         }
-        
+
+        //Resetoi pelin alkamaan alusta.
+        if (Input.GetKeyDown(KeyCode.R))
+        { 
+            
+            if (Mirror.NetworkServer.active)
+            {
+                ResetService.Instance.HardResetServerAuthoritative();
+            }
+            else if (Mirror.NetworkClient.active)
+            {
+                ResetService.Instance.CmdRequestHardReset();
+            }
+            else
+            {
+                // Yksinpeli
+                GameReset.HardReloadSceneKeepMode();
+            }
+        } 
     }
 }

@@ -18,6 +18,17 @@ public class UnitSelectedVisual : MonoBehaviour
 
     private void Start()
     {
+        /*
+        if (UnitActionSystem.Instance != null)
+        {
+            UnitActionSystem.Instance.OnSelectedUnitChanged += UnitActionSystem_OnSelectedUnitChanged;
+            UpdateVisual();
+        }
+        */
+    }
+
+    void OnEnable()
+    {
         if (UnitActionSystem.Instance != null)
         {
             UnitActionSystem.Instance.OnSelectedUnitChanged += UnitActionSystem_OnSelectedUnitChanged;
@@ -25,12 +36,22 @@ public class UnitSelectedVisual : MonoBehaviour
         }
     }
 
+    void OnDisable()
+    {
+        if (UnitActionSystem.Instance != null)
+        {
+            UnitActionSystem.Instance.OnSelectedUnitChanged -= UnitActionSystem_OnSelectedUnitChanged;
+            UpdateVisual();
+        }
+    }
+
+    /*
     private void OnDestroy()
     {
         if (UnitActionSystem.Instance != null)
             UnitActionSystem.Instance.OnSelectedUnitChanged -= UnitActionSystem_OnSelectedUnitChanged;
     }
-
+    */
     private void UnitActionSystem_OnSelectedUnitChanged(object sender, EventArgs empty)
     {
         UpdateVisual();

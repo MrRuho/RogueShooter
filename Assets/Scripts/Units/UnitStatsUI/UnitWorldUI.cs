@@ -65,18 +65,26 @@ public class UnitWorldUI : MonoBehaviour
 
     }
 
+    /*
     private void OnEnable()
     {
+        Unit.OnAnyActionPointsChanged += Unit_OnAnyActionPointsChanged;
+        healthSystem.OnDamaged += HealthSystem_OnDamaged;
         PlayerLocalTurnGate.LocalPlayerTurnChanged += PlayerLocalTurnGate_LocalPlayerTurnChanged;
     }
-
+    */
+    
     private void OnDisable()
     {
+        Unit.OnAnyActionPointsChanged -= Unit_OnAnyActionPointsChanged;
+        healthSystem.OnDamaged -= HealthSystem_OnDamaged;
         PlayerLocalTurnGate.LocalPlayerTurnChanged -= PlayerLocalTurnGate_LocalPlayerTurnChanged;
     }
 
     private void OnDestroy()
     {
+        Unit.OnAnyActionPointsChanged -= Unit_OnAnyActionPointsChanged;
+        healthSystem.OnDamaged -= HealthSystem_OnDamaged;
         PlayerLocalTurnGate.LocalPlayerTurnChanged -= PlayerLocalTurnGate_LocalPlayerTurnChanged;
     }
 

@@ -23,7 +23,6 @@ public class MoveAction : BaseAction
 
     private void Update()
     {
-        if (AuthorityHelper.HasLocalControl(this)) return;
         if (!isActive) return;
         Vector3 moveDirection = (targetPosition - transform.position).normalized;
 

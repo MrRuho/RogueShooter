@@ -63,13 +63,6 @@ namespace Utp
 				ServerSpawnEnemies();
 			}
 
-			// DODO PvP pelin käynnistys
-			else if (GameModeManager.SelectedMode == GameMode.Versus)
-			{
-				
-			}
-
-
 		}
 
 		/// <summary>
@@ -196,15 +189,6 @@ namespace Utp
 			if (coord != null)
 				coord.ServerUpdateRequiredCount(NetworkServer.connections.Count);
 
-			/*
-			// KoOp: päivitä vihollisen AP-näkyvyys heti alussa
-			if (GameModeManager.SelectedMode == GameMode.CoOp)
-			{
-				// Varmista että ollaan Players-phase
-				TurnSystem.Instance?.ForcePhase(isPlayerTurn: true, incrementTurnNumber: false);
-				UnitUIBroadcaster.Instance.BroadcastUnitWorldUIVisibility(false);
-			}
-			*/
 			// --- VERSUS (PvP) — host aloittaa ---
 			if (GameModeManager.SelectedMode == GameMode.Versus)
 			{

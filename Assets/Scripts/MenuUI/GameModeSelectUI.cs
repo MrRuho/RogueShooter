@@ -50,5 +50,28 @@ public class GameModeSelectUI : MonoBehaviour
         var lg = LevelGrid.Instance;
         if (lg != null) lg.RebuildOccupancyFromScene();
     }
-    
+
+    // DODO: Resetoi käynnissä oleva peli takaisin aloitukseen.
+    public void Reset()
+    {
+        // Pieni “siivous” ennen reloadia on ok, mutta ei pakollinen
+        FieldCleaner.ClearAll();
+
+        if (Mirror.NetworkServer.active)
+        {
+            ResetService.Instance.HardResetServerAuthoritative();
+        }
+        else if (Mirror.NetworkClient.active)
+        {
+            ResetService.Instance.CmdRequestHardReset();
+        }
+        else
+        {
+            // Yksinpeli
+            GameReset.HardReloadSceneKeepMode();
+        }
+    }
+
+    // DODO: Resetoi peli takaisin yksinpelimoodiin. 
+
 }

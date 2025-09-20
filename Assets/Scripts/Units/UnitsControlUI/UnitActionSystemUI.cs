@@ -46,10 +46,43 @@ public class UnitActionSystemUI : MonoBehaviour
        
         Unit.OnAnyActionPointsChanged += Unit_OnAnyActionPointsChanged;
     }
+    
+    /*
+    void OnEnable()
+    {
+        if (UnitActionSystem.Instance != null)
+        {   
+            UnitActionSystem.Instance.OnSelectedUnitChanged += UnitActionSystem_OnSelectedUnitChanged;
+            UnitActionSystem.Instance.OnSelectedActionChanged += UnitActionSystem_OnSelectedActionChanged;
+            UnitActionSystem.Instance.OnActionStarted += UnitActionSystem_OnActionStarted;
+          
+        } else
+        {
+            Debug.Log("UnitActionSystem instance found.");
+        }
+        if (TurnSystem.Instance != null)
+        { 
+            TurnSystem.Instance.OnTurnChanged += TurnSystem_OnTurnChanged;
+        } else
+        {
+            Debug.Log("TurnSystem instance not found.");
+        }
+       
+        Unit.OnAnyActionPointsChanged += Unit_OnAnyActionPointsChanged;
+    }
+    */
+    void OnDisable()
+    {
+        UnitActionSystem.Instance.OnSelectedUnitChanged -= UnitActionSystem_OnSelectedUnitChanged;
+        UnitActionSystem.Instance.OnSelectedActionChanged -= UnitActionSystem_OnSelectedActionChanged;
+        UnitActionSystem.Instance.OnActionStarted -= UnitActionSystem_OnActionStarted;
+        TurnSystem.Instance.OnTurnChanged -= TurnSystem_OnTurnChanged;
+        Unit.OnAnyActionPointsChanged -= Unit_OnAnyActionPointsChanged;
+    }
 
     private void CreateUnitActionButtons()
     {
-       
+
         Unit selectedUnit = UnitActionSystem.Instance.GetSelectedUnit();
         if (selectedUnit == null)
         {
@@ -60,7 +93,7 @@ public class UnitActionSystemUI : MonoBehaviour
 
         foreach (BaseAction baseAction in selectedUnit.GetBaseActionsArray())
         {
-            Transform actionButtonTransform = Instantiate( actionButtonPrefab, actionButtonContainerTransform);
+            Transform actionButtonTransform = Instantiate(actionButtonPrefab, actionButtonContainerTransform);
             UnitActionButtonUI actionButtonUI = actionButtonTransform.GetComponent<UnitActionButtonUI>();
             actionButtonUI.SetBaseAction(baseAction);
             actionButtonUIList.Add(actionButtonUI);
