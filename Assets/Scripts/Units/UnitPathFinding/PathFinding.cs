@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Analytics;
 
 /// <summary>
 /// Finds a shortest path on a grid between two grid cells using the A* algorithm
@@ -25,6 +26,8 @@ public class PathFinding : MonoBehaviour
     /// (Optional) Prefab used to draw debug visuals for the grid.
     /// </summary>
     [SerializeField] private Transform gridDebugPrefab;
+
+    [SerializeField] private LayerMask obstaclesLayerMask;
     private int width;
     private int height;
     private float cellSize;
@@ -44,10 +47,37 @@ public class PathFinding : MonoBehaviour
             return;
         }
         Instance = this;
+    }
 
-        gridSystem = new GridSystem<PathNode>(10, 10, 2f,
+    public void Setup(int width, int height, float cellSize)
+    {
+        this.width = width;
+        this.height = height;
+        this.cellSize = cellSize;
+
+        gridSystem = new GridSystem<PathNode>(width, height, cellSize,
             (GridSystem<PathNode> g, GridPosition gridPosition) => new PathNode(gridPosition));
+
         gridSystem.CreateDebugObjects(gridDebugPrefab);
+        
+        // Set grids where is object like wall (Obstacles layer) to notwalkable 
+        for (int x = 0; x < width; x++)
+        {
+            for (int z = 0; z < width; z++)
+            {
+                GridPosition gridPosition = new GridPosition(x, z);
+                Vector3 wordPosition = LevelGrid.Instance.GetWorldPosition(gridPosition);
+                float RaycastOffSetDistance = 5f;
+                if (Physics.Raycast(
+                         wordPosition + Vector3.down * RaycastOffSetDistance,
+                         Vector3.up, RaycastOffSetDistance * 2,
+                         obstaclesLayerMask))
+                {
+                    GetNode(x, z).SetIsWalkable(false);
+                }
+            }
+        }
+
     }
 
     /// <summary>
@@ -98,7 +128,7 @@ public class PathFinding : MonoBehaviour
             // Goal reached: reconstruct and return path.
             if (currentNode == endNode)
             {
-                
+
                 return CalculatePath(endNode);
             }
 
@@ -109,6 +139,13 @@ public class PathFinding : MonoBehaviour
             {
                 if (closedList.Contains(neighbourNode))
                 {
+                    continue;
+                }
+
+                // add unwalkable grids like walls, boxs and so on, to the closed list. 
+                if (!neighbourNode.GetIsWalkable())
+                {
+                    closedList.Add(neighbourNode);
                     continue;
                 }
 
