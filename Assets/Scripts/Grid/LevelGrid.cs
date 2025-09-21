@@ -6,7 +6,6 @@ using UnityEngine;
 /// This class is responsible for managing the grid system in the game.
 /// It creates a grid of grid objects and provides methods to interact with the grid.
 /// </summary>
-
 public class LevelGrid : MonoBehaviour
 {
     public static LevelGrid Instance { get; private set; }

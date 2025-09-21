@@ -6,7 +6,6 @@ using NUnit.Framework;
 // It contains two integer values, x and z, which represent the coordinates of the position in the grid.
 // It also contains methods for comparing two GridPosition objects, adding and subtracting them, and converting them to a string representation.
 // </summary>
-
 public struct GridPosition:IEquatable<GridPosition>
 {
     public int x;

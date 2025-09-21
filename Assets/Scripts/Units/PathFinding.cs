@@ -3,17 +3,35 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 
+/// <summary>
+/// Finds a shortest path on a grid between two grid cells using the A* algorithm
+/// with 8-directional movement (N, NE, E, SE, S, SW, W, NW).
+/// </summary>
 public class PathFinding : MonoBehaviour
 {
-     public static PathFinding Instance { get; private set; }
+    public static PathFinding Instance { get; private set; }
 
+    /// <summary>
+    /// Movement cost for a straight (orthogonal) step.
+    /// </summary>
     private const int MOVE_STRAIGHT_COST = 10;
+
+    /// <summary>
+    /// Movement cost for a diagonal step.
+    /// </summary>
     private const int MOVE_DIAGONAL_COST = 14;
+
+    /// <summary>
+    /// (Optional) Prefab used to draw debug visuals for the grid.
+    /// </summary>
     [SerializeField] private Transform gridDebugPrefab;
     private int width;
     private int height;
     private float cellSize;
 
+    /// <summary>
+    /// Logical grid holding <see cref="PathNode"/> objects used by A*.
+    /// </summary>
     private GridSystem<PathNode> gridSystem;
 
     private void Awake()
@@ -32,6 +50,16 @@ public class PathFinding : MonoBehaviour
         gridSystem.CreateDebugObjects(gridDebugPrefab);
     }
 
+    /// <summary>
+    /// Computes the shortest path from <paramref name="startGridPosition"/> to <paramref name="endGridPosition"/>
+    /// using A* search. Allows both orthogonal and diagonal moves.
+    /// </summary>
+    /// <param name="startGridPosition">Start cell in grid coordinates.</param>
+    /// <param name="endGridPosition">Target cell in grid coordinates.</param>
+    /// <returns>
+    /// Ordered list of grid positions from start to end (inclusive) if a path exists;
+    /// otherwise <c>null</c>.
+    /// </returns>
     public List<GridPosition> FindPath(GridPosition startGridPosition, GridPosition endGridPosition)
     {
         List<PathNode> openList = new();
@@ -42,6 +70,7 @@ public class PathFinding : MonoBehaviour
 
         openList.Add(startNode);
 
+        // Initialize all nodes with "infinite" g-cost and clear path data.
         for (int x = 0; x < gridSystem.GetWidth(); x++)
         {
             for (int z = 0; z < gridSystem.GetHeight(); z++)
@@ -56,17 +85,20 @@ public class PathFinding : MonoBehaviour
             }
         }
 
+        // Seed start node.
         startNode.SetGCost(0);
-        startNode.SetHCost(CalculataDistance(startGridPosition, endGridPosition));
+        startNode.SetHCost(CalculeteDistance(startGridPosition, endGridPosition));
         startNode.CalculateFCost();
 
+        // A* loop.
         while (openList.Count > 0)
         {
             PathNode currentNode = GetLowestFCostPathNode(openList);
 
+            // Goal reached: reconstruct and return path.
             if (currentNode == endNode)
             {
-                // Reached final node.
+                
                 return CalculatePath(endNode);
             }
 
@@ -81,13 +113,14 @@ public class PathFinding : MonoBehaviour
                 }
 
                 int tentativeGCost =
-                    currentNode.GetGCost() + CalculataDistance(currentNode.GetGridPosition(), neighbourNode.GetGridPosition());
+                    currentNode.GetGCost() + CalculeteDistance(currentNode.GetGridPosition(), neighbourNode.GetGridPosition());
 
+                // Found a cheaper path to neighbour: update its scores and parent.
                 if (tentativeGCost < neighbourNode.GetGCost())
                 {
                     neighbourNode.SetCameFromPathNode(currentNode);
                     neighbourNode.SetGCost(tentativeGCost);
-                    neighbourNode.SetHCost(CalculataDistance(neighbourNode.GetGridPosition(), endGridPosition));
+                    neighbourNode.SetHCost(CalculeteDistance(neighbourNode.GetGridPosition(), endGridPosition));
                     neighbourNode.CalculateFCost();
 
                     if (!openList.Contains(neighbourNode))
@@ -102,7 +135,14 @@ public class PathFinding : MonoBehaviour
         return null;
     }
 
-    public int CalculataDistance(GridPosition gridPositionA, GridPosition gridPositionB)
+    /// <summary>
+    /// Heuristic + step cost between two grid positions assuming 8-directional movement:
+    /// uses the standard "octile" distance with straight and diagonal step costs.
+    /// </summary>
+    /// <param name="gridPositionA">First grid position.</param>
+    /// <param name="gridPositionB">Second grid position.</param>
+    /// <returns>Estimated movement cost from A to B.</returns>
+    public int CalculeteDistance(GridPosition gridPositionA, GridPosition gridPositionB)
     {
         GridPosition gridPositionDistance = gridPositionA - gridPositionB;
         int xDistance = Mathf.Abs(gridPositionDistance.x);
@@ -111,6 +151,11 @@ public class PathFinding : MonoBehaviour
         return MOVE_DIAGONAL_COST * Mathf.Min(xDistance, zDistance) + MOVE_STRAIGHT_COST * remaining;
     }
 
+    /// <summary>
+    /// Returns the node with the lowest f-cost from the given list.
+    /// </summary>
+    /// <param name="pathNodeList">Candidate nodes (typically the open list).</param>
+    /// <returns>Node with the smallest f-cost.</returns>
     private PathNode GetLowestFCostPathNode(List<PathNode> pathNodeList)
     {
         PathNode lowestFCostPathNode = pathNodeList[0];
@@ -124,11 +169,20 @@ public class PathFinding : MonoBehaviour
         return lowestFCostPathNode;
     }
 
+    /// <summary>
+    /// Gets the path node at grid coordinates (x, z).
+    /// </summary>
     private PathNode GetNode(int x, int z)
     {
         return gridSystem.GetGridObject(new GridPosition(x, z));
     }
 
+    /// <summary>
+    /// Returns all valid 8-directional neighbours of the given node (clamped to grid bounds).
+    /// Order: left (and diagonals), right (and diagonals), then vertical up/down.
+    /// </summary>
+    /// <param name="currentNode">Node whose neighbours are requested.</param>
+    /// <returns>List of neighbouring <see cref="PathNode"/> objects.</returns>
     private List<PathNode> GetNeighbourList(PathNode currentNode)
     {
         List<PathNode> neighbourList = new();
@@ -185,6 +239,12 @@ public class PathFinding : MonoBehaviour
         return neighbourList;
     }
 
+    /// <summary>
+    /// Reconstructs the path by walking back from <paramref name="endNode"/> via CameFrom pointers,
+    /// then converts it into a list of <see cref="GridPosition"/>s from start to end.
+    /// </summary>
+    /// <param name="endNode">Goal node reached by A*.</param>
+    /// <returns>Ordered list of grid positions representing the path.</returns>
     private List<GridPosition> CalculatePath(PathNode endNode)
     {
         List<PathNode> pathNodeList = new List<PathNode>();

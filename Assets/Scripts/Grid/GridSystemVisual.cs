@@ -7,7 +7,6 @@ using UnityEngine;
 /// This class is responsible for visualizing the grid system in the game.
 /// It creates a grid of visual objects that represent the grid positions.
 /// </summary>
-
 public class GridSystemVisual : MonoBehaviour
 {
 
