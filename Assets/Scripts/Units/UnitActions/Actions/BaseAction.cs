@@ -62,17 +62,32 @@ public abstract class BaseAction : NetworkBehaviour
         return unit;
     }
 
-    //-------------- ENEMY AI ACTIONS -------------
+    // -------------- ENEMY AI ACTIONS -------------
+    
+    /// <summary>
+    /// ENEMY AI:
+    /// Empty ENEMY AI ACTIONS abstract class. 
+    /// Every Unit action like MoveAction.cs, ShootAction.cs and so on defines this differently
+    /// Contains gridposition and action value
+    /// </summary>
     public abstract EnemyAIAction GetEnemyAIAction(GridPosition gridPosition);
 
+    /// <summary>
+    /// ENEMY AI:
+    /// Making a list all possible actions an enemy Unit can take, and shorting them 
+    /// based on highest action value.(Gives the enemy the best outcome) 
+    /// The best Action is in the enemyAIActionList[0]
+    /// </summary>
     public EnemyAIAction GetBestEnemyAIAction()
     {
         List<EnemyAIAction> enemyAIActionList = new();
 
         List<GridPosition> validActionGridPositionList = GetValidGridPositionList();
 
+
         foreach (GridPosition gridPosition in validActionGridPositionList)
         {
+            // All actions have own EnemyAIAction to set griposition and action value.
             EnemyAIAction enemyAIAction = GetEnemyAIAction(gridPosition);
             enemyAIActionList.Add(enemyAIAction);
         }

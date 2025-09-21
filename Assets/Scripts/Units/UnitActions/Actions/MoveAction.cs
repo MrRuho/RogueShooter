@@ -80,10 +80,13 @@ public class MoveAction : BaseAction
     {
         return "Move";
     }
-    
+
+    /// <summary>
+    /// ENEMY AI: 
+    /// Move toward to Player unit to make shoot action.
+    /// </summary>
     public override EnemyAIAction GetEnemyAIAction(GridPosition gridPosition)
     {
-      //  int targetCountAtGridPosition = unit.GetShootAction().GetTargetCountAtPosition(gridPosition);
         int targetCountAtGridPosition = unit.GetAction<ShootAction>().GetTargetCountAtPosition(gridPosition);
 
         return new EnemyAIAction

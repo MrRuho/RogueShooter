@@ -100,14 +100,7 @@ public class ShootAction : BaseAction
     {
         return "Shoot";
     }
-
-    public override List<GridPosition> GetValidGridPositionList()
-    {
-        
-        GridPosition unitGridPosition = unit.GetGridPosition();
-        return GetValidActionGridPositionList(unitGridPosition);
-    }
-
+ 
     public List<GridPosition> GetValidActionGridPositionList(GridPosition unitGridPosition)
     {
         List<GridPosition> validGridPositionList = new();
@@ -169,6 +162,19 @@ public class ShootAction : BaseAction
         return maxShootDistance;
     }
 
+    /// ---------------- AI ----------------
+    /// <summary>
+    /// ENEMY AI: Make a list about Player Units what Enemy Unit can shoot. 
+    /// </summary>
+    public override List<GridPosition> GetValidGridPositionList()
+    {
+        GridPosition unitGridPosition = unit.GetGridPosition();
+        return GetValidActionGridPositionList(unitGridPosition);
+    }
+
+    /// <summary>
+    /// ENEMY AI: How "good" target is. Target who have a lowest health, gets a higher actionvalue
+    /// </summary>
     public override EnemyAIAction GetEnemyAIAction(GridPosition gridPosition)
     {
         Unit targetUnit = LevelGrid.Instance.GetUnitAtGridPosition(gridPosition);
@@ -176,7 +182,7 @@ public class ShootAction : BaseAction
         return new EnemyAIAction
         {
             gridPosition = gridPosition,
-            actionValue = 100 + Mathf.RoundToInt((1 - targetUnit.GetHealthNormalized()) * 100f), //Ampuu sitä jolla on vähiten healhtia
+            actionValue = 100 + Mathf.RoundToInt((1 - targetUnit.GetHealthNormalized()) * 100f), //Take at target who have a lowest health.
         };
     }
 

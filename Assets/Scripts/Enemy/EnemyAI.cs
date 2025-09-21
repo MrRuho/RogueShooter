@@ -2,6 +2,13 @@ using System;
 using System.Collections;
 using UnityEngine;
 using Utp;
+
+/// <summary>
+/// Control EnemyAI. Go trough all posibble actions what current enemy Unit can do and chose the best one.
+/// Listen to TurnSystem and when turn OnTurnChanged, AI state switch WaitingForEnemyTurn to the TakingTurn state
+/// and try to find best action to all enemy Units. All enemy Unit do this independently based on 
+/// action values. 
+/// </summary>
 public class EnemyAI : MonoBehaviour
 {
     public static EnemyAI Instance { get; private set; }
@@ -26,18 +33,18 @@ public class EnemyAI : MonoBehaviour
 
     private void Start()
     {
-        
+
         if (GameModeManager.SelectedMode == GameMode.SinglePlayer)
         {
             TurnSystem.Instance.OnTurnChanged += TurnSystem_OnTurnChanged;
         }
-        
+
 
         if (GameNetworkManager.Instance != null &&
         GameNetworkManager.Instance.GetNetWorkClientConnected() &&
         !GameNetworkManager.Instance.GetNetWorkServerActive())
         {
-            // Co-opissa AI:n ajaa vain serveri koroutinena
+            // Coop gamemode using IEnumerator RunEnemyTurnCoroutine() trough the server. No local calls
             if (GameModeManager.SelectedMode == GameMode.CoOp)
                 enabled = false;
         }
@@ -63,24 +70,23 @@ public class EnemyAI : MonoBehaviour
 
     private void Update()
     {
-        //HUOM! AI:n Update-looppi kuuluu vain yksinpeliin. Coopissa kutsu tehdään CoopTurcoordinator.cs kautta
-        // joka kutsuu EnemyAI.cs funktiota RunEnemyTurnCoroutine()
+        //NOTE! Only solo game!
         if (GameModeManager.SelectedMode != GameMode.SinglePlayer) return;
-        // Odotellaan että pelaaja on päättänyt vuoronsa
         if (TurnSystem.Instance.IsPlayerTurn()) return;
-        //Jos pelimoodi on singleplayer ja ei ole pelaajan vuoro, niin ajetaan Enemy AI.
+
+        //If game mode is SinglePlayer and is not PlayerTurn then runs Enemy AI.
         EnemyAITick(Time.deltaTime);
     }
 
     /// <summary>
-    /// Yksi AI "frame": sisältää saman tilakoneen kuin ennen Update:ssa.
-    /// Kutsutaan sekä Update:sta (SP) että koroutista (Co-op server).
+    /// Enemy start taking actions after small waiting time.
+    /// Update call this every frame.
     /// </summary>
-    // 1) Vaihda signatuuri ja palauta valmis/ei-valmis
     private bool EnemyAITick(float dt)
     {
         switch (state)
         {
+            // It is Player turn so keep waiting untill TurnSystem_OnTurnChanged switch state to TakingTurn.   
             case State.WaitingForEnemyTurn:
                 return false;
 
@@ -88,41 +94,50 @@ public class EnemyAI : MonoBehaviour
                 timer -= dt;
                 if (timer <= 0f)
                 {
-                    if (TryTakeEnemyAIAction(SetStateTakingTurn))
+                    //Return false when all Enemy Units have make they actions 
+                    if (SelectEnemyUnitToTakeAction(SetStateTakingTurn))
                     {
-                        state = State.Busy; // odottaa actionin callbackia
+                        state = State.Busy;
                         return false;
                     }
                     else
                     {
-                        // Ei enää tekoja → AI-vuoro loppu
+                        // If enemy cant make actions. Return turn back to player.
+                        // NOTE! In Coop mode CoopTurnCoordinator make this.
                         if (GameModeManager.SelectedMode == GameMode.SinglePlayer)
                         {
-                            // SP: voidaan vaihtaa vuoro heti täältä
                             TurnSystem.Instance.NextTurn();
                         }
-                        // Co-opissa EI kutsuta NextTurniä täältä.
+
+                        // Enemy AI switch back to waiting. 
                         state = State.WaitingForEnemyTurn;
-                        return true; // valmis
+                        return true;
                     }
                 }
                 return false;
 
             case State.Busy:
-                // Odotetaan callback -> SetStateTakingTurn(); ei valmis vielä
+                // When Enemy doing action just return.
+                // Waiting c# Action call from base action and then call funktion SetStateTakingTurn()
                 return false;
         }
         return false;
     }
 
 
+    /// <summary>
+    /// c# Action callback. SelectEnemyUnitToTakeAction use this and when action is ready. This occurs
+    /// </summary>
     private void SetStateTakingTurn()
     {
         timer = 0.5f;
         state = State.TakingTurn;
     }
 
-    private bool TryTakeEnemyAIAction(Action onEnemyAIActionComplete)
+    /// <summary>
+    /// Go through all enemy Units on EnemyUnit List and try to take action. 
+    /// </summary>
+    private bool SelectEnemyUnitToTakeAction(Action onEnemyAIActionComplete)
     {
         foreach (Unit enemyUnit in UnitManager.Instance.GetEnemyUnitList())
         {
@@ -140,12 +155,19 @@ public class EnemyAI : MonoBehaviour
         return false;
     }
 
+    /// <summary>
+    /// Selected Unit Go through all possible actions what Enemy Unit can do 
+    /// and choosing the best one based on them action value.
+    /// Then make action if have enough action points.
+    /// </summary>
     private bool TryTakeEnemyAIAction(Unit enemyUnit, Action onEnemyAIActionComplete)
     {
+        // Contains Gridposition and action value (How good action is)
         EnemyAIAction bestEnemyAIAction = null;
+
         BaseAction bestBaseAction = null;
 
-        // Käy kaikki mahdolliset toiminnot läpi mitä vihollinen voi tehdä ja valitsee niistä parhaimman.
+        // Choosing the best action, based on them action value.
         foreach (BaseAction baseAction in enemyUnit.GetBaseActionsArray())
         {
             if (!enemyUnit.CanSpendActionPointsToTakeAction(baseAction))
@@ -161,6 +183,7 @@ public class EnemyAI : MonoBehaviour
             }
             else
             {
+                // Go trough all actions and take the best one.
                 EnemyAIAction testEnemyAIAction = baseAction.GetBestEnemyAIAction();
                 if (testEnemyAIAction != null && testEnemyAIAction.actionValue > bestEnemyAIAction.actionValue)
                 {
@@ -170,8 +193,9 @@ public class EnemyAI : MonoBehaviour
             }
         }
 
+        // Try to take action
         if (bestEnemyAIAction != null && enemyUnit.TrySpendActionPointsToTakeAction(bestBaseAction))
-        {
+        {      
             bestBaseAction.TakeAction(bestEnemyAIAction.gridPosition, onEnemyAIActionComplete);
             return true;
         }
@@ -181,35 +205,40 @@ public class EnemyAI : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// When turn changed. Switch state to taking turn and enemy turn start. 
+    /// </summary>
     private void TurnSystem_OnTurnChanged(object sender, EventArgs e)
     {
         if (!TurnSystem.Instance.IsPlayerTurn())
         {
             state = State.TakingTurn;
-            timer = 1f; // pieni viive ennen ensimmäistä tekoa
+            timer = 1f; // Small holding time before action.
         }
     }
 
-    // 3) Co-opin koroutti: katkaise kun EnemyAITick ilmoittaa valmiiksi
+    /// <summary>
+    /// When playing online: (Coop mode) Server handle All AI actions.
+    /// </summary>
     [Mirror.Server]
     public IEnumerator RunEnemyTurnCoroutine()
     {
 
-        // Alusta vihollisvuoro kuten SP:ssä
         SetStateTakingTurn();
 
-        // Aja kunnes AI ilmoittaa olevansa valmis
         while (true)
         {
-            // Jos jostain syystä vuoro jo vaihtui (varmistus)
             if (TurnSystem.Instance.IsPlayerTurn())
+            {
+                Debug.LogWarning("[EnemyAI] Players get turn before AI has ended own turn! This sould not be posibble");
                 yield break;
+            }
 
             bool finished = EnemyAITick(Time.deltaTime);
             if (finished)
-                yield break; // AI-vuoro valmis → CoopTurnCoordinator jatkaa vuoronvaihtoa
+                yield break; // AI-Turn ready. CoopTurnCoordinator continue and give turn back to players.
 
-            yield return null; // odota seuraava frame
+            yield return null; // wait one frame.
         }
     }
 }

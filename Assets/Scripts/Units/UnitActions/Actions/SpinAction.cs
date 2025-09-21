@@ -60,6 +60,10 @@ public class SpinAction : BaseAction
         return 1;
     }
 
+    /// <summary>
+    /// ENEMY AI: 
+    /// Currently this action has no value. Just testing!
+    /// </summary>
     public override EnemyAIAction GetEnemyAIAction(GridPosition gridPosition)
     {
         return new EnemyAIAction
