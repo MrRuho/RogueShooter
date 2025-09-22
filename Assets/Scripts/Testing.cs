@@ -18,6 +18,10 @@ public class Testing : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.T))
         {
+            
+
+            //Show pathfind line
+            /*
             GridPosition mouseGridPosition = LevelGrid.Instance.GetGridPosition(MouseWorld.GetMouseWorldPosition());
             GridPosition startGridPosition = new GridPosition(0, 0);
 
@@ -32,6 +36,7 @@ public class Testing : MonoBehaviour
                     10f
                 );
             }
+            */
         }
 
         //Resetoi pelin alkamaan alusta.

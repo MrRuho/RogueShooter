@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Runtime.InteropServices.WindowsRuntime;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Analytics;
@@ -58,8 +59,9 @@ public class PathFinding : MonoBehaviour
         gridSystem = new GridSystem<PathNode>(width, height, cellSize,
             (GridSystem<PathNode> g, GridPosition gridPosition) => new PathNode(gridPosition));
 
+        // NOTE! This is for the testing.
         gridSystem.CreateDebugObjects(gridDebugPrefab);
-        
+
         // Set grids where is object like wall (Obstacles layer) to notwalkable 
         for (int x = 0; x < width; x++)
         {
@@ -67,10 +69,16 @@ public class PathFinding : MonoBehaviour
             {
                 GridPosition gridPosition = new GridPosition(x, z);
                 Vector3 wordPosition = LevelGrid.Instance.GetWorldPosition(gridPosition);
+
+                // Raycast shooting start little bit lower so it is not collider to self.
+                // Note. This can be fix allso in Unity setup if needed
                 float RaycastOffSetDistance = 5f;
+                // Raycast max distance, so it ignores roof and doors
+                float maxCheckHeight = 5f;
+
                 if (Physics.Raycast(
                          wordPosition + Vector3.down * RaycastOffSetDistance,
-                         Vector3.up, RaycastOffSetDistance * 2,
+                         Vector3.up, maxCheckHeight,
                          obstaclesLayerMask))
                 {
                     GetNode(x, z).SetIsWalkable(false);
@@ -90,7 +98,7 @@ public class PathFinding : MonoBehaviour
     /// Ordered list of grid positions from start to end (inclusive) if a path exists;
     /// otherwise <c>null</c>.
     /// </returns>
-    public List<GridPosition> FindPath(GridPosition startGridPosition, GridPosition endGridPosition)
+    public List<GridPosition> FindPath(GridPosition startGridPosition, GridPosition endGridPosition, out int pathLeght)
     {
         List<PathNode> openList = new();
         List<PathNode> closedList = new();
@@ -128,6 +136,8 @@ public class PathFinding : MonoBehaviour
             // Goal reached: reconstruct and return path.
             if (currentNode == endNode)
             {
+                // Prevent Unit to move longer path then pathfinding allows.
+                pathLeght = endNode.GetFCost();
 
                 return CalculatePath(endNode);
             }
@@ -169,6 +179,7 @@ public class PathFinding : MonoBehaviour
         }
 
         // No Path found
+        pathLeght = 0;
         return null;
     }
 
@@ -303,4 +314,22 @@ public class PathFinding : MonoBehaviour
 
         return gridPositionList;
     }
+
+    public bool IsWalkableGridPosition(GridPosition gridPosition)
+    {
+        return gridSystem.GetGridObject(gridPosition).GetIsWalkable();
+    }
+
+    // Prevent to go grid position where is no path. Like surrounded by unwalkable grids.
+    public bool HasPath(GridPosition startGridPosition, GridPosition endGridPosition)
+    {
+        return FindPath(startGridPosition, endGridPosition, out int pathLeght) != null;
+    }
+
+    public int GetPathLeght(GridPosition startGridPosition, GridPosition endGridPosition)
+    {
+        FindPath(startGridPosition, endGridPosition, out int pathLeght);
+        return pathLeght;
+    }
+
 }

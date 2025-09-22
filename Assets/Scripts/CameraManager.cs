@@ -5,7 +5,7 @@ public class CameraManager : MonoBehaviour
 {
     [SerializeField] private GameObject actionCameraGameObject;
 
- 
+    [SerializeField] private float actionCameraVerticalPosition = 2.5f;
     private void Start()
     {
       //  BaseAction.OnAnyActionStarted += BaseAction_OnAnyActionStarted;
@@ -45,7 +45,7 @@ public class CameraManager : MonoBehaviour
                 Unit shooterUnit = shootAction.GetUnit();
                 Unit targetUnit = shootAction.GetTargetUnit();
 
-                Vector3 cameraCharacterHeight = Vector3.up * 1.7f;
+                Vector3 cameraCharacterHeight = Vector3.up * actionCameraVerticalPosition; //1.7f;
                 Vector3 shootDir = (targetUnit.GetWorldPosition() - shooterUnit.GetWorldPosition()).normalized;
 
                 float shoulderOffsetAmount = 0.5f;

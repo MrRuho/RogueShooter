@@ -20,6 +20,7 @@ public class ShootAction : BaseAction
         Cooloff
     }
 
+    [SerializeField] private LayerMask obstaclesLayerMask;
     private State state;
     private int maxShootDistance = 5;
 
@@ -120,8 +121,21 @@ public class ShootAction : BaseAction
 
                 Unit targetUnit = LevelGrid.Instance.GetUnitAtGridPosition(testGridPosition);
 
-                // Make sure we don't include friendly units. Continue the loop only if the unit is an enemy.
+                // Make sure we don't include friendly units.
                 if (targetUnit.IsEnemy() == unit.IsEnemy()) continue;
+
+                Vector3 unitWorldPosition = LevelGrid.Instance.GetWorldPosition(unitGridPosition);
+                Vector3 shootDir = (targetUnit.GetWorldPosition() - unitWorldPosition).normalized;
+                float unitShoulderHeight = 2.5f;
+                if (Physics.Raycast(
+                    unitWorldPosition + Vector3.up * unitShoulderHeight,
+                    shootDir,
+                    Vector3.Distance(unitWorldPosition, targetUnit.GetWorldPosition()),
+                    obstaclesLayerMask))
+                {
+                    //Target Unit is Blocked by an Obstacle
+                    continue;
+                }
 
                 validGridPositionList.Add(testGridPosition);
             }
