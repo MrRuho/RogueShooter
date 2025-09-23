@@ -1,5 +1,8 @@
 using UnityEngine;
 
+/// <summary>
+/// Turn wordUI elemenets ( Like Unit Health and action points) toward to camera.
+/// </summary>
 public class LookAtCamera : MonoBehaviour
 {
     [SerializeField] private bool invert;
