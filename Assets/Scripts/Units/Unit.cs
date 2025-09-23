@@ -206,7 +206,12 @@ public class Unit : NetworkBehaviour
 
     public float GetHealthNormalized()
     {
-        return healthSystem.GetHealthNormalized();   
+        return healthSystem.GetHealthNormalized();
+    }
+    
+    public void Damage(int damageAmount)
+    {
+        healthSystem.Damage(damageAmount);
     }
 
 }

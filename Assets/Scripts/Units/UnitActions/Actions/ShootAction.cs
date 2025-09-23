@@ -109,7 +109,7 @@ public class ShootAction : BaseAction
         return "Shoot";
     }
  
-    public List<GridPosition> GetValidActionGridPositionList(GridPosition unitGridPosition)
+    public  List<GridPosition> GetValidActionGridPositionList(GridPosition unitGridPosition)
     {
         List<GridPosition> validGridPositionList = new();
 
