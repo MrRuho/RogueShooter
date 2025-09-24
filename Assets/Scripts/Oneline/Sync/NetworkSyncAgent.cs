@@ -13,6 +13,7 @@ public class NetworkSyncAgent : NetworkBehaviour
 {
     public static NetworkSyncAgent Local;   // Easy access for NetworkSync static helper
     [SerializeField] private GameObject bulletPrefab; // Prefab for the bullet projectile
+    [SerializeField] private GameObject grenadePrefab;
 
     public override void OnStartLocalPlayer()
     {
@@ -42,6 +43,19 @@ public class NetworkSyncAgent : NetworkBehaviour
         }
 
         // Spawn across the network
+        NetworkServer.Spawn(go);
+    }
+ 
+    [Command(requiresAuthority = true)]
+    public void CmdSpawnGrenade(Vector3 spawnPos, Vector3 targetPos)
+    {
+        if (grenadePrefab == null) { Debug.LogWarning("[NetSync] grenadePrefab missing"); return; }
+
+        var go = Instantiate(grenadePrefab, spawnPos, Quaternion.identity);
+        
+        if (go.TryGetComponent<GrenadeProjectile>(out var gp))
+            gp.Setup(new Vector3(targetPos.x, spawnPos.y, targetPos.z));
+
         NetworkServer.Spawn(go);
     }
 

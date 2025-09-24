@@ -605,7 +605,7 @@ MonoBehaviour:
     LookAtTarget: {fileID: 0}
     CustomLookAtTarget: 0
   Lens:
-    FieldOfView: 65
+    FieldOfView: 75
     OrthographicSize: 5
     NearClipPlane: 0.3
     FarClipPlane: 1000
@@ -2858,7 +2858,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6581974193694860568, guid: adf80d3637ccde249aa475d57582d0c5, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 5
+      value: 13
       objectReference: {fileID: 0}
     - target: {fileID: 6581974193694860568, guid: adf80d3637ccde249aa475d57582d0c5, type: 3}
       propertyPath: m_LocalRotation.w
@@ -2952,6 +2952,7 @@ MonoBehaviour:
   - {fileID: 3233335089446238902, guid: ebcba67d80965d4498a1e659b057e81a, type: 3}
   - {fileID: 6451126097255659782, guid: 655eb09c924aa8f4093a75ac6e5ea6b7, type: 3}
   - {fileID: 7375612249453950360, guid: 503824367a19c7749a4ee396c1388cc4, type: 3}
+  - {fileID: 7374537704562805240, guid: ef01bfdfadc18044882f4cc7063f4be7, type: 3}
   exceptionsDisconnect: 1
   snapshotSettings:
     bufferTimeMultiplier: 2

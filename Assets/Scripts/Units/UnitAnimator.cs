@@ -6,7 +6,10 @@ public class UnitAnimator : MonoBehaviour
 {
     [SerializeField] private Animator animator;
     [SerializeField] private GameObject bulletProjectilePrefab;
+    [SerializeField] private GameObject granadeProjectilePrefab;
     [SerializeField] private Transform shootPointTransform;
+
+    GranadeAction granadeAction;
 
     private void Awake()
     {
@@ -20,6 +23,11 @@ public class UnitAnimator : MonoBehaviour
         if (TryGetComponent<ShootAction>(out ShootAction shootAction))
         {
             shootAction.OnShoot += ShootAction_OnShoot;
+        }
+
+        if (TryGetComponent<GranadeAction>(out GranadeAction granadeAction))
+        {
+            granadeAction.ThrowGranade += granadeAction_ThrowGranade;
         }
     }
 
@@ -38,7 +46,7 @@ public class UnitAnimator : MonoBehaviour
         }
     }
     */
-    
+
     void OnDisable()
     {
         if (TryGetComponent<MoveAction>(out MoveAction moveAction))
@@ -50,6 +58,11 @@ public class UnitAnimator : MonoBehaviour
         if (TryGetComponent<ShootAction>(out ShootAction shootAction))
         {
             shootAction.OnShoot -= ShootAction_OnShoot;
+        }
+
+        if (TryGetComponent<GranadeAction>(out GranadeAction granadeAction))
+        {
+            granadeAction.ThrowGranade -= granadeAction_ThrowGranade;
         }
     }
 
@@ -70,4 +83,28 @@ public class UnitAnimator : MonoBehaviour
         target.y = shootPointTransform.position.y;
         NetworkSync.SpawnBullet(bulletProjectilePrefab, shootPointTransform.position, target);
     }
+
+    private void granadeAction_ThrowGranade(object sender, EventArgs e)
+    {
+
+        var action = (GranadeAction)sender;
+
+        Vector3 origin = shootPointTransform.position;
+        Vector3 target = action.TargetWorld; // GranadeAction asettaa tämän TakeActionissa
+        target.y = origin.y;                 // sama taso kuin luodeissa
+
+        //DoDo
+        // animator.SetTrigger("ThrowGranande");
+        // Testing
+        StartCoroutine(NotifyAfterDelay(action, 2f));
+        // Sama kuvio kuin bulleteissa:
+        NetworkSync.SpawnGrenade(granadeProjectilePrefab, origin, target);
+
+    }
+    private System.Collections.IEnumerator NotifyAfterDelay(GranadeAction action, float seconds)
+    {
+        yield return new WaitForSeconds(seconds);
+        action.OnGrenadeBehaviourComplete();
+    }
+
 }

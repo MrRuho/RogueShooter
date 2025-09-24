@@ -72,6 +72,43 @@ public static class NetworkSync
         }
     }
 
+    public static void SpawnGrenade(GameObject grenadePrefab, Vector3 spawnPos, Vector3 targetPos)
+    {
+        if (NetworkServer.active) // Online: server/host
+        {
+            var go = Object.Instantiate(grenadePrefab, spawnPos, Quaternion.identity);
+            if (go.TryGetComponent<GrenadeProjectile>(out var gp))
+                gp.Setup(new Vector3(targetPos.x, spawnPos.y, targetPos.z)); // ks. kohta 4
+
+            NetworkServer.Spawn(go);
+            return;
+        }
+
+        if (NetworkClient.active) // Online: client
+        {
+            if (NetworkSyncAgent.Local != null)
+            {
+                NetworkSyncAgent.Local.CmdSpawnGrenade(spawnPos, targetPos);
+            }
+            else
+            {
+                Debug.LogWarning("[NetworkSync] No Local NetworkSyncAgent found, fallback to local Instantiate.");
+                var go = Object.Instantiate(grenadePrefab, spawnPos, Quaternion.identity);
+                if (go.TryGetComponent<GrenadeProjectile>(out var gp))
+                    gp.Setup(new Vector3(targetPos.x, spawnPos.y, targetPos.z));
+            }
+        }
+        else
+        {
+            
+            // Offline
+            var go = Object.Instantiate(grenadePrefab, spawnPos, Quaternion.identity);
+            if (go.TryGetComponent<GrenadeProjectile>(out var gp))
+                gp.Setup(new Vector3(targetPos.x, spawnPos.y, targetPos.z));
+        }
+    }
+
+
     /// <summary>
     /// Apply damage to a Unit in SP/Host/Client modes.
     /// - Server/Host: call HealthSystem.Damage directly (authoritative).
@@ -122,6 +159,12 @@ public static class NetworkSync
         }
     }
 
+    /// <summary>
+    /// Server: Control when Pleyers can see own and others Unit stats, 
+    /// Like only active player AP(Action Points) are visible.
+    /// When is Enemy turn only Enemy Units Action points are visible.
+    /// Solo and Versus mode handle this localy becouse there is no need syncronisation.
+    /// </summary>
     public static void BroadcastActionPoints(Unit unit, int apValue)
     {
         if (unit == null) return;
@@ -141,13 +184,7 @@ public static class NetworkSync
             if (ni) NetworkSyncAgent.Local.CmdMirrorAp(ni.netId, apValue);
         }
     }
-    /// <summary>
-    /// Server: Control when Pleyers can see own and others Unit stats, 
-    /// Like only active player AP(Action Points) are visible.
-    /// When is Enemy turn only Enemy Units Action points are visible.
-    /// Solo and Versus mode handle this localy becouse there is no need syncronisation.
-    /// </summary>
-
+    
     public static void SpawnRagdoll(GameObject prefab, Vector3 pos, Quaternion rot, uint sourceUnitNetId, Transform originalRootBone)
     {
 

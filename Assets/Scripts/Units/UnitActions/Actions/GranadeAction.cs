@@ -5,6 +5,9 @@ using UnityEngine;
 
 public class GranadeAction : BaseAction
 {
+    public event EventHandler ThrowGranade;
+
+    public Vector3 TargetWorld { get; private set; }
 
     [SerializeField] private Transform grenadeProjectilePrefab;
 
@@ -51,7 +54,7 @@ public class GranadeAction : BaseAction
                 if (!LevelGrid.Instance.IsValidGridPosition(testGridPosition)) continue;
                 int testDistance = Mathf.Abs(x) + Mathf.Abs(z);
                 if (testDistance > maxThrowDistance) continue;
-              //  if (!LevelGrid.Instance.HasAnyUnitOnGridPosition(testGridPosition)) continue;
+                //  if (!LevelGrid.Instance.HasAnyUnitOnGridPosition(testGridPosition)) continue;
 
                 validGridPositionList.Add(testGridPosition);
             }
@@ -60,20 +63,26 @@ public class GranadeAction : BaseAction
 
         return validGridPositionList;
     }
-  
+
     public override void TakeAction(GridPosition gridPosition, Action onActionComplete)
     {
-        Transform grenadeProjectileTransform = Instantiate(grenadeProjectilePrefab, unit.GetWorldPosition(), Quaternion.identity);
-        GrenadeProjectile grenadeProjectile = grenadeProjectileTransform.GetComponent<GrenadeProjectile>();
-        grenadeProjectile.Setup(gridPosition, OnGrenadeBehaviourComplete);
+        /*
+            Transform grenadeProjectileTransform = Instantiate(grenadeProjectilePrefab, unit.GetWorldPosition(), Quaternion.identity);
+            GrenadeProjectile grenadeProjectile = grenadeProjectileTransform.GetComponent<GrenadeProjectile>();
+            grenadeProjectile.Setup(gridPosition, OnGrenadeBehaviourComplete);
 
+            ActionStart(onActionComplete);
+        */
         ActionStart(onActionComplete);
-    }
 
-    private void OnGrenadeBehaviourComplete()
+        TargetWorld = LevelGrid.Instance.GetWorldPosition(gridPosition);
+        // Pyydä UnitAnimatoria hoitamaan visuaalit ja spawni
+        ThrowGranade?.Invoke(this, EventArgs.Empty);
+
+    }
+    
+    public void OnGrenadeBehaviourComplete()
     {
         ActionComplete();
     }
-
-
 }

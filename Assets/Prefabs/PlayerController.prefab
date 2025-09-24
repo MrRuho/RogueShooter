@@ -131,3 +131,4 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0
   bulletPrefab: {fileID: 7196073207834334459, guid: d74275857cb5cf14fa64a0672eca7fc7, type: 3}
+  grenadePrefab: {fileID: 7374537704562805240, guid: ef01bfdfadc18044882f4cc7063f4be7, type: 3}
