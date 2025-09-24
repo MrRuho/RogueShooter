@@ -89,15 +89,18 @@ public class UnitAnimator : MonoBehaviour
 
         var action = (GranadeAction)sender;
 
-        Vector3 origin = shootPointTransform.position;
-        Vector3 target = action.TargetWorld; // GranadeAction asettaa tämän TakeActionissa
-        target.y = origin.y;                 // sama taso kuin luodeissa
-
         //DoDo
         // animator.SetTrigger("ThrowGranande");
         // Testing
         StartCoroutine(NotifyAfterDelay(action, 2f));
-        // Sama kuvio kuin bulleteissa:
+        // -----------------------------------------
+
+
+        Vector3 origin = shootPointTransform.position;
+        Vector3 target = action.TargetWorld; // GranadeAction asettaa tämän TakeActionissa
+       // target.y = origin.y;                 // sama taso kuin luodeissa
+
+
         NetworkSync.SpawnGrenade(granadeProjectilePrefab, origin, target);
 
     }

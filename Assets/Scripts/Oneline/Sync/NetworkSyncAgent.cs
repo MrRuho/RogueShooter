@@ -54,7 +54,7 @@ public class NetworkSyncAgent : NetworkBehaviour
         var go = Instantiate(grenadePrefab, spawnPos, Quaternion.identity);
         
         if (go.TryGetComponent<GrenadeProjectile>(out var gp))
-            gp.Setup(new Vector3(targetPos.x, spawnPos.y, targetPos.z));
+            gp.Setup(targetPos);
 
         NetworkServer.Spawn(go);
     }

@@ -63,14 +63,14 @@ public class ScreenShake : MonoBehaviour
         // cinemachineRecoilImpulseSource = GetComponent<CinemachineImpulseSource>();
     }
 
-    public void ExplosiveCameraShake()
+    public void ExplosiveCameraShake(float ShakeStrength)
     {
-        cinemachineExplosiveImpulseSource.GenerateImpulse();
+        cinemachineExplosiveImpulseSource.GenerateImpulse(ShakeStrength);
     }
 
-    public void RecoilCameraShake()
+    public void RecoilCameraShake(float ShakeStrength)
     { 
-        cinemachineRecoilImpulseSource.GenerateImpulse();
+        cinemachineRecoilImpulseSource.GenerateImpulse(ShakeStrength);
     }
 }
 

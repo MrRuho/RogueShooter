@@ -74,13 +74,14 @@ public static class NetworkSync
 
     public static void SpawnGrenade(GameObject grenadePrefab, Vector3 spawnPos, Vector3 targetPos)
     {
+        
         if (NetworkServer.active) // Online: server/host
         {
             var go = Object.Instantiate(grenadePrefab, spawnPos, Quaternion.identity);
             if (go.TryGetComponent<GrenadeProjectile>(out var gp))
-                gp.Setup(new Vector3(targetPos.x, spawnPos.y, targetPos.z)); // ks. kohta 4
+                gp.Setup(targetPos);
 
-            NetworkServer.Spawn(go);
+                NetworkServer.Spawn(go);
             return;
         }
 
@@ -95,7 +96,7 @@ public static class NetworkSync
                 Debug.LogWarning("[NetworkSync] No Local NetworkSyncAgent found, fallback to local Instantiate.");
                 var go = Object.Instantiate(grenadePrefab, spawnPos, Quaternion.identity);
                 if (go.TryGetComponent<GrenadeProjectile>(out var gp))
-                    gp.Setup(new Vector3(targetPos.x, spawnPos.y, targetPos.z));
+                    gp.Setup(targetPos);
             }
         }
         else
@@ -104,7 +105,7 @@ public static class NetworkSync
             // Offline
             var go = Object.Instantiate(grenadePrefab, spawnPos, Quaternion.identity);
             if (go.TryGetComponent<GrenadeProjectile>(out var gp))
-                gp.Setup(new Vector3(targetPos.x, spawnPos.y, targetPos.z));
+                gp.Setup(targetPos);
         }
     }
 

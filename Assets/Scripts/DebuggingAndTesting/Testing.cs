@@ -21,7 +21,7 @@ public class Testing : MonoBehaviour
 
             // ScreenShake.Instance.Shake(5f);
 
-            ScreenShake.Instance.RecoilCameraShake();
+           // ScreenShake.Instance.RecoilCameraShake();
 
             //Show pathfind line
             /*
