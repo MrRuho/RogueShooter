@@ -115,7 +115,7 @@ public static class NetworkSync
     /// - Client: send a Command via NetworkSyncAgent to run on server.
     /// - Offline: call locally.
     /// </summary>
-    public static void ApplyDamage(Unit target, int amount)
+    public static void ApplyDamageToUnit(Unit target, int amount)
     {
         if (target == null) return;
 

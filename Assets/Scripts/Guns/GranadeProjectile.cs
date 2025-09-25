@@ -83,10 +83,16 @@ public class GrenadeProjectile : NetworkBehaviour
                 {
                     if (collider.TryGetComponent<Unit>(out Unit targetUnit))
                     {
-                        NetworkSync.ApplyDamage(targetUnit, damage);
+                        NetworkSync.ApplyDamageToUnit(targetUnit, damage);
+                    }
+                    if (collider.TryGetComponent<DestructibleObject>(out DestructibleObject targetObject))
+                    {
+                        // NetworkSync.ApplyDamageToUnit(targetUnit, damage);
+                        targetObject.Damage(damage);
                     }
                 }
             }
+            
             
             // Screen Shake
             OnAnyGranadeExploded?.Invoke(this, EventArgs.Empty);

@@ -1,9 +1,6 @@
 using System;
 using System.Collections.Generic;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.Analytics;
 
 /// <summary>
 /// Finds a shortest path on a grid between two grid cells using the A* algorithm
@@ -320,6 +317,11 @@ public class PathFinding : MonoBehaviour
         return gridSystem.GetGridObject(gridPosition).GetIsWalkable();
     }
 
+    public void SetIsWalkableGridPosition(GridPosition gridPosition, bool isWalkable)
+    {
+        gridSystem.GetGridObject(gridPosition).SetIsWalkable(isWalkable);
+    }
+   
     // Prevent to go grid position where is no path. Like surrounded by unwalkable grids.
     public bool HasPath(GridPosition startGridPosition, GridPosition endGridPosition)
     {
@@ -331,5 +333,4 @@ public class PathFinding : MonoBehaviour
         FindPath(startGridPosition, endGridPosition, out int pathLeght);
         return pathLeght;
     }
-
 }
