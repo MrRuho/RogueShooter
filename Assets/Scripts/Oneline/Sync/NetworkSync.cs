@@ -40,10 +40,10 @@ public static class NetworkSync
     {
         if (NetworkServer.active) // Online: server or host
         {
-            var go = Object.Instantiate(bulletPrefab, spawnPos, Quaternion.identity);
-            if (go.TryGetComponent<BulletProjectile>(out var bp))
-                bp.Setup(new Vector3(targetPos.x, spawnPos.y, targetPos.z));
-            NetworkServer.Spawn(go);
+            var bullet = Object.Instantiate(bulletPrefab, spawnPos, Quaternion.identity);
+            if (bullet.TryGetComponent<BulletProjectile>(out var bulletProjectile))
+                bulletProjectile.Setup(new Vector3(targetPos.x, spawnPos.y, targetPos.z));
+            NetworkServer.Spawn(bullet);
             return;
         }
 
@@ -58,17 +58,17 @@ public static class NetworkSync
             {
                 // fallback if no local agent found (shouldn't happen in a correct setup)
                 Debug.LogWarning("[NetworkSync] No Local NetworkSyncAgent found, falling back to local Instantiate.");
-                var go = Object.Instantiate(bulletPrefab, spawnPos, Quaternion.identity);
-                if (go.TryGetComponent<BulletProjectile>(out var bp))
-                    bp.Setup(new Vector3(targetPos.x, spawnPos.y, targetPos.z));
+                var bullet = Object.Instantiate(bulletPrefab, spawnPos, Quaternion.identity);
+                if (bullet.TryGetComponent<BulletProjectile>(out var bulletProjectile))
+                    bulletProjectile.Setup(new Vector3(targetPos.x, spawnPos.y, targetPos.z));
             }
         }
         else
         {
             // Offline / Singleplayer: just instantiate locally
-            var go = Object.Instantiate(bulletPrefab, spawnPos, Quaternion.identity);
-            if (go.TryGetComponent<BulletProjectile>(out var bp))
-                bp.Setup(new Vector3(targetPos.x, spawnPos.y, targetPos.z));
+            var bullet = Object.Instantiate(bulletPrefab, spawnPos, Quaternion.identity);
+            if (bullet.TryGetComponent<BulletProjectile>(out var bulletProjectile))
+                bulletProjectile.Setup(new Vector3(targetPos.x, spawnPos.y, targetPos.z));
         }
     }
 
@@ -77,11 +77,11 @@ public static class NetworkSync
         
         if (NetworkServer.active) // Online: server/host
         {
-            var go = Object.Instantiate(grenadePrefab, spawnPos, Quaternion.identity);
-            if (go.TryGetComponent<GrenadeProjectile>(out var gp))
-                gp.Setup(targetPos);
+            var granade = Object.Instantiate(grenadePrefab, spawnPos, Quaternion.identity);
+            if (granade.TryGetComponent<GrenadeProjectile>(out var granadeProjectile))
+                granadeProjectile.Setup(targetPos);
 
-                NetworkServer.Spawn(go);
+                NetworkServer.Spawn(granade);
             return;
         }
 
@@ -94,21 +94,20 @@ public static class NetworkSync
             else
             {
                 Debug.LogWarning("[NetworkSync] No Local NetworkSyncAgent found, fallback to local Instantiate.");
-                var go = Object.Instantiate(grenadePrefab, spawnPos, Quaternion.identity);
-                if (go.TryGetComponent<GrenadeProjectile>(out var gp))
-                    gp.Setup(targetPos);
+                var granade = Object.Instantiate(grenadePrefab, spawnPos, Quaternion.identity);
+                if (granade.TryGetComponent<GrenadeProjectile>(out var granadeProjectile))
+                    granadeProjectile.Setup(targetPos);
             }
         }
         else
         {
             
             // Offline
-            var go = Object.Instantiate(grenadePrefab, spawnPos, Quaternion.identity);
-            if (go.TryGetComponent<GrenadeProjectile>(out var gp))
-                gp.Setup(targetPos);
+            var granade = Object.Instantiate(grenadePrefab, spawnPos, Quaternion.identity);
+            if (granade.TryGetComponent<GrenadeProjectile>(out var granadeProjectile))
+                granadeProjectile.Setup(targetPos);
         }
     }
-
 
     /// <summary>
     /// Apply damage to a Unit in SP/Host/Client modes.

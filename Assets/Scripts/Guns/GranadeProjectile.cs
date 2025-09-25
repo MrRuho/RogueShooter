@@ -1,71 +1,63 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using Mirror;
-using UnityEngine.UIElements;
+using System.Collections;
 
 public class GrenadeProjectile : NetworkBehaviour
 {
     public static event EventHandler OnAnyGranadeExploded;
 
     [SerializeField] private Transform granadeExplodeVFXPrefab;
-
     [SerializeField] private float damageRadius = 4f;
     [SerializeField] private int damage = 30;
     [SerializeField] private float moveSpeed = 15f;
-    [SerializeField] private LayerMask groundMask = ~0; // säädä omiin layereihin
-    [SerializeField] private float rayStartHeight = 20f;
-    [SerializeField] private float rayDepth = 200f;
-
     [SerializeField] private AnimationCurve arcYAnimationCurve;
 
-    [SyncVar] private Vector3 targetPosition;
+    [SyncVar(hook = nameof(OnTargetChanged))] private Vector3 targetPosition;
 
     private float totalDistance;
     private Vector3 positionXZ;
+    private const float MIN_DIST = 0.01f;
 
-    //private Action onGrenadeBehaviourComplete;
-
-
+    private bool isExploded = false;
 
     public override void OnStartClient()
     {
         base.OnStartClient();
     }
 
-    public void Setup(Vector3 targetWorld) // kutsutaan ennen Spawnia
+    public void Setup(Vector3 targetWorld)
     {
-        targetPosition = SnapToGround(targetWorld);
-        totalDistance = Vector3.Distance(transform.position, targetPosition);
-
-        positionXZ = transform.position;
-        positionXZ.y = 0;
-        totalDistance = Vector3.Distance(positionXZ, targetPosition);
-      
+        var groundTarget = SnapToGround(targetWorld);
+        // Aseta SyncVar, hook kutsutaan kaikilla (server + clientit)
+        targetPosition = groundTarget;
+        RecomputeDerived(); // varmistetaan serverillä heti
     }
-    
+
     private Vector3 SnapToGround(Vector3 worldXZ)
     {
-        /*
-        // Ray alas, haku maasta
-        var from = worldXZ + Vector3.up * rayStartHeight;
-        if (Physics.Raycast(from, Vector3.down, out var hit, rayStartHeight + rayDepth, groundMask, QueryTriggerInteraction.Ignore))
-            return hit.point;
-
-        // fallback: pidä XZ, laita y=0 (tai scene-maan oletuskorkeus)
-        */
-        totalDistance = Vector3.Distance(transform.position, targetPosition);
-
-        positionXZ = transform.position;
-        positionXZ.y = 0;
-        totalDistance = Vector3.Distance(positionXZ, targetPosition);
-
         return new Vector3(worldXZ.x, 0f, worldXZ.z);
     }
 
-    private void Update()
+    void OnTargetChanged(Vector3 _old, Vector3 _new)
     {
+        // Kun SyncVar saapuu clientille, laske johdetut kentät sielläkin
+        RecomputeDerived();
+    }
+
+    private void RecomputeDerived()
+    {
+        positionXZ = transform.position;
+        positionXZ.y = 0f;
+
+        totalDistance = Vector3.Distance(positionXZ, targetPosition);
+        if (totalDistance < MIN_DIST) totalDistance = MIN_DIST; // suoja nollaa vastaan
+    }
+
+    private void Update()
+    {  
+        if (isExploded) return;
+
         Vector3 moveDir = (targetPosition - positionXZ).normalized;
 
         positionXZ += moveSpeed * Time.deltaTime * moveDir;
@@ -73,41 +65,64 @@ public class GrenadeProjectile : NetworkBehaviour
         float distance = Vector3.Distance(positionXZ, targetPosition);
         float distanceNormalized = 1 - distance / totalDistance;
 
-        float maxHeight = totalDistance/ 4f;
+        float maxHeight = totalDistance / 4f;
         float positionY = arcYAnimationCurve.Evaluate(distanceNormalized) * maxHeight;
         transform.position = new Vector3(positionXZ.x, positionY, positionXZ.z);
 
         float reachedTargetDistance = .2f;
-        if (Vector3.Distance(positionXZ, targetPosition) < reachedTargetDistance)
+
+
+        if ((Vector3.Distance(positionXZ, targetPosition) < reachedTargetDistance) && !isExploded)
         {
-
-            Collider[] colliderArray = Physics.OverlapSphere(targetPosition, damageRadius);
-
-            foreach (Collider collider in colliderArray)
+            isExploded = true;
+            if (NetworkServer.active || !NetworkClient.isConnected) // Server tai offline
             {
-                if (collider.TryGetComponent<Unit>(out Unit targetUnit))
-                {
+                Collider[] colliderArray = Physics.OverlapSphere(targetPosition, damageRadius);
 
-                    NetworkSync.ApplyDamage(targetUnit, damage);
+                foreach (Collider collider in colliderArray)
+                {
+                    if (collider.TryGetComponent<Unit>(out Unit targetUnit))
+                    {
+                        NetworkSync.ApplyDamage(targetUnit, damage);
+                    }
                 }
             }
-
+            
+            // Screen Shake
             OnAnyGranadeExploded?.Invoke(this, EventArgs.Empty);
+            // Explode VFX
+            Instantiate(granadeExplodeVFXPrefab, targetPosition + Vector3.up * 1f, Quaternion.identity);
 
-            Instantiate(granadeExplodeVFXPrefab, targetPosition + Vector3.up *1f, Quaternion.identity);
-            // Network-aware destruction
-            if (isServer) NetworkServer.Destroy(gameObject);
-            else Destroy(gameObject);
+            if (!NetworkServer.active)
+            {
+                Destroy(gameObject);
+                return;
+            }
 
-            // onGrenadeBehaviourComplete();
+            // Online: Hide Granade before destroy it, so that client have time to create own explode VFX from orginal Granade pose.
+            SetSoftHiddenLocal(true);
+            RpcSetSoftHidden(true);
+            StartCoroutine(DestroyAfter(0.30f));      
         }
     }
-
-/*
-    public void Setup(GridPosition targetGridPosition, Action onGrenadeBehaviourComplete)
+    
+    private IEnumerator DestroyAfter(float seconds)
     {
-        this.onGrenadeBehaviourComplete = onGrenadeBehaviourComplete;
-        targetPosition = LevelGrid.Instance.GetWorldPosition(targetGridPosition);
+        yield return new WaitForSeconds(seconds);
+        NetworkServer.Destroy(gameObject);
     }
-*/
+
+    [ClientRpc]
+    private void RpcSetSoftHidden(bool hidden)
+    {
+        SetSoftHiddenLocal(hidden);
+    }
+
+    private void SetSoftHiddenLocal(bool hidden)
+    {
+        foreach (var r in GetComponentsInChildren<Renderer>())
+        {
+            r.enabled = hidden;
+        }
+    }
 }

@@ -9,18 +9,29 @@ public class HealthSystem : MonoBehaviour
     [SerializeField] private int health = 100;
     private int healthMax;
 
+    // To prevent multiple death events
+    private bool isDead;
+
     void Awake()
     {
         healthMax = health;
+        isDead = false;
     }
 
     public void Damage(int damageAmount)
     {
+        if (isDead) return;
+
         health -= damageAmount;
         if (health <= 0)
         {
             health = 0;
-            Die();
+
+            if (!isDead)
+            {
+                isDead = true;
+                Die();
+            }
         }
 
         OnDamaged?.Invoke(this, EventArgs.Empty);
