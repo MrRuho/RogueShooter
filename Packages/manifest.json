@@ -10,6 +10,7 @@
     "com.unity.jobs": "0.70.0-preview.7",
     "com.unity.multiplayer.center": "1.0.0",
     "com.unity.nuget.newtonsoft-json": "3.2.1",
+    "com.unity.probuilder": "6.0.7",
     "com.unity.render-pipelines.universal": "17.0.4",
     "com.unity.services.multiplayer": "1.1.2",
     "com.unity.test-framework": "1.4.6",
