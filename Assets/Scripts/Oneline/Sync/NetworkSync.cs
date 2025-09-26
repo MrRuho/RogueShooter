@@ -115,7 +115,7 @@ public static class NetworkSync
     /// - Client: send a Command via NetworkSyncAgent to run on server.
     /// - Offline: call locally.
     /// </summary>
-    public static void ApplyDamageToUnit(Unit target, int amount)
+    public static void ApplyDamageToUnit(Unit target, int amount, Vector3 hitPosition)
     {
         if (target == null) return;
 
@@ -124,7 +124,7 @@ public static class NetworkSync
             var healthSystem = target.GetComponent<HealthSystem>();
             if (healthSystem == null) return;
 
-            healthSystem.Damage(amount);
+            healthSystem.Damage(amount, hitPosition);
             UpdateHealthBarUI(healthSystem, target);
             return;
         }
@@ -134,13 +134,13 @@ public static class NetworkSync
             var ni = target.GetComponent<NetworkIdentity>();
             if (ni && NetworkSyncAgent.Local != null)
             {
-                NetworkSyncAgent.Local.CmdApplyDamage(ni.netId, amount);
+                NetworkSyncAgent.Local.CmdApplyDamage(ni.netId, amount, hitPosition);
                 return;
             }
         }
 
         // Offline fallback
-        target.GetComponent<HealthSystem>()?.Damage(amount);
+        target.GetComponent<HealthSystem>()?.Damage(amount, hitPosition);
     }
 
     private static void UpdateHealthBarUI(HealthSystem healthSystem, Unit target)
@@ -185,17 +185,27 @@ public static class NetworkSync
         }
     }
     
-    public static void SpawnRagdoll(GameObject prefab, Vector3 pos, Quaternion rot, uint sourceUnitNetId, Transform originalRootBone)
+    public static void SpawnRagdoll(GameObject prefab, Vector3 pos, Quaternion rot, uint sourceUnitNetId, Transform originalRootBone, Vector3 lastHitPosition, int overkill)
     {
 
         if (NetworkServer.active)
         {
             var go = Object.Instantiate(prefab, pos, rot);
 
-            if (go.TryGetComponent<RagdollPoseBinder>(out var ragdollPoseBinder))
+            if (go.TryGetComponent<UnitRagdoll>(out var rg))
             {
-                ragdollPoseBinder.sourceUnitNetId = sourceUnitNetId;
+                rg.SetOverkill(overkill);
+                rg.SetLastHitPosition(lastHitPosition);
             }
+
+            // Set sourceUnitNetId so that clients can find the original unit
+            if (go.TryGetComponent<RagdollPoseBinder>(out var ragdollBinder))
+            {
+                ragdollBinder.sourceUnitNetId = sourceUnitNetId;
+                ragdollBinder.lastHitPos = lastHitPosition;
+                ragdollBinder.overkill = overkill;
+            }
+
             else
             {
                 Debug.LogWarning("[Ragdoll] Ragdoll prefab lacks RagdollPoseBinder component.");
@@ -208,7 +218,10 @@ public static class NetworkSync
         // offline fallback
         var off = Object.Instantiate(prefab, pos, rot);
         if (off.TryGetComponent<UnitRagdoll>(out var unitRagdoll))
+        {
+            unitRagdoll.SetOverkill(overkill);
+            unitRagdoll.SetLastHitPosition(lastHitPosition);
             unitRagdoll.Setup(originalRootBone);
+        }
     }
-
 }

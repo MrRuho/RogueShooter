@@ -3,16 +3,20 @@ using UnityEngine;
 
 public class UnitRagdoll : MonoBehaviour
 {
-    
+
     [SerializeField] private Transform ragdollRootBone;
 
-    public Transform Root => ragdollRootBone; 
+    private Vector3 lastHitPosition;
+
+    private int overkill;
+
+    public Transform Root => ragdollRootBone;
 
     public void Setup(Transform orginalRootBone)
     {
         MatchAllChildTransforms(orginalRootBone, ragdollRootBone);
-        Vector3 randomDir = new Vector3(Random.Range(-1f, +1f), 0, Random.Range(-1, +1));
-        ApplyPushForceToRagdoll(ragdollRootBone, 100f, transform.position + randomDir, 10f);
+      //  Vector3 randomDir = new Vector3(Random.Range(-1f, +1f), 0, Random.Range(-1, +1));
+        ApplyPushForceToRagdoll(ragdollRootBone, 500f + overkill, lastHitPosition, 50f);
     }
 
     /// <summary>
@@ -51,5 +55,15 @@ public class UnitRagdoll : MonoBehaviour
 
             ApplyPushForceToRagdoll(child, pushForce, pushPosition, PushRange);
         }
+    }
+
+    public void SetLastHitPosition(Vector3 hitPosition)
+    {
+        lastHitPosition = hitPosition;
+    }
+    
+    public void SetOverkill(int overkill)
+    {
+        this.overkill = overkill;
     }
 }

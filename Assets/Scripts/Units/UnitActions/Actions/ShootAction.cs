@@ -24,7 +24,8 @@ public class ShootAction : BaseAction
 
     [SerializeField] private LayerMask obstaclesLayerMask;
     private State state;
-    private int maxShootDistance = 5;
+    [SerializeField] private int maxShootDistance = 5;
+    [SerializeField] private int damage = 30;
 
     private float stateTimer;
     private Unit targetUnit;
@@ -97,7 +98,24 @@ public class ShootAction : BaseAction
             shootingUnit = unit
         });
 
-        NetworkSync.ApplyDamageToUnit(targetUnit, 30);
+        // Peruspaikat (world-space)
+        Vector3 shooterPos = unit.GetWorldPosition() + Vector3.up * 1.6f;   // silmä/rinta
+        Vector3 targetPos  = targetUnit.GetWorldPosition() + Vector3.up * 1.2f;
+
+        // Suunta ampujalta kohteeseen
+        Vector3 dir = targetPos - shooterPos;
+        if (dir.sqrMagnitude < 0.0001f) dir = targetUnit.transform.forward;  // fallback
+        dir.Normalize();
+
+        // Siirrä osumakeskus hieman kohti ampujaa (0.5–1.0 m toimii yleensä hyvin)
+        float backOffset = 0.7f;
+        Vector3 hitPosition = targetPos - dir * backOffset;
+
+        // (valinnainen) pieni satunnainen sivuttaisjitter, ettei kaikki näytä identtiseltä
+        Vector3 side = Vector3.Cross(dir, Vector3.up).normalized;
+        hitPosition += side * UnityEngine.Random.Range(-0.1f, 0.1f);
+
+        NetworkSync.ApplyDamageToUnit(targetUnit, damage, hitPosition);
     }
 
     public override int GetActionPointsCost()

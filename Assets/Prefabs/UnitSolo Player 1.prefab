@@ -563,6 +563,8 @@ MonoBehaviour:
   obstaclesLayerMask:
     serializedVersion: 2
     m_Bits: 256
+  maxShootDistance: 5
+  damage: 80
 --- !u!114 &2329178454014912029
 MonoBehaviour:
   m_ObjectHideFlags: 0

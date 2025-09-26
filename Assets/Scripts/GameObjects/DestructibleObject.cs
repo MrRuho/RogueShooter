@@ -1,4 +1,5 @@
 using System;
+using Unity.Mathematics;
 using UnityEngine;
 
 public class DestructibleObject : MonoBehaviour
@@ -29,20 +30,22 @@ public class DestructibleObject : MonoBehaviour
         return gridPosition;
     }
 
-    public void Damage(int damageAmount)
+    public void Damage(int damageAmount, Vector3 hitPosition)
     {
         if (isDestroyed) return;
 
         health -= damageAmount;
         if (health <= 0)
         {
+            // Biger overkill means more push force
+            int overkill = math.abs(health) + 1;
             health = 0;
 
             if (!isDestroyed)
             {
                 isDestroyed = true;
                 Transform createDestroyTransform = Instantiate(objectDestroyPrefab, transform.position, Quaternion.identity);
-                ApplyPushForceToChildren(createDestroyTransform, 300f, transform.position, 10f);
+                ApplyPushForceToChildren(createDestroyTransform, 10f * overkill, hitPosition, 10f);
                 Destroy(gameObject);
                 OnAnyDestroyed?.Invoke(this, EventArgs.Empty);
             }

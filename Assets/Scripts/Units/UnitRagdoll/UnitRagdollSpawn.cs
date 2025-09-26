@@ -24,7 +24,9 @@ public class UnitRagdollSpawn : MonoBehaviour
     {
         if (spawned) return;
         spawned = true;
-
+        Vector3 lastHitPosition = healthSystem.LastHitPosition;
+        int overkill = healthSystem.Overkill;
+        Debug.Log("[UnitRangdollSpawn] LastHitPosition: " + lastHitPosition);
         var ni = GetComponentInParent<Mirror.NetworkIdentity>();
         uint id = ni ? ni.netId : 0;
 
@@ -33,7 +35,9 @@ public class UnitRagdollSpawn : MonoBehaviour
             transform.position,
             transform.rotation,
             id,
-            orginalRagdollRootBone);
+            orginalRagdollRootBone,
+            lastHitPosition,
+            overkill);
         
         healthSystem.OnDead -= HealthSystem_OnDied;
     } 

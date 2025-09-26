@@ -75,7 +75,7 @@ public class GrenadeProjectile : NetworkBehaviour
         if ((Vector3.Distance(positionXZ, targetPosition) < reachedTargetDistance) && !isExploded)
         {
             isExploded = true;
-            if (NetworkServer.active || !NetworkClient.isConnected) // Server tai offline
+            if (NetworkServer.active || !NetworkClient.isConnected) // Server or offline
             {
                 Collider[] colliderArray = Physics.OverlapSphere(targetPosition, damageRadius);
 
@@ -83,12 +83,12 @@ public class GrenadeProjectile : NetworkBehaviour
                 {
                     if (collider.TryGetComponent<Unit>(out Unit targetUnit))
                     {
-                        NetworkSync.ApplyDamageToUnit(targetUnit, damage);
+                        NetworkSync.ApplyDamageToUnit(targetUnit, damage, targetPosition);
                     }
                     if (collider.TryGetComponent<DestructibleObject>(out DestructibleObject targetObject))
                     {
                         // NetworkSync.ApplyDamageToUnit(targetUnit, damage);
-                        targetObject.Damage(damage);
+                        targetObject.Damage(damage, targetPosition);
                     }
                 }
             }

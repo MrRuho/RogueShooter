@@ -64,7 +64,7 @@ public class NetworkSyncAgent : NetworkBehaviour
     /// then broadcast the new HP to all clients for UI.
     /// </summary>
     [Command(requiresAuthority = true)]
-    public void CmdApplyDamage(uint targetNetId, int amount)
+    public void CmdApplyDamage(uint targetNetId, int amount, Vector3 hitPosition)
     {
         if (!NetworkServer.spawned.TryGetValue(targetNetId, out var targetNi) || targetNi == null)
             return;
@@ -75,7 +75,7 @@ public class NetworkSyncAgent : NetworkBehaviour
             return;
 
         // 1) Server tekee damagen (kuten ennenkin)
-        hs.Damage(amount);
+        hs.Damage(amount, hitPosition);
 
         // 2) Heti perään broadcast → kaikki clientit päivittävät oman UI:nsa
         //    (ServerBroadcastHp kutsuu RpcNotifyHpChanged → hs.ApplyNetworkHealth(..) clientillä)

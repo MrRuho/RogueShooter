@@ -11,6 +11,11 @@ public class HealthSystem : MonoBehaviour
 
     // To prevent multiple death events
     private bool isDead;
+    private Vector3 lastHitPosition;
+    public Vector3 LastHitPosition => lastHitPosition;
+
+    private int overkill;
+    public int Overkill => overkill;
 
     void Awake()
     {
@@ -18,17 +23,19 @@ public class HealthSystem : MonoBehaviour
         isDead = false;
     }
 
-    public void Damage(int damageAmount)
+    public void Damage(int damageAmount, Vector3 hitPosition)
     {
         if (isDead) return;
 
         health -= damageAmount;
         if (health <= 0)
-        {
+        {   
+            overkill = Math.Abs(health) + 1;
             health = 0;
 
             if (!isDead)
             {
+                lastHitPosition = hitPosition;
                 isDead = true;
                 Die();
             }

@@ -8,6 +8,8 @@ using UnityEngine;
 public class RagdollPoseBinder : NetworkBehaviour
 {
     [SyncVar] public uint sourceUnitNetId;
+    [SyncVar] public Vector3 lastHitPos;
+    [SyncVar] public int overkill;
 
     [ClientCallback]
     private void Start()
@@ -21,7 +23,11 @@ public class RagdollPoseBinder : NetworkBehaviour
         if (root != null)
         {
             if (TryGetComponent<UnitRagdoll>(out var unitRagdoll))
+            {
+                unitRagdoll.SetOverkill(overkill);
+                unitRagdoll.SetLastHitPosition(lastHitPos);
                 unitRagdoll.Setup(root);
+            }
             yield break;
         }
 

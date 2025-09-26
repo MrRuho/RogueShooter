@@ -209,9 +209,11 @@ public class Unit : NetworkBehaviour
         return healthSystem.GetHealthNormalized();
     }
     
+    /*
     public void Damage(int damageAmount)
     {
         healthSystem.Damage(damageAmount);
     }
+    */
 
 }

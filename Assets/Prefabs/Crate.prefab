@@ -68,7 +68,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   objectDestroyPrefab: {fileID: 1112128242377616497, guid: e4feda0d243933341bdbc499339c5432, type: 3}
-  health: 3
+  health: 50
 --- !u!1001 &7330071596232486713
 PrefabInstance:
   m_ObjectHideFlags: 0

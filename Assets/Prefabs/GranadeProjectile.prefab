@@ -138,13 +138,8 @@ MonoBehaviour:
   syncInterval: 0
   granadeExplodeVFXPrefab: {fileID: 3887590015569303107, guid: eb8cc254c612c8a4faebe98e212c26c4, type: 3}
   damageRadius: 4
-  damage: 30
+  damage: 100
   moveSpeed: 15
-  groundMask:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  rayStartHeight: 20
-  rayDepth: 200
   arcYAnimationCurve:
     serializedVersion: 2
     m_Curve:
