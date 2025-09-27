@@ -1,5 +1,6 @@
 using System.Linq;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using Utp;
 
 public class FieldCleaner : MonoBehaviour
@@ -43,5 +44,11 @@ public class FieldCleaner : MonoBehaviour
             Destroy(go);
         }
 
+    }
+    
+    public static void ReloadMap()
+    {
+        Debug.Log("[FieldCleaner] Reloading map.");
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 }

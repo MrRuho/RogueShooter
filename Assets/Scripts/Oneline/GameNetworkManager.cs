@@ -28,6 +28,7 @@ namespace Utp
 			Instance = this;
 
 			base.Awake();
+			autoCreatePlayer = false;
 
 			utpTransport = GetComponent<UtpTransport>();
 
@@ -159,6 +160,37 @@ namespace Utp
 		{
 			base.OnValidate();
 		}
+		
+		bool addPlayerRequested;
+
+		public override void OnClientSceneChanged()
+		{
+			base.OnClientSceneChanged();
+
+			if (!NetworkClient.ready) NetworkClient.Ready();
+
+			// Lähetä AddPlayer vain kerran / yhteys
+			if (NetworkClient.connection != null &&
+				NetworkClient.connection.identity == null &&
+				!addPlayerRequested)
+			{
+				addPlayerRequested = true;
+				NetworkClient.AddPlayer();
+			}
+		}
+
+		public override void OnStopClient()
+		{
+			base.OnStopClient();
+			addPlayerRequested = false; // nollaa vartija disconnectissa
+		}
+
+		public override void OnClientDisconnect()
+		{
+			base.OnClientDisconnect();
+			addPlayerRequested = false;
+		}
+
 
 		/// <summary>
 		/// Tämä metodi spawnaa jokaiselle clientille oman Unitin ja tekee siitä heidän ohjattavan yksikkönsä.
@@ -180,6 +212,7 @@ namespace Utp
 			var units = SpawnUnitsCoordinator.Instance.SpawnPlayersForNetwork(conn, isHost);
 			foreach (var unit in units)
 			{
+				Debug.Log($"[NM] Spawning player unit {unit.name} for connection {conn.connectionId}, isHost={isHost}");
 				NetworkServer.Spawn(unit, conn); // authority tälle pelaajalle
 			}
 

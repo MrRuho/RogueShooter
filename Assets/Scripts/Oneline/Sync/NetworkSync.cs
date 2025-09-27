@@ -143,6 +143,30 @@ public static class NetworkSync
         target.GetComponent<HealthSystem>()?.Damage(amount, hitPosition);
     }
 
+    public static void ApplyDamageToObject(DestructibleObject target, int amount, Vector3 hitPosition)
+    {
+        if (target == null) return;
+
+        if (NetworkServer.active) // Online: server or host
+        {
+            target.Damage(amount, hitPosition);
+            return;
+        }
+
+        if (NetworkClient.active) // Online: client
+        {
+            var ni = target.GetComponent<NetworkIdentity>();
+            if (ni && NetworkSyncAgent.Local != null)
+            {
+                NetworkSyncAgent.Local.CmdApplyDamageToObject(ni.netId, amount, hitPosition);
+                return;
+            }
+        }
+
+        // Offline fallback
+        target.Damage(amount, hitPosition);
+    }
+
     private static void UpdateHealthBarUI(HealthSystem healthSystem, Unit target)
     {
         // → ilmoita kaikille clienteille, jotta UnitWorldUI saa eventin

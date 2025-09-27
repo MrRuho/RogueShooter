@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class GranadeAction : BaseAction
@@ -50,11 +49,10 @@ public class GranadeAction : BaseAction
                 GridPosition offsetGridPosition = new(x, z);
                 GridPosition testGridPosition = unitGridPosition + offsetGridPosition;
 
-                // Check if the test grid position is within the valid range and not occupied by another unit
+                // Check if the test grid position is within the valid range
                 if (!LevelGrid.Instance.IsValidGridPosition(testGridPosition)) continue;
                 int testDistance = Mathf.Abs(x) + Mathf.Abs(z);
                 if (testDistance > maxThrowDistance) continue;
-                //  if (!LevelGrid.Instance.HasAnyUnitOnGridPosition(testGridPosition)) continue;
 
                 validGridPositionList.Add(testGridPosition);
             }
@@ -66,13 +64,7 @@ public class GranadeAction : BaseAction
 
     public override void TakeAction(GridPosition gridPosition, Action onActionComplete)
     {
-        /*
-            Transform grenadeProjectileTransform = Instantiate(grenadeProjectilePrefab, unit.GetWorldPosition(), Quaternion.identity);
-            GrenadeProjectile grenadeProjectile = grenadeProjectileTransform.GetComponent<GrenadeProjectile>();
-            grenadeProjectile.Setup(gridPosition, OnGrenadeBehaviourComplete);
 
-            ActionStart(onActionComplete);
-        */
         ActionStart(onActionComplete);
 
         TargetWorld = LevelGrid.Instance.GetWorldPosition(gridPosition);

@@ -1,8 +1,10 @@
 using System;
 using Unity.Mathematics;
 using UnityEngine;
+using Mirror;
+using System.Collections;
 
-public class DestructibleObject : MonoBehaviour
+public class DestructibleObject : NetworkBehaviour
 {
     public static event EventHandler OnAnyDestroyed;
 
@@ -10,13 +12,11 @@ public class DestructibleObject : MonoBehaviour
     [SerializeField] private Transform objectDestroyPrefab;
     [SerializeField] private int health = 3;
 
-
-
     // To prevent multiple destruction events
     private bool isDestroyed;
 
     void Awake()
-    {
+    {   
         isDestroyed = false;
     }
 
@@ -24,6 +24,7 @@ public class DestructibleObject : MonoBehaviour
     {
         gridPosition = LevelGrid.Instance.GetGridPosition(transform.position);
     }
+    
 
     public GridPosition GetGridPosition()
     {
@@ -32,6 +33,9 @@ public class DestructibleObject : MonoBehaviour
 
     public void Damage(int damageAmount, Vector3 hitPosition)
     {
+        var ni = GetComponent<NetworkIdentity>();
+        Debug.Log($"[Damage] isServer={isServer} isClient={isClient} netId={(ni? ni.netId : 0)} observers={(ni && ni.observers!=null? ni.observers.Count : -1)}");
+
         if (isDestroyed) return;
 
         health -= damageAmount;
@@ -43,15 +47,43 @@ public class DestructibleObject : MonoBehaviour
 
             if (!isDestroyed)
             {
-                isDestroyed = true;
-                Transform createDestroyTransform = Instantiate(objectDestroyPrefab, transform.position, Quaternion.identity);
-                ApplyPushForceToChildren(createDestroyTransform, 10f * overkill, hitPosition, 10f);
-                Destroy(gameObject);
-                OnAnyDestroyed?.Invoke(this, EventArgs.Empty);
+         
+                 isDestroyed = true;
+                if (!NetworkClient.isConnected)
+                {
+                    PlayDestroyFx(hitPosition, overkill);
+                    SetSoftHiddenLocal(true);
+                    StartCoroutine(DestroyAfter(0.30f));
+                    return;
+                }
+                else if (NetworkServer.active)
+                {
+                    // Server: toista sama kaikilla clientillä
+                    RpcPlayDestroyFx(hitPosition, overkill);
+                    PlayDestroyFx(hitPosition, overkill);
+                    SetSoftHiddenLocal(true);
+                    StartCoroutine(DestroyAfter(0.30f));
+                    return;
+                 }        
             }
         }
     }
-    
+
+    private void PlayDestroyFx(Vector3 hitPosition, int overkill)
+    {
+        Debug.Log($"[PlayDestroyFx] Creating destroy effect at {transform.position} with overkill {overkill}");
+        var t = Instantiate(objectDestroyPrefab, transform.position, Quaternion.identity);
+        ApplyPushForceToChildren(t, 10f * overkill, hitPosition, 10f);
+        OnAnyDestroyed?.Invoke(this, EventArgs.Empty);
+    }
+
+    [ClientRpc] private void RpcPlayDestroyFx(Vector3 hitPosition, int overkill)
+    {
+        Debug.Log($"[RpcPlayDestroyFx] Called on client. HitPosition: {hitPosition}, Overkill: {overkill}");
+        // Clientit: toista sama paikallisesti
+        PlayDestroyFx(hitPosition, overkill);
+    }
+
     private void ApplyPushForceToChildren(Transform root, float pushForce, Vector3 pushPosition, float PushRange)
     {
         foreach (Transform child in root)
@@ -63,5 +95,30 @@ public class DestructibleObject : MonoBehaviour
 
             ApplyPushForceToChildren(child, pushForce, pushPosition, PushRange);
         }
+    }
+
+    private IEnumerator DestroyAfter(float seconds)
+    {
+        yield return new WaitForSeconds(seconds);
+     
+        Debug.Log("Destroying object locally");
+        if (isServer) NetworkServer.Destroy(gameObject);
+        else Destroy(gameObject);
+        OnAnyDestroyed?.Invoke(this, EventArgs.Empty);
+    }
+
+    [ClientRpc]
+    private void RpcSetSoftHidden(bool hidden)
+    {
+        SetSoftHiddenLocal(hidden);
+    }
+
+    private void SetSoftHiddenLocal(bool hidden)
+    {
+        foreach (var r in GetComponentsInChildren<Renderer>(true))
+            r.enabled = !hidden;
+
+        foreach (var c in GetComponentsInChildren<Collider>(true))
+            c.enabled = !hidden;
     }
 }

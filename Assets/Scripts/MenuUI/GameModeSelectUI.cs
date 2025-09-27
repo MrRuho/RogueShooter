@@ -51,7 +51,7 @@ public class GameModeSelectUI : MonoBehaviour
         if (lg != null) lg.RebuildOccupancyFromScene();
     }
 
-    // DODO: Resetoi käynnissä oleva peli takaisin aloitukseen.
+
     public void Reset()
     {
         // Pieni “siivous” ennen reloadia on ok, mutta ei pakollinen
@@ -71,7 +71,4 @@ public class GameModeSelectUI : MonoBehaviour
             GameReset.HardReloadSceneKeepMode();
         }
     }
-
-    // DODO: Resetoi peli takaisin yksinpelimoodiin. 
-
 }

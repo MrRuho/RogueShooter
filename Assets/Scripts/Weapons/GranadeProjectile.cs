@@ -87,8 +87,7 @@ public class GrenadeProjectile : NetworkBehaviour
                     }
                     if (collider.TryGetComponent<DestructibleObject>(out DestructibleObject targetObject))
                     {
-                        // NetworkSync.ApplyDamageToUnit(targetUnit, damage);
-                        targetObject.Damage(damage, targetPosition);
+                         NetworkSync.ApplyDamageToObject(targetObject, damage, targetPosition);
                     }
                 }
             }

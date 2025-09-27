@@ -1,3 +1,4 @@
+using System;
 using Mirror;
 using UnityEngine;
 /// <summary>
@@ -80,6 +81,19 @@ public class NetworkSyncAgent : NetworkBehaviour
         // 2) Heti perään broadcast → kaikki clientit päivittävät oman UI:nsa
         //    (ServerBroadcastHp kutsuu RpcNotifyHpChanged → hs.ApplyNetworkHealth(..) clientillä)
         ServerBroadcastHp(unit, hs.GetHealth(), hs.GetHealthMax());
+    }
+
+    [Command(requiresAuthority = true)]
+    public void CmdApplyDamageToObject(uint targetNetId, int amount, Vector3 hitPosition)
+    {
+        if (!NetworkServer.spawned.TryGetValue(targetNetId, out var targetNi) || targetNi == null)
+            return;
+
+        var obj = targetNi.GetComponent<DestructibleObject>();
+        if (obj == null)
+            return;
+
+        obj.Damage(amount, hitPosition);
     }
 
     // ---- SERVER-puolen helperit: kutsu näitä palvelimelta
