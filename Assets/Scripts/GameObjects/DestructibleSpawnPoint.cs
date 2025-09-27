@@ -10,7 +10,7 @@ public class DestructibleSpawnPoint : MonoBehaviour
     [SerializeField] private GameObject destructiblePrefab;
     public GameObject Prefab => destructiblePrefab;
 
-    private void Start() 
+    private void Start()
     {
         // OFFLINE: ei verkkoa -> luo paikallisesti (näkyy heti)
         if (!NetworkClient.active && !NetworkServer.active)
@@ -19,13 +19,18 @@ public class DestructibleSpawnPoint : MonoBehaviour
             Instantiate(destructiblePrefab, transform.position, transform.rotation);
             Destroy(gameObject);
         }
+
+        // PUHDAS CLIENT: serveri spawnaa oikean → poista placeholder heti
+        if (NetworkClient.active && !NetworkServer.active)
+        {
+            Destroy(gameObject);
+            return;
+        }
+  
     }
 
- 
     public void CreteObject()
     {
-        Debug.Log("[DestructibleSpawnPoint] CreteObject called." + (NetworkServer.active ? "(Server)" : "(Client)"));
-
         // ONLINE: server luo ja spawnnaa
         if (NetworkServer.active)
         {
@@ -34,11 +39,6 @@ public class DestructibleSpawnPoint : MonoBehaviour
             NetworkServer.Spawn(go);
             Destroy(gameObject);
             return;
-        }
-        else 
-        {
-            // Puhdas client (ei host): odota server-spawnia tai jätä tämän hoito serverille
-            Destroy(gameObject);
         }
     }
 }

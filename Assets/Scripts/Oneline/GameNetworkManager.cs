@@ -236,7 +236,6 @@ namespace Utp
 					Debug.LogWarning("[NM] PvP rekisteröinti epäonnistui: PlayerController tai PvPTurnCoordinator puuttuu.");
 				}
 			}
-
 		}
 
 		[Server]
@@ -299,7 +298,6 @@ namespace Utp
 			{
 				ServerSpawnEnemies();
 			}
-		}
-		
+		}		
 	}
 }

@@ -43,7 +43,6 @@ public class FieldCleaner : MonoBehaviour
         {
             Destroy(go);
         }
-
     }
     
     public static void ReloadMap()

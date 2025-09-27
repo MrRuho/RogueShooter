@@ -33,39 +33,29 @@ public class DestructibleObject : NetworkBehaviour
 
     public void Damage(int damageAmount, Vector3 hitPosition)
     {
-        var ni = GetComponent<NetworkIdentity>();
-        Debug.Log($"[Damage] isServer={isServer} isClient={isClient} netId={(ni? ni.netId : 0)} observers={(ni && ni.observers!=null? ni.observers.Count : -1)}");
-
         if (isDestroyed) return;
 
         health -= damageAmount;
-        if (health <= 0)
-        {
-            // Biger overkill means more push force
-            int overkill = math.abs(health) + 1;
-            health = 0;
+        if (health > 0) return;
 
-            if (!isDestroyed)
-            {
-         
-                 isDestroyed = true;
-                if (!NetworkClient.isConnected)
-                {
-                    PlayDestroyFx(hitPosition, overkill);
-                    SetSoftHiddenLocal(true);
-                    StartCoroutine(DestroyAfter(0.30f));
-                    return;
-                }
-                else if (NetworkServer.active)
-                {
-                    // Server: toista sama kaikilla clientillä
-                    RpcPlayDestroyFx(hitPosition, overkill);
-                    PlayDestroyFx(hitPosition, overkill);
-                    SetSoftHiddenLocal(true);
-                    StartCoroutine(DestroyAfter(0.30f));
-                    return;
-                 }        
-            }
+        int overkill = math.abs(health) + 1;
+        health = 0;
+        isDestroyed = true;
+
+        if (isServer)
+        {
+            RpcPlayDestroyFx(hitPosition, overkill);
+            RpcSetSoftHidden(true);
+            StartCoroutine(DestroyAfter(0.30f));
+            return;
+        }
+
+        // Offline (ei serveriä eikä clienttia)
+        if (!NetworkClient.active && !NetworkServer.active)
+        {
+            PlayDestroyFx(hitPosition, overkill);
+            SetSoftHiddenLocal(true);
+            StartCoroutine(DestroyAfter(0.30f));
         }
     }
 
