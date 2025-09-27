@@ -25,8 +25,7 @@ public class Connect : MonoBehaviour
 
     public void HostLAN()
     {
-        // Debug.Log("HostLAN clicked");
-        // gameNetworkManager.StartStandardHost(); // tämä asettaa useRelay=false ja käynnistää hostin
+
         LoadSceneToAllHostLAN();
     }
 
@@ -50,7 +49,6 @@ public class Connect : MonoBehaviour
             return;
         }
 
-        // gameNetworkManager.StartRelayHost(2, null);
         LoadSceneToAllHost();
     }
 
@@ -65,16 +63,22 @@ public class Connect : MonoBehaviour
         gameNetworkManager.JoinRelayServer();
     }
 
+    /// <summary>
+    /// Starts a LAN host and loads the current scene for all clients.
+    /// </summary>
     public void LoadSceneToAllHostLAN()
     {
-        gameNetworkManager.StartStandardHost();       
+        gameNetworkManager.StartStandardHost();
         var sceneName = SceneManager.GetActiveScene().name;
         NetworkManager.singleton.ServerChangeScene(sceneName);
     }
 
+    /// <summary>
+    /// Starts a relay host and loads the current scene for all clients.
+    /// </summary>
     public void LoadSceneToAllHost()
     {
-        gameNetworkManager.StartRelayHost(2, null);          
+        gameNetworkManager.StartRelayHost(2, null);
         var sceneName = SceneManager.GetActiveScene().name;
         NetworkManager.singleton.ServerChangeScene(sceneName);
     }

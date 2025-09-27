@@ -1,6 +1,9 @@
 using Mirror;
 using UnityEngine;
 
+/// <summary>
+/// Spawns map content such as destructible objects when the server starts.
+/// </summary>
 public class MapContentSpawner : NetworkBehaviour
 {
     public override void OnStartServer()
@@ -14,5 +17,5 @@ public class MapContentSpawner : NetworkBehaviour
         {
             sp.CreteObject();
         }
-    }        
+    }
 }

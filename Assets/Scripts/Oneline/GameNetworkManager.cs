@@ -163,13 +163,16 @@ namespace Utp
 		
 		bool addPlayerRequested;
 
+		/// <summary>
+		/// Make sure that the clien sends a AddPlayer request once the scene is loaded.
+		/// </summary>
 		public override void OnClientSceneChanged()
 		{
 			base.OnClientSceneChanged();
 
 			if (!NetworkClient.ready) NetworkClient.Ready();
 
-			// Lähetä AddPlayer vain kerran / yhteys
+			// Send AddPlayer message only once
 			if (NetworkClient.connection != null &&
 				NetworkClient.connection.identity == null &&
 				!addPlayerRequested)

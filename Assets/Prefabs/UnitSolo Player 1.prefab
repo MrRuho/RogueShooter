@@ -378,6 +378,7 @@ GameObject:
   - component: {fileID: -8676646097946852038}
   - component: {fileID: 1061650688474466407}
   - component: {fileID: 6634297939630033100}
+  - component: {fileID: 8851538063361950134}
   - component: {fileID: 2329178454014912029}
   - component: {fileID: 4511270037338635811}
   - component: {fileID: -7356064289643425705}
@@ -565,6 +566,18 @@ MonoBehaviour:
     m_Bits: 256
   maxShootDistance: 5
   damage: 80
+--- !u!114 &8851538063361950134
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3233335089446238902}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f87911acc3318ee4386a6dcc2eabd482, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &2329178454014912029
 MonoBehaviour:
   m_ObjectHideFlags: 0

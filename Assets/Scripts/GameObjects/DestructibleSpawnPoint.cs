@@ -15,7 +15,6 @@ public class DestructibleSpawnPoint : MonoBehaviour
         // OFFLINE: ei verkkoa -> luo paikallisesti (näkyy heti)
         if (!NetworkClient.active && !NetworkServer.active)
         {
-            Debug.Log($"[DestructibleSpawnPoint] (Offline) Spawning destructible at {transform.position}");
             Instantiate(destructiblePrefab, transform.position, transform.rotation);
             Destroy(gameObject);
         }

@@ -15,6 +15,7 @@ public class DestructibleObject : NetworkBehaviour
     // To prevent multiple destruction events
     private bool isDestroyed;
 
+    private bool _walkabilitySet;
     void Awake()
     {   
         isDestroyed = false;
@@ -23,8 +24,38 @@ public class DestructibleObject : NetworkBehaviour
     private void Start()
     {
         gridPosition = LevelGrid.Instance.GetGridPosition(transform.position);
+        TryMarkBlocked();
     }
-    
+
+    /// <summary>
+    /// Marks the grid position as blocked if not already set.
+    /// </summary>
+    private void TryMarkBlocked()
+    {
+        if (_walkabilitySet) return;
+
+        if (PathFinding.Instance != null)
+        {
+            PathFinding.Instance.SetIsWalkableGridPosition(gridPosition, false);
+            _walkabilitySet = true;
+        }
+        else
+        {
+            // jos PathFinding käynnistyy myöhemmin (scene-reload + spawn)
+            StartCoroutine(DeferBlockOneFrame());
+        }
+    }
+
+    private IEnumerator DeferBlockOneFrame()
+    {
+        yield return null; // 1 frame
+        if (PathFinding.Instance != null)
+        {
+            Debug.Log("Later update: Deferring walkability set for destructible object at " + gridPosition);
+            PathFinding.Instance.SetIsWalkableGridPosition(gridPosition, false);
+            _walkabilitySet = true;
+        }
+    }
 
     public GridPosition GetGridPosition()
     {
@@ -61,7 +92,6 @@ public class DestructibleObject : NetworkBehaviour
 
     private void PlayDestroyFx(Vector3 hitPosition, int overkill)
     {
-        Debug.Log($"[PlayDestroyFx] Creating destroy effect at {transform.position} with overkill {overkill}");
         var t = Instantiate(objectDestroyPrefab, transform.position, Quaternion.identity);
         ApplyPushForceToChildren(t, 10f * overkill, hitPosition, 10f);
         OnAnyDestroyed?.Invoke(this, EventArgs.Empty);
@@ -69,7 +99,6 @@ public class DestructibleObject : NetworkBehaviour
 
     [ClientRpc] private void RpcPlayDestroyFx(Vector3 hitPosition, int overkill)
     {
-        Debug.Log($"[RpcPlayDestroyFx] Called on client. HitPosition: {hitPosition}, Overkill: {overkill}");
         // Clientit: toista sama paikallisesti
         PlayDestroyFx(hitPosition, overkill);
     }
@@ -91,7 +120,6 @@ public class DestructibleObject : NetworkBehaviour
     {
         yield return new WaitForSeconds(seconds);
      
-        Debug.Log("Destroying object locally");
         if (isServer) NetworkServer.Destroy(gameObject);
         else Destroy(gameObject);
         OnAnyDestroyed?.Invoke(this, EventArgs.Empty);

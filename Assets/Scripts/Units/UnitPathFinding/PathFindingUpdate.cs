@@ -1,6 +1,9 @@
 using System;
 using UnityEngine;
 
+/// <summary>
+/// Updates the pathfinding grid when destructible objects are destroyed.
+/// </summary>
 public class PathFindingUpdate : MonoBehaviour
 {
     private void Start()
