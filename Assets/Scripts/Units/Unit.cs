@@ -10,7 +10,7 @@ using UnityEngine;
 /// </summary>
 [RequireComponent(typeof(HealthSystem))]
 [RequireComponent(typeof(MoveAction))]
-[RequireComponent(typeof(SpinAction))]
+[RequireComponent(typeof(TurnTowardsAction))]
 public class Unit : NetworkBehaviour
 {
 

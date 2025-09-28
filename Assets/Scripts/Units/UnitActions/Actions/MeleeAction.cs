@@ -4,7 +4,17 @@ using UnityEngine;
 
 public class MeleeAction : BaseAction
 {
-    private int maxSwordDistance = 1;
+    [SerializeField] private int damage = 100;
+
+    private enum State
+    {
+        MeleeActionBeforeHit,
+        MeleeActionAfterHit,
+    }
+    private int maxMeleedDistance = 1;
+    private State state;
+    private float stateTimer;
+    private Unit targetUnit;
 
     private void Update()
     {
@@ -12,22 +22,42 @@ public class MeleeAction : BaseAction
         {
             return;
         }
+        stateTimer -= Time.deltaTime;
+        switch (state)
+        {
+            case State.MeleeActionBeforeHit:
 
-        ActionComplete();
+                RotateTowards(targetUnit.GetWorldPosition());
+                break;
+            case State.MeleeActionAfterHit:
+                break;
+        }
+
+        if (stateTimer <= 0f)
+        {
+            NextState();
+        }
+    }
+
+    private void NextState()
+    {
+        switch (state)
+        {
+            case State.MeleeActionBeforeHit:
+                state = State.MeleeActionAfterHit;
+                float afterHitStateTime = 0.5f;
+                stateTimer = afterHitStateTime;
+                MakeDamage(damage, targetUnit);
+                break;
+            case State.MeleeActionAfterHit:
+                ActionComplete();
+                break;
+        }
     }
 
     public override string GetActionName()
     {
         return "Melee";
-    }
-
-    public override EnemyAIAction GetEnemyAIAction(GridPosition gridPosition)
-    {
-        return new EnemyAIAction
-        {
-            gridPosition = gridPosition,
-            actionValue = 200,
-        };
     }
 
     public override List<GridPosition> GetValidGridPositionList()
@@ -36,13 +66,13 @@ public class MeleeAction : BaseAction
 
         GridPosition unitGridPosition = unit.GetGridPosition();
 
-        for (int x = -maxSwordDistance; x <= maxSwordDistance; x++)
+        for (int x = -maxMeleedDistance; x <= maxMeleedDistance; x++)
         {
-            for (int z = -maxSwordDistance; z <= maxSwordDistance; z++)
+            for (int z = -maxMeleedDistance; z <= maxMeleedDistance; z++)
             {
                 GridPosition offsetGridPosition = new(x, z);
                 GridPosition testGridPosition = unitGridPosition + offsetGridPosition;
-                
+
                 if (!LevelGrid.Instance.HasAnyUnitOnGridPosition(testGridPosition)) continue;
 
                 Unit targetUnit = LevelGrid.Instance.GetUnitAtGridPosition(testGridPosition);
@@ -60,7 +90,21 @@ public class MeleeAction : BaseAction
 
     public override void TakeAction(GridPosition gridPosition, Action onActionComplete)
     {
-        Debug.Log("Melee action taken at " + gridPosition);
+        targetUnit = LevelGrid.Instance.GetUnitAtGridPosition(gridPosition);
+
+        state = State.MeleeActionBeforeHit;
+        float beforeHitStateTime = 0.7f;
+        stateTimer = beforeHitStateTime;
         ActionStart(onActionComplete);
+    }
+
+    //-------------- ENEMY AI ACTIONS -------------
+    public override EnemyAIAction GetEnemyAIAction(GridPosition gridPosition)
+    {
+        return new EnemyAIAction
+        {
+            gridPosition = gridPosition,
+            actionValue = 200,
+        };
     }
 }

@@ -23,24 +23,31 @@ public abstract class BaseAction : NetworkBehaviour
     {
         unit = GetComponent<Unit>();
     }
-
+    
+    // Defines the action button text for the Unit UI.
     public abstract string GetActionName();
 
+    // Executes the action at the specified grid position and invokes the callback upon completion.
     public abstract void TakeAction(GridPosition gridPosition, Action onActionComplete);
 
+    // Checks if the specified grid position is valid for the action, when mouse is over a grid position.
     public virtual bool IsValidGridPosition(GridPosition gridPosition)
     {
         List<GridPosition> validGridPositionsList = GetValidGridPositionList();
         return validGridPositionsList.Contains(gridPosition);
     }
 
+    // Returns a list of valid grid positions for the action.
     public abstract List<GridPosition> GetValidGridPositionList();
 
+    // Returns the action points cost for performing the action.
     public virtual int GetActionPointsCost()
     {
         return 1;
     }
 
+    // Called when the action starts, sets the action as active and stores the completion callback.
+    // Prevents the player from performing multiple actions at the same time.
     protected void ActionStart(Action onActionComplete)
     {
         isActive = true;
@@ -49,6 +56,8 @@ public abstract class BaseAction : NetworkBehaviour
         OnAnyActionStarted?.Invoke(this, EventArgs.Empty);
     }
 
+    // Called when the action is completed, sets the action as inactive and invokes the completion callback.
+    // Allows the player to perform new actions.
     protected void ActionComplete()
     {
         isActive = false;
@@ -61,9 +70,65 @@ public abstract class BaseAction : NetworkBehaviour
     {
         return unit;
     }
+    
+    public void MakeDamage(int damage, Unit targetUnit)
+    {
+        // Peruspaikat (world-space)
+        Vector3 attacerPos = unit.GetWorldPosition() + Vector3.up * 1.6f;   // silmä/rinta
+        Vector3 targetPos  = targetUnit.GetWorldPosition() + Vector3.up * 1.2f;
+
+        // Suunta
+        Vector3 dir = targetPos - attacerPos;
+        if (dir.sqrMagnitude < 0.0001f) dir = targetUnit.transform.forward;  // fallback
+        dir.Normalize();
+
+        // Siirrä osumakeskus hieman kohti hyökkääjää (0.5–1.0 m toimii yleensä hyvin)
+        float backOffset = 0.7f;
+        Vector3 hitPosition = targetPos - dir * backOffset;
+
+        // (valinnainen) pieni satunnainen sivuttaisjitter, ettei kaikki näytä identtiseltä
+        Vector3 side = Vector3.Cross(dir, Vector3.up).normalized;
+        hitPosition += side * UnityEngine.Random.Range(-0.1f, 0.1f);
+
+        NetworkSync.ApplyDamageToUnit(targetUnit, damage, hitPosition);
+    }
+    /*
+    public void RotateTowards(Unit targetUnit = null, LevelGrid levelGrid = null)
+    {
+        // Rotate towards the target position
+        if (targetUnit != null && levelGrid == null)
+        { 
+            Vector3 aimDirection = (targetUnit.GetWorldPosition() - unit.GetWorldPosition()).normalized;
+            float rotationSpeed = 10f;
+            transform.forward = Vector3.Lerp(transform.forward, aimDirection, Time.deltaTime * rotationSpeed);
+
+        }
+        else if (levelGrid != null && targetUnit == null)
+        {
+            Vector3 aimDirection = (levelGrid.GetWorldPosition() - unit.GetWorldPosition()).normalized;
+            float rotationSpeed = 10f;
+            transform.forward = Vector3.Lerp(transform.forward, aimDirection, Time.deltaTime * rotationSpeed);
+        }
+    }
+    */
+    public enum RotateTargetType
+    {
+        Unit,
+        GridPosition
+    }
+
+    public void RotateTowards(Vector3 targetPosition)
+    {
+        // Laske suunta
+        Vector3 aimDirection = (targetPosition - unit.GetWorldPosition()).normalized;
+
+        // Käänny kohti suuntaa
+        float rotationSpeed = 10f;
+        transform.forward = Vector3.Lerp(transform.forward, aimDirection, Time.deltaTime * rotationSpeed);
+    }
 
     // -------------- ENEMY AI ACTIONS -------------
-    
+
     /// <summary>
     /// ENEMY AI:
     /// Empty ENEMY AI ACTIONS abstract class. 

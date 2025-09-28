@@ -24,7 +24,7 @@ public class ShootAction : BaseAction
 
     [SerializeField] private LayerMask obstaclesLayerMask;
     private State state;
-    [SerializeField] private int maxShootDistance = 5;
+    [SerializeField] private int maxShootDistance = 7;
     [SerializeField] private int damage = 30;
 
     private float stateTimer;
@@ -40,10 +40,7 @@ public class ShootAction : BaseAction
         switch (state)
         {
             case State.Aiming:
-                // Rotate towards the target position
-                Vector3 aimDirection = (targetUnit.GetWorldPosition() - unit.GetWorldPosition()).normalized;
-                float rotationSpeed = 10f;
-                transform.forward = Vector3.Lerp(transform.forward, aimDirection, Time.deltaTime * rotationSpeed);
+                RotateTowards(targetUnit.GetWorldPosition());
                 break;
             case State.Shooting:
                 if (canShootBullet)
@@ -98,24 +95,8 @@ public class ShootAction : BaseAction
             shootingUnit = unit
         });
 
-        // Peruspaikat (world-space)
-        Vector3 shooterPos = unit.GetWorldPosition() + Vector3.up * 1.6f;   // silmä/rinta
-        Vector3 targetPos  = targetUnit.GetWorldPosition() + Vector3.up * 1.2f;
+        MakeDamage(damage, targetUnit);
 
-        // Suunta ampujalta kohteeseen
-        Vector3 dir = targetPos - shooterPos;
-        if (dir.sqrMagnitude < 0.0001f) dir = targetUnit.transform.forward;  // fallback
-        dir.Normalize();
-
-        // Siirrä osumakeskus hieman kohti ampujaa (0.5–1.0 m toimii yleensä hyvin)
-        float backOffset = 0.7f;
-        Vector3 hitPosition = targetPos - dir * backOffset;
-
-        // (valinnainen) pieni satunnainen sivuttaisjitter, ettei kaikki näytä identtiseltä
-        Vector3 side = Vector3.Cross(dir, Vector3.up).normalized;
-        hitPosition += side * UnityEngine.Random.Range(-0.1f, 0.1f);
-
-        NetworkSync.ApplyDamageToUnit(targetUnit, damage, hitPosition);
     }
 
     public override int GetActionPointsCost()

@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -68,13 +69,32 @@ public class GranadeAction : BaseAction
         ActionStart(onActionComplete);
 
         TargetWorld = LevelGrid.Instance.GetWorldPosition(gridPosition);
-        // Pyydä UnitAnimatoria hoitamaan visuaalit ja spawni
-        ThrowGranade?.Invoke(this, EventArgs.Empty);
+       // RotateTowards(RotateTargetType.GridPosition, TargetWorld);
+        StartCoroutine(TurnAndThrow(1f, TargetWorld));
+    
 
     }
-    
+
+    private IEnumerator TurnAndThrow(float delay, Vector3 targetWorld)
+    {
+        float elapsed = 0f;
+        while (elapsed < delay)
+        {
+            // Käänny kohti targettia koko viiveen ajan
+            RotateTowards(targetWorld);
+
+            elapsed += Time.deltaTime;
+            yield return null;
+        }
+
+        ThrowGranade?.Invoke(this, EventArgs.Empty);
+        ActionComplete();
+    }
+
     public void OnGrenadeBehaviourComplete()
     {
         ActionComplete();
     }
+    
+    
 }
