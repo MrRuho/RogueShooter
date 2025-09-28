@@ -5,6 +5,7 @@ using UnityEngine;
 /// <summary>
 /// Finds a shortest path on a grid between two grid cells using the A* algorithm
 /// with 8-directional movement (N, NE, E, SE, S, SW, W, NW).
+/// Note: This class Script Execution Order is set to be executed after LevelGrid.cs. High priority.
 /// </summary>
 public class PathFinding : MonoBehaviour
 {

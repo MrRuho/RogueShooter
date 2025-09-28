@@ -2969,7 +2969,7 @@ MonoBehaviour:
   evaluationMethod: 0
   evaluationInterval: 3
   timeInterpolationGui: 0
-  relayJoinCode: RLP78B
+  relayJoinCode: BDLB78
 --- !u!4 &753069689
 Transform:
   m_ObjectHideFlags: 0

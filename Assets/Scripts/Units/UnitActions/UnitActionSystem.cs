@@ -5,10 +5,11 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 
 /// <summary>
-///     This script handles the unit action system in the game.
-///     It allows the player to select units and perform actions on them, such as moving or shooting.
+/// This script handles the unit action system in the game.
+/// It allows the player to select units and perform actions on them, such as moving or shooting.
+/// It also manages the state of the selected unit and action, and prevents the player from performing multiple actions at the same time.
+/// Note: This class Script Execution Order is set to be executed before UnitManager.cs. High priority.
 /// </summary>
-
 public class UnitActionSystem : MonoBehaviour
 {
     public static UnitActionSystem Instance { get; private set; }

@@ -2,6 +2,12 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// This class is responsible for managing all units in the game.
+/// It keeps track of all units, friendly units, and enemy units.
+/// It listens to unit spawn and death events to update its lists accordingly.
+/// Note: This class Script Script Execution Order is set to be executed after UnitActionSystem.cs. High priority.
+/// </summary>
 public class UnitManager : MonoBehaviour
 {
     public static UnitManager Instance { get; private set; }
@@ -30,7 +36,7 @@ public class UnitManager : MonoBehaviour
         Unit.OnAnyUnitDead += Unit_OnAnyUnitDead;
     }
 
-    void OnEnable() 
+    void OnEnable()
     {
         Unit.OnAnyUnitSpawned += Unit_OnAnyUnitSpawned;
         Unit.OnAnyUnitDead += Unit_OnAnyUnitDead;
@@ -94,7 +100,7 @@ public class UnitManager : MonoBehaviour
         unitList.Clear();
         friendlyUnitList.Clear();
         enemyUnitList.Clear();
-        
+
     }
 
 }

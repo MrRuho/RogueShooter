@@ -36,8 +36,11 @@ public class GameModeSelectUI : MonoBehaviour
         OnSelected();
     }
 
-    public void OnSelected()
+    public async void OnSelected()
     {
+        Authentication authentication = connectCanvas.GetComponent<Authentication>();
+        await authentication.SingInPlayerToUnityServerAsync();
+
         FieldCleaner.ClearAll();
         StartCoroutine(ResetGridNextFrame());
         gameModeSelectCanvas.SetActive(false);

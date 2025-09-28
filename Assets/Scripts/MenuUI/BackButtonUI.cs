@@ -21,7 +21,10 @@ public class BackButtonUI : MonoBehaviour
 
     private void BackButton_OnClick()
     {
-        Debug.Log("Back button clicked.");
+        // Sign out the player from Unity Services
+        Authentication authentication = connectCanvas.GetComponent<Authentication>();
+        authentication.SignOutPlayerFromUnityServer();
+
         // Hide the connect canvas and show the game mode select canvas
         connectCanvas.SetActive(false);
         gameModeSelectCanvas.SetActive(true);

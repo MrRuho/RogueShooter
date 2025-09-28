@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// This class is responsible for managing the grid system in the game.
-/// It creates a grid of grid objects and provides methods to interact with the grid.
+/// This class is responsible for managing the game's grid system.
+/// It keeps track of the units on the grid and their positions.
+/// It provides methods to add, remove, and move units on the grid.
+/// Note: This class Script Execution Order is set to be executed after UnitManager.cs. High priority.
 /// </summary>
 public class LevelGrid : MonoBehaviour
 {
