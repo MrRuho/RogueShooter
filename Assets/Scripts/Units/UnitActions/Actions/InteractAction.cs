@@ -1,10 +1,8 @@
 using System;
 using System.Collections.Generic;
-using UnityEngine;
 
 public class InteractAction : BaseAction
 {
-
     private void Update()
     {
         if (!isActive)

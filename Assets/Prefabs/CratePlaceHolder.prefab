@@ -45,7 +45,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 37ddad3a2106d8943a5d990f18b47df7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  destructiblePrefab: {fileID: 0}
+  destructiblePrefab: {fileID: 5889313467451788506, guid: 1ed8849164b823443b53a989c70367b8, type: 3}
 --- !u!1001 &504136424053019384
 PrefabInstance:
   m_ObjectHideFlags: 0
