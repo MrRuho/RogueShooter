@@ -172,7 +172,7 @@ public class GridSystemVisual : MonoBehaviour
             case MoveAction moveAction:
                 gridVisualType = GridVisualType.white;
                 break;
-            case TurnTowardsAction spinAction:
+            case TurnTowardsAction turnTowardsAction:
                 gridVisualType = GridVisualType.Blue;
                 break;
             case ShootAction shootAction:
@@ -184,7 +184,10 @@ public class GridSystemVisual : MonoBehaviour
                 break;
             case MeleeAction meleeAction:
                 gridVisualType = GridVisualType.Red;
-                ShowGridPositionRangeSquare(selectedUnit.GetGridPosition(), 1, GridVisualType.RedSoft);  
+                ShowGridPositionRangeSquare(selectedUnit.GetGridPosition(), 1, GridVisualType.RedSoft);
+                break;
+            case InteractAction interactAction:
+                gridVisualType = GridVisualType.Blue;
                 break;
 
         }

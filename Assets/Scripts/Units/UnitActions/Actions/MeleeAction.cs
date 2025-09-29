@@ -4,6 +4,10 @@ using UnityEngine;
 
 public class MeleeAction : BaseAction
 {
+    public static event EventHandler OnAnyMeleeActionHit;
+
+    public event EventHandler OnMeleeActionStarted;
+    public event EventHandler OnMeleeActionCompleted;
     [SerializeField] private int damage = 100;
 
     private enum State
@@ -26,7 +30,6 @@ public class MeleeAction : BaseAction
         switch (state)
         {
             case State.MeleeActionBeforeHit:
-
                 RotateTowards(targetUnit.GetWorldPosition());
                 break;
             case State.MeleeActionAfterHit:
@@ -45,11 +48,13 @@ public class MeleeAction : BaseAction
         {
             case State.MeleeActionBeforeHit:
                 state = State.MeleeActionAfterHit;
-                float afterHitStateTime = 0.5f;
+                float afterHitStateTime = 1f;
                 stateTimer = afterHitStateTime;
                 MakeDamage(damage, targetUnit);
+                OnAnyMeleeActionHit?.Invoke(this, EventArgs.Empty);
                 break;
             case State.MeleeActionAfterHit:
+                OnMeleeActionCompleted?.Invoke(this, EventArgs.Empty);
                 ActionComplete();
                 break;
         }
@@ -95,6 +100,7 @@ public class MeleeAction : BaseAction
         state = State.MeleeActionBeforeHit;
         float beforeHitStateTime = 0.7f;
         stateTimer = beforeHitStateTime;
+        OnMeleeActionStarted?.Invoke(this, EventArgs.Empty);
         ActionStart(onActionComplete);
     }
 

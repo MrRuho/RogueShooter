@@ -1,15 +1,18 @@
 using UnityEngine;
 using System;
+using Mirror;
 
 [RequireComponent(typeof(MoveAction))]
-public class UnitAnimator : MonoBehaviour
+public class UnitAnimator : NetworkBehaviour
 {
     [SerializeField] private Animator animator;
     [SerializeField] private GameObject bulletProjectilePrefab;
     [SerializeField] private GameObject granadeProjectilePrefab;
     [SerializeField] private Transform shootPointTransform;
+    [SerializeField] private Transform rifleTransform;
+    [SerializeField] private Transform meleeTransform;
 
-    GranadeAction granadeAction;
+    //GranadeAction granadeAction;
 
     private void Awake()
     {
@@ -29,23 +32,20 @@ public class UnitAnimator : MonoBehaviour
         {
             granadeAction.ThrowGranade += granadeAction_ThrowGranade;
         }
+
+        if (TryGetComponent<MeleeAction>(out MeleeAction meleeAction))
+        {
+            meleeAction.OnMeleeActionStarted += MeleeAction_OnMeleeActionStarted;
+            meleeAction.OnMeleeActionCompleted += MeleeAction_OnMeleeActionCompleted;
+        }
+
+
     }
 
-    /*
-    void OnEnable()
+    private void Start()
     {
-        if (TryGetComponent<MoveAction>(out MoveAction moveAction))
-        {
-            moveAction.OnStartMoving += MoveAction_OnStartMoving;
-            moveAction.OnStopMoving += MoveAction_OnStopMoving;
-        }
-
-        if (TryGetComponent<ShootAction>(out ShootAction shootAction))
-        {
-            shootAction.OnShoot += ShootAction_OnShoot;
-        }
+        EquipRifle();
     }
-    */
 
     void OnDisable()
     {
@@ -63,6 +63,12 @@ public class UnitAnimator : MonoBehaviour
         if (TryGetComponent<GranadeAction>(out GranadeAction granadeAction))
         {
             granadeAction.ThrowGranade -= granadeAction_ThrowGranade;
+        }
+
+        if (TryGetComponent<MeleeAction>(out MeleeAction meleeAction))
+        {
+            meleeAction.OnMeleeActionStarted -= MeleeAction_OnMeleeActionStarted;
+            meleeAction.OnMeleeActionCompleted -= MeleeAction_OnMeleeActionCompleted;
         }
     }
 
@@ -95,12 +101,8 @@ public class UnitAnimator : MonoBehaviour
         StartCoroutine(NotifyAfterDelay(action, 2f));
         // -----------------------------------------
 
-
         Vector3 origin = shootPointTransform.position;
-        Vector3 target = action.TargetWorld; // GranadeAction asettaa tämän TakeActionissa
-       // target.y = origin.y;                 // sama taso kuin luodeissa
-
-
+        Vector3 target = action.TargetWorld;
         NetworkSync.SpawnGrenade(granadeProjectilePrefab, origin, target);
 
     }
@@ -108,6 +110,53 @@ public class UnitAnimator : MonoBehaviour
     {
         yield return new WaitForSeconds(seconds);
         action.OnGrenadeBehaviourComplete();
+    }
+
+    private void MeleeAction_OnMeleeActionStarted(object sender, EventArgs e)
+    {
+        EquipMelee();
+        animator.SetTrigger("Melee");
+    }
+
+    private void MeleeAction_OnMeleeActionCompleted(object sender, EventArgs e)
+    {
+        EquipRifle();
+        //animator.SetTrigger("Idle");
+    }
+
+    private void EquipRifle()
+    {
+        rifleTransform.gameObject.SetActive(true);
+        meleeTransform.gameObject.SetActive(false);
+        OnelineVisibilitySync(true, rifleTransform);
+        OnelineVisibilitySync(false, meleeTransform);
+      
+    }
+
+    private void EquipMelee()
+    {
+        rifleTransform.gameObject.SetActive(true);
+        meleeTransform.gameObject.SetActive(true);
+        OnelineVisibilitySync(true, rifleTransform);
+        OnelineVisibilitySync(true, meleeTransform);
+        
+    }
+
+    private void OnelineVisibilitySync(bool visible, Transform item)
+    {
+        if (item == null)
+        {
+            Debug.LogWarning("Item transform is null.");
+            return;
+        } 
+        if (NetworkClient.active || NetworkServer.active)
+        {
+            var visibility = item.GetComponent<NetVisibility>();
+            if (visibility != null)
+            {
+                visibility.SetVisibleAny(visible);
+            }
+        }
     }
 
 }
