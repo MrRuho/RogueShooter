@@ -225,6 +225,23 @@ namespace Utp
 			if (coord != null)
 				coord.ServerUpdateRequiredCount(NetworkServer.connections.Count);
 
+			//  Jos nyt on Players-vuoro, avaa toiminta tälle uudelle clientille
+			if (NetTurnManager.Instance && NetTurnManager.Instance.phase == TurnPhase.Players)
+			{
+				var pc = conn.identity ? conn.identity.GetComponent<PlayerController>() : null;
+				if (pc != null) pc.ServerSetHasEnded(false);   // -> TargetRpc avaa UI:n
+			}
+
+			// Asettaa pelaajan UI.n pelaajan vuoroksi.
+			if (CoopTurnCoordinator.Instance && NetTurnManager.Instance)
+			{
+				CoopTurnCoordinator.Instance.RpcTurnPhaseChanged(
+					NetTurnManager.Instance.phase,
+					NetTurnManager.Instance.turnNumber,
+					true
+				);
+			}
+
 			// --- VERSUS (PvP) — host aloittaa ---
 			if (GameModeManager.SelectedMode == GameMode.Versus)
 			{

@@ -29,9 +29,16 @@ public class NetTurnManager : NetworkBehaviour
     public override void OnStartServer()
     {
         base.OnStartServer();
-        ResetTurnState();
         // jos haluat lukita kahteen pelaajaan protoa varten:
         if (GameModeManager.SelectedMode == GameMode.CoOp) requiredCount = 2;
+        StartCoroutine(DeferResetOneFrame());
+    }
+
+    [Server]
+    private IEnumerator DeferResetOneFrame()
+    {
+        yield return null;                 // odota että SpawnObjects on valmis
+        ResetTurnState();                  // nyt RpcUpdateReadyStatus on turvallinen
     }
 
     [Server]
@@ -41,21 +48,7 @@ public class NetTurnManager : NetworkBehaviour
         phase = TurnPhase.Players;
         endedPlayers.Clear();
         endedCount = 0;
-
-        // nollaa kaikilta pelaajilta ‘hasEndedThisTurn’
-        foreach (var kvp in NetworkServer.connections)
-        {
-            var id = kvp.Value.identity;
-            if (!id) continue;
-            var pc = id.GetComponent<PlayerController>();
-            if (pc) pc.ServerSetHasEnded(false);  // <<< TÄRKEIN RIVI
-        }
-
-        // Tyhjennä "Player X READY" -teksti kaikilta. Käytössä vain Co-opissa
-        if (GameModeManager.SelectedMode == GameMode.CoOp)
-        {
-            CoopTurnCoordinator.Instance.RpcUpdateReadyStatus(System.Array.Empty<int>(), System.Array.Empty<string>());
-        }
+        SetPlayerStartState();
     }
 
     [Server]
@@ -99,6 +92,18 @@ public class NetTurnManager : NetworkBehaviour
         if (GameModeManager.SelectedMode == GameMode.CoOp)
         {
             CoopTurnCoordinator.Instance.TryAdvanceIfReady();
+        }
+    }
+
+    public void SetPlayerStartState()
+    { 
+        // Asettaa pelaajan tilan pelaajan vuoroksi.
+        foreach (var kvp in NetworkServer.connections)
+        {
+            var id = kvp.Value.identity;
+            if (!id) continue;
+            var pc = id.GetComponent<PlayerController>();
+            if (pc) pc.ServerSetHasEnded(false);  // <<< TÄRKEIN RIVI
         }
     }
 }
