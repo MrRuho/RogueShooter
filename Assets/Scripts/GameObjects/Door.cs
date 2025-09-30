@@ -2,7 +2,7 @@ using UnityEngine;
 using Mirror;
 using System;
 
-public class Door : NetworkBehaviour
+public class Door : NetworkBehaviour, IInteractable
 {
     [Header("State")]
     [SyncVar(hook = nameof(OnIsOpenChanged))]
@@ -35,7 +35,7 @@ public class Door : NetworkBehaviour
     private void Start()
     {
         gridPosition = LevelGrid.Instance.GetGridPosition(transform.position);
-        LevelGrid.Instance.SetDoorAtGridPosition(gridPosition, this);
+        LevelGrid.Instance.SetInteractableAtGridPosition(gridPosition, this);
 
         // Alun käveltävyys: serverillä tai täysin offline-tilassa
         if (NetworkServer.active || NetOffline)

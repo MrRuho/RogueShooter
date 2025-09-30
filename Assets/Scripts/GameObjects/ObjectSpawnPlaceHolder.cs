@@ -1,21 +1,21 @@
 using Mirror;
 using UnityEngine;
 /// <summary>
-/// This class is responsible for spawning destructible objects in the game.
-/// This object is only placeholder, which spawns the actual destructible object and then destroys itself.
+/// This class is responsible for spawning objects in the game.
+/// This object is only placeholder, which spawns the actual object and then destroys itself.
 /// Because spawning must be done by the server, this object must exist on the server.
 /// </summary>
-public class DestructibleSpawnPoint : MonoBehaviour
+public class ObjectSpawnPlaceHolder : MonoBehaviour
 {
-    [SerializeField] private GameObject destructiblePrefab;
-    public GameObject Prefab => destructiblePrefab;
+    [SerializeField] private GameObject objectPrefab;
+    public GameObject Prefab => objectPrefab;
 
     private void Start()
     {
         // OFFLINE: ei verkkoa -> luo paikallisesti (näkyy heti)
         if (!NetworkClient.active && !NetworkServer.active)
         {
-            Instantiate(destructiblePrefab, transform.position, transform.rotation);
+            Instantiate(objectPrefab, transform.position, transform.rotation);
             Destroy(gameObject);
         }
 
@@ -33,8 +33,8 @@ public class DestructibleSpawnPoint : MonoBehaviour
         // ONLINE: server luo ja spawnnaa
         if (NetworkServer.active)
         {
-            Debug.Log($"[DestructibleSpawnPoint] Spawning destructible at {transform.position}");
-            var go = Instantiate(destructiblePrefab, transform.position, transform.rotation);
+            Debug.Log($"[objectSpawnPoint] Spawning object at {transform.position}");
+            var go = Instantiate(objectPrefab, transform.position, transform.rotation);
             NetworkServer.Spawn(go);
             Destroy(gameObject);
             return;
