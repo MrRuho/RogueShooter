@@ -37,9 +37,11 @@ public class Door : NetworkBehaviour, IInteractable
         gridPosition = LevelGrid.Instance.GetGridPosition(transform.position);
         LevelGrid.Instance.SetInteractableAtGridPosition(gridPosition, this);
 
-        // Alun käveltävyys: serverillä tai täysin offline-tilassa
-        if (NetworkServer.active || NetOffline)
+        // AINA: päivitä käveltävyys tämän hetken tilan mukaan
+        if (PathFinding.Instance != null)
+        {
             PathFinding.Instance.SetIsWalkableGridPosition(gridPosition, isOpen);
+        }
     }
 
     private void Update()
@@ -109,7 +111,7 @@ public class Door : NetworkBehaviour, IInteractable
         ApplyAnimator(newVal);
 
         // Pathfinding vain serverillä (tai offline Startissa/ToggleLocalissa)
-        if (NetworkServer.active)
+        if (PathFinding.Instance != null)
             PathFinding.Instance.SetIsWalkableGridPosition(gridPosition, newVal);
     }
 
