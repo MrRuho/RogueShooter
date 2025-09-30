@@ -35,7 +35,7 @@ public class InteractAction : BaseAction
         {
             for (int z = -1; z <= 1; z++)
             {
-                GridPosition offsetGridPosition = new(x, z);
+                GridPosition offsetGridPosition = new(x, z, 0);
                 GridPosition testGridPosition = unitGridPosition + offsetGridPosition;
 
                 if (!LevelGrid.Instance.IsValidGridPosition(testGridPosition)) continue;

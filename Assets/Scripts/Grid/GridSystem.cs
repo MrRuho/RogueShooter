@@ -12,21 +12,26 @@ public class GridSystem<TGridObject>
     private int width;
     private int height;
     private float cellSize;
+    private int floor;
 
+    private float floorHeigth;
     private TGridObject[,] gridObjectsArray;
-    public GridSystem(int width, int height, float cellSize, Func<GridSystem<TGridObject>, GridPosition, TGridObject> createGridObject)
+    
+    public GridSystem(int width, int height, float cellSize, int floor, float floorHeigth, Func<GridSystem<TGridObject>, GridPosition, TGridObject> createGridObject)
     {
         this.width = width;
         this.height = height;
         this.cellSize = cellSize;
+        this.floor = floor;
+        this.floorHeigth = floorHeigth;
 
         gridObjectsArray = new TGridObject[width, height];
 
-        for (int x = 0; x< width; x++)
+        for (int x = 0; x < width; x++)
         {
-            for(int z = 0; z < height; z++)
+            for (int z = 0; z < height; z++)
             {
-                GridPosition gridPosition = new GridPosition(x, z);
+                GridPosition gridPosition = new GridPosition(x, z, floor);
                 gridObjectsArray[x, z] = createGridObject(this, gridPosition);
             }
         }
@@ -36,7 +41,9 @@ public class GridSystem<TGridObject>
 /// It multiplies the grid coordinates by the cell size to get the world position.
     public Vector3 GetWorldPosition(GridPosition gridPosition)
     {
-        return new Vector3(gridPosition.x, 0, gridPosition.z )* cellSize;
+
+        return new Vector3(gridPosition.x, 0, gridPosition.z) * cellSize +
+        new Vector3(0, gridPosition.floor, 0) * floorHeigth;
     }
 
 /// Purpose: This is used to find the grid position of a unit in the grid system.
@@ -44,7 +51,9 @@ public class GridSystem<TGridObject>
 /// It converts the world position to grid coordinates by dividing the world position by the cell size.
     public GridPosition GetGridPosition(Vector3 worldPosition)
     {
-        return new GridPosition( Mathf.RoundToInt(worldPosition.x/cellSize), Mathf.RoundToInt(worldPosition.z/cellSize));
+        return new GridPosition( Mathf.RoundToInt(worldPosition.x/cellSize),
+        Mathf.RoundToInt(worldPosition.z/cellSize),
+        floor);
     }
 
 /// Purpose: This method creates debug objects in the grid system for visualization purposes.
@@ -55,7 +64,7 @@ public class GridSystem<TGridObject>
         {
             for(int z = 0; z < height; z++)
             {
-                GridPosition gridPosition = new GridPosition(x, z);
+                GridPosition gridPosition = new GridPosition(x, z, floor);
                 Transform debugTransform = GameObject.Instantiate(debugPrefab, GetWorldPosition(gridPosition), Quaternion.identity);
                 GridDebugObject gridDebugObject = debugTransform.GetComponent<GridDebugObject>();
                 gridDebugObject.SetGridObject(GetGridObject(gridPosition));
@@ -74,10 +83,11 @@ public class GridSystem<TGridObject>
 /// It checks if the x and z coordinates are within the bounds of the grid width and height.
     public bool IsValidGridPosition(GridPosition gridPosition)
     {
-        return  gridPosition.x >= 0 && 
-                gridPosition.x < width && 
-                gridPosition.z >= 0 && 
-                gridPosition.z < height;
+        return gridPosition.x >= 0 &&
+                gridPosition.x < width &&
+                gridPosition.z >= 0 &&
+                gridPosition.z < height &&
+                gridPosition.floor == floor;
     }
 
     public int GetWidth()

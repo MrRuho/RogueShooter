@@ -75,7 +75,7 @@ public class MeleeAction : BaseAction
         {
             for (int z = -maxMeleedDistance; z <= maxMeleedDistance; z++)
             {
-                GridPosition offsetGridPosition = new(x, z);
+                GridPosition offsetGridPosition = new(x, z, 0);
                 GridPosition testGridPosition = unitGridPosition + offsetGridPosition;
 
                 if (!LevelGrid.Instance.HasAnyUnitOnGridPosition(testGridPosition)) continue;

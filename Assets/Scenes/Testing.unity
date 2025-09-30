@@ -5891,6 +5891,7 @@ MonoBehaviour:
   width: 25
   height: 25
   cellSize: 2
+  floorAmount: 1
 --- !u!4 &1496398978
 Transform:
   m_ObjectHideFlags: 0
@@ -6324,9 +6325,17 @@ PrefabInstance:
       propertyPath: m_Name
       value: InteractItem_PlaceHolder
       objectReference: {fileID: 0}
+    - target: {fileID: 7802554619083874681, guid: 7db4ffcfecda05741b2218dbc97287e4, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 7802554619083874681, guid: 7db4ffcfecda05741b2218dbc97287e4, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 4
+      objectReference: {fileID: 0}
     - target: {fileID: 7922284982961469717, guid: 7db4ffcfecda05741b2218dbc97287e4, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 3
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7922284982961469717, guid: 7db4ffcfecda05741b2218dbc97287e4, type: 3}
       propertyPath: m_LocalPosition.y
@@ -6334,7 +6343,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7922284982961469717, guid: 7db4ffcfecda05741b2218dbc97287e4, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 17.89193
+      value: 14
       objectReference: {fileID: 0}
     - target: {fileID: 7922284982961469717, guid: 7db4ffcfecda05741b2218dbc97287e4, type: 3}
       propertyPath: m_LocalRotation.w

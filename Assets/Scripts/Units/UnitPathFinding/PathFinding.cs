@@ -54,7 +54,7 @@ public class PathFinding : MonoBehaviour
         this.height = height;
         this.cellSize = cellSize;
 
-        gridSystem = new GridSystem<PathNode>(width, height, cellSize,
+        gridSystem = new GridSystem<PathNode>(width, height, cellSize, 0, LevelGrid.FLOOR_HEIGHT,
             (GridSystem<PathNode> g, GridPosition gridPosition) => new PathNode(gridPosition));
 
         // NOTE! This is for the testing.
@@ -65,7 +65,7 @@ public class PathFinding : MonoBehaviour
         {
             for (int z = 0; z < width; z++)
             {
-                GridPosition gridPosition = new GridPosition(x, z);
+                GridPosition gridPosition = new GridPosition(x, z, 0);
                 Vector3 wordPosition = LevelGrid.Instance.GetWorldPosition(gridPosition);
 
                 // Raycast shooting start little bit lower so it is not collider to self.
@@ -111,7 +111,7 @@ public class PathFinding : MonoBehaviour
         {
             for (int z = 0; z < gridSystem.GetHeight(); z++)
             {
-                GridPosition gridPosition = new GridPosition(x, z);
+                GridPosition gridPosition = new GridPosition(x, z, 0);
                 PathNode pathNode = gridSystem.GetGridObject(gridPosition);
 
                 pathNode.SetGCost(int.MaxValue);
@@ -220,7 +220,7 @@ public class PathFinding : MonoBehaviour
     /// </summary>
     private PathNode GetNode(int x, int z)
     {
-        return gridSystem.GetGridObject(new GridPosition(x, z));
+        return gridSystem.GetGridObject(new GridPosition(x, z, 0));
     }
 
     /// <summary>

@@ -117,7 +117,7 @@ public class ShootAction : BaseAction
         {
             for (int z = -maxShootDistance; z <= maxShootDistance; z++)
             {
-                GridPosition offsetGridPosition = new(x, z);
+                GridPosition offsetGridPosition = new(x, z, 0);
                 GridPosition testGridPosition = unitGridPosition + offsetGridPosition;
 
                 // Check if the test grid position is within the valid range and not occupied by another unit

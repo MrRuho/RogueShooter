@@ -47,7 +47,7 @@ public class GranadeAction : BaseAction
         {
             for (int z = -maxThrowDistance; z <= maxThrowDistance; z++)
             {
-                GridPosition offsetGridPosition = new(x, z);
+                GridPosition offsetGridPosition = new(x, z, 0);
                 GridPosition testGridPosition = unitGridPosition + offsetGridPosition;
 
                 // Check if the test grid position is within the valid range

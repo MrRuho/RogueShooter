@@ -80,7 +80,7 @@ public class MoveAction : BaseAction
         {
             for (int z = -maxMoveDistance; z <= maxMoveDistance; z++)
             {
-                GridPosition offsetGridPosition = new(x, z);
+                GridPosition offsetGridPosition = new(x, z, 0);
                 GridPosition testGridPosition = unitGridPosition + offsetGridPosition;
 
                 // Check if the test grid position is not within the valid range or is it occupied by another unit or it is not walkable

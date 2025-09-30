@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("ScriptsPdf")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+e6a67a245f2d111f6c24ece0b4e6781f6dee5461")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+ae86b2ee1ee4e588563f69a5591246f1aa5831ea")]
 [assembly: System.Reflection.AssemblyProductAttribute("ScriptsPdf")]
 [assembly: System.Reflection.AssemblyTitleAttribute("ScriptsPdf")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
