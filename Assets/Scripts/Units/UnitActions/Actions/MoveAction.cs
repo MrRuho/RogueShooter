@@ -80,24 +80,27 @@ public class MoveAction : BaseAction
         {
             for (int z = -maxMoveDistance; z <= maxMoveDistance; z++)
             {
-                GridPosition offsetGridPosition = new(x, z, 0);
-                GridPosition testGridPosition = unitGridPosition + offsetGridPosition;
-
-                // Check if the test grid position is not within the valid range or is it occupied by another unit or it is not walkable
-                // or Unit can't go there.
-                if (!LevelGrid.Instance.IsValidGridPosition(testGridPosition) ||
-                    unitGridPosition == testGridPosition ||
-                    LevelGrid.Instance.HasAnyUnitOnGridPosition(testGridPosition) ||
-                    !PathFinding.Instance.IsWalkableGridPosition(testGridPosition) ||
-                    !PathFinding.Instance.HasPath(unitGridPosition, testGridPosition)) continue;
-
-                int pathfindingDistanceMultiplier = 10;
-                if (PathFinding.Instance.GetPathLeght(unitGridPosition, testGridPosition) > maxMoveDistance * pathfindingDistanceMultiplier)
+                for (int floor = -maxMoveDistance; floor <= maxMoveDistance; floor++)
                 {
-                    //Path leght is too long
-                    continue;
+                    GridPosition offsetGridPosition = new(x, z, floor);
+                    GridPosition testGridPosition = unitGridPosition + offsetGridPosition;
+
+                    // Check if the test grid position is not within the valid range or is it occupied by another unit or it is not walkable
+                    // or Unit can't go there.
+                    if (!LevelGrid.Instance.IsValidGridPosition(testGridPosition) ||
+                        unitGridPosition == testGridPosition ||
+                        LevelGrid.Instance.HasAnyUnitOnGridPosition(testGridPosition) ||
+                        !PathFinding.Instance.IsWalkableGridPosition(testGridPosition) ||
+                        !PathFinding.Instance.HasPath(unitGridPosition, testGridPosition)) continue;
+
+                    int pathfindingDistanceMultiplier = 10;
+                    if (PathFinding.Instance.GetPathLeght(unitGridPosition, testGridPosition) > maxMoveDistance * pathfindingDistanceMultiplier)
+                    {
+                        //Path leght is too long
+                        continue;
+                    }
+                    validGridPositionList.Add(testGridPosition);
                 }
-                validGridPositionList.Add(testGridPosition);
             }
         }
         return validGridPositionList;
