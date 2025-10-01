@@ -12,11 +12,12 @@ public class LevelGrid : MonoBehaviour
 {
     public static LevelGrid Instance { get; private set; }
 
-    public const float FLOOR_HEIGHT = 3f;
+    public const float FLOOR_HEIGHT = 4f;
     public event EventHandler onAnyUnitMoveGridPosition;
 
     [SerializeField] private Transform debugPrefab;
-    [SerializeField]private int width;
+   // [SerializeField] private bool debugVisible = true;
+    [SerializeField] private int width;
     [SerializeField]private int height;
     [SerializeField]private float cellSize;
     [SerializeField]private int floorAmount;
@@ -42,7 +43,7 @@ public class LevelGrid : MonoBehaviour
                 width, height, cellSize, floor, FLOOR_HEIGHT,
                 (GridSystem<GridObject> g, GridPosition gridPosition) => new GridObject(g, gridPosition)
                 );
-            // gridSystem.CreateDebugObjects(debugPrefab);
+            //gridSystem.CreateDebugObjects(debugPrefab);
             gridSystemList.Add(gridSystem); // NullReferenceException: Object reference not set to an instance of an object!
 
         }

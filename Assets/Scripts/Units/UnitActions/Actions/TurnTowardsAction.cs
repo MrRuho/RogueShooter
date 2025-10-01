@@ -100,13 +100,14 @@ public class TurnTowardsAction : BaseAction
 
     public override int GetActionPointsCost()
     {
-        return 0;
+        return 100;
     }
 
     /// <summary>
     /// ENEMY AI: 
     /// Currently this action has no value. Just testing!
     /// </summary>
+  
     public override EnemyAIAction GetEnemyAIAction(GridPosition gridPosition)
     {
         return new EnemyAIAction
@@ -116,4 +117,5 @@ public class TurnTowardsAction : BaseAction
 
         };
     }
+    
 }

@@ -45,6 +45,7 @@ public class UnitActionSystem : MonoBehaviour
     }
     private void Update()
     {
+        Debug.Log(LevelGrid.Instance.GetGridPosition(MouseWorld.GetMouseWorldPosition()));
         // Prevents the player from performing multiple actions at the same time
         if (isBusy) return;
 
