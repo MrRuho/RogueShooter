@@ -7,7 +7,6 @@ using UnityEngine;
 /// The MoveAction class is responsible for handling the movement of a unit in the game.
 /// It allows the unit to move to a target position, and it calculates valid move grid positions based on the unit's current position.
 /// </summary>
-
 public class MoveAction : BaseAction
 {
 
@@ -49,7 +48,7 @@ public class MoveAction : BaseAction
 
     public override void TakeAction(GridPosition gridPosition, Action onActionComplete)
     {
-        List <GridPosition> pathGridPositionsList = PathFinding.Instance.FindPath(unit.GetGridPosition(), gridPosition, out int pathLeght);
+        List<GridPosition> pathGridPositionsList = PathFinding.Instance.FindPath(unit.GetGridPosition(), gridPosition, out int pathLeght);
 
         currentPositionIndex = 0;
         positionList = new List<Vector3>();
@@ -69,46 +68,154 @@ public class MoveAction : BaseAction
         OnStartMoving?.Invoke(this, EventArgs.Empty);
         ActionStart(onActionComplete);
     }
-
+ 
     public override List<GridPosition> GetValidGridPositionList()
     {
-        List<GridPosition> validGridPositionList = new();
+        var valid = new List<GridPosition>();
+        var candidates = new HashSet<GridPosition>(); // estää duplikaatit
 
-        GridPosition unitGridPosition = unit.GetGridPosition();
+        GridPosition unitPos = unit.GetGridPosition();
+        int startFloor = unitPos.floor;
 
-        for (int x = -maxMoveDistance; x <= maxMoveDistance; x++)
+        // Jos maxMoveDistance on RUUTUJA, kustannusbudjetti on *10 per ruutu*
+        const int COST_PER_TILE = 10;
+        int moveBudgetCost = maxMoveDistance * COST_PER_TILE;
+
+        // --- 1) Nykyisen kerroksen ruudut (perus-offsetit) ---
+        for (int dx = -maxMoveDistance; dx <= maxMoveDistance; dx++)
         {
-            for (int z = -maxMoveDistance; z <= maxMoveDistance; z++)
+            for (int dz = -maxMoveDistance; dz <= maxMoveDistance; dz++)
             {
-                for (int floor = -maxMoveDistance; floor <= maxMoveDistance; floor++)
+                var test = new GridPosition(unitPos.x + dx, unitPos.z + dz, startFloor);
+                candidates.Add(test);
+            }
+        }
+
+        // --- 2) Linkkien kautta saavutettavat kerrokset (hybridi) ---
+        var links = PathFinding.Instance.GetPathfindingLinks();
+        if (links != null && links.Count > 0)
+        {
+            foreach (var link in links)
+            {
+                // A -> B
+                if (link.gridPositionA.floor == startFloor)
                 {
-                    GridPosition offsetGridPosition = new(x, z, floor);
-                    GridPosition testGridPosition = unitGridPosition + offsetGridPosition;
-
-                    // Check if the test grid position is not within the valid range or is it occupied by another unit or it is not walkable
-                    // or Unit can't go there.
-                    if (!LevelGrid.Instance.IsValidGridPosition(testGridPosition) ||
-                        unitGridPosition == testGridPosition ||
-                        LevelGrid.Instance.HasAnyUnitOnGridPosition(testGridPosition) ||
-                        !PathFinding.Instance.IsWalkableGridPosition(testGridPosition) ||
-                        !PathFinding.Instance.HasPath(unitGridPosition, testGridPosition)) continue;
-
-                    int pathfindingDistanceMultiplier = 10;
-                    if (PathFinding.Instance.GetPathLeght(unitGridPosition, testGridPosition) > maxMoveDistance * pathfindingDistanceMultiplier)
+                    int lbToA = PathFinding.Instance.CalculateDistance(unitPos, link.gridPositionA);
+                    if (lbToA <= moveBudgetCost)
                     {
-                        //Path leght is too long
-                        continue;
+                        int remaining = moveBudgetCost - lbToA;
+                        int radiusTiles = Mathf.Max(0, remaining / COST_PER_TILE);
+
+                        for (int dx = -radiusTiles; dx <= radiusTiles; dx++)
+                        {
+                            for (int dz = -radiusTiles; dz <= radiusTiles; dz++)
+                            {
+                                var aroundB = new GridPosition(
+                                    link.gridPositionB.x + dx,
+                                    link.gridPositionB.z + dz,
+                                    link.gridPositionB.floor
+                                );
+                                candidates.Add(aroundB);
+                            }
+                        }
                     }
-                    validGridPositionList.Add(testGridPosition);
+                }
+
+                // B -> A
+                if (link.gridPositionB.floor == startFloor)
+                {
+                    int lbToB = PathFinding.Instance.CalculateDistance(unitPos, link.gridPositionB);
+                    if (lbToB <= moveBudgetCost)
+                    {
+                        int remaining = moveBudgetCost - lbToB;
+                        int radiusTiles = Mathf.Max(0, remaining / COST_PER_TILE);
+
+                        for (int dx = -radiusTiles; dx <= radiusTiles; dx++)
+                        {
+                            for (int dz = -radiusTiles; dz <= radiusTiles; dz++)
+                            {
+                                var aroundA = new GridPosition(
+                                    link.gridPositionA.x + dx,
+                                    link.gridPositionA.z + dz,
+                                    link.gridPositionA.floor
+                                );
+                                candidates.Add(aroundA);
+                            }
+                        }
+                    }
                 }
             }
         }
-        return validGridPositionList;
+
+        // --- 3) Suodata & tee vain yksi A* per kandidaatti (välimuistilla) ---
+        foreach (var test in candidates)
+        {
+            // Perusvalidoinnit
+            if (!LevelGrid.Instance.IsValidGridPosition(test)) continue;
+            if (test == unitPos) continue;
+            if (LevelGrid.Instance.HasAnyUnitOnGridPosition(test)) continue;
+            if (!PathFinding.Instance.IsWalkableGridPosition(test)) continue;
+
+            // Heuristiikkakarsinta (Manhattan*10): jos edes optimistinen kustannus > budjetti, skip
+            int lowerBound = PathFinding.Instance.CalculateDistance(unitPos, test);
+            if (lowerBound > moveBudgetCost) continue;
+
+            // *** VAIN YKSI A* per ruutu (mutta nyt cachetettuna saman framen sisällä) ***
+            if (!TryGetPathCostCached(unitPos, test, out int pathCost)) continue; // ei polkua
+            if (pathCost > moveBudgetCost) continue;
+
+            valid.Add(test);
+        }
+
+        return valid;
     }
 
     public override string GetActionName()
     {
         return "Move";
+    }
+
+    // --- Per-frame pathfinding cache ---
+    private struct PathQuery : IEquatable<PathQuery> {
+        public GridPosition start;
+        public GridPosition end;
+        public bool Equals(PathQuery other) => start == other.start && end == other.end;
+        public override bool Equals(object obj) => obj is PathQuery pq && Equals(pq);
+        public override int GetHashCode() => (start.GetHashCode() * 397) ^ end.GetHashCode();
+    }
+
+    private struct PathCacheEntry {
+        public bool exists;
+        public int cost;
+        // Jos joskus haluat itse polun, voit lisätä: public List<GridPosition> path;
+    }
+
+    // Yhteinen cache tälle actionille (voisi olla myös static jos haluat jakaa yli instanssien)
+    private Dictionary<PathQuery, PathCacheEntry> _pathCache = new Dictionary<PathQuery, PathCacheEntry>(256);
+    private int _cacheFrame = -1;
+
+    private bool TryGetPathCostCached(GridPosition start, GridPosition end, out int cost)
+    {
+        // Nollaa cache kerran per frame
+        int frame = Time.frameCount;
+        if (_cacheFrame != frame) {
+            _pathCache.Clear();
+            _cacheFrame = frame;
+        }
+
+        var key = new PathQuery { start = start, end = end };
+        if (_pathCache.TryGetValue(key, out var entry)) {
+            cost = entry.cost;
+            return entry.exists;
+        }
+
+        // Ei ollut välimuistissa -> laske kerran
+        var path = PathFinding.Instance.FindPath(start, end, out int pathCost);
+        bool exists = path != null;
+        _pathCache[key] = new PathCacheEntry { exists = exists, cost = pathCost };
+
+        cost = pathCost;
+        return exists;
     }
 
     /// <summary>
@@ -123,7 +230,6 @@ public class MoveAction : BaseAction
         {
             gridPosition = gridPosition,
             actionValue = targetCountAtGridPosition * 10,
-
         };
     }
 }

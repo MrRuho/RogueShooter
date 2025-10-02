@@ -103,6 +103,7 @@ public class Door : NetworkBehaviour, IInteractable
         isOpen = !isOpen;
         ApplyAnimator(isOpen);
         PathFinding.Instance.SetIsWalkableGridPosition(gridPosition, isOpen);
+
     }
 
     // SyncVar hook – ajetaan kaikilla kun isOpen muuttuu serverillä
