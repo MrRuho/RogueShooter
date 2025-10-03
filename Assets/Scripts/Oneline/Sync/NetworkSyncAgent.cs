@@ -53,9 +53,8 @@ public class NetworkSyncAgent : NetworkBehaviour
         if (grenadePrefab == null) { Debug.LogWarning("[NetSync] grenadePrefab missing"); return; }
 
         var go = Instantiate(grenadePrefab, spawnPos, Quaternion.identity);
-        
         if (go.TryGetComponent<GrenadeProjectile>(out var gp))
-            gp.Setup(targetPos);
+            gp.Setup(targetPos); // tärkeää: ennen Spawnia
 
         NetworkServer.Spawn(go);
     }

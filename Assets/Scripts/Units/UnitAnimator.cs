@@ -6,6 +6,7 @@ using Mirror;
 public class UnitAnimator : NetworkBehaviour
 {
     [SerializeField] private Animator animator;
+    [SerializeField] private NetworkAnimator netAnim;
     [SerializeField] private GameObject bulletProjectilePrefab;
     [SerializeField] private GameObject granadeProjectilePrefab;
     [SerializeField] private Transform shootPointTransform;
@@ -14,6 +15,8 @@ public class UnitAnimator : NetworkBehaviour
 
     [SerializeField] private Transform rifleTransformOffHand;
     [SerializeField] private Transform meleeTransform;
+
+    private static bool IsNetworkActive() => NetworkClient.active || NetworkServer.active;
 
     private void Awake()
     {
@@ -85,10 +88,21 @@ public class UnitAnimator : NetworkBehaviour
         animator.SetBool("IsRunning", false);
     }
 
+  
+
     private void ShootAction_OnShoot(object sender, ShootAction.OnShootEventArgs e)
     {
-        animator.SetTrigger("Shoot");
+        if (!IsNetworkActive())
+        {
+            animator.SetTrigger("Shoot");
+        }
+        else
+        {
+            netAnim.SetTrigger("Shoot");
+        }
+
         Vector3 target = e.targetUnit.GetWorldPosition();
+
         float unitShoulderHeight = 2.5f;
         target.y += unitShoulderHeight;
         NetworkSync.SpawnBullet(bulletProjectilePrefab, shootPointTransform.position, target);
@@ -102,27 +116,48 @@ public class UnitAnimator : NetworkBehaviour
         pendingGrenadeAction = (GranadeAction)sender;
         pendingGrenadeTarget = pendingGrenadeAction.TargetWorld;
         GranadeActionStart();
-        animator.SetTrigger("ThrowGrenade");
+        if (!IsNetworkActive())
+        {
+            animator.SetTrigger("ThrowGrenade");
+        }
+        else
+        { 
+            netAnim.SetTrigger("ThrowGrenade");
+        }
     }
 
     // Animation Event. ThrowGrenadeStand. When the animation reaches the event marker, this funktion tricers.
     // This event mark is set in animation. UnitAnimations -> Throw Grenade Stand
     public void AE_ThrowGrenadeStandRelease()
     {
-        Debug.Log("[AE_ThrowGrenadeStandRelease] Throw grenade!");
-        Vector3 origin = shootPointTransform.position;
+        // --- GUARD: jos pending on jo käytetty, älä tee mitään (estää tuplan samalta koneelta)
+        if (pendingGrenadeAction == null) return;
 
+        // --- GATE: onlinessa vain omistaja-client saa jatkaa (server ja ei-ownerit return)
+        if (NetworkClient.active || NetworkServer.active)
+        {
+            var ni = GetComponentInParent<NetworkIdentity>();
+            if (!(isClient && ni && ni.isOwned)) return;
+        }
+
+        // Mistä kranaatti lähtee (sama logiikka kuin luodeilla)
+        Vector3 origin = rifleTransform.position;
+
+        // Piilota/grace-visuals kuten ennen
         GrenadeTransform.gameObject.SetActive(false);
         OnelineVisibilitySync(false, GrenadeTransform);
 
+        // Kutsu keskitettyä synkkaa (täsmälleen kuin luodeissa)
         NetworkSync.SpawnGrenade(granadeProjectilePrefab, origin, pendingGrenadeTarget);
-        pendingGrenadeAction?.OnGrenadeBehaviourComplete(); // nyt vasta päätetään action
+
+        // Siivous kuten ennen
+        pendingGrenadeAction?.OnGrenadeBehaviourComplete();
         pendingGrenadeAction = null;
     }
 
     // Animation Event. PickGrenadeStand When the animation reaches the event marker, this funktion tricers.
     // This event mark is set in animation. UnitAnimations -> Throw Grenade Stand
-    public void  AE_PickGrenadeStand()
+    public void AE_PickGrenadeStand()
     {
         EguipGranade();
     }
@@ -130,7 +165,14 @@ public class UnitAnimator : NetworkBehaviour
     private void MeleeAction_OnMeleeActionStarted(object sender, EventArgs e)
     {
         EquipMelee();
-        animator.SetTrigger("Melee");
+        if (!IsNetworkActive())
+        {
+            animator.SetTrigger("Melee");
+        }
+        else
+        { 
+            netAnim.SetTrigger("Melee");
+        }
     }
 
     private void MeleeAction_OnMeleeActionCompleted(object sender, EventArgs e)
@@ -188,13 +230,13 @@ public class UnitAnimator : NetworkBehaviour
             Debug.LogWarning("Item transform is null.");
             return;
         }
-        if (NetworkClient.active || NetworkServer.active)
+
+        var visibility = item.GetComponent<NetVisibility>();
+        if (!visibility) return;
+
+        if (NetworkServer.active)
         {
-            var visibility = item.GetComponent<NetVisibility>();
-            if (visibility != null)
-            {
-                visibility.SetVisibleAny(visible);
-            }
+            visibility.ServerSetVisible(visible);
         }
     }
 

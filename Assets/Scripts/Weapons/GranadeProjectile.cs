@@ -21,6 +21,8 @@ public class GrenadeProjectile : NetworkBehaviour
 
     private bool isExploded = false;
 
+    private bool _ready;
+
     public override void OnStartClient()
     {
         base.OnStartClient();
@@ -32,6 +34,7 @@ public class GrenadeProjectile : NetworkBehaviour
         // Aseta SyncVar, hook kutsutaan kaikilla (server + clientit)
         targetPosition = groundTarget;
         RecomputeDerived(); // varmistetaan serverillä heti
+        _ready = true;
     }
 
     private Vector3 SnapToGround(Vector3 worldXZ)
@@ -43,6 +46,7 @@ public class GrenadeProjectile : NetworkBehaviour
     {
         // Kun SyncVar saapuu clientille, laske johdetut kentät sielläkin
         RecomputeDerived();
+        _ready = true;
     }
 
     private void RecomputeDerived()
@@ -56,17 +60,25 @@ public class GrenadeProjectile : NetworkBehaviour
 
     private void Update()
     {  
-        if (isExploded) return;
+        if (!_ready || isExploded) return;
 
-        Vector3 moveDir = (targetPosition - positionXZ).normalized;
+        Vector3 moveDir = targetPosition - positionXZ;
+        if (moveDir.sqrMagnitude < 1e-6f) moveDir = Vector3.forward; // varadir, ettei normalized → NaN
+        moveDir.Normalize();
 
         positionXZ += moveSpeed * Time.deltaTime * moveDir;
 
         float distance = Vector3.Distance(positionXZ, targetPosition);
-        float distanceNormalized = 1 - distance / totalDistance;
+        if (totalDistance < 1e-6f) totalDistance = 0.01f; 
+        float distanceNormalized = 1f - (distance / totalDistance);
+        distanceNormalized = Mathf.Clamp01(distanceNormalized);
 
         float maxHeight = totalDistance / 4f;
-        float positionY = arcYAnimationCurve.Evaluate(distanceNormalized) * maxHeight;
+        float positionY = arcYAnimationCurve != null
+            ? arcYAnimationCurve.Evaluate(distanceNormalized) * maxHeight
+            : 0f;
+
+        if (float.IsNaN(positionY)) positionY = 0f;                   // viimeinen pelastus
         transform.position = new Vector3(positionXZ.x, positionY, positionXZ.z);
 
         float reachedTargetDistance = .2f;
@@ -91,8 +103,7 @@ public class GrenadeProjectile : NetworkBehaviour
                     }
                 }
             }
-            
-            
+           
             // Screen Shake
             OnAnyGranadeExploded?.Invoke(this, EventArgs.Empty);
             // Explode VFX
@@ -127,7 +138,7 @@ public class GrenadeProjectile : NetworkBehaviour
     {
         foreach (var r in GetComponentsInChildren<Renderer>())
         {
-            r.enabled = hidden;
+            r.enabled = !hidden;
         }
     }
 }

@@ -72,16 +72,15 @@ public static class NetworkSync
         }
     }
 
+    // HUOM: käytä tätä myös AE:stä (UnitAnimatorista)
     public static void SpawnGrenade(GameObject grenadePrefab, Vector3 spawnPos, Vector3 targetPos)
     {
-        
-        if (NetworkServer.active) // Online: server/host
+        if (NetworkServer.active) // Online: server tai host
         {
-            var granade = Object.Instantiate(grenadePrefab, spawnPos, Quaternion.identity);
-            if (granade.TryGetComponent<GrenadeProjectile>(out var granadeProjectile))
-                granadeProjectile.Setup(targetPos);
-
-                NetworkServer.Spawn(granade);
+            var go = Object.Instantiate(grenadePrefab, spawnPos, Quaternion.identity);
+            if (go.TryGetComponent<GrenadeProjectile>(out var gp))
+                gp.Setup(targetPos);                 // ASETUS ENNEN spawnia
+            NetworkServer.Spawn(go);
             return;
         }
 
@@ -93,21 +92,22 @@ public static class NetworkSync
             }
             else
             {
-                Debug.LogWarning("[NetworkSync] No Local NetworkSyncAgent found, fallback to local Instantiate.");
-                var granade = Object.Instantiate(grenadePrefab, spawnPos, Quaternion.identity);
-                if (granade.TryGetComponent<GrenadeProjectile>(out var granadeProjectile))
-                    granadeProjectile.Setup(targetPos);
+                // Sama fallback kuin luodeissa (jos näin haluat)
+                Debug.LogWarning("[NetworkSync] No Local NetworkSyncAgent found, falling back to local Instantiate.");
+                var go = Object.Instantiate(grenadePrefab, spawnPos, Quaternion.identity);
+                if (go.TryGetComponent<GrenadeProjectile>(out var gp))
+                    gp.Setup(targetPos);
             }
         }
         else
         {
-            
-            // Offline
-            var granade = Object.Instantiate(grenadePrefab, spawnPos, Quaternion.identity);
-            if (granade.TryGetComponent<GrenadeProjectile>(out var granadeProjectile))
-                granadeProjectile.Setup(targetPos);
+            // Offline / Singleplayer
+            var go = Object.Instantiate(grenadePrefab, spawnPos, Quaternion.identity);
+            if (go.TryGetComponent<GrenadeProjectile>(out var gp))
+                gp.Setup(targetPos);
         }
     }
+
 
     /// <summary>
     /// Apply damage to a Unit in SP/Host/Client modes.
