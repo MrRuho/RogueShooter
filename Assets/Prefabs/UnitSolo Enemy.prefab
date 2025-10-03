@@ -28,6 +28,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: UnitSolo Enemy
       objectReference: {fileID: 0}
+    - target: {fileID: 423664758648814920, guid: 9eade25f7fc5b7d439428c63bd6bec87, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 7d22fc6b9a431b043a917fb89a80bcfc, type: 2}
     - target: {fileID: 1826795885621774535, guid: 9eade25f7fc5b7d439428c63bd6bec87, type: 3}
       propertyPath: _assetId
       value: 1038515454
@@ -35,6 +39,10 @@ PrefabInstance:
     - target: {fileID: 3233335089446238902, guid: 9eade25f7fc5b7d439428c63bd6bec87, type: 3}
       propertyPath: m_Name
       value: UnitSolo Enemy
+      objectReference: {fileID: 0}
+    - target: {fileID: 5891227557711432326, guid: 9eade25f7fc5b7d439428c63bd6bec87, type: 3}
+      propertyPath: isEnemy
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6027068296431371701, guid: 9eade25f7fc5b7d439428c63bd6bec87, type: 3}
       propertyPath: ragdollPrefab

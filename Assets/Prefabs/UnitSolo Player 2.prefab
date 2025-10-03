@@ -16,6 +16,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: UnitSolo Player 2
       objectReference: {fileID: 0}
+    - target: {fileID: 423664758648814920, guid: 9eade25f7fc5b7d439428c63bd6bec87, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 673443bdcb7bf2f47be93ce60e68966f, type: 2}
     - target: {fileID: 1826795885621774535, guid: 9eade25f7fc5b7d439428c63bd6bec87, type: 3}
       propertyPath: _assetId
       value: 498691345

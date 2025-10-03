@@ -89,7 +89,8 @@ public class UnitAnimator : NetworkBehaviour
     {
         animator.SetTrigger("Shoot");
         Vector3 target = e.targetUnit.GetWorldPosition();
-        target.y = shootPointTransform.position.y;
+        float unitShoulderHeight = 2.5f;
+        target.y += unitShoulderHeight;
         NetworkSync.SpawnBullet(bulletProjectilePrefab, shootPointTransform.position, target);
     }
     

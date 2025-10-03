@@ -103,7 +103,7 @@ public abstract class BaseAction : NetworkBehaviour
     {
         // Laske suunta
         Vector3 aimDirection = (targetPosition - unit.GetWorldPosition()).normalized;
-
+        aimDirection.y = 0f;
         // Käänny kohti suuntaa
         float rotationSpeed = 10f;
         transform.forward = Vector3.Slerp(transform.forward, aimDirection, Time.deltaTime * rotationSpeed);

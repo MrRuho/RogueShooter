@@ -117,34 +117,37 @@ public class ShootAction : BaseAction
         {
             for (int z = -maxShootDistance; z <= maxShootDistance; z++)
             {
-                GridPosition offsetGridPosition = new(x, z, 0);
-                GridPosition testGridPosition = unitGridPosition + offsetGridPosition;
-
-                // Check if the test grid position is within the valid range and not occupied by another unit
-                if (!LevelGrid.Instance.IsValidGridPosition(testGridPosition)) continue;
-                int testDistance = Mathf.Abs(x) + Mathf.Abs(z);
-                if (testDistance > maxShootDistance) continue;
-                if (!LevelGrid.Instance.HasAnyUnitOnGridPosition(testGridPosition)) continue;
-
-                Unit targetUnit = LevelGrid.Instance.GetUnitAtGridPosition(testGridPosition);
-
-                // Make sure we don't include friendly units.
-                if (targetUnit.IsEnemy() == unit.IsEnemy()) continue;
-
-                Vector3 unitWorldPosition = LevelGrid.Instance.GetWorldPosition(unitGridPosition);
-                Vector3 shootDir = (targetUnit.GetWorldPosition() - unitWorldPosition).normalized;
-                float unitShoulderHeight = 2.5f;
-                if (Physics.Raycast(
-                    unitWorldPosition + Vector3.up * unitShoulderHeight,
-                    shootDir,
-                    Vector3.Distance(unitWorldPosition, targetUnit.GetWorldPosition()),
-                    obstaclesLayerMask))
+                for (int floor = -maxShootDistance; floor <= maxShootDistance; floor++)
                 {
-                    //Target Unit is Blocked by an Obstacle
-                    continue;
-                }
+                    GridPosition offsetGridPosition = new(x, z, floor);
+                    GridPosition testGridPosition = unitGridPosition + offsetGridPosition;
 
-                validGridPositionList.Add(testGridPosition);
+                    // Check if the test grid position is within the valid range and not occupied by another unit
+                    if (!LevelGrid.Instance.IsValidGridPosition(testGridPosition)) continue;
+                    int testDistance = Mathf.Abs(x) + Mathf.Abs(z);
+                    if (testDistance > maxShootDistance) continue;
+                    if (!LevelGrid.Instance.HasAnyUnitOnGridPosition(testGridPosition)) continue;
+
+                    Unit targetUnit = LevelGrid.Instance.GetUnitAtGridPosition(testGridPosition);
+
+                    // Make sure we don't include friendly units.
+                    if (targetUnit.IsEnemy() == unit.IsEnemy()) continue;
+
+                    Vector3 unitWorldPosition = LevelGrid.Instance.GetWorldPosition(unitGridPosition);
+                    Vector3 shootDir = (targetUnit.GetWorldPosition() - unitWorldPosition).normalized;
+                    float unitShoulderHeight = 2.5f;
+                    if (Physics.Raycast(
+                        unitWorldPosition + Vector3.up * unitShoulderHeight,
+                        shootDir,
+                        Vector3.Distance(unitWorldPosition, targetUnit.GetWorldPosition()),
+                        obstaclesLayerMask))
+                    {
+                        //Target Unit is Blocked by an Obstacle
+                        continue;
+                    }
+
+                    validGridPositionList.Add(testGridPosition);
+                }
             }
 
         }
