@@ -92,25 +92,7 @@ public abstract class BaseAction : NetworkBehaviour
 
         NetworkSync.ApplyDamageToUnit(targetUnit, damage, hitPosition);
     }
-    /*
-    public void RotateTowards(Unit targetUnit = null, LevelGrid levelGrid = null)
-    {
-        // Rotate towards the target position
-        if (targetUnit != null && levelGrid == null)
-        { 
-            Vector3 aimDirection = (targetUnit.GetWorldPosition() - unit.GetWorldPosition()).normalized;
-            float rotationSpeed = 10f;
-            transform.forward = Vector3.Lerp(transform.forward, aimDirection, Time.deltaTime * rotationSpeed);
 
-        }
-        else if (levelGrid != null && targetUnit == null)
-        {
-            Vector3 aimDirection = (levelGrid.GetWorldPosition() - unit.GetWorldPosition()).normalized;
-            float rotationSpeed = 10f;
-            transform.forward = Vector3.Lerp(transform.forward, aimDirection, Time.deltaTime * rotationSpeed);
-        }
-    }
-    */
     public enum RotateTargetType
     {
         Unit,
@@ -124,7 +106,7 @@ public abstract class BaseAction : NetworkBehaviour
 
         // Käänny kohti suuntaa
         float rotationSpeed = 10f;
-        transform.forward = Vector3.Lerp(transform.forward, aimDirection, Time.deltaTime * rotationSpeed);
+        transform.forward = Vector3.Slerp(transform.forward, aimDirection, Time.deltaTime * rotationSpeed);
     }
 
     // -------------- ENEMY AI ACTIONS -------------

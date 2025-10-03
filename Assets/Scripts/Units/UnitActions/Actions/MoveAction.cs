@@ -16,32 +16,68 @@ public class MoveAction : BaseAction
     private List<Vector3> positionList;
     private int currentPositionIndex;
 
+    private bool isChangingFloors;
+    private float differentFloorsTeleportTimer;
+    private float differentFloorsTeleportTimerMax = .5f;
+
 
     private void Update()
     {
         if (!isActive) return;
 
         Vector3 targetPosition = positionList[currentPositionIndex];
-        Vector3 moveDirection = (targetPosition - transform.position).normalized;
 
-        // Rotate towards the target position
-        float rotationSpeed = 10f;
-        transform.forward = Vector3.Lerp(transform.forward, moveDirection, Time.deltaTime * rotationSpeed);
-
-        float stoppingDistance = 0.2f;
-        if (Vector3.Distance(transform.position, targetPosition) > stoppingDistance)
+        if (isChangingFloors)
         {
+            Vector3 targetSameFloorPosition = targetPosition;
+            targetSameFloorPosition.y = transform.position.y;
+            Vector3 rotateDirection = (targetSameFloorPosition - transform.position).normalized;
+
+            float rotationSpeed = 10f;
+            transform.forward = Vector3.Slerp(transform.forward, rotateDirection, Time.deltaTime * rotationSpeed);
+            differentFloorsTeleportTimer -= Time.deltaTime;
+            if (differentFloorsTeleportTimer < 0f)
+            {
+                isChangingFloors = false;
+                transform.position = targetPosition;
+            }
+        }
+        else
+        {
+
+            Vector3 moveDirection = (targetPosition - transform.position).normalized;
+
+            // Rotate towards the target position
+            float rotationSpeed = 10f;
+            transform.forward = Vector3.Slerp(transform.forward, moveDirection, Time.deltaTime * rotationSpeed);
+
             // Move towards the target position
             float moveSpeed = 6f;
             transform.position += moveSpeed * Time.deltaTime * moveDirection;
         }
-        else
+
+
+        float stoppingDistance = 0.2f;
+        if (Vector3.Distance(transform.position, targetPosition) < stoppingDistance)
         {
             currentPositionIndex++;
             if (currentPositionIndex >= positionList.Count)
             {
                 OnStopMoving?.Invoke(this, EventArgs.Empty);
                 ActionComplete();
+            }
+            else
+            {
+                targetPosition = positionList[currentPositionIndex];
+                GridPosition targetGridPosition = LevelGrid.Instance.GetGridPosition(targetPosition);
+                GridPosition unitGridPosition = LevelGrid.Instance.GetGridPosition(transform.position);
+
+                if (targetGridPosition.floor != unitGridPosition.floor)
+                {
+                    //Different floors
+                    isChangingFloors = true;
+                    differentFloorsTeleportTimer = differentFloorsTeleportTimerMax;
+                }
             }
         }
     }
@@ -58,13 +94,7 @@ public class MoveAction : BaseAction
             positionList.Add(LevelGrid.Instance.GetWorldPosition(pathGridPosition));
 
         }
-        /*
-        positionList = new List<Vector3>
-        {
-            LevelGrid.Instance.GetWorldPosition(gridPosition),
-        };
-        */
-
+  
         OnStartMoving?.Invoke(this, EventArgs.Empty);
         ActionStart(onActionComplete);
     }

@@ -12,6 +12,14 @@ PrefabInstance:
       propertyPath: _assetId
       value: 498691345
       objectReference: {fileID: 0}
+    - target: {fileID: 246340107227206225, guid: 9eade25f7fc5b7d439428c63bd6bec87, type: 3}
+      propertyPath: m_Name
+      value: UnitSolo Player 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1826795885621774535, guid: 9eade25f7fc5b7d439428c63bd6bec87, type: 3}
+      propertyPath: _assetId
+      value: 498691345
+      objectReference: {fileID: 0}
     - target: {fileID: 3233335089446238902, guid: 9eade25f7fc5b7d439428c63bd6bec87, type: 3}
       propertyPath: m_Name
       value: UnitSolo Player 2

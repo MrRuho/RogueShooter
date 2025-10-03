@@ -74,7 +74,7 @@ public class PathFinding : MonoBehaviour
 
         for (int x = 0; x < width; x++)
         {
-            for (int z = 0; z < height; z++) // <-- korjattu: height, ei width
+            for (int z = 0; z < height; z++)
             {
                 for (int floor = 0; floor < floorAmount; floor++)
                 {
@@ -220,13 +220,13 @@ public class PathFinding : MonoBehaviour
 
     private PathNode GetLowestFCostPathNode(List<PathNode> list)
     {
-        PathNode best = list[0];
+        PathNode lowestFCostPathNode = list[0];
         for (int i = 1; i < list.Count; i++)
         {
-            if (list[i].GetFCost() < best.GetFCost())
-                best = list[i];
+            if (list[i].GetFCost() < lowestFCostPathNode.GetFCost())
+                lowestFCostPathNode = list[i];
         }
-        return best;
+        return lowestFCostPathNode;
     }
 
     private GridSystem<PathNode> GetGridSystem(int floor) => gridSystemList[floor];
@@ -237,31 +237,31 @@ public class PathFinding : MonoBehaviour
     private List<PathNode> GetNeighbourList(PathNode currentNode)
     {
         List<PathNode> neighbourList = new List<PathNode>();
-        GridPosition gp = currentNode.GetGridPosition();
+        GridPosition gridPosition = currentNode.GetGridPosition();
 
         // Left
-        if (gp.x - 1 >= 0)
+        if (gridPosition.x - 1 >= 0)
         {
-            neighbourList.Add(GetNode(gp.x - 1, gp.z + 0, gp.floor));
-            if (gp.z - 1 >= 0) neighbourList.Add(GetNode(gp.x - 1, gp.z - 1, gp.floor));
-            if (gp.z + 1 < height) neighbourList.Add(GetNode(gp.x - 1, gp.z + 1, gp.floor));
+            neighbourList.Add(GetNode(gridPosition.x - 1, gridPosition.z + 0, gridPosition.floor));
+            if (gridPosition.z - 1 >= 0) neighbourList.Add(GetNode(gridPosition.x - 1, gridPosition.z - 1, gridPosition.floor));
+            if (gridPosition.z + 1 < height) neighbourList.Add(GetNode(gridPosition.x - 1, gridPosition.z + 1, gridPosition.floor));
         }
 
         // Right
-        if (gp.x + 1 < width)
+        if (gridPosition.x + 1 < width)
         {
-            neighbourList.Add(GetNode(gp.x + 1, gp.z + 0, gp.floor));
-            if (gp.z - 1 >= 0) neighbourList.Add(GetNode(gp.x + 1, gp.z - 1, gp.floor));
-            if (gp.z + 1 < height) neighbourList.Add(GetNode(gp.x + 1, gp.z + 1, gp.floor));
+            neighbourList.Add(GetNode(gridPosition.x + 1, gridPosition.z + 0, gridPosition.floor));
+            if (gridPosition.z - 1 >= 0) neighbourList.Add(GetNode(gridPosition.x + 1, gridPosition.z - 1, gridPosition.floor));
+            if (gridPosition.z + 1 < height) neighbourList.Add(GetNode(gridPosition.x + 1, gridPosition.z + 1, gridPosition.floor));
         }
 
         // Down / Up
-        if (gp.z - 1 >= 0) neighbourList.Add(GetNode(gp.x + 0, gp.z - 1, gp.floor));
-        if (gp.z + 1 < height) neighbourList.Add(GetNode(gp.x + 0, gp.z + 1, gp.floor));
+        if (gridPosition.z - 1 >= 0) neighbourList.Add(GetNode(gridPosition.x + 0, gridPosition.z - 1, gridPosition.floor));
+        if (gridPosition.z + 1 < height) neighbourList.Add(GetNode(gridPosition.x + 0, gridPosition.z + 1, gridPosition.floor));
 
         // Linkit (esim. portaat kerroksesta toiseen)
         List<PathNode> total = new List<PathNode>(neighbourList);
-        foreach (GridPosition linkGp in GetPathfindingLinkConnectedGridPositionList(gp))
+        foreach (GridPosition linkGp in GetPathfindingLinkConnectedGridPositionList(gridPosition))
         {
             total.Add(GetNode(linkGp.x, linkGp.z, linkGp.floor));
         }
@@ -312,7 +312,7 @@ public class PathFinding : MonoBehaviour
         => FindPath(startGridPosition, endGridPosition, out int _) != null;
 
     // Säilytetty kirjoitusasu (vaikka sisällä kaikki käyttävät CalculateDistancea)
-    public int GetPathLeght(GridPosition startGridPosition, GridPosition endGridPosition)
+    public int GetPathLenght(GridPosition startGridPosition, GridPosition endGridPosition)
     {
         FindPath(startGridPosition, endGridPosition, out int pathLeght);
         return pathLeght;

@@ -7,6 +7,8 @@ public class GranadeAction : BaseAction
 {
     public event EventHandler ThrowGranade;
 
+    public event EventHandler ThrowReady;
+
     public Vector3 TargetWorld { get; private set; }
 
     [SerializeField] private Transform grenadeProjectilePrefab;
@@ -67,9 +69,7 @@ public class GranadeAction : BaseAction
     {
 
         ActionStart(onActionComplete);
-
         TargetWorld = LevelGrid.Instance.GetWorldPosition(gridPosition);
-       // RotateTowards(RotateTargetType.GridPosition, TargetWorld);
         StartCoroutine(TurnAndThrow(1f, TargetWorld));
     
 
@@ -88,13 +88,11 @@ public class GranadeAction : BaseAction
         }
 
         ThrowGranade?.Invoke(this, EventArgs.Empty);
-        ActionComplete();
     }
 
     public void OnGrenadeBehaviourComplete()
     {
+        ThrowReady?.Invoke(this, EventArgs.Empty);
         ActionComplete();
     }
-    
-    
 }
