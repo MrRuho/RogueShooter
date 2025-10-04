@@ -24,6 +24,7 @@ GameObject:
   - component: {fileID: 5069564035370356584}
   - component: {fileID: 7633362043615807318}
   - component: {fileID: 5210618861754131345}
+  - component: {fileID: -5605335296106689536}
   m_Layer: 7
   m_Name: UnitSolo Player 1
   m_TagString: Untagged
@@ -219,7 +220,7 @@ MonoBehaviour:
   obstaclesLayerMask:
     serializedVersion: 2
     m_Bits: 256
-  maxShootDistance: 5
+  maxShootDistance: 10
   damage: 80
 --- !u!114 &5597279145825593226
 MonoBehaviour:
@@ -283,15 +284,13 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
+  weaponVis: {fileID: -5605335296106689536}
   animator: {fileID: 386233639072471366}
   netAnim: {fileID: 1008889384909675835}
   bulletProjectilePrefab: {fileID: 7196073207834334459, guid: d74275857cb5cf14fa64a0672eca7fc7, type: 3}
   granadeProjectilePrefab: {fileID: 7374537704562805240, guid: ef01bfdfadc18044882f4cc7063f4be7, type: 3}
   shootPointTransform: {fileID: 2890156147936391665}
   rifleTransform: {fileID: 267759259856859748}
-  GrenadeTransform: {fileID: 399603889930561625}
-  rifleTransformOffHand: {fileID: 2721352306454599018}
-  meleeTransform: {fileID: 7652166151291797549}
 --- !u!114 &7633362043615807318
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -319,6 +318,25 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ragdollPrefab: {fileID: 7668381059966303012, guid: ebcba67d80965d4498a1e659b057e81a, type: 3}
   orginalRagdollRootBone: {fileID: 295483252081437764}
+--- !u!114 &-5605335296106689536
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 246340107227206225}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ba260e3ee9d2c04419c2586c095967f3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WeaponVisibilitySync
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  rifleRightHandTransform: {fileID: 267759259856859748}
+  rifleLeftHandTransform: {fileID: 2721352306454599018}
+  meleeLeftHandTransform: {fileID: 7652166151291797549}
+  grenadeRightHandTransform: {fileID: 399603889930561625}
 --- !u!1 &1954669533539790246
 GameObject:
   m_ObjectHideFlags: 0
@@ -1688,7 +1706,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1421948775106820, guid: 53288e2e44402a149a88a9c02ab0b18a, type: 3}
       propertyPath: m_Name
-      value: SM_Prop_Knife_01
+      value: SM_Prop_Knife_01_offHand
       objectReference: {fileID: 0}
     - target: {fileID: 1421948775106820, guid: 53288e2e44402a149a88a9c02ab0b18a, type: 3}
       propertyPath: m_IsActive

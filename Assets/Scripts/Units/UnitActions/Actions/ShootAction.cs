@@ -40,7 +40,10 @@ public class ShootAction : BaseAction
         switch (state)
         {
             case State.Aiming:
-                RotateTowards(targetUnit.GetWorldPosition());
+                if (RotateTowards(targetUnit.GetWorldPosition()))
+                {
+                    stateTimer = Mathf.Min(stateTimer, 0.4f);
+                }
                 break;
             case State.Shooting:
                 if (canShootBullet)
@@ -58,7 +61,6 @@ public class ShootAction : BaseAction
         {
             NextState();
         }
-
     }
 
     private void NextState()

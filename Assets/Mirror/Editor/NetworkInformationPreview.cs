@@ -22,6 +22,7 @@ namespace Mirror
 
         class Styles
         {
+           
             public GUIStyle labelStyle = new GUIStyle(EditorStyles.label);
             public GUIStyle componentName = new GUIStyle(EditorStyles.boldLabel);
             public GUIStyle disabledName = new GUIStyle(EditorStyles.miniLabel);
@@ -60,8 +61,11 @@ namespace Mirror
         }
 
         GUIContent title;
-        Styles styles = new Styles();
 
+        //------------ MY CODE!---------------
+        Styles styles; //= new Styles();
+        // -----------------------------------
+        
         public override GUIContent GetPreviewTitle()
         {
             if (title == null)
@@ -79,6 +83,17 @@ namespace Mirror
 
         public override void OnPreviewGUI(Rect r, GUIStyle background)
         {
+            // MY CODE! SOMETIMES UNIT CRACH WHEN START EDITOR
+            if (styles == null)
+            {
+                // Jos EditorStyles ei ole vielä valmis, skippaa tämä frame
+                if (EditorStyles.label == null) return;
+
+                try { styles = new Styles(); }
+                catch { return; } // varmuus: jos jokin vielä null → älä kaadu
+            }
+            // ----------------------------------------------------
+
             if (Event.current.type != EventType.Repaint)
                 return;
 

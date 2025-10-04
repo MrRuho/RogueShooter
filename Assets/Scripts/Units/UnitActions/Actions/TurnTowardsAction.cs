@@ -36,8 +36,10 @@ public class TurnTowardsAction : BaseAction
         switch (state)
         {
             case State.StartTurning:
-                TargetWorld = LevelGrid.Instance.GetWorldPosition(gridPosition);
-                RotateTowards(TargetWorld);
+                if (RotateTowards(TargetWorld))
+                {
+                    stateTimer = 0; 
+                }
                 break;
             case State.EndTurning:
                 break;
@@ -67,6 +69,7 @@ public class TurnTowardsAction : BaseAction
     }
     public override void TakeAction(GridPosition gridPosition, Action onActionComplete)
     {
+        TargetWorld = LevelGrid.Instance.GetWorldPosition(gridPosition);
         this.gridPosition = gridPosition;        
         state = State.StartTurning;
         float beforeTurnStateTime = 0.7f;

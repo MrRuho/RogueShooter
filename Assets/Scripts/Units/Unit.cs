@@ -14,7 +14,7 @@ using UnityEngine;
 public class Unit : NetworkBehaviour
 {
 
-    private const int ACTION_POINTS_MAX = 2;
+    private const int ACTION_POINTS_MAX = 5;
 
     [SyncVar] public uint OwnerId;
 

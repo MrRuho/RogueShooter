@@ -5,22 +5,22 @@ using Mirror;
 [RequireComponent(typeof(MoveAction))]
 public class UnitAnimator : NetworkBehaviour
 {
+    [Header("UnitWeaponVisibilitySync")]
+    [SerializeField] private WeaponVisibilitySync weaponVis;
+
+    [Header("Animators")]
     [SerializeField] private Animator animator;
     [SerializeField] private NetworkAnimator netAnim;
+
     [SerializeField] private GameObject bulletProjectilePrefab;
     [SerializeField] private GameObject granadeProjectilePrefab;
     [SerializeField] private Transform shootPointTransform;
     [SerializeField] private Transform rifleTransform;
-    [SerializeField] private Transform GrenadeTransform;
-
-    [SerializeField] private Transform rifleTransformOffHand;
-    [SerializeField] private Transform meleeTransform;
 
     private static bool IsNetworkActive() => NetworkClient.active || NetworkServer.active;
 
     private void Awake()
     {
-
         if (TryGetComponent<MoveAction>(out MoveAction moveAction))
         {
             moveAction.OnStartMoving += MoveAction_OnStartMoving;
@@ -44,8 +44,6 @@ public class UnitAnimator : NetworkBehaviour
             meleeAction.OnMeleeActionCompleted += MeleeAction_OnMeleeActionCompleted;
         }
     }
-
-    
 
     private void Start()
     {
@@ -82,13 +80,10 @@ public class UnitAnimator : NetworkBehaviour
     {
         animator.SetBool("IsRunning", true);
     }
-
     private void MoveAction_OnStopMoving(object sender, EventArgs e)
     {
         animator.SetBool("IsRunning", false);
     }
-
-  
 
     private void ShootAction_OnShoot(object sender, ShootAction.OnShootEventArgs e)
     {
@@ -107,10 +102,30 @@ public class UnitAnimator : NetworkBehaviour
         target.y += unitShoulderHeight;
         NetworkSync.SpawnBullet(bulletProjectilePrefab, shootPointTransform.position, target);
     }
-    
-    private Vector3 pendingGrenadeTarget;
-    private GranadeAction pendingGrenadeAction;
 
+    private void MeleeAction_OnMeleeActionStarted(object sender, EventArgs e)
+    {
+        EquipMelee();
+        if (!IsNetworkActive())
+        {
+            animator.SetTrigger("Melee");
+        }
+        else
+        {
+            netAnim.SetTrigger("Melee");
+        }
+    }
+    private void MeleeAction_OnMeleeActionCompleted(object sender, EventArgs e)
+    {
+        EquipRifle();
+    }
+
+    private void GranadeActionStart()
+    {
+        weaponVis.OwnerRequestSet(rifleRight: false, rifleLeft: true, meleeLeft: false, grenade: false);
+    }
+    private Vector3 pendingGrenadeTarget;
+    private GranadeAction pendingGrenadeAction; 
     private void GrenadeAction_ThrowGranade(object sender, EventArgs e)
     {
         pendingGrenadeAction = (GranadeAction)sender;
@@ -126,8 +141,12 @@ public class UnitAnimator : NetworkBehaviour
         }
     }
 
-    // Animation Event. ThrowGrenadeStand. When the animation reaches the event marker, this funktion tricers.
-    // This event mark is set in animation. UnitAnimations -> Throw Grenade Stand
+    // --------- START Grenade Animation events START -----------------------
+    // Event marks is set in animation. UnitAnimations -> Throw Grenade Stand
+    public void AE_PickGrenadeStand()
+    {
+        EguipGranade();
+    }
     public void AE_ThrowGrenadeStandRelease()
     {
         // --- GUARD: jos pending on jo käytetty, älä tee mitään (estää tuplan samalta koneelta)
@@ -143,10 +162,6 @@ public class UnitAnimator : NetworkBehaviour
         // Mistä kranaatti lähtee (sama logiikka kuin luodeilla)
         Vector3 origin = rifleTransform.position;
 
-        // Piilota/grace-visuals kuten ennen
-        GrenadeTransform.gameObject.SetActive(false);
-        OnelineVisibilitySync(false, GrenadeTransform);
-
         // Kutsu keskitettyä synkkaa (täsmälleen kuin luodeissa)
         NetworkSync.SpawnGrenade(granadeProjectilePrefab, origin, pendingGrenadeTarget);
 
@@ -154,90 +169,26 @@ public class UnitAnimator : NetworkBehaviour
         pendingGrenadeAction?.OnGrenadeBehaviourComplete();
         pendingGrenadeAction = null;
     }
-
-    // Animation Event. PickGrenadeStand When the animation reaches the event marker, this funktion tricers.
-    // This event mark is set in animation. UnitAnimations -> Throw Grenade Stand
-    public void AE_PickGrenadeStand()
-    {
-        EguipGranade();
-    }
-
-    private void MeleeAction_OnMeleeActionStarted(object sender, EventArgs e)
-    {
-        EquipMelee();
-        if (!IsNetworkActive())
-        {
-            animator.SetTrigger("Melee");
-        }
-        else
-        { 
-            netAnim.SetTrigger("Melee");
-        }
-    }
-
-    private void MeleeAction_OnMeleeActionCompleted(object sender, EventArgs e)
+    public void AE_OnGrenadeThrowStandFinished()
     {
         EquipRifle();
     }
-    
+    //--------------- END Grenade Animation events END ---------------
     private void GrenadeAction_ThrowReady(object sender, EventArgs e)
     {
-        EquipRifle();
+       weaponVis.OwnerRequestSet(rifleRight: false, rifleLeft: true, meleeLeft: false, grenade: false);
     }
-
+     
     private void EquipRifle()
     {
-        rifleTransform.gameObject.SetActive(true);
-        rifleTransformOffHand.gameObject.SetActive(false);
-        meleeTransform.gameObject.SetActive(false);
-        GrenadeTransform.gameObject.SetActive(false);
-
-        OnelineVisibilitySync(true, rifleTransform);
-        OnelineVisibilitySync(false, rifleTransformOffHand);
-        OnelineVisibilitySync(false, meleeTransform);
-        OnelineVisibilitySync(false, GrenadeTransform);
-
+        weaponVis.OwnerRequestSet(rifleRight: true, rifleLeft: false, meleeLeft: false, grenade: false);
     }
-
     private void EquipMelee()
     {
-        rifleTransform.gameObject.SetActive(true);
-        meleeTransform.gameObject.SetActive(true);
-        OnelineVisibilitySync(true, rifleTransform);
-        OnelineVisibilitySync(true, meleeTransform);
-        
+        weaponVis.OwnerRequestSet(rifleRight: true, rifleLeft: false, meleeLeft: true, grenade: false);
     }
-
-    private void GranadeActionStart()
-    {
-        rifleTransform.gameObject.SetActive(false);
-        rifleTransformOffHand.gameObject.SetActive(true);
-        
-        OnelineVisibilitySync(false, rifleTransform);
-        OnelineVisibilitySync(true, rifleTransformOffHand);
-    }
-
     private void EguipGranade()
     {
-        GrenadeTransform.gameObject.SetActive(true);
-        OnelineVisibilitySync(true, GrenadeTransform);
+        weaponVis.OwnerRequestSet(rifleRight: false, rifleLeft: true, meleeLeft: false, grenade: true);
     }
-
-    private void OnelineVisibilitySync(bool visible, Transform item)
-    {
-        if (item == null)
-        {
-            Debug.LogWarning("Item transform is null.");
-            return;
-        }
-
-        var visibility = item.GetComponent<NetVisibility>();
-        if (!visibility) return;
-
-        if (NetworkServer.active)
-        {
-            visibility.ServerSetVisible(visible);
-        }
-    }
-
 }

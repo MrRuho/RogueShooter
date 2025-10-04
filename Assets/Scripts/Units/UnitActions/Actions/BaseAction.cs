@@ -99,14 +99,18 @@ public abstract class BaseAction : NetworkBehaviour
         GridPosition
     }
 
-    public void RotateTowards(Vector3 targetPosition)
+    public bool RotateTowards(Vector3 targetPosition, float rotationSpeed = 10f)
     {
-        // Laske suunta
+         // Suuntavektori
         Vector3 aimDirection = (targetPosition - unit.GetWorldPosition()).normalized;
         aimDirection.y = 0f;
-        // Käänny kohti suuntaa
-        float rotationSpeed = 10f;
+
         transform.forward = Vector3.Slerp(transform.forward, aimDirection, Time.deltaTime * rotationSpeed);
+
+        // Kääntyminen on suoritettu.
+        float tolerance = 0.99f;
+        float dot = Vector3.Dot(transform.forward.normalized, aimDirection);
+        return dot > tolerance; 
     }
 
     // -------------- ENEMY AI ACTIONS -------------

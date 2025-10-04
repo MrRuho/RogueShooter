@@ -70,20 +70,32 @@ public class GranadeAction : BaseAction
 
         ActionStart(onActionComplete);
         TargetWorld = LevelGrid.Instance.GetWorldPosition(gridPosition);
-        StartCoroutine(TurnAndThrow(1f, TargetWorld));
+        StartCoroutine(TurnAndThrow(.5f, TargetWorld));
     
 
     }
 
     private IEnumerator TurnAndThrow(float delay, Vector3 targetWorld)
     {
-        float elapsed = 0f;
-        while (elapsed < delay)
+        // Odotetaan kunnes RotateTowards palaa true
+        float waitAfterAligned = 0.1f; // pienen odotuksen verran
+        float alignedTime = 0f;
+        
+        while (true)
         {
-            // Käänny kohti targettia koko viiveen ajan
-            RotateTowards(targetWorld);
+            bool aligned = RotateTowards(targetWorld);
 
-            elapsed += Time.deltaTime;
+            if (aligned)
+            {
+                alignedTime += Time.deltaTime;
+                if (alignedTime >= waitAfterAligned)
+                    break; // ollaan kohdistettu ja odotettu tarpeeksi
+            }
+            else
+            {
+                alignedTime = 0f; // resetoi jos ei vielä kohdallaan
+            }
+
             yield return null;
         }
 
