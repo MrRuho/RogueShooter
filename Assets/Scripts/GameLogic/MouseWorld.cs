@@ -14,7 +14,7 @@ public class MouseWorld : MonoBehaviour
     {
         instance = this;
     }
-    
+
     public static Vector3 GetMouseWorldPosition()
     {
         Ray ray = Camera.main.ScreenPointToRay(InputManager.Instance.GetMouseScreenPosition());
@@ -22,4 +22,26 @@ public class MouseWorld : MonoBehaviour
         return raycastHit.point;
     }
 
+    /// <summary>
+    ///  Ignore non visible objects, floors and walls what FloorVisibily has set to hidden.
+    /// </summary>
+    public static Vector3 GetPositionOnlyHitVisible()
+    {
+        Ray ray = Camera.main.ScreenPointToRay(InputManager.Instance.GetMouseScreenPosition());
+        RaycastHit[] raycastHitArray = Physics.RaycastAll(ray, float.MaxValue, instance.mousePlaneLayerMask);
+        System.Array.Sort(raycastHitArray,
+        (a, b) => a.distance.CompareTo(b.distance));
+
+        foreach (RaycastHit raycastHit in raycastHitArray)
+        {
+            if (raycastHit.transform.TryGetComponent(out Renderer renderer))
+            {
+                if (renderer.enabled)
+                {
+                    return raycastHit.point;
+                }
+            }
+        }
+        return Vector3.zero;
+    }
 }

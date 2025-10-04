@@ -40,7 +40,7 @@ public class NetworkSyncAgent : NetworkBehaviour
         // Setup target on the projectile
         if (go.TryGetComponent<BulletProjectile>(out var bp))
         {
-            bp.Setup(new Vector3(targetPos.x, spawnPos.y, targetPos.z));
+            bp.Setup(targetPos);
         }
 
         // Spawn across the network

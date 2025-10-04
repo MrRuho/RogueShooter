@@ -22,6 +22,7 @@ public class Unit : NetworkBehaviour
     public static event EventHandler OnAnyUnitSpawned;
     public static event EventHandler OnAnyUnitDead;
 
+    public event Action<bool> OnHiddenChangedEvent;
 
     [SerializeField] public bool isEnemy;
 
@@ -32,14 +33,26 @@ public class Unit : NetworkBehaviour
 
     private int actionPoints = ACTION_POINTS_MAX;
 
+    [SyncVar(hook = nameof(OnHiddenChanged))]
+    private bool isHidden;
+
+    private Renderer[] renderers;
+    private Collider[] colliders;
+    private Animator anim;
+
     private void Awake()
     {
+        renderers = GetComponentsInChildren<Renderer>(true);
+        colliders = GetComponentsInChildren<Collider>(true);
+        TryGetComponent(out anim);
+
         healthSystem = GetComponent<HealthSystem>();
         baseActionsArray = GetComponents<BaseAction>();
     }
 
     private void Start()
     {
+
         if (LevelGrid.Instance != null)
         {
             gridPosition = LevelGrid.Instance.GetGridPosition(transform.position);
@@ -165,19 +178,18 @@ public class Unit : NetworkBehaviour
     private void HealthSystem_OnDead(object sender, System.EventArgs e)
     {
         OnAnyUnitDead?.Invoke(this, EventArgs.Empty);
-
         if (!NetworkServer.active)
         {
-            Destroy(gameObject);
+            // OFFLINE: suoraan tuho
+            if (!NetworkClient.active) { Destroy(gameObject); return; }
             return;
         }
-
-        // Online: Hide Unit before destroy it, so that client have time to create own ragdoll from orginal Unit pose.
-        // After some time hiden Unit get destroyed.
-
+        
+        // Piilota jotta client ehtii kopioida omaan ragdolliin tiedot
+        isHidden = true;
         SetSoftHiddenLocal(true);
-        RpcSetSoftHidden(true);
         StartCoroutine(DestroyAfter(0.30f));
+
     }
 
     private IEnumerator DestroyAfter(float seconds)
@@ -186,34 +198,27 @@ public class Unit : NetworkBehaviour
         NetworkServer.Destroy(gameObject);
     }
 
-    [ClientRpc]
-    private void RpcSetSoftHidden(bool hidden)
-    {
-        SetSoftHiddenLocal(hidden);
-    }
-
     private void SetSoftHiddenLocal(bool hidden)
     {
-        foreach (var r in GetComponentsInChildren<Renderer>(true))
-            r.enabled = !hidden;
-
-        foreach (var c in GetComponentsInChildren<Collider>(true))
-            c.enabled = !hidden;
-
-        if (TryGetComponent<Animator>(out var anim))
-            anim.enabled = !hidden;
+        bool visible = !hidden;
+        foreach (var r in renderers) if (r) r.enabled = visible;
+        foreach (var c in colliders) if (c) c.enabled = visible;
+        if (anim) anim.enabled = visible;
     }
 
     public float GetHealthNormalized()
     {
         return healthSystem.GetHealthNormalized();
     }
-    
-    /*
-    public void Damage(int damageAmount)
-    {
-        healthSystem.Damage(damageAmount);
-    }
-    */
 
+    private void OnHiddenChanged(bool oldVal, bool newVal)
+    {
+        OnHiddenChangedEvent?.Invoke(newVal);
+    }
+
+    public bool IsHidden()
+    {
+        return isHidden;
+    }
 }
+

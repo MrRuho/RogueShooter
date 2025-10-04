@@ -12,10 +12,13 @@ public class UnitAnimator : NetworkBehaviour
     [SerializeField] private Animator animator;
     [SerializeField] private NetworkAnimator netAnim;
 
+    [Header("Projectiles")]
     [SerializeField] private GameObject bulletProjectilePrefab;
     [SerializeField] private GameObject granadeProjectilePrefab;
+
+    [Header("Spawnpoints")]
     [SerializeField] private Transform shootPointTransform;
-    [SerializeField] private Transform rifleTransform;
+    [SerializeField] private Transform rightHandTransform;
 
     private static bool IsNetworkActive() => NetworkClient.active || NetworkServer.active;
 
@@ -160,7 +163,7 @@ public class UnitAnimator : NetworkBehaviour
         }
 
         // Mistä kranaatti lähtee (sama logiikka kuin luodeilla)
-        Vector3 origin = rifleTransform.position;
+        Vector3 origin = rightHandTransform.position;
 
         // Kutsu keskitettyä synkkaa (täsmälleen kuin luodeissa)
         NetworkSync.SpawnGrenade(granadeProjectilePrefab, origin, pendingGrenadeTarget);

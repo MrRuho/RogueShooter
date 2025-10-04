@@ -42,7 +42,7 @@ public static class NetworkSync
         {
             var bullet = Object.Instantiate(bulletPrefab, spawnPos, Quaternion.identity);
             if (bullet.TryGetComponent<BulletProjectile>(out var bulletProjectile))
-                bulletProjectile.Setup(new Vector3(targetPos.x, spawnPos.y, targetPos.z));
+                bulletProjectile.Setup(targetPos);
             NetworkServer.Spawn(bullet);
             return;
         }
@@ -60,7 +60,7 @@ public static class NetworkSync
                 Debug.LogWarning("[NetworkSync] No Local NetworkSyncAgent found, falling back to local Instantiate.");
                 var bullet = Object.Instantiate(bulletPrefab, spawnPos, Quaternion.identity);
                 if (bullet.TryGetComponent<BulletProjectile>(out var bulletProjectile))
-                    bulletProjectile.Setup(new Vector3(targetPos.x, spawnPos.y, targetPos.z));
+                    bulletProjectile.Setup(targetPos);
             }
         }
         else
@@ -68,7 +68,7 @@ public static class NetworkSync
             // Offline / Singleplayer: just instantiate locally
             var bullet = Object.Instantiate(bulletPrefab, spawnPos, Quaternion.identity);
             if (bullet.TryGetComponent<BulletProjectile>(out var bulletProjectile))
-                bulletProjectile.Setup(new Vector3(targetPos.x, spawnPos.y, targetPos.z));
+                bulletProjectile.Setup(targetPos);
         }
     }
 

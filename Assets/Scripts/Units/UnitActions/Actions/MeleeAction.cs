@@ -30,9 +30,12 @@ public class MeleeAction : BaseAction
         switch (state)
         {
             case State.MeleeActionBeforeHit:
-                if (RotateTowards(targetUnit.GetWorldPosition()))
+                if (targetUnit != null)
                 {
-                    stateTimer = Mathf.Min(stateTimer, 0.4f);
+                    if (RotateTowards(targetUnit.GetWorldPosition()))
+                    {
+                        stateTimer = Mathf.Min(stateTimer, 0.4f);
+                    }
                 }
                 break;
             case State.MeleeActionAfterHit:

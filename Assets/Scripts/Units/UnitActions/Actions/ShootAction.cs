@@ -40,10 +40,13 @@ public class ShootAction : BaseAction
         switch (state)
         {
             case State.Aiming:
-                if (RotateTowards(targetUnit.GetWorldPosition()))
+                if (targetUnit != null)
                 {
-                    stateTimer = Mathf.Min(stateTimer, 0.4f);
-                }
+                    if (RotateTowards(targetUnit.GetWorldPosition()))
+                    {
+                        stateTimer = Mathf.Min(stateTimer, 0.4f);
+                    }
+                 }
                 break;
             case State.Shooting:
                 if (canShootBullet)
@@ -131,7 +134,7 @@ public class ShootAction : BaseAction
                     if (!LevelGrid.Instance.HasAnyUnitOnGridPosition(testGridPosition)) continue;
 
                     Unit targetUnit = LevelGrid.Instance.GetUnitAtGridPosition(testGridPosition);
-
+                    if (targetUnit == null) continue;
                     // Make sure we don't include friendly units.
                     if (targetUnit.IsEnemy() == unit.IsEnemy()) continue;
 

@@ -42,16 +42,20 @@ public class GridObject
 
     public List<Unit> GetUnitList()
     {
+        unitList.RemoveAll(u => u == null);
         return unitList;
     }
 
     public bool HasAnyUnit()
     {
+        // Poista tuhotut viitteet (Unity-null huomioiden)
+        unitList.RemoveAll(u => u == null);
         return unitList.Count > 0;
     }
 
     public Unit GetUnit()
     {
+        /*
         if (HasAnyUnit())
         {
             return unitList[0];
@@ -60,6 +64,14 @@ public class GridObject
         {
             return null;
         }
+        */
+        // Siivoa ja palauta ensimmäinen elossa oleva
+
+        for (int i = unitList.Count - 1; i >= 0; i--)
+        {
+            if (unitList[i] == null) { unitList.RemoveAt(i); continue; }
+        }
+        return unitList.Count > 0 ? unitList[0] : null;
     }
 
     public IInteractable GetInteractable()
