@@ -32,7 +32,7 @@ public abstract class BaseAction : NetworkBehaviour
 
     // Checks if the specified grid position is valid for the action, when mouse is over a grid position.
     public virtual bool IsValidGridPosition(GridPosition gridPosition)
-    {
+    {   
         List<GridPosition> validGridPositionsList = GetValidGridPositionList();
         return validGridPositionsList.Contains(gridPosition);
     }

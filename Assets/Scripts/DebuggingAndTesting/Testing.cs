@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
@@ -25,9 +26,10 @@ public class Testing : MonoBehaviour
             //Show pathfind line
             /*
             GridPosition mouseGridPosition = LevelGrid.Instance.GetGridPosition(MouseWorld.GetMouseWorldPosition());
-            GridPosition startGridPosition = new GridPosition(0, 0);
+            GridPosition startGridPosition = new GridPosition(0, 0, 0);
 
-            List<GridPosition> gridPositionList = PathFinding.Instance.FindPath(startGridPosition, mouseGridPosition);
+
+            List<GridPosition> gridPositionList = PathFinding.Instance.FindPath(startGridPosition, startGridPosition, out int pathLeght, 6);
 
             for (int i = 0; i < gridPositionList.Count - 1; i++)
             {

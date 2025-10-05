@@ -84,7 +84,7 @@ public class MoveAction : BaseAction
 
     public override void TakeAction(GridPosition gridPosition, Action onActionComplete)
     {
-        List<GridPosition> pathGridPositionsList = PathFinding.Instance.FindPath(unit.GetGridPosition(), gridPosition, out int pathLeght);
+        List<GridPosition> pathGridPositionsList = PathFinding.Instance.FindPath(unit.GetGridPosition(), gridPosition, out int pathLeght, maxMoveDistance);
 
         currentPositionIndex = 0;
         positionList = new List<Vector3>();
@@ -240,12 +240,17 @@ public class MoveAction : BaseAction
         }
 
         // Ei ollut välimuistissa -> laske kerran
-        var path = PathFinding.Instance.FindPath(start, end, out int pathCost);
+        var path = PathFinding.Instance.FindPath(start, end, out int pathCost, maxMoveDistance);
         bool exists = path != null;
         _pathCache[key] = new PathCacheEntry { exists = exists, cost = pathCost };
 
         cost = pathCost;
         return exists;
+    }
+
+    public int GetMaxMoveDistance()
+    {
+        return maxMoveDistance;
     }
 
     /// <summary>

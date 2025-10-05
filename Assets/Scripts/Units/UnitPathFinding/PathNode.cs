@@ -16,6 +16,9 @@ public class PathNode
         this.gridPosition = gridPosition;
     }
 
+    public int LastGenerationID { get; private set; } = -1;
+    public void MarkGeneration(int generationID) => LastGenerationID = generationID;
+
     public override string ToString()
     {
         return gridPosition.ToString();

@@ -22,7 +22,7 @@ public class UnitActionSystem : MonoBehaviour
     [SerializeField] private Unit selectedUnit;
 
     private BaseAction selectedAction;
-
+ 
     // Prevents the player from performing multiple actions at the same time
     private bool isBusy;
 
@@ -57,25 +57,31 @@ public class UnitActionSystem : MonoBehaviour
 
         // Check if the player is trying to select a unit or move the selected unit
         if (TryHandleUnitSelection()) return;
-
+    
         HandleSelectedAction();
     }
 
     private void HandleSelectedAction()
-    {
+    {   
+        // Jos ei ole valittua yksikköä. Ei edes yritetä tehdä mitään.
+        if (selectedUnit == null || selectedAction == null) return;
+
         if (InputManager.Instance.IsMouseButtonDownThisFrame())
         {
             GridPosition mouseGridPosition = LevelGrid.Instance.GetGridPosition(MouseWorld.GetPositionOnlyHitVisible());
-            
-            if (selectedUnit == null || selectedAction == null) return;
-            if (!selectedAction.IsValidGridPosition(mouseGridPosition)
-            || !selectedUnit.TrySpendActionPointsToTakeAction(selectedAction))
-            {
-                return;
-            }
+
+            // Ei yritetä tehdä niitä toimintoja johon valittun Unitin liike ei riitä
+            int steps = selectedUnit.GetMaxMoveDistance();
+            int moveBudgetCost = PathFinding.CostFromSteps(steps);
+            int estCost = PathFinding.Instance.CalculateDistance(selectedUnit.GetGridPosition(),
+            mouseGridPosition);
+            if (estCost > moveBudgetCost * 10) return;
+
+            if (!selectedAction.IsValidGridPosition(mouseGridPosition)||
+            !selectedUnit.TrySpendActionPointsToTakeAction(selectedAction)) return;
+          
             SetBusy();
             selectedAction.TakeAction(mouseGridPosition, ClearBusy);
-
             OnActionStarted?.Invoke(this, EventArgs.Empty);
         }
     }

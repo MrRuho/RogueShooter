@@ -925,6 +925,67 @@ MonoBehaviour:
   actionButtonPrefab: {fileID: 4402364427280041592, guid: 9f370d27722696e4aaf1d61cfb4df634, type: 3}
   actionButtonContainerTransform: {fileID: 2131008702}
   actionPointsText: {fileID: 481241218}
+--- !u!1 &128506491
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 128506494}
+  - component: {fileID: 128506493}
+  - component: {fileID: 128506492}
+  m_Layer: 0
+  m_Name: _Diagnostic
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &128506492
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 128506491}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 26b1181e683f2014ba24be24998264d7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PathDiagHotkey
+  dumpKey: 111
+  resetKey: 112
+--- !u!114 &128506493
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 128506491}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d807fd1c698ce0646b21b12cd3cbc330, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PathfindingDiagnostics
+  enabledRuntime: 1
+  windowSize: 200
+--- !u!4 &128506494
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 128506491}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 11.93482, y: 4, z: 19.90744}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &134279685
 GameObject:
   m_ObjectHideFlags: 0
@@ -3287,6 +3348,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 64
   pathfindingLinkContainer: {fileID: 1621226040}
+  diagnostic: 0
 --- !u!4 &764396293
 Transform:
   m_ObjectHideFlags: 0
@@ -4433,6 +4495,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FloorVisibility
   dynamicFloorPosition: 0
+  ignoreRendererList: []
 --- !u!1001 &1079231332
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -7244,6 +7307,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FloorVisibility
   dynamicFloorPosition: 0
+  ignoreRendererList: []
 --- !u!1001 &1818125517
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -8565,3 +8629,4 @@ SceneRoots:
   - {fileID: 1997163697}
   - {fileID: 2121319881}
   - {fileID: 35366736}
+  - {fileID: 128506494}

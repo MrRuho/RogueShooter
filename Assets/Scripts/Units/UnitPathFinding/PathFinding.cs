@@ -26,8 +26,7 @@ public class PathFinding : MonoBehaviour
 
     private int width;
     private int height;
-    private float cellSize;
-    private int floorAmount;
+    private int currentGenerationID = 0;
 
     private List<GridSystem<PathNode>> gridSystemList;
     private List<PathfindingLink> pathfindingLinkList;
@@ -47,8 +46,6 @@ public class PathFinding : MonoBehaviour
     {
         this.width = width;
         this.height = height;
-        this.cellSize = cellSize;
-        this.floorAmount = floorAmount;
 
         gridSystemList = new List<GridSystem<PathNode>>();
 
@@ -121,87 +118,156 @@ public class PathFinding : MonoBehaviour
         }
     }
 
+    // 2) UUSI API – liikebudjetilla (askelina), esim. 6
+    public List<GridPosition> FindPath(
+        GridPosition startGridPosition,
+        GridPosition endGridPosition,
+        out int pathLeght,
+        int moveBudgetSteps)
+    {
+        return FindPathInternal(startGridPosition, endGridPosition, out pathLeght, moveBudgetSteps);
+    }
+
     /// <summary>
     /// A* polku alusta loppuun. Palauttaa ruutulistan tai null jos ei polkua.
     /// </summary>
-    public List<GridPosition> FindPath(GridPosition startGridPosition, GridPosition endGridPosition, out int pathLeght)
+    /// 
+    // 3) VARSINAINEN TOTEUTUS – siirretty sisäiseksi ja lisätty budjetti
+    private List<GridPosition> FindPathInternal(
+        GridPosition startGridPosition,
+        GridPosition endGridPosition,
+        out int pathLeght,
+        int moveBudgetSteps)
     {
-        List<PathNode> openList = new List<PathNode>();
-        List<PathNode> closedList = new List<PathNode>();
+#if PERFORMANCE_DIAG
+
+        var diag = PathfindingDiagnostics.Instance;
+        bool diagOn = diag != null && diag.enabledRuntime;
+
+        System.Diagnostics.Stopwatch sw = null;
+        if (diagOn) { sw = new System.Diagnostics.Stopwatch(); sw.Start(); }
+
+        int expanded = 0; // kuinka monta solmua laajennettiin (pop + käsitelty)
+
+#endif
+        // --- BUDJETTI: muutetaan askeleet kustannukseksi (suora 10, diag 20) ---
+        int moveBudgetCost = (moveBudgetSteps == int.MaxValue) ? int.MaxValue : moveBudgetSteps * MOVE_STRAIGHT_COST;
+
+        // VARHAINEN KARSINTA: jos edes heuristiikka ylittää budjetin → ei yritetä
+        int minPossibleCost = CalculateDistance(startGridPosition, endGridPosition);
+        if (minPossibleCost > moveBudgetCost)
+        {
+            pathLeght = 0;
+
+#if PERFORMANCE_DIAG
+
+            if (diagOn) { sw.Stop(); diag.AddSample(sw.Elapsed.TotalMilliseconds, false, 0, expanded); }
+            
+#endif
+
+            return null;
+        }
+
+        currentGenerationID++;
+
+        var openQueue = new PriorityQueue<PathNode>();
+        HashSet<PathNode> openSet = new HashSet<PathNode>();
+        HashSet<PathNode> closedSet = new HashSet<PathNode>();
 
         PathNode startNode = GetGridSystem(startGridPosition.floor).GetGridObject(startGridPosition);
         PathNode endNode = GetGridSystem(endGridPosition.floor).GetGridObject(endGridPosition);
 
-        openList.Add(startNode);
-
-        // Resetoi kaikki nodet
-        for (int x = 0; x < width; x++)
-        {
-            for (int z = 0; z < height; z++)
-            {
-                for (int floor = 0; floor < floorAmount; floor++)
-                {
-                    GridPosition gp = new GridPosition(x, z, floor);
-                    PathNode node = GetGridSystem(floor).GetGridObject(gp);
-
-                    node.SetGCost(int.MaxValue);
-                    node.SetHCost(0);
-                    node.CalculateFCost();
-                    node.ResetCameFromPathNode();
-                }
-            }
-        }
-
-        // Seed
+        EnsureInit(startNode);
         startNode.SetGCost(0);
         startNode.SetHCost(CalculateDistance(startGridPosition, endGridPosition));
         startNode.CalculateFCost();
 
-        // A* loop
-        while (openList.Count > 0)
+        openQueue.Enqueue(startNode, startNode.GetFCost());
+        openSet.Add(startNode);
+
+        while (openQueue.Count > 0)
         {
-            PathNode currentNode = GetLowestFCostPathNode(openList);
+            // Popataan kunnes saadaan solmu, jota ei ole jo suljettu (duplikaattien varalta)
+            PathNode currentNode = openQueue.Dequeue();
+            if (closedSet.Contains(currentNode)) continue;
+
+            EnsureInit(currentNode);
+            expanded++;
+
+            // Suojavyö: jos nykyinen g jo yli budjetin, ei jatketa tästä haarasta
+            if (currentNode.GetGCost() > moveBudgetCost)
+                continue;
 
             if (currentNode == endNode)
             {
                 pathLeght = endNode.GetFCost();
-                return CalculatePath(endNode);
+                var path = CalculatePath(endNode);
+#if PERFORMANCE_DIAG
+
+                if (diagOn)
+                {
+                    sw.Stop();
+                    diag.AddSample(sw.Elapsed.TotalMilliseconds, success: true, pathLen: path.Count, expanded: expanded);
+                }
+#endif
+                return path;
             }
 
-            openList.Remove(currentNode);
-            closedList.Add(currentNode);
+            openSet.Remove(currentNode);
+            closedSet.Add(currentNode);
 
             foreach (PathNode neighbourNode in GetNeighbourList(currentNode))
             {
-                if (closedList.Contains(neighbourNode)) continue;
+                if (closedSet.Contains(neighbourNode)) continue;
 
-                // Lisää ei-käveltävät suoraan closediin
                 if (!neighbourNode.GetIsWalkable())
                 {
-                    closedList.Add(neighbourNode);
+                    closedSet.Add(neighbourNode);
                     continue;
                 }
 
-                int tentativeGCost = currentNode.GetGCost() +
-                                     CalculateDistance(currentNode.GetGridPosition(), neighbourNode.GetGridPosition());
+                EnsureInit(neighbourNode);
 
-                if (tentativeGCost < neighbourNode.GetGCost())
+                int stepCost = CalculateDistance(currentNode.GetGridPosition(), neighbourNode.GetGridPosition());
+                int tentativeG = currentNode.GetGCost() + stepCost;
+
+                // BUDJETTIRAJAUS: älä työnnä yli-budjetin solmuja eteenpäin
+                if (tentativeG > moveBudgetCost)
+                    continue;
+
+                if (tentativeG < neighbourNode.GetGCost())
                 {
                     neighbourNode.SetCameFromPathNode(currentNode);
-                    neighbourNode.SetGCost(tentativeGCost);
+                    neighbourNode.SetGCost(tentativeG);
                     neighbourNode.SetHCost(CalculateDistance(neighbourNode.GetGridPosition(), endGridPosition));
                     neighbourNode.CalculateFCost();
 
-                    if (!openList.Contains(neighbourNode))
+                    if (!openSet.Contains(neighbourNode))
                     {
-                        openList.Add(neighbourNode);
+                        openQueue.Enqueue(neighbourNode, neighbourNode.GetFCost());
+                        openSet.Add(neighbourNode);
+                    }
+                    else
+                    {
+                        // Ei decrease-key:tä → työnnä uusi; vanhat ohitetaan dequeue-vaiheessa
+                        openQueue.Enqueue(neighbourNode, neighbourNode.GetFCost());
                     }
                 }
             }
         }
 
-        // Ei polkua
+        // Ei polkua budjetin sisällä
         pathLeght = 0;
+
+#if PERFORMANCE_DIAG
+
+        if (diagOn)
+        {
+            sw.Stop();
+            diag.AddSample(sw.Elapsed.TotalMilliseconds, success: false, pathLen: 0, expanded: expanded);
+        }
+
+#endif
         return null;
     }
 
@@ -216,17 +282,6 @@ public class PathFinding : MonoBehaviour
         int diagonal = Mathf.Min(xDistance, zDistance);
         int straight = Mathf.Abs(xDistance - zDistance);
         return MOVE_DIAGONAL_COST * diagonal + MOVE_STRAIGHT_COST * straight;
-    }
-
-    private PathNode GetLowestFCostPathNode(List<PathNode> list)
-    {
-        PathNode lowestFCostPathNode = list[0];
-        for (int i = 1; i < list.Count; i++)
-        {
-            if (list[i].GetFCost() < lowestFCostPathNode.GetFCost())
-                lowestFCostPathNode = list[i];
-        }
-        return lowestFCostPathNode;
     }
 
     private GridSystem<PathNode> GetGridSystem(int floor) => gridSystemList[floor];
@@ -301,22 +356,25 @@ public class PathFinding : MonoBehaviour
         return gridPositions;
     }
 
-    // Julkiset apurit – nimet pidetty ennallaan projektin yhteensopivuuden takia
     public bool IsWalkableGridPosition(GridPosition gridPosition)
         => GetGridSystem(gridPosition.floor).GetGridObject(gridPosition).GetIsWalkable();
 
     public void SetIsWalkableGridPosition(GridPosition gridPosition, bool isWalkable)
         => GetGridSystem(gridPosition.floor).GetGridObject(gridPosition).SetIsWalkable(isWalkable);
 
-    public bool HasPath(GridPosition startGridPosition, GridPosition endGridPosition)
-        => FindPath(startGridPosition, endGridPosition, out int _) != null;
-
-    // Säilytetty kirjoitusasu (vaikka sisällä kaikki käyttävät CalculateDistancea)
-    public int GetPathLenght(GridPosition startGridPosition, GridPosition endGridPosition)
+    void EnsureInit(PathNode node)
     {
-        FindPath(startGridPosition, endGridPosition, out int pathLeght);
-        return pathLeght;
+        if (node.LastGenerationID != currentGenerationID)
+        {
+            node.SetGCost(int.MaxValue);
+            node.SetHCost(0);
+            node.CalculateFCost();
+            node.ResetCameFromPathNode();
+            node.MarkGeneration(currentGenerationID);
+        }
     }
+
+    public static int CostFromSteps(int steps) => steps * MOVE_STRAIGHT_COST;
 
     public List<PathfindingLink> GetPathfindingLinks()
     {

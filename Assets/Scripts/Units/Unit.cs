@@ -33,6 +33,8 @@ public class Unit : NetworkBehaviour
 
     private int actionPoints = ACTION_POINTS_MAX;
 
+    private int maxMoveDistance;
+
     [SyncVar(hook = nameof(OnHiddenChanged))]
     private bool isHidden;
 
@@ -48,6 +50,7 @@ public class Unit : NetworkBehaviour
 
         healthSystem = GetComponent<HealthSystem>();
         baseActionsArray = GetComponents<BaseAction>();
+        maxMoveDistance = GetComponent<MoveAction>().GetMaxMoveDistance();
     }
 
     private void Start()
@@ -169,7 +172,6 @@ public class Unit : NetworkBehaviour
         OnAnyActionPointsChanged?.Invoke(this, EventArgs.Empty);
     }
 
-
     public bool IsEnemy()
     {
         return isEnemy;
@@ -184,7 +186,7 @@ public class Unit : NetworkBehaviour
             if (!NetworkClient.active) { Destroy(gameObject); return; }
             return;
         }
-        
+
         // Piilota jotta client ehtii kopioida omaan ragdolliin tiedot
         isHidden = true;
         SetSoftHiddenLocal(true);
@@ -219,6 +221,11 @@ public class Unit : NetworkBehaviour
     public bool IsHidden()
     {
         return isHidden;
+    }
+
+    public int GetMaxMoveDistance()
+    {
+        return maxMoveDistance;
     }
 }
 
