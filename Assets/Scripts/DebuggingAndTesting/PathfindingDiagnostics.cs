@@ -1,3 +1,5 @@
+#if PERFORMANCE_DIAG
+
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -83,3 +85,18 @@ public class PathfindingDiagnostics : MonoBehaviour
         AvgMs = P95Ms = P50Ms = 0;
     }
 }
+
+#else
+
+using UnityEngine;
+
+// Stubbi, joka kääntyy release-buildiin mutta ei tee mitään
+public class PathfindingDiagnostics : MonoBehaviour
+{
+    public static PathfindingDiagnostics Instance => null;
+    public bool enabledRuntime => false;
+    public void AddSample(double ms, bool success, int pathLen, int expanded) { }
+    public void ResetStats() { }
+}
+
+#endif

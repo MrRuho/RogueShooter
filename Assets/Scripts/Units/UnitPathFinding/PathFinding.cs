@@ -104,6 +104,8 @@ public class PathFinding : MonoBehaviour
             }
         }
 
+        EdgeBaker.Instance.BakeAllEdges();
+
         // Rakenna linkit VAIN kerran silmukoiden ulkopuolella
         pathfindingLinkList = new List<PathfindingLink>();
         if (pathfindingLinkContainer != null)
@@ -162,7 +164,7 @@ public class PathFinding : MonoBehaviour
 #if PERFORMANCE_DIAG
 
             if (diagOn) { sw.Stop(); diag.AddSample(sw.Elapsed.TotalMilliseconds, false, 0, expanded); }
-            
+
 #endif
 
             return null;
@@ -192,8 +194,10 @@ public class PathFinding : MonoBehaviour
             if (closedSet.Contains(currentNode)) continue;
 
             EnsureInit(currentNode);
-            expanded++;
 
+#if PERFORMANCE_DIAG
+            expanded++;
+#endif
             // Suojavyö: jos nykyinen g jo yli budjetin, ei jatketa tästä haarasta
             if (currentNode.GetGCost() > moveBudgetCost)
                 continue;
@@ -202,6 +206,7 @@ public class PathFinding : MonoBehaviour
             {
                 pathLeght = endNode.GetFCost();
                 var path = CalculatePath(endNode);
+
 #if PERFORMANCE_DIAG
 
                 if (diagOn)
@@ -286,42 +291,128 @@ public class PathFinding : MonoBehaviour
 
     private GridSystem<PathNode> GetGridSystem(int floor) => gridSystemList[floor];
 
-    private PathNode GetNode(int x, int z, int floor)
+    public PathNode GetNode(int x, int z, int floor)
         => GetGridSystem(floor).GetGridObject(new GridPosition(x, z, floor));
+
+
+    // Suunnan tulkinta kahden ruudun välille (vain orto)
+    private EdgeMask DirFromDelta(int dx, int dz)
+    {
+        if (dx == 0 && dz == +1) return EdgeMask.N;
+        if (dx == +1 && dz == 0) return EdgeMask.E;
+        if (dx == 0 && dz == -1) return EdgeMask.S;
+        if (dx == -1 && dz == 0) return EdgeMask.W;
+        return EdgeMask.None;
+    }
+
+    private EdgeMask Opposite(EdgeMask d) => d switch
+    {
+        EdgeMask.N => EdgeMask.S,
+        EdgeMask.E => EdgeMask.W,
+        EdgeMask.S => EdgeMask.N,
+        EdgeMask.W => EdgeMask.E,
+        _ => EdgeMask.None
+    };
+
+    // Palauttaa: voiko siirtyä A -> B huomioiden reunaesteet ja kulmanleikkauksen
+    private bool CanStep(GridPosition a, GridPosition b)
+    {
+        int dx = b.x - a.x;
+        int dz = b.z - a.z;
+
+        bool diagonal = Mathf.Abs(dx) == 1 && Mathf.Abs(dz) == 1;
+        bool ortho = (dx == 0) ^ (dz == 0);
+        if (!diagonal && !ortho) return false; // ei tueta hyppyjä >1
+
+        var nodeA = GetNode(a.x, a.z, a.floor);
+        var nodeB = GetNode(b.x, b.z, b.floor);
+
+        // Orto-liike: tarkista A:n reuna ja B:n vastareuna
+        if (ortho)
+        {
+            var dir = DirFromDelta(dx, dz);
+            if (dir == EdgeMask.None) return false;
+            if (nodeA.HasWall(dir)) return false;
+            if (nodeB.HasWall(Opposite(dir))) return false;
+            return true;
+        }
+
+        // Diagonaali: vaadi molemmat ortopolut vapaiksi (ei kulman läpi oikoamista)
+        var aToX = new GridPosition(a.x + dx, a.z, a.floor);
+        var aToZ = new GridPosition(a.x, a.z + dz, a.floor);
+
+        if (!IsValidGridPosition(aToX) || !IsValidGridPosition(aToZ)) return false;
+        if (!IsWalkable(aToX) || !IsWalkable(aToZ)) return false;
+
+        bool pathViaX = CanStep(a, aToX) && CanStep(aToX, b);
+        bool pathViaZ = CanStep(a, aToZ) && CanStep(aToZ, b);
+
+        return pathViaX || pathViaZ;
+
+    }
+
+    private bool IsValidGridPosition(GridPosition gridPosition)
+    {
+        // Kysytään LevelGridiltä (tai siltä, missä sun GridSystem on käytössä)
+        return LevelGrid.Instance.GetGridSystem(gridPosition.floor).IsValidGridPosition(gridPosition);
+    }
+
+    private bool IsWalkable(GridPosition gridPosition)
+    {
+        PathNode node = GetNode(gridPosition.x, gridPosition.z, gridPosition.floor);
+        return node != null && node.GetIsWalkable();
+    }
 
     private List<PathNode> GetNeighbourList(PathNode currentNode)
     {
-        List<PathNode> neighbourList = new List<PathNode>();
-        GridPosition gridPosition = currentNode.GetGridPosition();
+        List<PathNode> result = new List<PathNode>(8);
 
-        // Left
-        if (gridPosition.x - 1 >= 0)
+        GridPosition gp = currentNode.GetGridPosition();
+
+        // 8-suuntaa (NE, E, SE, S, SW, W, NW, N)
+        // Käytetään samaa järjestystä kuin aiemmin, mutta checkataan CanStep
+        static IEnumerable<(int dx, int dz)> Offsets()
         {
-            neighbourList.Add(GetNode(gridPosition.x - 1, gridPosition.z + 0, gridPosition.floor));
-            if (gridPosition.z - 1 >= 0) neighbourList.Add(GetNode(gridPosition.x - 1, gridPosition.z - 1, gridPosition.floor));
-            if (gridPosition.z + 1 < height) neighbourList.Add(GetNode(gridPosition.x - 1, gridPosition.z + 1, gridPosition.floor));
+            yield return (-1, 0); // W
+            yield return (-1, -1); // SW
+            yield return (-1, +1); // NW
+
+            yield return (+1, 0); // E
+            yield return (+1, -1); // SE
+            yield return (+1, +1); // NE
+
+            yield return (0, -1); // S
+            yield return (0, +1); // N
         }
 
-        // Right
-        if (gridPosition.x + 1 < width)
+        foreach (var (dx, dz) in Offsets())
         {
-            neighbourList.Add(GetNode(gridPosition.x + 1, gridPosition.z + 0, gridPosition.floor));
-            if (gridPosition.z - 1 >= 0) neighbourList.Add(GetNode(gridPosition.x + 1, gridPosition.z - 1, gridPosition.floor));
-            if (gridPosition.z + 1 < height) neighbourList.Add(GetNode(gridPosition.x + 1, gridPosition.z + 1, gridPosition.floor));
+            int nx = gp.x + dx;
+            int nz = gp.z + dz;
+
+            if (nx < 0 || nz < 0 || nx >= width || nz >= height) continue;
+
+            var ngp = new GridPosition(nx, nz, gp.floor);
+            if (!IsWalkable(ngp)) continue;
+
+            // Reunaeste- ja kulma-esto
+            if (!CanStep(gp, ngp)) continue;
+
+            result.Add(GetNode(nx, nz, gp.floor));
         }
 
-        // Down / Up
-        if (gridPosition.z - 1 >= 0) neighbourList.Add(GetNode(gridPosition.x + 0, gridPosition.z - 1, gridPosition.floor));
-        if (gridPosition.z + 1 < height) neighbourList.Add(GetNode(gridPosition.x + 0, gridPosition.z + 1, gridPosition.floor));
-
-        // Linkit (esim. portaat kerroksesta toiseen)
-        List<PathNode> total = new List<PathNode>(neighbourList);
-        foreach (GridPosition linkGp in GetPathfindingLinkConnectedGridPositionList(gridPosition))
+        // Linkit (esim. portaat / hissit kerrosten välillä)
+        // Yleensä linkit ohittavat N/E/S/W -reunat, joten sallitaan suoraan.
+        foreach (GridPosition linkGp in GetPathfindingLinkConnectedGridPositionList(gp))
         {
-            total.Add(GetNode(linkGp.x, linkGp.z, linkGp.floor));
+            // Varmista ettei mennä ulos
+            if (!IsValidGridPosition(linkGp)) continue;
+            if (!IsWalkable(linkGp)) continue;
+
+            result.Add(GetNode(linkGp.x, linkGp.z, linkGp.floor));
         }
 
-        return total;
+        return result;
     }
 
     private List<GridPosition> GetPathfindingLinkConnectedGridPositionList(GridPosition gridPosition)
@@ -379,5 +470,15 @@ public class PathFinding : MonoBehaviour
     public List<PathfindingLink> GetPathfindingLinks()
     {
         return pathfindingLinkList ?? new List<PathfindingLink>();
+    }
+
+    public int GetWidth()
+    {
+        return width;
+    }
+    
+    public int GetHeight()
+    {
+        return height;    
     }
 }

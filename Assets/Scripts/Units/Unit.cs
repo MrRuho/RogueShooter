@@ -14,7 +14,7 @@ using UnityEngine;
 public class Unit : NetworkBehaviour
 {
 
-    private const int ACTION_POINTS_MAX = 5;
+    private const int ACTION_POINTS_MAX = 100;
 
     [SyncVar] public uint OwnerId;
 
@@ -55,7 +55,6 @@ public class Unit : NetworkBehaviour
 
     private void Start()
     {
-
         if (LevelGrid.Instance != null)
         {
             gridPosition = LevelGrid.Instance.GetGridPosition(transform.position);
@@ -71,7 +70,6 @@ public class Unit : NetworkBehaviour
 
     private void Update()
     {
-
         GridPosition newGridPosition = LevelGrid.Instance.GetGridPosition(transform.position);
         if (newGridPosition != gridPosition)
         {
@@ -228,4 +226,3 @@ public class Unit : NetworkBehaviour
         return maxMoveDistance;
     }
 }
-

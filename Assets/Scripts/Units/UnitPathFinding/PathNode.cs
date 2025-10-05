@@ -1,6 +1,8 @@
 using Unity.VisualScripting;
 using UnityEngine;
 
+[System.Flags]
+public enum EdgeMask { None=0, N=1, E=2, S=4, W=8 }
 public class PathNode
 {
     private GridPosition gridPosition;
@@ -10,6 +12,12 @@ public class PathNode
     private PathNode cameFromPathNode;
 
     private bool isWalkable = true;
+    private EdgeMask walls; // ← ruudun reunaesteet
+
+    public void AddWall(EdgeMask dir) => walls |= dir;
+    public void RemoveWall(EdgeMask dir) => walls &= ~dir;
+    public bool HasWall(EdgeMask dir) => (walls & dir) != 0;
+    public void ClearWalls() => walls = EdgeMask.None;
 
     public PathNode(GridPosition gridPosition)
     {
@@ -88,4 +96,5 @@ public class PathNode
     {
         return isWalkable;
     }
+    
 }

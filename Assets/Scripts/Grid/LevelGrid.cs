@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Mirror.BouncyCastle.Crypto.Utilities;
 using UnityEngine;
 
 /// <summary>
@@ -55,7 +56,7 @@ public class LevelGrid : MonoBehaviour
     }
 
 
-    private GridSystem<GridObject> GetGridSystem(int floor)
+    public GridSystem<GridObject> GetGridSystem(int floor)
     {
         if (floor < 0 || floor >= gridSystemList.Count) { Debug.LogError($"Invalid floor {floor}"); return null; }
         return gridSystemList[floor];
@@ -137,6 +138,7 @@ public class LevelGrid : MonoBehaviour
 
     public int  GetFloorAmount() => floorAmount;
 
+    public float GetCellSize() => cellSize;
 
     public bool HasAnyUnitOnGridPosition(GridPosition gridPosition)
     {
