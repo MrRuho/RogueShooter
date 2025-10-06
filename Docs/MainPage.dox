@@ -1,0 +1,45 @@
+/// @mainpage RogueShooter Tactical Grid & Pathfinding System
+///
+/// ## Overview
+/// The RogueShooter pathfinding subsystem provides deterministic, grid-based navigation
+/// for the game’s turn-based tactical combat.  
+/// It replaces Unity’s NavMesh with a fully custom solution that is aware of small obstacles,
+/// destructible environments, and multi-floor structures.
+///
+/// The system is composed of three core modules:
+///
+/// | Module | Responsibility | Description |
+/// |:--------|:----------------|:-------------|
+/// | **LevelGrid** | Spatial framework | Defines world↔grid coordinate conversion, grid dimensions, and unit occupancy tracking. |
+/// | **EdgeBaker** | Edge obstacle detection | Scans scene geometry and encodes thin blockers (walls, rails, doorframes) into per-cell edge data. |
+/// | **PathFinding** | Route computation | Performs A* pathfinding with edge-aware movement, multi-floor traversal, and tactical range budgets. |
+///
+/// Together these components form a deterministic and physically consistent tactical layer
+/// that governs all movement, visibility, and AI navigation in RogueShooter.
+///
+/// ## Design goals
+/// - **Deterministic:** Every query produces identical results across clients and replays.  
+/// - **Grid-based:** Movement, visibility, and cover are computed on fixed-size cells.  
+/// - **Edge-accurate:** Units cannot move or shoot through thin scene geometry.  
+/// - **Performance-safe:** Minimal allocations; fast updates through generation-based caching.  
+/// - **Dynamic-ready:** Supports runtime map changes (doors opening, walls destroyed) through incremental rebaking.
+///
+/// ## Runtime flow
+/// 1. **LevelGrid.Setup()** initializes the grid and cell dimensions.  
+/// 2. **PathFinding.Setup()** raycasts for walkable cells.  
+/// 3. **EdgeBaker.BakeAllEdges()** detects edge walls and applies edge masks.  
+/// 4. **Units** use `FindPath()` for tactical movement and range preview calculations.  
+/// 5. **EdgeBaker.RebakeEdgesAround()** updates affected edges after geometry changes.  
+///
+/// ## Why this architecture
+/// RogueShooter’s tactical gameplay demands strict positional logic —  
+/// a single misplaced wall or incorrect path could desynchronize multiplayer matches or break AI behavior.  
+/// This modular pathfinding system ensures that all positional reasoning
+/// (movement, cover, visibility, range) operates from the same deterministic grid foundation.
+///
+/// ## Related files
+/// - `LevelGrid.cs` – Core grid and unit occupancy management  
+/// - `EdgeBaker.cs` – Edge detection and wall data generation  
+/// - `PathFinding.cs` – A* algorithm implementation and movement logic  
+///
+/// ---

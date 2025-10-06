@@ -2,10 +2,20 @@ using System;
 using System.Collections.Generic;
 
 /// <summary>
-/// Kevyt min-heap -pohjainen PriorityQueue ilman ulkoisia paketteja.
-/// - Pienin priority (int) tulee ulos ensin.
-/// - Ei "decrease-key":tä → jos prioriteetti muuttuu, enqueuen vain uudestaan.
-///   (Popatessa ohitetaan vanhentuneet merkinnät peliloogikassa.)
+/// A lightweight, generic min-heap–based Priority Queue implementation used internally for game logic,
+/// especially pathfinding and AI decision-making. 
+/// 
+/// This class provides a simple and efficient way to retrieve the next element with the lowest priority value.
+/// It avoids external dependencies for performance and maintainability within Unity builds.
+/// 
+/// Design notes specific to RogueShooter:
+/// - Used by the pathfinding and tactical AI systems to determine optimal movement and action order.
+/// - Provides deterministic and garbage-free priority management during runtime (no LINQ or heap allocations).
+/// - Does not support key priority updates (“decrease-key”) — instead, updated items are re-enqueued,
+///   and outdated entries are safely ignored by the higher-level game logic.
+/// 
+/// In short, this queue enables efficient and predictable priority handling for all turn-based tactical calculations,
+/// without relying on .NET’s built-in PriorityQueue (which is unavailable in some Unity versions).
 /// </summary>
 public sealed class PriorityQueue<T>
 {
