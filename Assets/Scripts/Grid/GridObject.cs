@@ -55,18 +55,6 @@ public class GridObject
 
     public Unit GetUnit()
     {
-        /*
-        if (HasAnyUnit())
-        {
-            return unitList[0];
-        }
-        else
-        {
-            return null;
-        }
-        */
-        // Siivoa ja palauta ensimmäinen elossa oleva
-
         for (int i = unitList.Count - 1; i >= 0; i--)
         {
             if (unitList[i] == null) { unitList.RemoveAt(i); continue; }

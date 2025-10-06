@@ -68,12 +68,19 @@ public class EdgeBaker : MonoBehaviour
     [Tooltip("Layerit, jotka edustavat RUUTUJEN VÄLISIÄ, ohuita liikkumista estäviä juttuja (kaiteet, seinäviivat, ovenpielet, tms.)")]
     [SerializeField] private LayerMask edgeBlockerMask;
 
+    [Header("Cover scan")]
+    [SerializeField] private LayerMask coverMask;
+
     [Tooltip("Reunan skannauksen 'nauhan' paksuus suhteessa cellSizeen (0.05-0.2 on tyypillinen).")]
     [Range(0.01f, 0.5f)]
     [SerializeField] private float edgeStripThickness = 0.1f;
 
     [Tooltip("Kuinka korkealta skannataan (metreinä). Yleensä hieman ukkelin pään korkeuden yläpuolelle.")]
     [SerializeField] private float edgeScanHeight = 2.0f;
+
+    [Header("Cover height")]
+    [SerializeField] private float lowCoverY = 1.0f;      // ~vyötärö
+    [SerializeField] private float highCoverY = 1.6f;     // ~pää/olkapää
 
     // ---- Lyhyet aliasit, ettei tarvitse arvailla mistä mikäkin tulee ----
     private PathFinding PF => pathfinding != null ? pathfinding : (pathfinding = FindFirstObjectByType<PathFinding>());
@@ -106,7 +113,6 @@ public class EdgeBaker : MonoBehaviour
     }
 
     // ------------------------- PUBLIC API -------------------------
-
     /// <summary>
     /// Performs a full edge bake across the entire grid.
     /// 
@@ -222,6 +228,7 @@ public class EdgeBaker : MonoBehaviour
         Vector3 west = center + new Vector3(-s * 0.5f, y, 0f);
 
         var node = PF.GetNode(gp.x, gp.z, gp.floor);
+        node.ClearCover();
 
         // Probe NORTH edge; if blocked, mark N on this node and S on the northern neighbor.
         if (HasEdgeBlock(north, halfNorthSouth, Quaternion.identity))
@@ -247,6 +254,58 @@ public class EdgeBaker : MonoBehaviour
             node.AddWall(EdgeMask.W);
             MarkOpposite(gp, -1, +0, EdgeMask.E);
         }
+
+        // --- Cover (sama geometria saa olla eri layerillä kuin edgeBlocker) ---
+        // Tehdään matala ja korkea testi erikseen: low = vain vyötäröosuma, high = osuu myös pään korkeuteen.
+        // Rajataan boksi vain yhdelle Y-korkeudelle (pieni korkeus), ettei pöydän jalat tms. vaikuta.
+        Vector3 lowHalfNS = new Vector3(s * edgeStripThickness * 0.5f, 0.1f, s * 0.45f);
+        Vector3 lowHalfEW = new Vector3(s * 0.45f, 0.1f, s * edgeStripThickness * 0.5f);
+        Vector3 highHalfNS = lowHalfNS;
+        Vector3 highHalfEW = lowHalfEW;
+
+        // pisteet cover-korkeuksille
+        Vector3 nLow = new Vector3(north.x, lowCoverY, north.z);
+        Vector3 nHigh = new Vector3(north.x, highCoverY, north.z);
+        Vector3 sLow = new Vector3(south.x, lowCoverY, south.z);
+        Vector3 sHigh = new Vector3(south.x, highCoverY, south.z);
+        Vector3 eLow = new Vector3(east.x, lowCoverY, east.z);
+        Vector3 eHigh = new Vector3(east.x, highCoverY, east.z);
+        Vector3 wLow = new Vector3(west.x, lowCoverY, west.z);
+        Vector3 wHigh = new Vector3(west.x, highCoverY, west.z);
+
+        // North
+        bool nLowHit = Physics.CheckBox(nLow, lowHalfNS, Quaternion.identity, coverMask);
+        bool nHighHit = Physics.CheckBox(nHigh, highHalfNS, Quaternion.identity, coverMask);
+        if (nHighHit) node.AddHighCover(CoverMask.N);
+        else if (nLowHit) node.AddLowCover(CoverMask.N);
+
+        // South
+        bool sLowHit = Physics.CheckBox(sLow, lowHalfNS, Quaternion.identity, coverMask);
+        bool sHighHit = Physics.CheckBox(sHigh, highHalfNS, Quaternion.identity, coverMask);
+        if (sHighHit) node.AddHighCover(CoverMask.S);
+        else if (sLowHit) node.AddLowCover(CoverMask.S);
+
+        // East
+        bool eLowHit = Physics.CheckBox(eLow, lowHalfEW, Quaternion.identity, coverMask);
+        bool eHighHit = Physics.CheckBox(eHigh, highHalfEW, Quaternion.identity, coverMask);
+        if (eHighHit) node.AddHighCover(CoverMask.E);
+        else if (eLowHit) node.AddLowCover(CoverMask.E);
+
+        // West
+        bool wLowHit = Physics.CheckBox(wLow, lowHalfEW, Quaternion.identity, coverMask);
+        bool wHighHit = Physics.CheckBox(wHigh, highHalfEW, Quaternion.identity, coverMask);
+        if (wHighHit) node.AddHighCover(CoverMask.W);
+        else if (wLowHit) node.AddLowCover(CoverMask.W);
+        
+        #if UNITY_EDITOR
+        if (node.HasWall(EdgeMask.N) || node.HasWall(EdgeMask.E) || node.HasWall(EdgeMask.S) || node.HasWall(EdgeMask.W) ||
+            node.HasHighCover(CoverMask.N) || node.HasHighCover(CoverMask.E) || node.HasHighCover(CoverMask.S) || node.HasHighCover(CoverMask.W) ||
+            node.HasLowCover(CoverMask.N)  || node.HasLowCover(CoverMask.E)  || node.HasLowCover(CoverMask.S)  || node.HasLowCover(CoverMask.W))
+        {
+            // Näet konsolissa, että jotain löytyy
+            Debug.Log($"[{gp.x},{gp.z},f{gp.floor}] walls:{node.HasWall(EdgeMask.N)}... coverH:{node.GetHighCoverMask()} coverL:{node.GetLowCoverMask()}");
+        }
+        #endif
     }
 
     /// <summary>

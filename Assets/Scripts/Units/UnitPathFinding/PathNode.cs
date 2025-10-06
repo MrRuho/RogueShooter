@@ -2,7 +2,10 @@ using Unity.VisualScripting;
 using UnityEngine;
 
 [System.Flags]
-public enum EdgeMask { None=0, N=1, E=2, S=4, W=8 }
+public enum EdgeMask { None = 0, N = 1, E = 2, S = 4, W = 8 }
+
+[System.Flags]
+public enum CoverMask { None=0, N=1, E=2, S=4, W=8 }
 public class PathNode
 {
     private GridPosition gridPosition;
@@ -13,11 +16,28 @@ public class PathNode
 
     private bool isWalkable = true;
     private EdgeMask walls; // ← ruudun reunaesteet
+    private CoverMask highCover;      // täyskorkea suoja suunnittain
+    private CoverMask lowCover;       // matala suoja suunnittain
 
+    /*
     public void AddWall(EdgeMask dir) => walls |= dir;
     public void RemoveWall(EdgeMask dir) => walls &= ~dir;
     public bool HasWall(EdgeMask dir) => (walls & dir) != 0;
     public void ClearWalls() => walls = EdgeMask.None;
+    */
+    public void ClearWalls() => walls = EdgeMask.None;
+    public void AddWall(EdgeMask dir) => walls |= dir;
+    public bool HasWall(EdgeMask dir) => (walls & dir) != 0;
+
+    public void ClearCover() { highCover = CoverMask.None; lowCover = CoverMask.None; }
+    public void AddHighCover(CoverMask d) => highCover |= d;
+    public void AddLowCover(CoverMask d) => lowCover |= d;
+
+    public bool HasHighCover(CoverMask d) => (highCover & d) != 0;
+    public bool HasLowCover(CoverMask d) => (lowCover & d) != 0;
+
+    public CoverMask GetHighCoverMask() => highCover;
+    public CoverMask GetLowCoverMask() => lowCover;
 
     public PathNode(GridPosition gridPosition)
     {
@@ -96,5 +116,5 @@ public class PathNode
     {
         return isWalkable;
     }
-    
+
 }
