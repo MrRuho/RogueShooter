@@ -111,5 +111,4 @@ public class CoverDebugGizmos : MonoBehaviour
         );
         Gizmos.DrawCube(center, size);
     }
-    
 }

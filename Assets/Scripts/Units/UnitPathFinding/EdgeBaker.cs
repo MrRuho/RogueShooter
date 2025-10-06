@@ -296,16 +296,6 @@ public class EdgeBaker : MonoBehaviour
         bool wHighHit = Physics.CheckBox(wHigh, highHalfEW, Quaternion.identity, coverMask);
         if (wHighHit) node.AddHighCover(CoverMask.W);
         else if (wLowHit) node.AddLowCover(CoverMask.W);
-        
-        #if UNITY_EDITOR
-        if (node.HasWall(EdgeMask.N) || node.HasWall(EdgeMask.E) || node.HasWall(EdgeMask.S) || node.HasWall(EdgeMask.W) ||
-            node.HasHighCover(CoverMask.N) || node.HasHighCover(CoverMask.E) || node.HasHighCover(CoverMask.S) || node.HasHighCover(CoverMask.W) ||
-            node.HasLowCover(CoverMask.N)  || node.HasLowCover(CoverMask.E)  || node.HasLowCover(CoverMask.S)  || node.HasLowCover(CoverMask.W))
-        {
-            // Näet konsolissa, että jotain löytyy
-            Debug.Log($"[{gp.x},{gp.z},f{gp.floor}] walls:{node.HasWall(EdgeMask.N)}... coverH:{node.GetHighCoverMask()} coverL:{node.GetLowCoverMask()}");
-        }
-        #endif
     }
 
     /// <summary>
