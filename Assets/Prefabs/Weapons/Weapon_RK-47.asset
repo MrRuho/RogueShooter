@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3a2416bd990fc1e4b8516fff1b10d615, type: 3}
+  m_Name: Weapon_RK-47
+  m_EditorClassIdentifier: Assembly-CSharp::WeaponDefinition
+  baseDamage: 60
+  critBonusDamage: 30
+  grazeFactor: 0.8
+  missChipFactor: 0.5
+  closeMax: 4
+  mediumMax: 9
+  longMax: 15
+  meleeAcc: 30
+  closeAcc: 90
+  mediumAcc: 90
+  longAcc: 90
+  extremeAcc: 30
+  critStartMelee: 95
+  critStartClose: 95
+  critStartMedium: 95
+  critStartLong: 95
+  critStartExtreme: 95

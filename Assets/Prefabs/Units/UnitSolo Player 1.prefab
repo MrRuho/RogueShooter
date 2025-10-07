@@ -157,6 +157,7 @@ MonoBehaviour:
   syncInterval: 0
   OwnerId: 0
   archetype: {fileID: 11400000, guid: 4550bcfa4110ca445be7e3f4b337acd8, type: 2}
+  currentWeapon: {fileID: 11400000, guid: 0a7d4b5dde914294784bbe40de853782, type: 2}
   isEnemy: 0
 --- !u!114 &8879463045434806438
 MonoBehaviour:
@@ -194,6 +195,7 @@ MonoBehaviour:
     m_Bits: 320
   maxShootDistance: 10
   damage: 80
+  weapon: {fileID: 11400000, guid: 0a7d4b5dde914294784bbe40de853782, type: 2}
 --- !u!114 &5597279145825593226
 MonoBehaviour:
   m_ObjectHideFlags: 0

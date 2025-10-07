@@ -92,7 +92,7 @@ public abstract class BaseAction : NetworkBehaviour
         NetworkSync.ApplyDamageToUnit(targetUnit, damage, hitPosition);
     }
 
-    public void ApplyHit(int damage, Unit targetUnit)
+    public void ApplyHit(int damage, Unit targetUnit, bool melee)
     {
         Vector3 attacer = unit.GetWorldPosition();
         var gp = targetUnit.GetGridPosition();
@@ -100,9 +100,8 @@ public abstract class BaseAction : NetworkBehaviour
         var dir = CoverService.GetIncomingDir(attacer, targetUnit.transform.position);
         var ct  = CoverService.GetCoverTypeAt(node, dir);
 
-        if (ct == CoverService.CoverType.None)
+        if (ct == CoverService.CoverType.None && !melee)
         {
-            Debug.Log("No cover! A direct hit");
             MakeDamage(damage, targetUnit);
             return;
         }
@@ -115,12 +114,10 @@ public abstract class BaseAction : NetworkBehaviour
 
         if (after >= 0)
         {
-            Debug.Log(" Personal cover value now:" + after);
             targetUnit.SetPersonalCover(after);
         }
         else
         {
-            Debug.Log(" Personal cover down");
             targetUnit.SetPersonalCover(0);
             MakeDamage(-after, targetUnit);
         }

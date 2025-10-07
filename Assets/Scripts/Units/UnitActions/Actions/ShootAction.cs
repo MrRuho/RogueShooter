@@ -26,6 +26,7 @@ public class ShootAction : BaseAction
     private State state;
     [SerializeField] private int maxShootDistance = 7;
     [SerializeField] private int damage = 30;
+    [SerializeField] private WeaponDefinition weapon;
 
     private float stateTimer;
     private Unit targetUnit;
@@ -86,6 +87,9 @@ public class ShootAction : BaseAction
         }
     }
 
+
+
+
     private void Shoot()
     {
         OnAnyShoot?.Invoke(this, new OnShootEventArgs
@@ -100,7 +104,45 @@ public class ShootAction : BaseAction
             shootingUnit = unit
         });
 
-        ApplyHit(damage, targetUnit);
+        /*
+        ApplyHit(damage, targetUnit, false);
+        */
+        // Laske tulos
+        var result = ShootingResolver.Resolve(unit, targetUnit, weapon);
+
+        // Debug: näe mihin kategoriaan osui
+        Debug.Log($"[{unit.name}] → [{targetUnit.name}] | {result.tier} | dmg:{result.damage}");
+
+        switch (result.tier)
+        {
+            case ShotTier.CritMiss:
+                // Täysi huti – ei vaikutusta
+                Debug.Log("Critical miss! Bullet flies off wildly.");
+                return;
+
+            case ShotTier.Miss:
+                Debug.Log("Miss! Some one shooting?!");
+                return;
+            case ShotTier.Graze:
+                // Vain suojapisteisiin
+                Debug.Log("Graze! Some one shooting on ME!!!");
+                targetUnit.SetPersonalCover(
+                    Mathf.Max(0, targetUnit.GetPersonalCover() - result.damage));
+                return;
+
+            case ShotTier.Hit:
+                Debug.Log("Hit! oh f..k");
+                // Normaali osuma → käytetään jo olemassa olevaa pipelinea
+                ApplyHit(result.damage, targetUnit, false);
+                return;
+
+            case ShotTier.Crit:
+                Debug.Log("Critical hit!");
+                // Kriittinen osuma – ohitetaan cover
+                MakeDamage(result.damage, targetUnit);
+                return;
+        }
+
     }
 
     public override int GetActionPointsCost()
@@ -153,7 +195,6 @@ public class ShootAction : BaseAction
                     validGridPositionList.Add(testGridPosition);
                 }
             }
-
         }
 
         return validGridPositionList;
