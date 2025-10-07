@@ -13,8 +13,11 @@ public class UnitWorldUI : MonoBehaviour
 {
     [SerializeField] private TextMeshProUGUI actionPointsText;
     [SerializeField] private Unit unit;
+
     [SerializeField] private Image healthBarImage;
     [SerializeField] private HealthSystem healthSystem;
+
+    [SerializeField] private Image personalCoverBarImage;
 
     /// <summary>
     /// Reference to the unit this UI belongs to.
@@ -40,12 +43,14 @@ public class UnitWorldUI : MonoBehaviour
 
     private void Start()
     {
-        // unitIdentity = unit ? unit.GetComponent<NetworkIdentity>() : GetComponentInParent<NetworkIdentity>();
-
+        
         Unit.OnAnyActionPointsChanged += Unit_OnAnyActionPointsChanged;
         healthSystem.OnDamaged += HealthSystem_OnDamaged;
+        unit.OnCoverPoolChanged += Unit_OnCoverPoolChanged; 
+
         UpdateActionPointsText();
         UpdateHealthBarUI();
+        Unit_OnCoverPoolChanged(unit.GetPersonalCover(), unit.GetPersonalCoverMax());
 
 
         // Co-opissa. Ei paikallista seurantaa.Ainoastaan alku asettelu
@@ -55,7 +60,7 @@ public class UnitWorldUI : MonoBehaviour
             {
                 actionPointsRoot.SetActive(false);
             }
-            
+
             return;
         }
 
@@ -65,6 +70,7 @@ public class UnitWorldUI : MonoBehaviour
 
     }
 
+
     /*
     private void OnEnable()
     {
@@ -73,12 +79,13 @@ public class UnitWorldUI : MonoBehaviour
         PlayerLocalTurnGate.LocalPlayerTurnChanged += PlayerLocalTurnGate_LocalPlayerTurnChanged;
     }
     */
-    
+
     private void OnDisable()
     {
         Unit.OnAnyActionPointsChanged -= Unit_OnAnyActionPointsChanged;
         healthSystem.OnDamaged -= HealthSystem_OnDamaged;
         PlayerLocalTurnGate.LocalPlayerTurnChanged -= PlayerLocalTurnGate_LocalPlayerTurnChanged;
+        unit.OnCoverPoolChanged -= Unit_OnCoverPoolChanged; 
     }
 
     private void OnDestroy()
@@ -86,6 +93,7 @@ public class UnitWorldUI : MonoBehaviour
         Unit.OnAnyActionPointsChanged -= Unit_OnAnyActionPointsChanged;
         healthSystem.OnDamaged -= HealthSystem_OnDamaged;
         PlayerLocalTurnGate.LocalPlayerTurnChanged -= PlayerLocalTurnGate_LocalPlayerTurnChanged;
+        unit.OnCoverPoolChanged -= Unit_OnCoverPoolChanged; 
     }
 
     private void UpdateActionPointsText()
@@ -96,6 +104,11 @@ public class UnitWorldUI : MonoBehaviour
     private void Unit_OnAnyActionPointsChanged(object sender, EventArgs e)
     {
         UpdateActionPointsText();
+    }
+
+    private void Unit_OnCoverPoolChanged(int current, int max)
+    {
+        personalCoverBarImage.fillAmount = max > 0 ? (float)current / max : 0f;
     }
 
     private void UpdateHealthBarUI()

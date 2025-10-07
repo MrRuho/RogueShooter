@@ -58,8 +58,6 @@ public class TurnSystem : MonoBehaviour
             Debug.Log("Versus mode: Proceeding to the next turn.");
             // Tee jotain erityistä Versus-tilassa
         }
-
-
     }
 
     private void ConvertUnusedActionPointsToCoverPoints()

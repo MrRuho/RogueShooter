@@ -19,8 +19,8 @@ public class Unit : NetworkBehaviour
     [SyncVar] public uint OwnerId;
 
     // --- Cover state ---
-    [SyncVar] private int personalCover;
-    [SyncVar] private int personalCoverMax;
+    [SyncVar(hook = nameof(OnPersonalCoverChanged))] private int personalCover;
+    [SyncVar(hook = nameof(OnPersonalCoverMaxChanged))] private int personalCoverMax;
 
 
     // Valinnainen: UI:lle
@@ -66,6 +66,16 @@ public class Unit : NetworkBehaviour
 
     private void Start()
     {
+
+        if (archetype != null)
+        {
+            personalCoverMax = archetype.personalCoverMax;
+        }
+        personalCover = personalCoverMax;
+
+        // kerro UI:lle heti
+        OnCoverPoolChanged?.Invoke(personalCover, personalCoverMax);
+
         if (LevelGrid.Instance != null)
         {
             gridPosition = LevelGrid.Instance.GetGridPosition(transform.position);
@@ -232,6 +242,7 @@ public class Unit : NetworkBehaviour
     public void SetPersonalCover(int damage)
     {
         personalCover = damage;
+        OnCoverPoolChanged?.Invoke(personalCover, personalCoverMax);
     }
 
     public float GetHealthNormalized()
@@ -258,25 +269,37 @@ public class Unit : NetworkBehaviour
     {
         // Kuinka paljon palautuu: arkkityypistä jos annettu, muuten kevyt oletus
         int regen = archetype != null ? archetype.coverRegenOnMove : 10;
-
         int before = personalCover;
+
         personalCover = Mathf.Clamp(personalCover + regen, 0, personalCoverMax);
 
-        // UI/kuuntelijat (jos käytössä)
+
         OnCoverPoolChanged?.Invoke(personalCover, personalCoverMax);
-        Debug.Log($"Cover regen on move: {before} -> {personalCover} (+{regen})");
     }
 
     public void RegenCoverBy(int amount)
     {
         int before = personalCover;
         personalCover = Mathf.Clamp(personalCover + amount, 0, personalCoverMax);
+
+
         OnCoverPoolChanged?.Invoke(personalCover, personalCoverMax);
-        Debug.Log($"Regen {amount} cover: {before} -> {personalCover}");
     }
 
     public int GetCoverRegenPerUnusedAP()
     {
         return archetype != null ? archetype.coverRegenPerUnusedAP : 1;
-    }  
+    }
+
+    // Hookit kutsuvat UI-kuuntelijoita kun arvo replikoituu clienteille
+    private void OnPersonalCoverChanged(int _, int newValue)
+    {
+        OnCoverPoolChanged?.Invoke(newValue, personalCoverMax);
+    }
+    private void OnPersonalCoverMaxChanged(int _, int newMax)
+    {
+        OnCoverPoolChanged?.Invoke(personalCover, newMax);
+    }
+    
+    public int GetPersonalCoverMax() => personalCoverMax;
 }
