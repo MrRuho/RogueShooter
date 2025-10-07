@@ -207,59 +207,69 @@ public class EdgeBaker : MonoBehaviour
     /// - The scan runs at edgeScanHeight (centered at Y = edgeScanHeight * 0.5), typically around head-height,
     ///   so low floor clutter doesn’t cause false positives while walls/rails are still detected.
     /// </summary>
-    private void BakeEdgesForCell(GridPosition gp)
+    private void BakeEdgesForCell(GridPosition gridPosition)
     {
-        // World-space center of this cell (at floor level)
-        Vector3 center = LG.GetWorldPosition(gp);
-        float s = CellSize;
+        var node = PF.GetNode(gridPosition.x, gridPosition.z, gridPosition.floor);
+        node.ClearCover();
 
+        // World-space center of this cell (at floor level)
+        Vector3 center = LG.GetWorldPosition(gridPosition);
+        float sellSize = CellSize;
+
+        // Place the four strip centers exactly on the cell borders and lift to mid-scan height.
+        float scanHeight = edgeScanHeight * 0.5f;
+        Vector3 north = center + new Vector3(0f, scanHeight, +sellSize * 0.5f);
+        Vector3 south = center + new Vector3(0f, scanHeight, -sellSize * 0.5f);
+        Vector3 east = center + new Vector3(+sellSize * 0.5f, scanHeight, 0f);
+        Vector3 west = center + new Vector3(-sellSize * 0.5f, scanHeight, 0f);
+
+        PathBlocker(north, south, east, west, sellSize, node, gridPosition);
+
+        WallCovers(north, south, east, west, sellSize, node);
+    }
+
+    private void PathBlocker(Vector3 north, Vector3 south, Vector3 east, Vector3 west, float sellSize, PathNode node, GridPosition gridPosition) 
+    { 
         // Define half-extents for the thin scanning strips:
         // - North/South strips are long along Z, thin along X.
         // - East/West strips are long along X, thin along Z.
         // Height half-extent is half of edgeScanHeight (so total box height == edgeScanHeight).
-        Vector3 halfNorthSouth = new(s * edgeStripThickness * 0.5f, edgeScanHeight * 0.5f, s * 0.45f);
-        Vector3 halfEastWest = new(s * 0.45f, edgeScanHeight * 0.5f, s * edgeStripThickness * 0.5f);
-
-        // Place the four strip centers exactly on the cell borders and lift to mid-scan height.
-        float y = edgeScanHeight * 0.5f;
-        Vector3 north = center + new Vector3(0f, y, +s * 0.5f);
-        Vector3 south = center + new Vector3(0f, y, -s * 0.5f);
-        Vector3 east = center + new Vector3(+s * 0.5f, y, 0f);
-        Vector3 west = center + new Vector3(-s * 0.5f, y, 0f);
-
-        var node = PF.GetNode(gp.x, gp.z, gp.floor);
-        node.ClearCover();
+        Vector3 halfNorthSouth = new(sellSize * edgeStripThickness * 0.5f, edgeScanHeight * 0.5f, sellSize * 0.45f);
+        Vector3 halfEastWest = new(sellSize * 0.45f, edgeScanHeight * 0.5f, sellSize * edgeStripThickness * 0.5f);
 
         // Probe NORTH edge; if blocked, mark N on this node and S on the northern neighbor.
         if (HasEdgeBlock(north, halfNorthSouth, Quaternion.identity))
         {
             node.AddWall(EdgeMask.N);
-            MarkOpposite(gp, +0, +1, EdgeMask.S);
+            MarkOpposite(gridPosition, +0, +1, EdgeMask.S);
         }
         // Probe SOUTH edge; mirror to the southern neighbor.
         if (HasEdgeBlock(south, halfNorthSouth, Quaternion.identity))
         {
             node.AddWall(EdgeMask.S);
-            MarkOpposite(gp, +0, -1, EdgeMask.N);
+            MarkOpposite(gridPosition, +0, -1, EdgeMask.N);
         }
         // Probe EAST edge; mirror to the eastern neighbor.
         if (HasEdgeBlock(east, halfEastWest, Quaternion.identity))
         {
             node.AddWall(EdgeMask.E);
-            MarkOpposite(gp, +1, +0, EdgeMask.W);
+            MarkOpposite(gridPosition, +1, +0, EdgeMask.W);
         }
         // Probe WEST edge; mirror to the western neighbor.
         if (HasEdgeBlock(west, halfEastWest, Quaternion.identity))
         {
             node.AddWall(EdgeMask.W);
-            MarkOpposite(gp, -1, +0, EdgeMask.E);
+            MarkOpposite(gridPosition, -1, +0, EdgeMask.E);
         }
+    }
 
+    private void WallCovers(Vector3 north, Vector3 south, Vector3 east, Vector3 west, float sellSize, PathNode node)
+    { 
         // --- Cover (sama geometria saa olla eri layerillä kuin edgeBlocker) ---
         // Tehdään matala ja korkea testi erikseen: low = vain vyötäröosuma, high = osuu myös pään korkeuteen.
         // Rajataan boksi vain yhdelle Y-korkeudelle (pieni korkeus), ettei pöydän jalat tms. vaikuta.
-        Vector3 lowHalfNS = new Vector3(s * edgeStripThickness * 0.5f, 0.1f, s * 0.45f);
-        Vector3 lowHalfEW = new Vector3(s * 0.45f, 0.1f, s * edgeStripThickness * 0.5f);
+        Vector3 lowHalfNS = new Vector3(sellSize * edgeStripThickness * 0.5f, 0.1f, sellSize * 0.45f);
+        Vector3 lowHalfEW = new Vector3(sellSize * 0.45f, 0.1f, sellSize * edgeStripThickness * 0.5f);
         Vector3 highHalfNS = lowHalfNS;
         Vector3 highHalfEW = lowHalfEW;
 

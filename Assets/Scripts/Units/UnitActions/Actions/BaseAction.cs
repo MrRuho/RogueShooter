@@ -76,7 +76,6 @@ public abstract class BaseAction : NetworkBehaviour
         // Peruspaikat (world-space)
         Vector3 attacerPos = unit.GetWorldPosition() + Vector3.up * 1.6f;   // silmä/rinta
         Vector3 targetPos  = targetUnit.GetWorldPosition() + Vector3.up * 1.2f;
-
         // Suunta
         Vector3 dir = targetPos - attacerPos;
         if (dir.sqrMagnitude < 0.0001f) dir = targetUnit.transform.forward;  // fallback
@@ -91,6 +90,40 @@ public abstract class BaseAction : NetworkBehaviour
         hitPosition += side * UnityEngine.Random.Range(-0.1f, 0.1f);
 
         NetworkSync.ApplyDamageToUnit(targetUnit, damage, hitPosition);
+    }
+
+    public void ApplyHit(int damage, Unit targetUnit)
+    {
+        Vector3 attacer = unit.GetWorldPosition();
+        var gp = targetUnit.GetGridPosition();
+        var node = PathFinding.Instance.GetNode(gp.x, gp.z, gp.floor);
+        var dir = CoverService.GetIncomingDir(attacer, targetUnit.transform.position);
+        var ct  = CoverService.GetCoverTypeAt(node, dir);
+
+        if (ct == CoverService.CoverType.None)
+        {
+            Debug.Log("No cover! A direct hit");
+            MakeDamage(damage, targetUnit);
+            return;
+        }
+
+        int mitigate = CoverService.GetCoverMitigationPoints(ct);
+        int toCover  = Mathf.Max(0, damage - mitigate);
+
+        int before = targetUnit.GetPersonalCover();
+        int after  = before - toCover;
+
+        if (after >= 0)
+        {
+            Debug.Log(" Personal cover value now:" + after);
+            targetUnit.SetPersonalCover(after);
+        }
+        else
+        {
+            Debug.Log(" Personal cover down");
+            targetUnit.SetPersonalCover(0);
+            MakeDamage(-after, targetUnit);
+        }
     }
 
     public enum RotateTargetType

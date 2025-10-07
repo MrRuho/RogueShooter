@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class TurnSystem : MonoBehaviour
@@ -34,6 +35,10 @@ public class TurnSystem : MonoBehaviour
         // Tarkista pelimoodi
         if (GameModeManager.SelectedMode == GameMode.SinglePlayer)
         {
+            // 1) Muunna käyttämättömät AP:t suojaksi (vain omat unitit)
+            ConvertUnusedActionPointsToCoverPoints();
+
+
             Debug.Log("SinglePlayer NextTurn");
             turnNumber++;
             isPlayerTurn = !isPlayerTurn;
@@ -55,6 +60,20 @@ public class TurnSystem : MonoBehaviour
         }
 
 
+    }
+
+    private void ConvertUnusedActionPointsToCoverPoints()
+    { 
+        List<Unit> ownUnits = UnitManager.Instance.GetFriendlyUnitList();
+            for (int i = 0; i < ownUnits.Count; i++)
+            {
+                Unit u = ownUnits[i];
+                int ap = u.GetActionPoints();
+                if (ap <= 0) continue;
+
+                int per = u.GetCoverRegenPerUnusedAP();
+                u.RegenCoverBy(ap * per);
+            }
     }
 
     public int GetTurnNumber()

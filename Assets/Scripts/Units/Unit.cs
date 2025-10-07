@@ -18,6 +18,17 @@ public class Unit : NetworkBehaviour
 
     [SyncVar] public uint OwnerId;
 
+    // --- Cover state ---
+    [SyncVar] private int personalCover;
+    [SyncVar] private int personalCoverMax;
+
+
+    // Valinnainen: UI:lle
+    public event Action<int, int> OnCoverPoolChanged;
+
+    // Skillit:
+    // [SerializeField] private UnitSkills skills; // sisältää CoverAbilityn tason tms.
+    [SerializeField] private UnitArchetype archetype;
     public static event EventHandler OnAnyActionPointsChanged;
     public static event EventHandler OnAnyUnitSpawned;
     public static event EventHandler OnAnyUnitDead;
@@ -66,6 +77,13 @@ public class Unit : NetworkBehaviour
         healthSystem.OnDead += HealthSystem_OnDead;
 
         OnAnyUnitSpawned?.Invoke(this, EventArgs.Empty);
+
+        if (archetype != null)
+        {
+            personalCoverMax = archetype.personalCoverMax;
+        }
+
+        personalCover = personalCoverMax;
     }
 
     private void Update()
@@ -206,6 +224,16 @@ public class Unit : NetworkBehaviour
         if (anim) anim.enabled = visible;
     }
 
+    public int GetPersonalCover()
+    {
+        return personalCover;
+    }
+
+    public void SetPersonalCover(int damage)
+    {
+        personalCover = damage;
+    }
+
     public float GetHealthNormalized()
     {
         return healthSystem.GetHealthNormalized();
@@ -225,4 +253,30 @@ public class Unit : NetworkBehaviour
     {
         return maxMoveDistance;
     }
+
+    public void RegenCoverOnMove()
+    {
+        // Kuinka paljon palautuu: arkkityypistä jos annettu, muuten kevyt oletus
+        int regen = archetype != null ? archetype.coverRegenOnMove : 10;
+
+        int before = personalCover;
+        personalCover = Mathf.Clamp(personalCover + regen, 0, personalCoverMax);
+
+        // UI/kuuntelijat (jos käytössä)
+        OnCoverPoolChanged?.Invoke(personalCover, personalCoverMax);
+        Debug.Log($"Cover regen on move: {before} -> {personalCover} (+{regen})");
+    }
+
+    public void RegenCoverBy(int amount)
+    {
+        int before = personalCover;
+        personalCover = Mathf.Clamp(personalCover + amount, 0, personalCoverMax);
+        OnCoverPoolChanged?.Invoke(personalCover, personalCoverMax);
+        Debug.Log($"Regen {amount} cover: {before} -> {personalCover}");
+    }
+
+    public int GetCoverRegenPerUnusedAP()
+    {
+        return archetype != null ? archetype.coverRegenPerUnusedAP : 1;
+    }  
 }

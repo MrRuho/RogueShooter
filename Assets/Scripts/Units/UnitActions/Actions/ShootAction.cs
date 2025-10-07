@@ -100,8 +100,7 @@ public class ShootAction : BaseAction
             shootingUnit = unit
         });
 
-        MakeDamage(damage, targetUnit);
-
+        ApplyHit(damage, targetUnit);
     }
 
     public override int GetActionPointsCost()

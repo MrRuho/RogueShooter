@@ -60,6 +60,7 @@ public class MoveAction : BaseAction
         float stoppingDistance = 0.2f;
         if (Vector3.Distance(transform.position, targetPosition) < stoppingDistance)
         {
+            
             currentPositionIndex++;
             if (currentPositionIndex >= positionList.Count)
             {
@@ -68,6 +69,7 @@ public class MoveAction : BaseAction
             }
             else
             {
+                unit.RegenCoverOnMove();
                 targetPosition = positionList[currentPositionIndex];
                 GridPosition targetGridPosition = LevelGrid.Instance.GetGridPosition(targetPosition);
                 GridPosition unitGridPosition = LevelGrid.Instance.GetGridPosition(transform.position);
@@ -94,7 +96,7 @@ public class MoveAction : BaseAction
             positionList.Add(LevelGrid.Instance.GetWorldPosition(pathGridPosition));
 
         }
-  
+
         OnStartMoving?.Invoke(this, EventArgs.Empty);
         ActionStart(onActionComplete);
     }

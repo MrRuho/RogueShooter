@@ -156,6 +156,7 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0
   OwnerId: 0
+  archetype: {fileID: 11400000, guid: 4550bcfa4110ca445be7e3f4b337acd8, type: 2}
   isEnemy: 0
 --- !u!114 &8879463045434806438
 MonoBehaviour:
