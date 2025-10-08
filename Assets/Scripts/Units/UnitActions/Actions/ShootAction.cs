@@ -121,17 +121,43 @@ public class ShootAction : BaseAction
                 return;
 
             case ShotTier.Miss:
-                Debug.Log("Miss! Some one shooting?!");
+
+                if (GetCoverType(targetUnit) == CoverService.CoverType.None)
+                {
+                    MakeDamage(damage, targetUnit);
+                    return;
+                }
+
+                if (targetUnit.GetPersonalCover() <= 0)
+                {
+                    MakeDamage(damage, targetUnit);
+                    return;
+                }
                 return;
+                
             case ShotTier.Graze:
-                // Vain suojapisteisiin
-                Debug.Log("Graze! Some one shooting on ME!!!");
+                if (GetCoverType(targetUnit) == CoverService.CoverType.None)
+                {
+                    MakeDamage(damage, targetUnit);
+                    return;
+                }
+
+                if (targetUnit.GetPersonalCover() <= 0)
+                {
+                    MakeDamage(damage, targetUnit);
+                    return;
+                }
+
                 targetUnit.SetPersonalCover(
                     Mathf.Max(0, targetUnit.GetPersonalCover() - result.damage));
                 return;
 
             case ShotTier.Hit:
-                Debug.Log("Hit! oh f..k");
+                if (GetCoverType(targetUnit) == CoverService.CoverType.None)
+                {
+                    MakeDamage(damage, targetUnit);
+                    return;
+                }
                 // Normaali osuma → käytetään jo olemassa olevaa pipelinea
                 ApplyHit(result.damage, targetUnit, false);
                 return;

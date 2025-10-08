@@ -12,20 +12,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3a2416bd990fc1e4b8516fff1b10d615, type: 3}
   m_Name: Weapon_RK-47
   m_EditorClassIdentifier: Assembly-CSharp::WeaponDefinition
-  baseDamage: 60
-  critBonusDamage: 30
-  grazeFactor: 0.8
-  missChipFactor: 0.5
+  baseDamage: 40
+  critBonusDamage: 10
+  grazeFactor: 0.6
+  missChipFactor: 0.3
   closeMax: 4
-  mediumMax: 9
-  longMax: 15
+  mediumMax: 15
+  longMax: 25
   meleeAcc: 30
   closeAcc: 90
   mediumAcc: 90
   longAcc: 90
   extremeAcc: 30
-  critStartMelee: 95
-  critStartClose: 95
-  critStartMedium: 95
-  critStartLong: 95
-  critStartExtreme: 95
+  critStartMelee: 98
+  critStartClose: 98
+  critStartMedium: 98
+  critStartLong: 98
+  critStartExtreme: 98

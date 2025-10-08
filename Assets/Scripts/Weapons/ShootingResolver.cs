@@ -125,14 +125,14 @@ public static class ShootingResolver
                 break;
         }
 
-#if UNITY_EDITOR
+//#if UNITY_EDITOR
             DebugShot(attacker, target, w, band, acc, roll, res);
-#endif
+//#endif
 
         return res;
     }
     
-#if UNITY_EDITOR
+//#if UNITY_EDITOR
     private static void DebugShot(Unit attacker, Unit target, WeaponDefinition w, RangeBand band, int acc, int roll, ShotResult result)
     {
         string txt =
@@ -150,5 +150,5 @@ public static class ShootingResolver
         Vector3 pos = target.transform.position + Vector3.up * 2.0f;
         //UnityEditor.Handles.Label(pos, txt.Replace("<b>", "").Replace("</b>", ""));
     }
-#endif
+//#endif
 }

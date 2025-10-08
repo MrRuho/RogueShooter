@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 [DefaultExecutionOrder(500)] // After Pathfindingin
@@ -111,6 +112,8 @@ public class EdgeBaker : MonoBehaviour
     {
         if (autoBakeOnStart) BakeAllEdges();
     }
+
+    
 
     // ------------------------- PUBLIC API -------------------------
     /// <summary>

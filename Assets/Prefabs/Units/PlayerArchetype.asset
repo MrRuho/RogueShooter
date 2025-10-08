@@ -12,9 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6f0884581d0521f41b259ac355406fc4, type: 3}
   m_Name: PlayerArchetype
   m_EditorClassIdentifier: Assembly-CSharp::UnitArchetype
-  personalCoverMax: 200
+  personalCoverMax: 100
   coverRegenOnMove: 20
-  coverMitigationMultiplier: 1
+  coverRegenPerUnusedAP: 0
+  shootingSkill: 2
+  accPerSkill: 3
+  lowCoverPenalty: 5
+  highCoverPenalty: 10
   coverMaxByLevel:
     serializedVersion: 2
     m_Curve:
@@ -55,30 +59,6 @@ MonoBehaviour:
       time: 10
       value: 35
       inSlope: 1.6666666
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  mitMultByLevel:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 1
-      value: 1
-      inSlope: 0
-      outSlope: 0.027777778
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    - serializedVersion: 3
-      time: 10
-      value: 1.25
-      inSlope: 0.027777778
       outSlope: 0
       tangentMode: 0
       weightedMode: 0

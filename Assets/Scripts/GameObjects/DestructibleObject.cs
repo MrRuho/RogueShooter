@@ -17,16 +17,21 @@ public class DestructibleObject : NetworkBehaviour
 
     private bool _walkabilitySet;
     void Awake()
-    {   
+    {
         isDestroyed = false;
     }
 
     private void Start()
     {
+        OnAnyDestroyed += DestructibleObject_OnAnyDestroyed;
         gridPosition = LevelGrid.Instance.GetGridPosition(transform.position);
         TryMarkBlocked();
     }
 
+    void OnDisable()
+    {
+        OnAnyDestroyed -= DestructibleObject_OnAnyDestroyed;
+    }
     /// <summary>
     /// Marks the grid position as blocked if not already set.
     /// </summary>
@@ -97,7 +102,8 @@ public class DestructibleObject : NetworkBehaviour
         OnAnyDestroyed?.Invoke(this, EventArgs.Empty);
     }
 
-    [ClientRpc] private void RpcPlayDestroyFx(Vector3 hitPosition, int overkill)
+    [ClientRpc]
+    private void RpcPlayDestroyFx(Vector3 hitPosition, int overkill)
     {
         // Clientit: toista sama paikallisesti
         PlayDestroyFx(hitPosition, overkill);
@@ -119,10 +125,11 @@ public class DestructibleObject : NetworkBehaviour
     private IEnumerator DestroyAfter(float seconds)
     {
         yield return new WaitForSeconds(seconds);
-     
+
         if (isServer) NetworkServer.Destroy(gameObject);
         else Destroy(gameObject);
         OnAnyDestroyed?.Invoke(this, EventArgs.Empty);
+        
     }
 
     [ClientRpc]
@@ -139,4 +146,10 @@ public class DestructibleObject : NetworkBehaviour
         foreach (var c in GetComponentsInChildren<Collider>(true))
             c.enabled = !hidden;
     }
+    
+    private void DestructibleObject_OnAnyDestroyed(object sender, EventArgs e)
+    {
+        EdgeBaker.Instance.RebakeEdgesAround(gridPosition);
+    }
+    
 }
