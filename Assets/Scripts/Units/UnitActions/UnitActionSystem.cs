@@ -1,4 +1,5 @@
 using System;
+using kcp2k;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -62,28 +63,49 @@ public class UnitActionSystem : MonoBehaviour
     }
 
     private void HandleSelectedAction()
-    {   
-        // Jos ei ole valittua yksikköä. Ei edes yritetä tehdä mitään.
+    {
         if (selectedUnit == null || selectedAction == null) return;
 
-        if (InputManager.Instance.IsMouseButtonDownThisFrame())
+        GridPosition targetGridPosition;
+
+        if (InputManager.Instance.IsMouseButtonDownThisFrame() && selectedAction is ShootAction)
         {
-            GridPosition mouseGridPosition = LevelGrid.Instance.GetGridPosition(MouseWorld.GetPositionOnlyHitVisible());
-
-            // Ei yritetä tehdä niitä toimintoja johon valittun Unitin liike ei riitä
-            int steps = selectedUnit.GetMaxMoveDistance();
-            int moveBudgetCost = PathFinding.CostFromSteps(steps);
-            int estCost = PathFinding.Instance.CalculateDistance(selectedUnit.GetGridPosition(),
-            mouseGridPosition);
-            if (estCost > moveBudgetCost * 10) return;
-
-            if (!selectedAction.IsValidGridPosition(mouseGridPosition)||
-            !selectedUnit.TrySpendActionPointsToTakeAction(selectedAction)) return;
-          
-            SetBusy();
-            selectedAction.TakeAction(mouseGridPosition, ClearBusy);
-            OnActionStarted?.Invoke(this, EventArgs.Empty);
+            Ray ray = Camera.main.ScreenPointToRay(InputManager.Instance.GetMouseScreenPosition());
+            if (Physics.Raycast(ray, out RaycastHit hit, float.MaxValue, unitLayerMask))
+            {
+                if (hit.transform.TryGetComponent<Unit>(out Unit unit))
+                {
+                    if (unit.IsEnemy())
+                    {
+                        targetGridPosition = unit.GetGridPosition();
+                        TryExecuteSelectedAction(targetGridPosition);
+                    }
+                }
+            }
         }
+        else if (InputManager.Instance.IsMouseButtonDownThisFrame())
+        {
+            // entinen logiikka: klikkaus ruutuun
+            Vector3 world = MouseWorld.GetPositionOnlyHitVisible(); // lattiat ym. näkyvyysfiltteri
+            targetGridPosition = LevelGrid.Instance.GetGridPosition(world);
+            TryExecuteSelectedAction(targetGridPosition);
+        }
+    }
+
+    private void TryExecuteSelectedAction(GridPosition gp)
+    {
+        // (valmiiksi olemassa olevaa logiikkaa)
+        int steps = selectedUnit.GetMaxMoveDistance();
+        int moveBudgetCost = PathFinding.CostFromSteps(steps);
+        int estCost = PathFinding.Instance.CalculateDistance(selectedUnit.GetGridPosition(), gp);
+        if (estCost > moveBudgetCost * 10) return;
+
+        if (!selectedAction.IsValidGridPosition(gp) ||
+            !selectedUnit.TrySpendActionPointsToTakeAction(selectedAction)) return;
+
+        SetBusy();
+        selectedAction.TakeAction(gp, ClearBusy);
+        OnActionStarted?.Invoke(this, EventArgs.Empty);
     }
 
     /// <summary>
@@ -135,7 +157,14 @@ public class UnitActionSystem : MonoBehaviour
     /// </summary>
     private void SetSelectedUnit(Unit unit)
     {
-        if (unit.IsEnemy()) return;
+        if (unit.IsEnemy())
+        {
+            if(selectedAction is ShootAction)
+            {
+                HandleSelectedAction();
+            }
+            return;
+        }
         selectedUnit = unit;
      //   SetSelectedAction(unit.GetMoveAction());
         SetSelectedAction(unit.GetAction<MoveAction>());
