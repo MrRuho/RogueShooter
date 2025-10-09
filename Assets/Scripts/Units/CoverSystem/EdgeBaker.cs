@@ -59,8 +59,8 @@ public class EdgeBaker : MonoBehaviour
     public static EdgeBaker Instance { get; private set; }
 
     [Header("References")]
-    [SerializeField] private PathFinding pathfinding;   // Jos jätät tyhjäksi, etsitään automaattisesti
-    [SerializeField] private LevelGrid levelGrid;       // Jos jätät tyhjäksi, käytetään LevelGrid.Instance
+    [SerializeField] private PathFinding pathfinding;
+    [SerializeField] private LevelGrid levelGrid;
 
     [Header("When to run")]
     [SerializeField] private bool autoBakeOnStart = true;
@@ -215,6 +215,7 @@ public class EdgeBaker : MonoBehaviour
         var node = PF.GetNode(gridPosition.x, gridPosition.z, gridPosition.floor);
         node.ClearCover();
 
+
         // World-space center of this cell (at floor level)
         Vector3 center = LG.GetWorldPosition(gridPosition);
         float sellSize = CellSize;
@@ -227,8 +228,7 @@ public class EdgeBaker : MonoBehaviour
         Vector3 west = center + new Vector3(-sellSize * 0.5f, scanHeight, 0f);
 
         PathBlocker(north, south, east, west, sellSize, node, gridPosition);
-
-        WallCovers(north, south, east, west, sellSize, node);
+        WallCovers(north, south, east, west, sellSize, node, gridPosition);
     }
 
     private void PathBlocker(Vector3 north, Vector3 south, Vector3 east, Vector3 west, float sellSize, PathNode node, GridPosition gridPosition) 
@@ -266,8 +266,8 @@ public class EdgeBaker : MonoBehaviour
         }
     }
 
-    private void WallCovers(Vector3 north, Vector3 south, Vector3 east, Vector3 west, float sellSize, PathNode node)
-    { 
+    private void WallCovers(Vector3 north, Vector3 south, Vector3 east, Vector3 west, float sellSize, PathNode node, GridPosition gridPosition)
+    {
         // --- Cover (sama geometria saa olla eri layerillä kuin edgeBlocker) ---
         // Tehdään matala ja korkea testi erikseen: low = vain vyötäröosuma, high = osuu myös pään korkeuteen.
         // Rajataan boksi vain yhdelle Y-korkeudelle (pieni korkeus), ettei pöydän jalat tms. vaikuta.

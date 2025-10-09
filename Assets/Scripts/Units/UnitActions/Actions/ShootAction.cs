@@ -87,9 +87,6 @@ public class ShootAction : BaseAction
         }
     }
 
-
-
-
     private void Shoot()
     {
         OnAnyShoot?.Invoke(this, new OnShootEventArgs
@@ -104,9 +101,6 @@ public class ShootAction : BaseAction
             shootingUnit = unit
         });
 
-        /*
-        ApplyHit(damage, targetUnit, false);
-        */
         // Laske tulos
         var result = ShootingResolver.Resolve(unit, targetUnit, weapon);
 
@@ -127,12 +121,15 @@ public class ShootAction : BaseAction
                     MakeDamage(damage, targetUnit);
                     return;
                 }
-
+                
                 if (targetUnit.GetPersonalCover() <= 0)
                 {
-                    MakeDamage(damage, targetUnit);
+                    MakeDamage(damage/3, targetUnit);
                     return;
                 }
+                
+                targetUnit.SetPersonalCover(
+                    Mathf.Max(0, targetUnit.GetPersonalCover() - result.damage));
                 return;
                 
             case ShotTier.Graze:
@@ -141,13 +138,13 @@ public class ShootAction : BaseAction
                     MakeDamage(damage, targetUnit);
                     return;
                 }
-
+                
                 if (targetUnit.GetPersonalCover() <= 0)
                 {
-                    MakeDamage(damage, targetUnit);
+                    MakeDamage(damage/2, targetUnit);
                     return;
                 }
-
+                
                 targetUnit.SetPersonalCover(
                     Mathf.Max(0, targetUnit.GetPersonalCover() - result.damage));
                 return;
@@ -158,11 +155,23 @@ public class ShootAction : BaseAction
                     MakeDamage(damage, targetUnit);
                     return;
                 }
+                /*
+                if (targetUnit.GetPersonalCover() <= 0)
+                {
+                    MakeDamage(damage, targetUnit);
+                    return;
+                }
+                */
+
+                targetUnit.SetPersonalCover(
+                    Mathf.Max(0, targetUnit.GetPersonalCover() - result.damage));
                 // Normaali osuma → käytetään jo olemassa olevaa pipelinea
                 ApplyHit(result.damage, targetUnit, false);
                 return;
 
             case ShotTier.Crit:
+                targetUnit.SetPersonalCover(
+                    Mathf.Max(0, targetUnit.GetPersonalCover() - result.damage));
                 Debug.Log("Critical hit!");
                 // Kriittinen osuma – ohitetaan cover
                 MakeDamage(result.damage, targetUnit);
@@ -216,8 +225,7 @@ public class ShootAction : BaseAction
                     {
                         //Target Unit is Blocked by an Obstacle
                         continue;
-                    }
-
+                    }                    
                     validGridPositionList.Add(testGridPosition);
                 }
             }

@@ -53,7 +53,9 @@ public class CoverVisualizer : MonoBehaviour
     }
 
     void Update() {
-        if (!pathfinding || !levelGrid || !cam) { HideAll(); return; }
+        BaseAction action = UnitActionSystem.Instance.GetSelectedAction();
+        if (action == null) return;
+        if (!pathfinding || !levelGrid || !cam || action.GetActionName() != "Move") { HideAll(); return; }
 
         var ray = cam.ScreenPointToRay(Input.mousePosition);
         if (!Physics.Raycast(ray, out var hit, 500f, groundMask, QueryTriggerInteraction.Collide)) { HideAll(); return; }
@@ -61,7 +63,7 @@ public class CoverVisualizer : MonoBehaviour
         // Ruudukkoon
         var gp = levelGrid.GetGridPosition(hit.point);
         var node = pathfinding.GetNode(gp.x, gp.z, gp.floor);
-        if (node == null) { HideAll(); return; }
+        if (node == null|| !node.GetIsWalkable()) { HideAll(); return; }
 
         var c = levelGrid.GetWorldPosition(gp);
         c.y += yOffset;

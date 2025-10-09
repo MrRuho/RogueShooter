@@ -5,7 +5,7 @@ public class UnitArchetype : ScriptableObject
 {
     [Header("Base skills")]
     public int personalCoverMax = 200;
-    public int coverRegenOnMove = 20;
+    public int coverRegenOnMove = 1;
     public int coverRegenPerUnusedAP = 50;
 
     public int shootingSkill = 0;          // 0..10

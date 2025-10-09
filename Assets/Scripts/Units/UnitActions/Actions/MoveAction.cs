@@ -12,7 +12,14 @@ public class MoveAction : BaseAction
 
     public event EventHandler OnStartMoving;
     public event EventHandler OnStopMoving;
+
+    GridPosition thisTurnStartingGridPosition;
+    GridPosition thisTurnEndridPosition;
+
     [SerializeField] private int maxMoveDistance = 4;
+
+    private int distance;
+
     private List<Vector3> positionList;
     private int currentPositionIndex;
 
@@ -20,6 +27,19 @@ public class MoveAction : BaseAction
     private float differentFloorsTeleportTimer;
     private float differentFloorsTeleportTimerMax = .5f;
 
+    private void Start()
+    {
+        distance = 0;
+        thisTurnStartingGridPosition = unit.GetGridPosition();
+
+        TurnSystem.Instance.OnTurnChanged += TurnSystem_OnTurnChanged;
+    }
+
+    private void TurnSystem_OnTurnChanged(object sender, EventArgs e)
+    {
+        thisTurnStartingGridPosition = unit.GetGridPosition();
+        distance = 0;
+    }
 
     private void Update()
     {
@@ -60,16 +80,18 @@ public class MoveAction : BaseAction
         float stoppingDistance = 0.2f;
         if (Vector3.Distance(transform.position, targetPosition) < stoppingDistance)
         {
-            
+            thisTurnEndridPosition = LevelGrid.Instance.GetGridPosition(transform.position);
+            DistanceFromStartingPoint();
+
             currentPositionIndex++;
             if (currentPositionIndex >= positionList.Count)
             {
+                
                 OnStopMoving?.Invoke(this, EventArgs.Empty);
                 ActionComplete();
             }
             else
             {
-                unit.RegenCoverOnMove();
                 targetPosition = positionList[currentPositionIndex];
                 GridPosition targetGridPosition = LevelGrid.Instance.GetGridPosition(targetPosition);
                 GridPosition unitGridPosition = LevelGrid.Instance.GetGridPosition(transform.position);
@@ -99,6 +121,22 @@ public class MoveAction : BaseAction
 
         OnStartMoving?.Invoke(this, EventArgs.Empty);
         ActionStart(onActionComplete);
+    }
+
+
+    private void DistanceFromStartingPoint()
+    {
+        int newDistance = PathFinding.Instance.CalculateDistance(thisTurnStartingGridPosition, thisTurnEndridPosition);
+
+        int delta = newDistance - distance;
+        if (Mathf.Abs(delta) < 10) return;
+        if (delta != 0)
+        {
+            Debug.Log($"Net distance delta: {delta / 10} tiles");
+            unit.RegenCoverOnMove(delta);
+        }
+
+        distance = newDistance;
     }
  
     public override List<GridPosition> GetValidGridPositionList()

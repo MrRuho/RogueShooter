@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::WeaponDefinition
   baseDamage: 40
   critBonusDamage: 10
-  grazeFactor: 0.6
-  missChipFactor: 0.3
+  grazeFactor: 0.3
+  missChipFactor: 0.2
   closeMax: 4
   mediumMax: 15
   longMax: 25

@@ -94,15 +94,6 @@ public abstract class BaseAction : NetworkBehaviour
 
     public void ApplyHit(int damage, Unit targetUnit, bool melee)
     {
-        /*
-        Vector3 attacer = unit.GetWorldPosition();
-        var gp = targetUnit.GetGridPosition();
-        var node = PathFinding.Instance.GetNode(gp.x, gp.z, gp.floor);
-        var dir = CoverService.GetIncomingDir(attacer, targetUnit.transform.position);
-        
-        var ct  = CoverService.GetCoverTypeAt(node, dir);
-
-        */
         var ct  = GetCoverType(targetUnit);
 
         if (ct == CoverService.CoverType.None && !melee)
@@ -130,11 +121,9 @@ public abstract class BaseAction : NetworkBehaviour
 
     public CoverService.CoverType GetCoverType(Unit targetUnit)
     { 
-        Vector3 attacer = unit.GetWorldPosition();
         var gp = targetUnit.GetGridPosition();
         var node = PathFinding.Instance.GetNode(gp.x, gp.z, gp.floor);
-        var dir = CoverService.GetIncomingDir(attacer, targetUnit.transform.position);
-        var ct  = CoverService.GetCoverTypeAt(node, dir);
+        var ct = CoverService.EvaluateCoverHalfPlane(unit.GetGridPosition(), targetUnit.GetGridPosition(), node);
         return ct;
     }
 

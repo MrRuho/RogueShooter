@@ -14,14 +14,14 @@ using UnityEngine;
 public class Unit : NetworkBehaviour
 {
 
-    private const int ACTION_POINTS_MAX = 2;
+    private const int ACTION_POINTS_MAX = 100;
 
     [SyncVar] public uint OwnerId;
 
     // --- Cover state ---
     [SyncVar(hook = nameof(OnPersonalCoverChanged))] private int personalCover;
     [SyncVar(hook = nameof(OnPersonalCoverMaxChanged))] private int personalCoverMax;
-
+    private int thisTurnStartingCover;
 
     // Valinnainen: UI:lle
     public event Action<int, int> OnCoverPoolChanged;
@@ -95,6 +95,7 @@ public class Unit : NetworkBehaviour
         }
 
         personalCover = personalCoverMax;
+        thisTurnStartingCover = personalCover;
     }
 
     private void Update()
@@ -186,6 +187,7 @@ public class Unit : NetworkBehaviour
     private void TurnSystem_OnTurnChanged(object sender, EventArgs e)
     {
         actionPoints = ACTION_POINTS_MAX;
+        thisTurnStartingCover = personalCover;
         OnAnyActionPointsChanged?.Invoke(this, EventArgs.Empty);
     }
 
@@ -266,14 +268,19 @@ public class Unit : NetworkBehaviour
         return maxMoveDistance;
     }
 
-    public void RegenCoverOnMove()
+    public void RegenCoverOnMove(int distance)
     {
-        // Kuinka paljon palautuu: arkkityypistä jos annettu, muuten kevyt oletus
-        int regen = archetype != null ? archetype.coverRegenOnMove : 10;
-        int before = personalCover;
+        int regenPerTile = archetype != null ? archetype.coverRegenOnMove : 5;
 
-        personalCover = Mathf.Clamp(personalCover + regen, 0, personalCoverMax);
+        int tileDelta = distance / 10;
 
+        int coverChange = regenPerTile * tileDelta;
+        int newCover = personalCover + coverChange;
+        if (newCover <= thisTurnStartingCover )
+        {
+            newCover = thisTurnStartingCover;
+        }
+        personalCover = Mathf.Clamp(newCover, 0, personalCoverMax);
 
         OnCoverPoolChanged?.Invoke(personalCover, personalCoverMax);
     }

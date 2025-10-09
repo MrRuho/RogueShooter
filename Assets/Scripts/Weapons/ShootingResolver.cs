@@ -60,10 +60,9 @@ public static class ShootingResolver
         acc += skillBonus;
 
         // cover-penalty suunnasta
-        var gp = target.GetGridPosition();
-        var node = PathFinding.Instance.GetNode(gp.x, gp.z, gp.floor);
-        var dirToTarget = CoverService.GetIncomingDir(a, target.transform.position);
-        var ct = CoverService.GetCoverTypeAt(node, dirToTarget);
+        var targetGridPosition = target.GetGridPosition();
+        var node = PathFinding.Instance.GetNode(targetGridPosition.x, targetGridPosition.z, targetGridPosition.floor);
+        var ct = CoverService.EvaluateCoverHalfPlane(attacker.GetGridPosition(), target.GetGridPosition(), node);
         int coverPenalty = 0;
         if ((attacker as Unit)?.archetype != null)
         {
