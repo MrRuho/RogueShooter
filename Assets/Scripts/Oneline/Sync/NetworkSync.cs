@@ -182,6 +182,25 @@ public static class NetworkSync
             NetworkSyncAgent.Local.ServerBroadcastHp(target, healthSystem.GetHealth(), healthSystem.GetHealthMax());
         }
     }
+    
+    public static void UpdateCoverUI(Unit target)
+    {
+        int current = target.GetPersonalCover();
+        int max     = target.GetPersonalCoverMax();
+
+        // Sama logiikka kuin HP:lle
+        if (NetworkSyncAgent.Local == null)
+        {
+            var agent = Object.FindFirstObjectByType<NetworkSyncAgent>();
+            if (agent != null)
+                agent.ServerBroadcastCover(target, current, max);
+        }
+        else
+        {
+            Debug.Log("Broadcastataan cover UI: Target" + target + "Current cover:" + current + "/" + max);
+            NetworkSyncAgent.Local.ServerBroadcastCover(target, current, max);
+        }
+    }
 
     /// <summary>
     /// Server: Control when Pleyers can see own and others Unit stats, 

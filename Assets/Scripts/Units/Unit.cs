@@ -19,8 +19,8 @@ public class Unit : NetworkBehaviour
     [SyncVar] public uint OwnerId;
 
     // --- Cover state ---
-    [SyncVar(hook = nameof(OnPersonalCoverChanged))] private int personalCover;
-    [SyncVar(hook = nameof(OnPersonalCoverMaxChanged))] private int personalCoverMax;
+    private int personalCover;
+    private int personalCoverMax;
     private int thisTurnStartingCover;
 
     // Valinnainen: UI:lle
@@ -241,11 +241,12 @@ public class Unit : NetworkBehaviour
     {
         return personalCover;
     }
-
+    
     public void SetPersonalCover(int damage)
     {
         personalCover = damage;
         OnCoverPoolChanged?.Invoke(personalCover, personalCoverMax);
+        NetworkSync.UpdateCoverUI(this);
     }
 
     public float GetHealthNormalized()
@@ -299,15 +300,18 @@ public class Unit : NetworkBehaviour
         return archetype != null ? archetype.coverRegenPerUnusedAP : 1;
     }
 
-    // Hookit kutsuvat UI-kuuntelijoita kun arvo replikoituu clienteille
-    private void OnPersonalCoverChanged(int _, int newValue)
-    {
-        OnCoverPoolChanged?.Invoke(newValue, personalCoverMax);
-    }
-    private void OnPersonalCoverMaxChanged(int _, int newMax)
-    {
-        OnCoverPoolChanged?.Invoke(personalCover, newMax);
-    }
-    
     public int GetPersonalCoverMax() => personalCoverMax;
+
+
+    public float GetCoverNormalized()
+    {
+        return (float)personalCover / personalCoverMax;
+    }
+
+    public void ApplyNetworkCover(int current, int max)
+    {
+        personalCoverMax = max;
+        personalCover    = Mathf.Clamp(current, 0, max);
+        OnCoverPoolChanged?.Invoke(personalCover, personalCoverMax);
+    } 
 }

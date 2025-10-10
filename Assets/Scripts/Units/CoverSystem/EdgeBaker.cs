@@ -175,7 +175,7 @@ public class EdgeBaker : MonoBehaviour
             for (int dz = -radius; dz <= radius; dz++)
             {
                 var gp = new GridPosition(center.x + dx, center.z + dz, center.floor);
-                if (!IsValidGridPosition(gp)) continue;
+                if (!IsValidGridPosition(gp) || !IsWalkable(gp)) continue;
 
                 var node = PF.GetNode(gp.x, gp.z, gp.floor);
                 if (node == null) continue;

@@ -111,10 +111,12 @@ public abstract class BaseAction : NetworkBehaviour
         if (after >= 0)
         {
             targetUnit.SetPersonalCover(after);
+            NetworkSync.UpdateCoverUI(targetUnit);
         }
         else
         {
             targetUnit.SetPersonalCover(0);
+            NetworkSync.UpdateCoverUI(targetUnit);
             MakeDamage(-after, targetUnit);
         }
     }

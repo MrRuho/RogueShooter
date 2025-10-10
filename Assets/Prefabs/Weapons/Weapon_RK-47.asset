@@ -16,8 +16,8 @@ MonoBehaviour:
   critBonusDamage: 10
   grazeFactor: 0.3
   missChipFactor: 0.2
-  closeMax: 4
-  mediumMax: 15
+  closeMax: 5
+  mediumMax: 12
   longMax: 25
   meleeAcc: 30
   closeAcc: 90

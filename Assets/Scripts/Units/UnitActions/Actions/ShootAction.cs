@@ -127,9 +127,10 @@ public class ShootAction : BaseAction
                     MakeDamage(damage/3, targetUnit);
                     return;
                 }
-                
+
                 targetUnit.SetPersonalCover(
                     Mathf.Max(0, targetUnit.GetPersonalCover() - result.damage));
+               // NetworkSync.UpdateCoverUI(targetUnit);
                 return;
                 
             case ShotTier.Graze:
@@ -144,9 +145,10 @@ public class ShootAction : BaseAction
                     MakeDamage(damage/2, targetUnit);
                     return;
                 }
-                
+
                 targetUnit.SetPersonalCover(
                     Mathf.Max(0, targetUnit.GetPersonalCover() - result.damage));
+               // NetworkSync.UpdateCoverUI(targetUnit);
                 return;
 
             case ShotTier.Hit:
@@ -155,16 +157,10 @@ public class ShootAction : BaseAction
                     MakeDamage(damage, targetUnit);
                     return;
                 }
-                /*
-                if (targetUnit.GetPersonalCover() <= 0)
-                {
-                    MakeDamage(damage, targetUnit);
-                    return;
-                }
-                */
 
                 targetUnit.SetPersonalCover(
                     Mathf.Max(0, targetUnit.GetPersonalCover() - result.damage));
+              //  NetworkSync.UpdateCoverUI(targetUnit);
                 // Normaali osuma → käytetään jo olemassa olevaa pipelinea
                 ApplyHit(result.damage, targetUnit, false);
                 return;
@@ -172,6 +168,7 @@ public class ShootAction : BaseAction
             case ShotTier.Crit:
                 targetUnit.SetPersonalCover(
                     Mathf.Max(0, targetUnit.GetPersonalCover() - result.damage));
+              //  NetworkSync.UpdateCoverUI(targetUnit);
                 Debug.Log("Critical hit!");
                 // Kriittinen osuma – ohitetaan cover
                 MakeDamage(result.damage, targetUnit);

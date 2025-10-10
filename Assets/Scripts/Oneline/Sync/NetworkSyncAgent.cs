@@ -104,10 +104,29 @@ public class NetworkSyncAgent : NetworkBehaviour
     }
 
     [Server]
+    public void ServerBroadcastCover(Unit unit, int current, int max)
+    {
+        var ni = unit.GetComponent<NetworkIdentity>();
+        if (ni) RpcNotifyCoverChanged(ni.netId, current, max);
+    }
+
+    [Server]
     public void ServerBroadcastAp(Unit unit, int ap)
     {
         var ni = unit.GetComponent<NetworkIdentity>();
         if (ni) RpcNotifyApChanged(ni.netId, ap);
+    }
+
+    // ---- SERVER → ALL CLIENTS: Cover-muutos ilmoitus
+    [ClientRpc]
+    void RpcNotifyCoverChanged(uint unitNetId, int current, int max)
+    {
+        if (!NetworkClient.spawned.TryGetValue(unitNetId, out var id) || id == null) return;
+
+        var unit = id.GetComponent<Unit>();
+        if (unit == null) return;
+
+        unit.ApplyNetworkCover(current, max);
     }
 
     // ---- SERVER → ALL CLIENTS: HP-muutos ilmoitus

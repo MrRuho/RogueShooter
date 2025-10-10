@@ -70,16 +70,6 @@ public class UnitWorldUI : MonoBehaviour
 
     }
 
-
-    /*
-    private void OnEnable()
-    {
-        Unit.OnAnyActionPointsChanged += Unit_OnAnyActionPointsChanged;
-        healthSystem.OnDamaged += HealthSystem_OnDamaged;
-        PlayerLocalTurnGate.LocalPlayerTurnChanged += PlayerLocalTurnGate_LocalPlayerTurnChanged;
-    }
-    */
-
     private void OnDisable()
     {
         Unit.OnAnyActionPointsChanged -= Unit_OnAnyActionPointsChanged;
@@ -106,9 +96,17 @@ public class UnitWorldUI : MonoBehaviour
         UpdateActionPointsText();
     }
 
+    private void UpdateCoverBarUI()
+    {
+        Debug.Log("Cover now"+ unit.GetCoverNormalized());
+        personalCoverBarImage.fillAmount = unit.GetCoverNormalized();
+    }
+    
+
     private void Unit_OnCoverPoolChanged(int current, int max)
     {
-        personalCoverBarImage.fillAmount = max > 0 ? (float)current / max : 0f;
+        
+        UpdateCoverBarUI();
     }
 
     private void UpdateHealthBarUI()

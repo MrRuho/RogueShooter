@@ -111,8 +111,6 @@ public class SpawnUnitsCoordinator : MonoBehaviour
         return enemySpawnPositions;
     }
 
-
-
     public void SetEnemiesSpawned(bool value)
     {
         enemiesSpawned = value;

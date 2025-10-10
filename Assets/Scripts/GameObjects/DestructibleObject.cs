@@ -6,7 +6,7 @@ using System.Collections;
 
 public class DestructibleObject : NetworkBehaviour
 {
-    public static event EventHandler OnAnyDestroyed;
+   // public static event EventHandler OnAnyDestroyed;
 
     private GridPosition gridPosition;
     [SerializeField] private Transform objectDestroyPrefab;
@@ -23,15 +23,10 @@ public class DestructibleObject : NetworkBehaviour
 
     private void Start()
     {
-        OnAnyDestroyed += DestructibleObject_OnAnyDestroyed;
         gridPosition = LevelGrid.Instance.GetGridPosition(transform.position);
         TryMarkBlocked();
     }
 
-    void OnDisable()
-    {
-        OnAnyDestroyed -= DestructibleObject_OnAnyDestroyed;
-    }
     /// <summary>
     /// Marks the grid position as blocked if not already set.
     /// </summary>
@@ -92,6 +87,8 @@ public class DestructibleObject : NetworkBehaviour
             PlayDestroyFx(hitPosition, overkill);
             SetSoftHiddenLocal(true);
             StartCoroutine(DestroyAfter(0.30f));
+            PathFinding.Instance.SetIsWalkableGridPosition(gridPosition, true);
+            EdgeBaker.Instance.RebakeEdgesAround(gridPosition);
         }
     }
 
@@ -99,7 +96,6 @@ public class DestructibleObject : NetworkBehaviour
     {
         var t = Instantiate(objectDestroyPrefab, transform.position, Quaternion.identity);
         ApplyPushForceToChildren(t, 10f * overkill, hitPosition, 10f);
-        OnAnyDestroyed?.Invoke(this, EventArgs.Empty);
     }
 
     [ClientRpc]
@@ -126,10 +122,39 @@ public class DestructibleObject : NetworkBehaviour
     {
         yield return new WaitForSeconds(seconds);
 
-        if (isServer) NetworkServer.Destroy(gameObject);
-        else Destroy(gameObject);
-        OnAnyDestroyed?.Invoke(this, EventArgs.Empty);
-        
+        if (isServer) 
+        {
+            // Server: vapauta ruutu ja rebake serverillä
+            PathFinding.Instance.SetIsWalkableGridPosition(gridPosition, true);
+            EdgeBaker.Instance.RebakeEdgesAround(gridPosition);
+
+            // Lähetä sama clienteille ennen tuhoa
+            RpcOnDestroyed(gridPosition);
+
+            // Pieni hengähdys (valinnainen, usein ei pakollinen)
+            // yield return null;
+
+            NetworkServer.Destroy(gameObject);
+        } else {
+            // Offline-tapaus tms.
+            Destroy(gameObject);
+        }
+    }
+    
+    // Lisää tämä luokkaan
+    [ClientRpc]
+    private void RpcOnDestroyed(GridPosition pos) {
+        // Clientin paikallinen kopio/visualisointi
+        if (PathFinding.Instance != null)
+            PathFinding.Instance.SetIsWalkableGridPosition(pos, true);
+        EdgeBaker.Instance.RebakeEdgesAround(pos);
+    }
+
+    // Varmistus myös tilanteeseen, jossa RPC hukkuu tai tulee myöhässä
+    public override void OnStopClient() {
+        if (PathFinding.Instance != null)
+            PathFinding.Instance.SetIsWalkableGridPosition(gridPosition, true);
+        EdgeBaker.Instance.RebakeEdgesAround(gridPosition);
     }
 
     [ClientRpc]
@@ -145,11 +170,5 @@ public class DestructibleObject : NetworkBehaviour
 
         foreach (var c in GetComponentsInChildren<Collider>(true))
             c.enabled = !hidden;
-    }
-    
-    private void DestructibleObject_OnAnyDestroyed(object sender, EventArgs e)
-    {
-        EdgeBaker.Instance.RebakeEdgesAround(gridPosition);
-    }
-    
+    }    
 }
