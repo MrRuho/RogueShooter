@@ -242,12 +242,70 @@ public class Unit : NetworkBehaviour
         return personalCover;
     }
     
+    /*
     public void SetPersonalCover(int damage)
     {
         personalCover = damage;
+        OnCoverPoolChanged?.Invoke(personalCover, personalCoverMax); // paikallinen UI päivittyy heti
+
+        // Verkossa: ilmoita muille
+        if (NetworkServer.active || NetworkClient.active)
+            NetworkSync.UpdateCoverUI(this);
+        if (!NetworkServer.active)
+        {
+            var ni = GetComponent<NetworkIdentity>();
+            if (NetworkClient.active && NetworkSyncAgent.Local != null && ni != null)
+            {
+                NetworkSyncAgent.Local.CmdSetUnitCover(ni.netId, damage);
+            }
+            return; // älä muuta paikallista arvoa clientissä → ei “pomppu” efektiä
+        }
+
+        personalCover = Mathf.Clamp(damage, 0, personalCoverMax);
         OnCoverPoolChanged?.Invoke(personalCover, personalCoverMax);
         NetworkSync.UpdateCoverUI(this);
     }
+    */
+    // Unit.cs
+public void SetPersonalCover(int value)
+{
+    // OFFLINE: ei Mirroria → päivitä suoraan paikallisesti
+    if (!NetworkServer.active && !NetworkClient.active)
+    {
+        ApplyCoverLocal(value);
+        return;
+    }
+
+    // ONLINE SERVER/HOST: päivitä totuusarvo ja broadcastaa
+    if (NetworkServer.active)
+    {
+        ApplyCoverServer(value);
+        return;
+    }
+
+    // ONLINE CLIENT: pyydä serveriä asettamaan (EI paikallista asettamista → ei "välähdystä")
+    var ni = GetComponent<NetworkIdentity>();
+    if (NetworkClient.active && NetworkSyncAgent.Local != null && ni != null)
+    {
+        NetworkSyncAgent.Local.CmdSetUnitCover(ni.netId, value);
+    }
+    // ei paikallista muutosta täällä
+}
+
+    private void ApplyCoverLocal(int value)
+    {
+        personalCover = Mathf.Clamp(value, 0, personalCoverMax);
+        OnCoverPoolChanged?.Invoke(personalCover, personalCoverMax); // UI päivittyy heti
+    }
+
+    [Server] // kutsutaan vain serverillä
+    private void ApplyCoverServer(int value)
+    {
+        personalCover = Mathf.Clamp(value, 0, personalCoverMax);
+        OnCoverPoolChanged?.Invoke(personalCover, personalCoverMax);
+        NetworkSync.UpdateCoverUI(this); // server → Rpc → kaikkien UI:t
+    }
+
 
     public float GetHealthNormalized()
     {

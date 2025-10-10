@@ -103,18 +103,20 @@ public class NetworkSyncAgent : NetworkBehaviour
         if (ni) RpcNotifyHpChanged(ni.netId, current, max);
     }
 
-    [Server]
-    public void ServerBroadcastCover(Unit unit, int current, int max)
-    {
-        var ni = unit.GetComponent<NetworkIdentity>();
-        if (ni) RpcNotifyCoverChanged(ni.netId, current, max);
-    }
+
 
     [Server]
     public void ServerBroadcastAp(Unit unit, int ap)
     {
         var ni = unit.GetComponent<NetworkIdentity>();
         if (ni) RpcNotifyApChanged(ni.netId, ap);
+    }
+    
+    [Server]
+    public void ServerBroadcastCover(Unit unit, int current, int max)
+    {
+        var ni = unit.GetComponent<NetworkIdentity>();
+        if (ni) RpcNotifyCoverChanged(ni.netId, current, max);
     }
 
     // ---- SERVER → ALL CLIENTS: Cover-muutos ilmoitus
@@ -127,6 +129,28 @@ public class NetworkSyncAgent : NetworkBehaviour
         if (unit == null) return;
 
         unit.ApplyNetworkCover(current, max);
+    }
+
+    [Command(requiresAuthority = false)]
+    public void CmdRequestCoverRefresh(uint unitNetId)
+    {
+        if (!NetworkServer.spawned.TryGetValue(unitNetId, out var id) || id == null) return;
+        var unit = id.GetComponent<Unit>();
+        if (unit == null) return;
+
+        // Server lukee arvot ja broadcastaa
+        ServerBroadcastCover(unit, unit.GetPersonalCover(), unit.GetPersonalCoverMax());
+    }
+
+    [Command(requiresAuthority = false)]
+    public void CmdSetUnitCover(uint unitNetId, int value)
+    {
+        if (!NetworkServer.spawned.TryGetValue(unitNetId, out var id) || id == null) return;
+        var unit = id.GetComponent<Unit>();
+        if (!unit) return;
+
+        unit.SetPersonalCover(Mathf.Clamp(value, 0, unit.GetPersonalCoverMax()));
+        // SetPersonalCover serverillä jo kutsuu NetworkSync.UpdateCoverUI(this)
     }
 
     // ---- SERVER → ALL CLIENTS: HP-muutos ilmoitus

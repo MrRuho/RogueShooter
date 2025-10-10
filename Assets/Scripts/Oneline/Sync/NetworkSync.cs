@@ -185,21 +185,25 @@ public static class NetworkSync
     
     public static void UpdateCoverUI(Unit target)
     {
-        int current = target.GetPersonalCover();
-        int max     = target.GetPersonalCoverMax();
+        if (target == null) return;
 
-        // Sama logiikka kuin HP:lle
-        if (NetworkSyncAgent.Local == null)
+        // SERVER: broadcastaa suoraan
+        if (NetworkServer.active)
         {
-            var agent = Object.FindFirstObjectByType<NetworkSyncAgent>();
+            var agent = UnityEngine.Object.FindFirstObjectByType<NetworkSyncAgent>();
             if (agent != null)
-                agent.ServerBroadcastCover(target, current, max);
+                agent.ServerBroadcastCover(target, target.GetPersonalCover(), target.GetPersonalCoverMax());
+            return;
         }
-        else
+
+        // CLIENT: pyydä serveriä tekemään virallinen päivitys
+        if (NetworkClient.active && NetworkSyncAgent.Local != null)
         {
-            Debug.Log("Broadcastataan cover UI: Target" + target + "Current cover:" + current + "/" + max);
-            NetworkSyncAgent.Local.ServerBroadcastCover(target, current, max);
+            var ni = target.GetComponent<NetworkIdentity>();
+            if (ni != null)
+                NetworkSyncAgent.Local.CmdRequestCoverRefresh(ni.netId);
         }
+          
     }
 
     /// <summary>
