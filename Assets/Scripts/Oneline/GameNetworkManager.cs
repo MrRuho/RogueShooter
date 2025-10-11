@@ -161,41 +161,24 @@ namespace Utp
 			base.OnValidate();
 		}
 		
-		bool addPlayerRequested;
-
 		/// <summary>
 		/// Make sure that the clien sends a AddPlayer request once the scene is loaded.
 		/// </summary>
 		public override void OnClientSceneChanged()
 		{
-			/*
-			base.OnClientSceneChanged();
-
-			if (!NetworkClient.ready) NetworkClient.Ready();
-
-			// Send AddPlayer message only once
-			if (NetworkClient.connection != null &&
-				NetworkClient.connection.identity == null &&
-				!addPlayerRequested)
-			{
-				addPlayerRequested = true;
-				NetworkClient.AddPlayer();
-			}
-			*/
-
+	
 			base.OnClientSceneChanged();
 
 			// (1) aina ready
 			if (!NetworkClient.ready) NetworkClient.Ready();
 
 			// (2) nollaa per scene, ettei jää päälle resetissä
-			addPlayerRequested = false;
+			//addPlayerRequested = false;
 
 			// (3) jos ei vielä Player-identityä tässä scenessä -> pyydä se
 			if (NetworkClient.connection != null &&
 				NetworkClient.connection.identity == null)
 			{
-				addPlayerRequested = true;
 				NetworkClient.AddPlayer();
 			}
 
@@ -204,15 +187,12 @@ namespace Utp
 		public override void OnStopClient()
 		{
 			base.OnStopClient();
-			addPlayerRequested = false; // nollaa vartija disconnectissa
 		}
 
 		public override void OnClientDisconnect()
 		{
 			base.OnClientDisconnect();
-			addPlayerRequested = false;
 		}
-
 
 		/// <summary>
 		/// Tämä metodi spawnaa jokaiselle clientille oman Unitin ja tekee siitä heidän ohjattavan yksikkönsä.

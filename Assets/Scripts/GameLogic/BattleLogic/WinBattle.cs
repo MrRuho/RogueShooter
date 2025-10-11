@@ -47,34 +47,42 @@ public class WinBattle : MonoBehaviour
 
     private void EvaluateWin()
     {
-        
+
         if (gameEnded) return;
         var um = UnitManager.Instance;
         if (um == null) return;
-        
+
         int friendCount = um.GetFriendlyUnitList().Count;
         int enemyCount = um.GetEnemyUnitList().Count;
-        Debug.Log("Evaluate win. Player units:" + friendCount + "Enemy units:" + enemyCount);
 
-        // Jos kumpikaan ei ole vielä spawnannut, älä tee mitään
-        /*
-        if (friendCount <= 0 && enemyCount <= 0)
+        if (GameModeManager.SelectedMode == GameMode.Versus)
         {
-            return;
+            bool hostWins = enemyCount <= 0;
+            bool hostLoses = friendCount <= 0;
+
+            if (hostWins || hostLoses)
+            {
+                bool isLocalHost = IsLocalHost();
+                bool localWins = (hostWins && isLocalHost) || (hostLoses && !isLocalHost);
+                ShowEnd(localWins ? "You win!" : "You lost");
+            }
         }
-        */
-        
-        if (enemyCount <= 0)
+        else // SinglePlayer
         {
-            ShowEnd("Players Win!");
-        }
-        else if (friendCount <= 0)
-        {
-            ShowEnd("Enemies Win!");
+            if (enemyCount <= 0) ShowEnd("Players Win!");
+            else if (friendCount <= 0) ShowEnd("Enemies Win!");
         }
     }
+    
+    // Host-koneella (server+client samassa) tämä palauttaa true. Etäklientillä false.
+    private bool IsLocalHost()
+    {
+        // Varmistetaan, että ollaan host-clientissä: sekä server että client aktiiviset,
+        // ja “paikallinen serveriyhteys” on sama kuin clientin oma yhteys.
+        return NetworkServer.active && NetworkClient.active;
+    }
 
-    private void ShowEnd(string title)
+    public void ShowEnd(string title)
     {
         gameEnded = true;
 

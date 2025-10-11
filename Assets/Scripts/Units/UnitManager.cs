@@ -30,12 +30,6 @@ public class UnitManager : MonoBehaviour
         enemyUnitList = new List<Unit>();
     }
 
-    private void Start()
-    {
-     //   Unit.OnAnyUnitSpawned += Unit_OnAnyUnitSpawned;
-     //   Unit.OnAnyUnitDead += Unit_OnAnyUnitDead;
-    }
-
     void OnEnable()
     {
         Unit.OnAnyUnitSpawned += Unit_OnAnyUnitSpawned;
@@ -53,14 +47,26 @@ public class UnitManager : MonoBehaviour
     {
         Unit unit = sender as Unit;
         unitList.Add(unit);
-
-        if (unit.IsEnemy())
+        if (GameModeManager.SelectedMode == GameMode.SinglePlayer)
         {
-            enemyUnitList.Add(unit);
+            if (unit.IsEnemy())
+            {
+                enemyUnitList.Add(unit);
+            }
+            else
+            {
+                friendlyUnitList.Add(unit);
+            }
         }
-        else
+        if (GameModeManager.SelectedMode == GameMode.Versus)
         {
-            friendlyUnitList.Add(unit);
+            if(NetworkSync.IsOwnerHost(unit.OwnerId))
+            {
+                friendlyUnitList.Add(unit);
+            } else
+            {
+                enemyUnitList.Add(unit);
+            }
         }
     }
 
@@ -69,14 +75,28 @@ public class UnitManager : MonoBehaviour
         Unit unit = sender as Unit;
         unitList.Remove(unit);
 
-        if (unit.IsEnemy())
+        if (GameModeManager.SelectedMode == GameMode.SinglePlayer)
         {
-            enemyUnitList.Remove(unit);
+            if (unit.IsEnemy())
+            {
+                enemyUnitList.Remove(unit);
+            }
+            else
+            {
+                friendlyUnitList.Remove(unit);
+            }
+
         }
-        else
+        if (GameModeManager.SelectedMode == GameMode.Versus)
         {
-            friendlyUnitList.Remove(unit);
-        }
+            if(NetworkSync.IsOwnerHost(unit.OwnerId))
+            {
+                friendlyUnitList.Remove(unit);
+            } else
+            {
+                enemyUnitList.Remove(unit);
+            }
+        }    
     }
 
     public List<Unit> GetUnitList()

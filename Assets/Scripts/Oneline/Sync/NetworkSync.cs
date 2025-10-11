@@ -230,7 +230,7 @@ public static class NetworkSync
             if (ni) NetworkSyncAgent.Local.CmdMirrorAp(ni.netId, apValue);
         }
     }
-    
+
     public static void SpawnRagdoll(GameObject prefab, Vector3 pos, Quaternion rot, uint sourceUnitNetId, Transform originalRootBone, Vector3 lastHitPosition, int overkill)
     {
 
@@ -269,5 +269,18 @@ public static class NetworkSync
             unitRagdoll.SetLastHitPosition(lastHitPosition);
             unitRagdoll.Setup(originalRootBone);
         }
+    }
+    
+
+    public static bool IsOwnerHost(uint ownerId)
+    {
+        if (!NetworkServer.active) return false; // varmin tieto vain serverillä
+        foreach (var kv in NetworkServer.connections)
+        {
+            var conn = kv.Value;
+            if (conn?.identity && conn.identity.netId == ownerId)
+                return conn.connectionId == 0; // 0 = host
+        }
+        return false;
     }
 }

@@ -58,7 +58,7 @@ public class PlayerController : NetworkBehaviour
     [TargetRpc]
     void TargetNotifyCanAct(NetworkConnectionToClient __, bool canAct)
     {
-        
+
         // Update End Turn Button
         var ui = FindFirstObjectByType<TurnSystemUI>();
         if (ui != null)
@@ -74,6 +74,14 @@ public class PlayerController : NetworkBehaviour
 
         // Set AP visibility in versus game
         PlayerLocalTurnGate.Set(canAct);
+    }
+    
+
+    [TargetRpc]
+    public void TargetShowEnd(NetworkConnectionToClient conn, bool youWon)
+    {
+        var ui = FindFirstObjectByType<WinBattle>();
+        if (ui) ui.ShowEnd(youWon ? "You win!" : "You lost");
     }
 
 }
