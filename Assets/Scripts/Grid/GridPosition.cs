@@ -1,5 +1,4 @@
 using System;
-using NUnit.Framework;
 
 // <summary>
 // This struct represents a position in a grid system.

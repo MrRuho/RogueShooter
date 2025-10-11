@@ -33,12 +33,12 @@ public class EnemyAI : MonoBehaviour
 
     private void Start()
     {
-
+        
         if (GameModeManager.SelectedMode == GameMode.SinglePlayer)
         {
             TurnSystem.Instance.OnTurnChanged += TurnSystem_OnTurnChanged;
         }
-
+        
 
         if (GameNetworkManager.Instance != null &&
         GameNetworkManager.Instance.GetNetWorkClientConnected() &&
@@ -49,16 +49,6 @@ public class EnemyAI : MonoBehaviour
                 enabled = false;
         }
     }
-
-    /*
-    void OnEnable()
-    {
-        if (GameModeManager.SelectedMode == GameMode.SinglePlayer)
-        {
-            TurnSystem.Instance.OnTurnChanged += TurnSystem_OnTurnChanged;
-        }
-    }
-    */
 
     void OnDisable()
     {

@@ -3,7 +3,6 @@ using TMPro;
 using System;
 using UnityEngine.UI;
 using Mirror;
-using System.Collections.Generic;
 
 /// <summary>
 /// Displays world-space UI for a single unit, including action points and health bar.
@@ -98,7 +97,6 @@ public class UnitWorldUI : MonoBehaviour
 
     private void UpdateCoverBarUI()
     {
-        Debug.Log("Cover now"+ unit.GetCoverNormalized());
         personalCoverBarImage.fillAmount = unit.GetCoverNormalized();
     }
     

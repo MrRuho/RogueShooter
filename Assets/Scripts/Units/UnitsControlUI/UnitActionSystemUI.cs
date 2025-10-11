@@ -45,30 +45,6 @@ public class UnitActionSystemUI : MonoBehaviour
         Unit.OnAnyActionPointsChanged += Unit_OnAnyActionPointsChanged;
     }
     
-    /*
-    void OnEnable()
-    {
-        if (UnitActionSystem.Instance != null)
-        {   
-            UnitActionSystem.Instance.OnSelectedUnitChanged += UnitActionSystem_OnSelectedUnitChanged;
-            UnitActionSystem.Instance.OnSelectedActionChanged += UnitActionSystem_OnSelectedActionChanged;
-            UnitActionSystem.Instance.OnActionStarted += UnitActionSystem_OnActionStarted;
-          
-        } else
-        {
-            Debug.Log("UnitActionSystem instance found.");
-        }
-        if (TurnSystem.Instance != null)
-        { 
-            TurnSystem.Instance.OnTurnChanged += TurnSystem_OnTurnChanged;
-        } else
-        {
-            Debug.Log("TurnSystem instance not found.");
-        }
-       
-        Unit.OnAnyActionPointsChanged += Unit_OnAnyActionPointsChanged;
-    }
-    */
     void OnDisable()
     {
         UnitActionSystem.Instance.OnSelectedUnitChanged -= UnitActionSystem_OnSelectedUnitChanged;

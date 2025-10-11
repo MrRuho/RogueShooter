@@ -35,6 +35,11 @@ public class MoveAction : BaseAction
         TurnSystem.Instance.OnTurnChanged += TurnSystem_OnTurnChanged;
     }
 
+    void OnDisable()
+    {
+        TurnSystem.Instance.OnTurnChanged -= TurnSystem_OnTurnChanged;
+    }
+
     private void TurnSystem_OnTurnChanged(object sender, EventArgs e)
     {
         thisTurnStartingGridPosition = unit.GetGridPosition();
@@ -132,7 +137,6 @@ public class MoveAction : BaseAction
         if (Mathf.Abs(delta) < 10) return;
         if (delta != 0)
         {
-            Debug.Log($"Net distance delta: {delta / 10} tiles");
             unit.RegenCoverOnMove(delta);
         }
 

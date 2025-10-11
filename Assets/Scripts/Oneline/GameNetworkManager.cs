@@ -168,6 +168,7 @@ namespace Utp
 		/// </summary>
 		public override void OnClientSceneChanged()
 		{
+			/*
 			base.OnClientSceneChanged();
 
 			if (!NetworkClient.ready) NetworkClient.Ready();
@@ -180,6 +181,24 @@ namespace Utp
 				addPlayerRequested = true;
 				NetworkClient.AddPlayer();
 			}
+			*/
+
+			base.OnClientSceneChanged();
+
+			// (1) aina ready
+			if (!NetworkClient.ready) NetworkClient.Ready();
+
+			// (2) nollaa per scene, ettei jää päälle resetissä
+			addPlayerRequested = false;
+
+			// (3) jos ei vielä Player-identityä tässä scenessä -> pyydä se
+			if (NetworkClient.connection != null &&
+				NetworkClient.connection.identity == null)
+			{
+				addPlayerRequested = true;
+				NetworkClient.AddPlayer();
+			}
+
 		}
 
 		public override void OnStopClient()

@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -184,14 +183,18 @@ public class PathFinding : MonoBehaviour
         pathfindingLinkList = new List<PathfindingLink>();
         if (pathfindingLinkContainer != null)
         {
+
             foreach (Transform linkTf in pathfindingLinkContainer)
             {
                 if (linkTf.TryGetComponent(out PathfindingLinkMonoBehaviour linkMb))
                 {
                     pathfindingLinkList.Add(linkMb.GetPathfindingLink());
+
                 }
             }
         }
+
+
     }
 
     /// <summary>
@@ -776,9 +779,9 @@ public class PathFinding : MonoBehaviour
     {
         return width;
     }
-    
+
     public int GetHeight()
     {
-        return height;    
+        return height;
     }
 }

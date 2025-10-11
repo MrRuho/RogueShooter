@@ -22,8 +22,20 @@ public class UnitAnimator : NetworkBehaviour
 
     private static bool IsNetworkActive() => NetworkClient.active || NetworkServer.active;
 
+    private MoveAction _move;
+    private ShootAction _shoot;
+    private GranadeAction _grenade;
+    private MeleeAction _melee;
+
+
     private void Awake()
     {
+        TryGetComponent(out _move);
+        TryGetComponent(out _shoot);
+        TryGetComponent(out _grenade);
+        TryGetComponent(out _melee);
+
+        /*
         if (TryGetComponent<MoveAction>(out MoveAction moveAction))
         {
             moveAction.OnStartMoving += MoveAction_OnStartMoving;
@@ -46,15 +58,75 @@ public class UnitAnimator : NetworkBehaviour
             meleeAction.OnMeleeActionStarted += MeleeAction_OnMeleeActionStarted;
             meleeAction.OnMeleeActionCompleted += MeleeAction_OnMeleeActionCompleted;
         }
+        */
+    }
+
+    private void OnEnable()
+    {
+        // Varmuus: poista ensin, tilaa sitten -> estää tuplat vaikka OnEnable ajettaisiin useasti
+        if (_move)
+        {
+            _move.OnStartMoving -= MoveAction_OnStartMoving;
+            _move.OnStopMoving -= MoveAction_OnStopMoving;
+            _move.OnStartMoving += MoveAction_OnStartMoving;
+            _move.OnStopMoving += MoveAction_OnStopMoving;
+        }
+
+        if (_shoot)
+        {
+            _shoot.OnShoot -= ShootAction_OnShoot;
+            _shoot.OnShoot += ShootAction_OnShoot;
+        }
+
+        if (_grenade)
+        {
+            _grenade.ThrowGranade -= GrenadeAction_ThrowGranade;
+            _grenade.ThrowReady -= GrenadeAction_ThrowReady;
+            _grenade.ThrowGranade += GrenadeAction_ThrowGranade;
+            _grenade.ThrowReady += GrenadeAction_ThrowReady;
+        }
+
+        if (_melee)
+        {
+            _melee.OnMeleeActionStarted -= MeleeAction_OnMeleeActionStarted;
+            _melee.OnMeleeActionCompleted -= MeleeAction_OnMeleeActionCompleted;
+            _melee.OnMeleeActionStarted += MeleeAction_OnMeleeActionStarted;
+            _melee.OnMeleeActionCompleted += MeleeAction_OnMeleeActionCompleted;
+        }
+    }
+    
+    private void OnDisable()
+    {
+        if (_move)
+        {
+            _move.OnStartMoving -= MoveAction_OnStartMoving;
+            _move.OnStopMoving  -= MoveAction_OnStopMoving;
+        }
+        if (_shoot)
+        {
+            _shoot.OnShoot -= ShootAction_OnShoot;
+        }
+        if (_grenade)
+        {
+            _grenade.ThrowGranade -= GrenadeAction_ThrowGranade;
+            _grenade.ThrowReady   -= GrenadeAction_ThrowReady;
+        }
+        if (_melee)
+        {
+            _melee.OnMeleeActionStarted   -= MeleeAction_OnMeleeActionStarted;
+            _melee.OnMeleeActionCompleted -= MeleeAction_OnMeleeActionCompleted;
+        }
     }
 
     private void Start()
     {
         EquipRifle();
     }
-
+    
+    /*
     void OnDisable()
     {
+        
         if (TryGetComponent<MoveAction>(out MoveAction moveAction))
         {
             moveAction.OnStartMoving -= MoveAction_OnStartMoving;
@@ -77,7 +149,9 @@ public class UnitAnimator : NetworkBehaviour
             meleeAction.OnMeleeActionStarted -= MeleeAction_OnMeleeActionStarted;
             meleeAction.OnMeleeActionCompleted -= MeleeAction_OnMeleeActionCompleted;
         }
+        
     }
+    */
 
     private void MoveAction_OnStartMoving(object sender, EventArgs e)
     {

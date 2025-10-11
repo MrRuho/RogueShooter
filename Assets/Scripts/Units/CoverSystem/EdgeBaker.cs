@@ -425,4 +425,5 @@ public class EdgeBaker : MonoBehaviour
 
         return gp.x >= 0 && gp.z >= 0 && gp.x < Width && gp.z < Height && gp.floor >= 0 && gp.floor < FloorAmount;
     }
+
 }

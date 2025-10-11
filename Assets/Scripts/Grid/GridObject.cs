@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using UnityEngine;
 
 // <summary>
 // This class represents a grid object in the grid system.

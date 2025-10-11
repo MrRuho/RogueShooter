@@ -28,6 +28,11 @@ public class FloorVisibility : MonoBehaviour
         ignoreSet = new HashSet<Renderer>(ignoreRendererList);
     }
 
+    void OnDisable()
+    {
+        if (unit != null) unit.OnHiddenChangedEvent -= OnUnitHiddenChanged;
+    }
+
     private void Start()
     {
         floor = LevelGrid.Instance.GetFloor(transform.position);

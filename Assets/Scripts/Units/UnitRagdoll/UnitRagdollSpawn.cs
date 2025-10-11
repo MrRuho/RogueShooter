@@ -20,6 +20,11 @@ public class UnitRagdollSpawn : MonoBehaviour
         healthSystem.OnDead += HealthSystem_OnDied;
     }
 
+    private void OnDisable()
+    {
+        healthSystem.OnDead -= HealthSystem_OnDied;
+    }
+
     private void HealthSystem_OnDied(object sender, EventArgs e)
     {
         if (spawned) return;

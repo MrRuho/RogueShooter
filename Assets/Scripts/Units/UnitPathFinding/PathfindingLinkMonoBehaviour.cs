@@ -1,5 +1,7 @@
 using UnityEngine;
 
+// Linkit asetetaan tyhjään linkkejä sisältävään game objektiin joka annetaan PathFindig.cs
+// Pathfinding etsii yhteydet Editorissa ennakkoon annetusta linkki conteinerista.
 public class PathfindingLinkMonoBehaviour : MonoBehaviour
 {
     public Vector3 linkPositionA;
@@ -17,10 +19,12 @@ public class PathfindingLinkMonoBehaviour : MonoBehaviour
 
     public PathfindingLink GetPathfindingLink()
     {
+        var aW = transform.TransformPoint(linkPositionA);
+        var bW = transform.TransformPoint(linkPositionB);
         return new PathfindingLink
         {
-            gridPositionA = LevelGrid.Instance.GetGridPosition(linkPositionA),
-            gridPositionB = LevelGrid.Instance.GetGridPosition(linkPositionB),
+            gridPositionA = LevelGrid.Instance.GetGridPosition(aW),
+            gridPositionB = LevelGrid.Instance.GetGridPosition(bW),
         };
     }
 }

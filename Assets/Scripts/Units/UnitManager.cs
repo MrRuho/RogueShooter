@@ -32,8 +32,8 @@ public class UnitManager : MonoBehaviour
 
     private void Start()
     {
-        Unit.OnAnyUnitSpawned += Unit_OnAnyUnitSpawned;
-        Unit.OnAnyUnitDead += Unit_OnAnyUnitDead;
+     //   Unit.OnAnyUnitSpawned += Unit_OnAnyUnitSpawned;
+     //   Unit.OnAnyUnitDead += Unit_OnAnyUnitDead;
     }
 
     void OnEnable()
@@ -47,11 +47,10 @@ public class UnitManager : MonoBehaviour
         Unit.OnAnyUnitSpawned -= Unit_OnAnyUnitSpawned;
         Unit.OnAnyUnitDead -= Unit_OnAnyUnitDead;
     }
-
+    
 
     private void Unit_OnAnyUnitSpawned(object sender, EventArgs e)
     {
-
         Unit unit = sender as Unit;
         unitList.Add(unit);
 
@@ -100,7 +99,5 @@ public class UnitManager : MonoBehaviour
         unitList.Clear();
         friendlyUnitList.Clear();
         enemyUnitList.Clear();
-
     }
-
 }

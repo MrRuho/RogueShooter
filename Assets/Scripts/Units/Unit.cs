@@ -98,6 +98,11 @@ public class Unit : NetworkBehaviour
         thisTurnStartingCover = personalCover;
     }
 
+    private void OnDisable()
+    {
+        TurnSystem.Instance.OnTurnChanged -= TurnSystem_OnTurnChanged;
+    }
+
     private void Update()
     {
         GridPosition newGridPosition = LevelGrid.Instance.GetGridPosition(transform.position);

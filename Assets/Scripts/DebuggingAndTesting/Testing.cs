@@ -21,7 +21,7 @@ public class Testing : MonoBehaviour
 
             // ScreenShake.Instance.Shake(5f);
 
-           // ScreenShake.Instance.RecoilCameraShake();
+            // ScreenShake.Instance.RecoilCameraShake();
 
             //Show pathfind line
             /*
@@ -42,7 +42,8 @@ public class Testing : MonoBehaviour
             }
             */
         }
-
+        
+        /*
         //Resetoi pelin alkamaan alusta.
         if (Input.GetKeyDown(KeyCode.R))
         {
@@ -55,6 +56,7 @@ public class Testing : MonoBehaviour
                 GameReset.HardReloadSceneKeepMode();
             }
         }
+        */
 
     }
 }

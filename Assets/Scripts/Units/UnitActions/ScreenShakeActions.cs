@@ -14,6 +14,7 @@ public class ScreenShakeActions : MonoBehaviour
     {
         ShootAction.OnAnyShoot -= ShootAction_OnAnyShoot;
         GrenadeProjectile.OnAnyGranadeExploded -= GrenadeProjectile_OnAnyGranadeExploded;
+         MeleeAction.OnAnyMeleeActionHit -= MeleeAction_OnAnyMeleeActionHit;
     }
 
     private void ShootAction_OnAnyShoot(object sender, ShootAction.OnShootEventArgs e)

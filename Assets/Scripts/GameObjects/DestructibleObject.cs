@@ -1,4 +1,3 @@
-using System;
 using Unity.Mathematics;
 using UnityEngine;
 using Mirror;
@@ -143,18 +142,46 @@ public class DestructibleObject : NetworkBehaviour
     
     // Lisää tämä luokkaan
     [ClientRpc]
-    private void RpcOnDestroyed(GridPosition pos) {
+    private void RpcOnDestroyed(GridPosition pos)
+    {
+
+        /*
         // Clientin paikallinen kopio/visualisointi
         if (PathFinding.Instance != null)
             PathFinding.Instance.SetIsWalkableGridPosition(pos, true);
         EdgeBaker.Instance.RebakeEdgesAround(pos);
+        */
+
+        var lg = LevelGrid.Instance;
+        var pf = PathFinding.Instance;
+        var eb = EdgeBaker.Instance;
+
+        if (lg != null && pf != null)
+            pf.SetIsWalkableGridPosition(pos, true);
+
+        if (lg != null && pf != null && eb != null)
+            eb.RebakeEdgesAround(pos);
     }
 
     // Varmistus myös tilanteeseen, jossa RPC hukkuu tai tulee myöhässä
-    public override void OnStopClient() {
+    public override void OnStopClient() 
+    {
+        /*
         if (PathFinding.Instance != null)
             PathFinding.Instance.SetIsWalkableGridPosition(gridPosition, true);
         EdgeBaker.Instance.RebakeEdgesAround(gridPosition);
+        */
+        var lg = LevelGrid.Instance;
+        var pf = PathFinding.Instance;
+        var eb = EdgeBaker.Instance;
+
+        // Palauta walkable vain jos LevelGrid + PathFinding ovat olemassa
+        if (lg != null && pf != null)
+            pf.SetIsWalkableGridPosition(gridPosition, true);
+
+        // Älä rebakea jos yksikin puuttuu (teardownissa usein puuttuu)
+        if (lg != null && pf != null && eb != null)
+            eb.RebakeEdgesAround(gridPosition);
     }
 
     [ClientRpc]
@@ -170,5 +197,6 @@ public class DestructibleObject : NetworkBehaviour
 
         foreach (var c in GetComponentsInChildren<Collider>(true))
             c.enabled = !hidden;
-    }    
+    }
+
 }
