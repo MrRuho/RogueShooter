@@ -110,10 +110,11 @@ public class EdgeBaker : MonoBehaviour
 
     private void Start()
     {
-        if (autoBakeOnStart) BakeAllEdges();
+        if (GameModeManager.SelectedMode == GameMode.SinglePlayer && autoBakeOnStart)
+        {
+            BakeAllEdges();   // offline / yksinpeli
+        }
     }
-
-    
 
     // ------------------------- PUBLIC API -------------------------
     /// <summary>

@@ -4,8 +4,7 @@ using UnityEngine;
 
 public class MapContentSpawner : NetworkBehaviour
 {
-    // (Valinnainen) ettei bakea ajeta klientillä monta kertaa
-    private static bool s_clientBakedOnce;
+    private  bool _clientBakedThisScene;
 
     public override void OnStartServer()
     {
@@ -15,49 +14,54 @@ public class MapContentSpawner : NetworkBehaviour
 
     private IEnumerator SpawnThenBake()
     {
-        Debug.Log("[MapContentSpawner] Spawning map content on server...");
-
         // 1) Spawnaa kaikki NetworkIdentity-suojat serverillä
         var spawnPoints = FindObjectsByType<ObjectSpawnPlaceHolder>(FindObjectsSortMode.None);
         foreach (var sp in spawnPoints)
-            sp.CreteObject(); // tämä kutsuu NetworkServer.Spawn(...)
+            sp.CreteObject(); // NetworkServer.Spawn(...)
 
-        // 2) Server-bake (jos serveri käyttää edge-dataa esim. AI:hin)
-        EdgeBaker.Instance.BakeAllEdges();
+        // 2) Odota, että riippuvuudet ovat olemassa
+        yield return new WaitUntil(() =>
+            EdgeBaker.Instance != null &&
+            LevelGrid.Instance  != null &&
+            PathFinding.Instance != null
+        );
 
-        // 3) Odota 1 frame → varmistaa että spawn-viestit ehtivät klienteille
+        // 3) Odota 1 frame, että uusien objektien Start() ehtii
         yield return null;
 
-        // 4) Käske kaikkia klientejä bake’amaan omassa päässään
-        RpcBakeAllEdgesOnClients();
+        // 4) Server-bake
+        EdgeBaker.Instance.BakeAllEdges();
+
+        // 5) Pyydä clienttejä bakeamaan guardattuna
+        RpcBakeAllEdgesOnClientsGuarded();
     }
 
     [ClientRpc]
-    private void RpcBakeAllEdgesOnClients()
+    private void RpcBakeAllEdgesOnClientsGuarded()
     {
-        if (s_clientBakedOnce) return; // valinnainen vartija
-        EdgeBaker.Instance.BakeAllEdges();
-        s_clientBakedOnce = true;
-        // Jos hover-UI tarvitsee refreshin, kutsu se tässä:
-        // GridSystemVisual.Instance?.RefreshAll?.Invoke();
-        Debug.Log("[MapContentSpawner] Client received RPC: BakeAllEdges()");
+        StartCoroutine(ClientBakeGuarded());
     }
 
-    // BONUS: myöhäisille liittyjille (late join) – kun tämä scene-objekti spawnaa klientille
     public override void OnStartClient()
     {
         base.OnStartClient();
-        StartCoroutine(BakeNextFrameOnClient());
+        // varmistus myöhässä liittyville
+        StartCoroutine(ClientBakeGuarded());
     }
 
-    private IEnumerator BakeNextFrameOnClient()
+    private IEnumerator ClientBakeGuarded()
     {
-        yield return null; // odota että kaikki scene-spawnit on valmiit klientilläkin
-        if (!s_clientBakedOnce)
-        {
-            EdgeBaker.Instance.BakeAllEdges();
-            s_clientBakedOnce = true;
-            Debug.Log("[MapContentSpawner] OnStartClient: BakeAllEdges()");
-        }
+        if (_clientBakedThisScene) yield break;
+        // Odota että kaikki on varmasti paikalla myös klientillä
+        yield return new WaitUntil(() =>
+            EdgeBaker.Instance != null &&
+            LevelGrid.Instance != null &&
+            PathFinding.Instance != null
+        );
+        
+        yield return null; // Startit ehtii
+
+        EdgeBaker.Instance.BakeAllEdges();
+        _clientBakedThisScene = true;
     }
 }

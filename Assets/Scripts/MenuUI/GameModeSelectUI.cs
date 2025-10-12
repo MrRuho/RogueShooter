@@ -1,3 +1,4 @@
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -7,6 +8,13 @@ public class GameModeSelectUI : MonoBehaviour
     [Header("Canvas References")]
     [SerializeField] private GameObject gameModeSelectCanvas; // this (self)
     [SerializeField] private GameObject connectCanvas;        // Hiden on start
+    [SerializeField] private GameObject connectCodePanel;        // Hiden on start
+
+    [Header("Services")]
+    [SerializeField] private Authentication authentication; // <-- UUSI
+
+    [Header("Join Code UI")]
+    [SerializeField] private TMP_Text joinCodeText; 
 
     // UI Elements
     [Header("Buttons")]
@@ -18,6 +26,7 @@ public class GameModeSelectUI : MonoBehaviour
         // Ensure the game mode select canvas is active and connect canvas is inactive at start
         gameModeSelectCanvas.SetActive(true);
         connectCanvas.SetActive(false);
+        connectCodePanel.SetActive(false);
 
         // Add button listeners
         coopButton.onClick.AddListener(OnClickCoOp);
@@ -38,13 +47,25 @@ public class GameModeSelectUI : MonoBehaviour
 
     public async void OnSelected()
     {
-        Authentication authentication = connectCanvas.GetComponent<Authentication>();
+        // 0) Varmista että Authentication löytyy (älä luota pelkkään connectCanvas-viitteeseen)
+        if (!authentication)
+            authentication = FindFirstObjectByType<Authentication>(FindObjectsInactive.Include);
+
+        if (!authentication)
+        {
+            Debug.LogError("[GameModeSelectUI] Authentication-componenttia ei löytynyt scenestä.");
+            return;
+        }
+
+        // 1) Sign-in Unity Servicesiin
         await authentication.SingInPlayerToUnityServerAsync();
 
+        // 2) UI-flown jatko
         FieldCleaner.ClearAll();
         StartCoroutine(ResetGridNextFrame());
-        gameModeSelectCanvas.SetActive(false);
-        connectCanvas.SetActive(true);
+        if (gameModeSelectCanvas) gameModeSelectCanvas.SetActive(false);
+        if (connectCanvas) connectCanvas.SetActive(true);
+
     }
 
     private System.Collections.IEnumerator ResetGridNextFrame()
@@ -73,5 +94,28 @@ public class GameModeSelectUI : MonoBehaviour
             // Yksinpeli
             GameReset.HardReloadSceneKeepMode();
         }
+    }
+
+    public void SetConnectCodePanelVisibility(bool active)
+    {
+        connectCodePanel.SetActive(active);
+    }
+
+    public void SetJoinCodeText(string s)
+    {
+        if (!joinCodeText)
+        {
+            Debug.LogWarning("[GameModeSelectUI] joinCodeText not assigned.");
+            return;
+        }
+
+        s = (s ?? "").Trim().ToUpperInvariant();
+        joinCodeText.text = $"JOIN CODE: {s}";
+
+        // (valinnainen) kopioi koodi leikepöydälle:
+        // GUIUtility.systemCopyBuffer = s;
+
+        // (valinnainen) varmista että paneeli on näkyvissä:
+        // if (connectCodePanel && !connectCodePanel.activeSelf) connectCodePanel.SetActive(true);
     }
 }

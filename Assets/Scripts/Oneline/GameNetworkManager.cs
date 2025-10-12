@@ -10,6 +10,8 @@ namespace Utp
 	public class GameNetworkManager : NetworkManager
 	{
 		public static GameNetworkManager Instance { get; private set; }
+
+		[SerializeField] private int hideJoinCodeAfterConnections = 2; // Host + 1 client
 		private UtpTransport utpTransport;
 
 		/// <summary>
@@ -121,7 +123,8 @@ namespace Utp
 			(string joinCode) =>
 			{
 				relayJoinCode = joinCode;
-				Debug.LogError($"Relay join code: {joinCode}");
+			//	Debug.LogError($"Relay join code: {joinCode}");
+				Debug.Log($"Relay join code: {joinCode}");
 				StartHost();
 			},
 			() =>
@@ -206,6 +209,13 @@ namespace Utp
 				return;
 			}
 			base.OnServerAddPlayer(conn);
+
+			int count = NetworkServer.connections?.Count ?? 0;
+			if (count >= hideJoinCodeAfterConnections)
+			{
+				// Piilota koodilaatikko
+				RelayJoinCodeUI.Instance.Hide();
+			}
 
 			// 2) päätä host vs client
 			bool isHost = conn.connectionId == 0;

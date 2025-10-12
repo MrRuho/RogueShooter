@@ -43,6 +43,6 @@ public class ResetService : NetworkBehaviour
         PlayerLocalTurnGate.SetCanAct(true);
 
         // 2) Päivitä HUD (näyttää "Players turn", aktivoi End Turn -napin logiikkaasi vasten)
-        TurnSystem.Instance?.SetHudFromNetwork(turnNumber, true);
+        TurnSystem.Instance.SetHudFromNetwork(turnNumber, true);
     }
 }

@@ -1,8 +1,8 @@
-
 using System.Collections;
 using Mirror;
 using UnityEngine;
 using Utp;
+
 /// <summary>
 /// This ensures that the server starts correctly and in the correct order.
 /// </summary>
@@ -42,12 +42,14 @@ public class ServerBootstrap : NetworkBehaviour
         }
 
         // 4) Rakenna occupancy nykyisestä scenestä (unitit/esteet)
-        LevelGrid.Instance?.RebuildOccupancyFromScene();
+        LevelGrid.Instance.RebuildOccupancyFromScene();
+        // 4b) Varmista että edge/cover-data on synkassa occupancy/geometryn kanssa
+        EdgeBaker.Instance.BakeAllEdges();
 
         // 5) Pakota aloitus Players turniin ja turnNumber = 1
         NetTurnManager.Instance.turnNumber = 1;
         NetTurnManager.Instance.phase = TurnPhase.Players;
-        TurnSystem.Instance?.ForcePhase(isPlayerTurn: true, incrementTurnNumber: false);
+        TurnSystem.Instance.ForcePhase(isPlayerTurn: true, incrementTurnNumber: false);
 
         // 6) Nyt on turvallista lähettää UI/RPC:t kaikille
         var endedIds = System.Array.Empty<int>();
@@ -61,12 +63,11 @@ public class ServerBootstrap : NetworkBehaviour
         );
 
         // (valinnainen) piilota enemy-WorldUI tms. alussa
-        UnitUIBroadcaster.Instance?.BroadcastUnitWorldUIVisibility(false);
+        UnitUIBroadcaster.Instance.BroadcastUnitWorldUIVisibility(false);
 
         // (valinnainen) client-init, jos sinulla on tällainen
-        ResetService.Instance?.RpcPostResetClientInit(NetTurnManager.Instance.turnNumber);
-     
+        ResetService.Instance.RpcPostResetClientInit(NetTurnManager.Instance.turnNumber);
+
         NetTurnManager.Instance.SetPlayerStartState();
     }
 }
-
