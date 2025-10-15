@@ -67,8 +67,7 @@ public class TurnSystem : MonoBehaviour
             {
                 Unit u = ownUnits[i];
                 int ap = u.GetActionPoints();
-                if (ap <= 0) continue;
-
+                if (ap <= 0) continue; 
                 int per = u.GetCoverRegenPerUnusedAP();
                 u.RegenCoverBy(ap * per);
             }

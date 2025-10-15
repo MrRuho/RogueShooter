@@ -20,6 +20,7 @@ GameObject:
   - component: {fileID: 6881522347894280322}
   - component: {fileID: 8360174411706437545}
   - component: {fileID: 8973082523940534421}
+  - component: {fileID: 1096603611384930272}
   - component: {fileID: 7633362043615807318}
   - component: {fileID: 3861632083682490980}
   - component: {fileID: 5069564035370356584}
@@ -260,6 +261,18 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
+--- !u!114 &1096603611384930272
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 246340107227206225}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 15b160be1d2c45f48864f2fb11f251d7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CoverSkill
 --- !u!114 &7633362043615807318
 MonoBehaviour:
   m_ObjectHideFlags: 0

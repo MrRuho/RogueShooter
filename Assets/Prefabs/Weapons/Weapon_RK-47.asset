@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3a2416bd990fc1e4b8516fff1b10d615, type: 3}
   m_Name: Weapon_RK-47
   m_EditorClassIdentifier: Assembly-CSharp::WeaponDefinition
+  maxShootRange: 15
   baseDamage: 50
   critBonusDamage: 10
   grazeFactor: 0.6

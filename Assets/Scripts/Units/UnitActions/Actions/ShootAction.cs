@@ -24,8 +24,9 @@ public class ShootAction : BaseAction
 
     [SerializeField] private LayerMask obstaclesLayerMask;
     private State state;
-    [SerializeField] private int maxShootDistance = 7;
-    [SerializeField] private int damage = 30;
+
+   // [SerializeField] private int maxShootDistance = 7;
+   // [SerializeField] private int damage = 30;
     [SerializeField] private WeaponDefinition weapon;
 
     private float stateTimer;
@@ -125,7 +126,7 @@ public class ShootAction : BaseAction
                 // Jos suojaa ei ole ollenkaan niin tämäkin lasketaan suoraksi osumaksi.
                 if (GetCoverType(targetUnit) == CoverService.CoverType.None)
                 {
-                    MakeDamage(damage, targetUnit);
+                    MakeDamage(result.damage, targetUnit);
                     return;
                 }
                 
@@ -137,7 +138,7 @@ public class ShootAction : BaseAction
                 // Myös suojasta jäljelle jäänyt vahinko menee vahinkoon.
                 if (GetCoverType(targetUnit) == CoverService.CoverType.None)
                 {
-                    MakeDamage(damage, targetUnit);
+                    MakeDamage(result.damage, targetUnit);
                     return;
                 }
 
@@ -167,11 +168,11 @@ public class ShootAction : BaseAction
     {
         List<GridPosition> validGridPositionList = new();
 
-        for (int x = -maxShootDistance; x <= maxShootDistance; x++)
+        for (int x = -weapon.maxShootRange; x <= weapon.maxShootRange; x++)
         {
-            for (int z = -maxShootDistance; z <= maxShootDistance; z++)
+            for (int z = -weapon.maxShootRange; z <= weapon.maxShootRange; z++)
             {
-                for (int floor = -maxShootDistance; floor <= maxShootDistance; floor++)
+                for (int floor = -weapon.maxShootRange; floor <= weapon.maxShootRange; floor++)
                 {
                     GridPosition offsetGridPosition = new(x, z, floor);
                     GridPosition testGridPosition = unitGridPosition + offsetGridPosition;
@@ -179,7 +180,7 @@ public class ShootAction : BaseAction
                     // Check if the test grid position is within the valid range and not occupied by another unit
                     if (!LevelGrid.Instance.IsValidGridPosition(testGridPosition)) continue;
                     int testDistance = Mathf.Abs(x) + Mathf.Abs(z);
-                    if (testDistance > maxShootDistance) continue;
+                    if (testDistance > weapon.maxShootRange) continue;
                     if (!LevelGrid.Instance.HasAnyUnitOnGridPosition(testGridPosition)) continue;
 
                     Unit targetUnit = LevelGrid.Instance.GetUnitAtGridPosition(testGridPosition);
@@ -228,7 +229,7 @@ public class ShootAction : BaseAction
 
     public int GetMaxShootDistance()
     {
-        return maxShootDistance;
+        return weapon.maxShootRange;
     }
 
     /// ---------------- AI ----------------

@@ -25,6 +25,8 @@ public struct RangeBandTuning
 [CreateAssetMenu(menuName = "RogueShooter/Weapon")]
 public class WeaponDefinition : ScriptableObject
 {
+    [Header("Range: Weapon basic max Range (No upgrades)")]
+    public int maxShootRange = 10;
     
     [Header("Base damage")]
     public int baseDamage = 10;
