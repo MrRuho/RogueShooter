@@ -75,7 +75,6 @@ public class PlayerController : NetworkBehaviour
         // Set AP visibility in versus game
         PlayerLocalTurnGate.Set(canAct);
     }
-    
 
     [TargetRpc]
     public void TargetShowEnd(NetworkConnectionToClient conn, bool youWon)
@@ -83,5 +82,4 @@ public class PlayerController : NetworkBehaviour
         var ui = FindFirstObjectByType<WinBattle>();
         if (ui) ui.ShowEnd(youWon ? "You win!" : "You lost");
     }
-
 }

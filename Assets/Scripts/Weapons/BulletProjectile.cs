@@ -3,6 +3,7 @@ using UnityEngine;
 
 public class BulletProjectile : NetworkBehaviour
 {
+    [SyncVar] public uint actorUnitNetId;
     [SerializeField] private TrailRenderer trailRenderer;
     [SerializeField] private Transform bulletHitVfxPrefab;
 

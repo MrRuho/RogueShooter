@@ -13,8 +13,9 @@ using UnityEngine;
 [RequireComponent(typeof(TurnTowardsAction))]
 public class Unit : NetworkBehaviour
 {
-
-    private const int ACTION_POINTS_MAX = 100;
+    [SerializeField] private int newCoverBonusHalf = 3;
+    [SerializeField] private int newCoverBonusFull = 6;
+    private const int ACTION_POINTS_MAX = 2;
 
     [SyncVar] public uint OwnerId;
 
@@ -22,6 +23,8 @@ public class Unit : NetworkBehaviour
     private int personalCover;
     private int personalCoverMax;
     private int thisTurnStartingCover;
+    [SyncVar] private bool underFire = false;
+    public bool IsUnderFire => underFire;
 
     // Valinnainen: UI:lle
     public event Action<int, int> OnCoverPoolChanged;
@@ -30,6 +33,8 @@ public class Unit : NetworkBehaviour
     // [SerializeField] private UnitSkills skills; // sisältää CoverAbilityn tason tms.
     [SerializeField] public UnitArchetype archetype;
     [SerializeField] private WeaponDefinition currentWeapon;
+
+    //Events
     public static event EventHandler OnAnyActionPointsChanged;
     public static event EventHandler OnAnyUnitSpawned;
     public static event EventHandler OnAnyUnitDead;
@@ -53,6 +58,8 @@ public class Unit : NetworkBehaviour
     private Renderer[] renderers;
     private Collider[] colliders;
     private Animator anim;
+
+    private int grenadePCS;
 
     private void Awake()
     {
@@ -94,8 +101,14 @@ public class Unit : NetworkBehaviour
             personalCoverMax = archetype.personalCoverMax;
         }
 
+        // **** Cover Skill *****
         personalCover = personalCoverMax;
         thisTurnStartingCover = personalCover;
+        underFire = false;
+
+        //****** Items ******
+        grenadePCS = archetype.grenadeCapacity;
+
     }
 
     private void OnDisable()
@@ -225,7 +238,6 @@ public class Unit : NetworkBehaviour
         isHidden = true;
         SetSoftHiddenLocal(true);
         StartCoroutine(DestroyAfter(0.30f));
-
     }
 
     private IEnumerator DestroyAfter(float seconds)
@@ -241,76 +253,6 @@ public class Unit : NetworkBehaviour
         foreach (var c in colliders) if (c) c.enabled = visible;
         if (anim) anim.enabled = visible;
     }
-
-    public int GetPersonalCover()
-    {
-        return personalCover;
-    }
-    
-    /*
-    public void SetPersonalCover(int damage)
-    {
-        personalCover = damage;
-        OnCoverPoolChanged?.Invoke(personalCover, personalCoverMax); // paikallinen UI päivittyy heti
-
-        // Verkossa: ilmoita muille
-        if (NetworkServer.active || NetworkClient.active)
-            NetworkSync.UpdateCoverUI(this);
-        if (!NetworkServer.active)
-        {
-            var ni = GetComponent<NetworkIdentity>();
-            if (NetworkClient.active && NetworkSyncAgent.Local != null && ni != null)
-            {
-                NetworkSyncAgent.Local.CmdSetUnitCover(ni.netId, damage);
-            }
-            return; // älä muuta paikallista arvoa clientissä → ei “pomppu” efektiä
-        }
-
-        personalCover = Mathf.Clamp(damage, 0, personalCoverMax);
-        OnCoverPoolChanged?.Invoke(personalCover, personalCoverMax);
-        NetworkSync.UpdateCoverUI(this);
-    }
-    */
-    // Unit.cs
-public void SetPersonalCover(int value)
-{
-    // OFFLINE: ei Mirroria → päivitä suoraan paikallisesti
-    if (!NetworkServer.active && !NetworkClient.active)
-    {
-        ApplyCoverLocal(value);
-        return;
-    }
-
-    // ONLINE SERVER/HOST: päivitä totuusarvo ja broadcastaa
-    if (NetworkServer.active)
-    {
-        ApplyCoverServer(value);
-        return;
-    }
-
-    // ONLINE CLIENT: pyydä serveriä asettamaan (EI paikallista asettamista → ei "välähdystä")
-    var ni = GetComponent<NetworkIdentity>();
-    if (NetworkClient.active && NetworkSyncAgent.Local != null && ni != null)
-    {
-        NetworkSyncAgent.Local.CmdSetUnitCover(ni.netId, value);
-    }
-    // ei paikallista muutosta täällä
-}
-
-    private void ApplyCoverLocal(int value)
-    {
-        personalCover = Mathf.Clamp(value, 0, personalCoverMax);
-        OnCoverPoolChanged?.Invoke(personalCover, personalCoverMax); // UI päivittyy heti
-    }
-
-    [Server] // kutsutaan vain serverillä
-    private void ApplyCoverServer(int value)
-    {
-        personalCover = Mathf.Clamp(value, 0, personalCoverMax);
-        OnCoverPoolChanged?.Invoke(personalCover, personalCoverMax);
-        NetworkSync.UpdateCoverUI(this); // server → Rpc → kaikkien UI:t
-    }
-
 
     public float GetHealthNormalized()
     {
@@ -332,18 +274,68 @@ public void SetPersonalCover(int value)
         return maxMoveDistance;
     }
 
+    public void SetUnderFire(bool value) => underFire = value;
+
+
+    
+    ///****** CoverSystem!************
+
+    public int GetPersonalCover()
+    {
+        return personalCover;
+    }
+
+    public void SetPersonalCover(int value)
+    {
+        // OFFLINE: ei Mirroria → päivitä suoraan paikallisesti
+        if (!NetworkServer.active && !NetworkClient.active)
+        {
+            ApplyCoverLocal(value);
+            return;
+        }
+
+        // ONLINE SERVER/HOST: päivitä totuusarvo ja broadcastaa
+        if (NetworkServer.active)
+        {
+            ApplyCoverServer(value);
+            return;
+        }
+
+        // ONLINE CLIENT: pyydä serveriä asettamaan (EI paikallista asettamista → ei "välähdystä")
+        var ni = GetComponent<NetworkIdentity>();
+        if (NetworkClient.active && NetworkSyncAgent.Local != null && ni != null)
+        {
+            NetworkSyncAgent.Local.CmdSetUnitCover(ni.netId, value);
+        }
+        // ei paikallista muutosta täällä
+    }
+
+    private void ApplyCoverLocal(int value)
+    {
+        personalCover = Mathf.Clamp(value, 0, personalCoverMax);
+        OnCoverPoolChanged?.Invoke(personalCover, personalCoverMax); // UI päivittyy heti
+    }
+
+    [Server] // kutsutaan vain serverillä
+    private void ApplyCoverServer(int value)
+    {
+        personalCover = Mathf.Clamp(value, 0, personalCoverMax);
+        OnCoverPoolChanged?.Invoke(personalCover, personalCoverMax);
+        NetworkSync.UpdateCoverUI(this); // server → Rpc → kaikkien UI:t
+    }
+
     public void RegenCoverOnMove(int distance)
     {
         int regenPerTile = archetype != null ? archetype.coverRegenOnMove : 5;
-
         int tileDelta = distance / 10;
-
         int coverChange = regenPerTile * tileDelta;
         int newCover = personalCover + coverChange;
-        if (newCover <= thisTurnStartingCover )
+
+        if (newCover <= thisTurnStartingCover)
         {
             newCover = thisTurnStartingCover;
         }
+
         personalCover = Mathf.Clamp(newCover, 0, personalCoverMax);
 
         OnCoverPoolChanged?.Invoke(personalCover, personalCoverMax);
@@ -360,7 +352,11 @@ public void SetPersonalCover(int value)
 
     public int GetCoverRegenPerUnusedAP()
     {
-        return archetype != null ? archetype.coverRegenPerUnusedAP : 1;
+        if (!underFire)
+        {
+            return archetype != null ? archetype.coverRegenPerUnusedAP : 1;
+        }
+        return 0;
     }
 
     public int GetPersonalCoverMax() => personalCoverMax;
@@ -374,7 +370,59 @@ public void SetPersonalCover(int value)
     public void ApplyNetworkCover(int current, int max)
     {
         personalCoverMax = max;
-        personalCover    = Mathf.Clamp(current, 0, max);
+        personalCover = Mathf.Clamp(current, 0, max);
         OnCoverPoolChanged?.Invoke(personalCover, personalCoverMax);
-    } 
+    }
+
+    public void AddPersonalCover(int delta)
+    {
+        if (delta == 0) return;
+        personalCover = Mathf.Clamp(personalCover + delta, 0, personalCoverMax);
+        OnCoverPoolChanged?.Invoke(personalCover, personalCoverMax);
+        NetworkSync.UpdateCoverUI(this); // jos verkossa
+    }
+
+    public void SetCoverBonus()
+    {
+        // Bonusta vain jos EI olla tulen alla
+        if (underFire) return;
+
+        // 1) hae nykyinen ruutu
+        var gp = GetGridPosition(); // tai: LevelGrid.Instance.GetGridPosition(transform.position)
+
+        // 2) hae node
+        var pf = PathFinding.Instance;
+        if (pf == null) return;
+        var node = pf.GetNode(gp.x, gp.z, gp.floor);
+        if (node == null) return;
+
+        // 3) mikä tahansa cover riittää (High > Low > None)
+        var t = CoverService.GetNodeAnyCover(node);
+        int bonus = t == CoverService.CoverType.High ? newCoverBonusFull :
+                    t == CoverService.CoverType.Low ? newCoverBonusHalf : 0;
+
+        if (bonus > 0)
+            AddPersonalCover(bonus); // sinulla jo oleva apuri
+    }
+
+    // **********************************
+
+    // ***** weapons ******
+    public void UseGrenade()
+    {
+        if (grenadePCS <= 0)
+        {
+            grenadePCS = 0;
+            return;
+        }
+        grenadePCS -= 1;
+    }
+
+    public int GetGrenadePCS() => grenadePCS;
+
+    public WeaponDefinition GetCurrentWeapon()
+    {
+        return currentWeapon;
+    }
+
 }

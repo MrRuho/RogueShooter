@@ -19,6 +19,7 @@ public abstract class BaseAction : NetworkBehaviour
     protected bool isActive;
     protected Action onActionComplete;
 
+
     protected virtual void Awake()
     {
         unit = GetComponent<Unit>();
@@ -70,12 +71,12 @@ public abstract class BaseAction : NetworkBehaviour
     {
         return unit;
     }
-    
+
     public void MakeDamage(int damage, Unit targetUnit)
     {
         // Peruspaikat (world-space)
         Vector3 attacerPos = unit.GetWorldPosition() + Vector3.up * 1.6f;   // silmä/rinta
-        Vector3 targetPos  = targetUnit.GetWorldPosition() + Vector3.up * 1.2f;
+        Vector3 targetPos = targetUnit.GetWorldPosition() + Vector3.up * 1.2f;
         // Suunta
         Vector3 dir = targetPos - attacerPos;
         if (dir.sqrMagnitude < 0.0001f) dir = targetUnit.transform.forward;  // fallback
@@ -89,11 +90,13 @@ public abstract class BaseAction : NetworkBehaviour
         Vector3 side = Vector3.Cross(dir, Vector3.up).normalized;
         hitPosition += side * UnityEngine.Random.Range(-0.1f, 0.1f);
 
-        NetworkSync.ApplyDamageToUnit(targetUnit, damage, hitPosition);
+        NetworkSync.ApplyDamageToUnit(targetUnit, damage, hitPosition, this.GetActorId());
     }
-
+    
+    
     public void ApplyHit(int damage, Unit targetUnit, bool melee)
     {
+        targetUnit.SetUnderFire(true);
         var ct  = GetCoverType(targetUnit);
 
         if (ct == CoverService.CoverType.None && !melee)
@@ -102,13 +105,18 @@ public abstract class BaseAction : NetworkBehaviour
             return;
         }
 
-        int mitigate = CoverService.GetCoverMitigationPoints(ct);
-        int toCover  = Mathf.Max(0, damage - mitigate);
+        float mitigate = 1;
+        if (targetUnit.GetPersonalCover() > 0)
+        {
+            mitigate = CoverService.GetCoverMitigationPoints(ct);
+        }
+
+        int toCover = Mathf.RoundToInt(damage * mitigate);
 
         int before = targetUnit.GetPersonalCover();
         int after  = before - toCover;
 
-        if (after >= 0)
+        if (after > 0)
         {
             targetUnit.SetPersonalCover(after);
             NetworkSync.UpdateCoverUI(targetUnit);
@@ -117,27 +125,21 @@ public abstract class BaseAction : NetworkBehaviour
         {
             targetUnit.SetPersonalCover(0);
             NetworkSync.UpdateCoverUI(targetUnit);
-            MakeDamage(-after, targetUnit);
+            MakeDamage(damage, targetUnit);
         }
     }
 
     public CoverService.CoverType GetCoverType(Unit targetUnit)
-    { 
+    {
         var gp = targetUnit.GetGridPosition();
         var node = PathFinding.Instance.GetNode(gp.x, gp.z, gp.floor);
         var ct = CoverService.EvaluateCoverHalfPlane(unit.GetGridPosition(), targetUnit.GetGridPosition(), node);
         return ct;
     }
 
-    public enum RotateTargetType
-    {
-        Unit,
-        GridPosition
-    }
-
     public bool RotateTowards(Vector3 targetPosition, float rotationSpeed = 10f)
     {
-         // Suuntavektori
+        // Suuntavektori
         Vector3 aimDirection = (targetPosition - unit.GetWorldPosition()).normalized;
         aimDirection.y = 0f;
 
@@ -146,8 +148,11 @@ public abstract class BaseAction : NetworkBehaviour
         // Kääntyminen on suoritettu.
         float tolerance = 0.99f;
         float dot = Vector3.Dot(transform.forward.normalized, aimDirection);
-        return dot > tolerance; 
+        return dot > tolerance;
     }
+    
+
+
 
     // -------------- ENEMY AI ACTIONS -------------
 

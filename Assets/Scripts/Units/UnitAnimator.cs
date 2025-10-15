@@ -34,31 +34,6 @@ public class UnitAnimator : NetworkBehaviour
         TryGetComponent(out _shoot);
         TryGetComponent(out _grenade);
         TryGetComponent(out _melee);
-
-        /*
-        if (TryGetComponent<MoveAction>(out MoveAction moveAction))
-        {
-            moveAction.OnStartMoving += MoveAction_OnStartMoving;
-            moveAction.OnStopMoving += MoveAction_OnStopMoving;
-        }
-
-        if (TryGetComponent<ShootAction>(out ShootAction shootAction))
-        {
-            shootAction.OnShoot += ShootAction_OnShoot;
-        }
-
-        if (TryGetComponent<GranadeAction>(out GranadeAction granadeAction))
-        {
-            granadeAction.ThrowGranade += GrenadeAction_ThrowGranade;
-            granadeAction.ThrowReady += GrenadeAction_ThrowReady;
-        }
-
-        if (TryGetComponent<MeleeAction>(out MeleeAction meleeAction))
-        {
-            meleeAction.OnMeleeActionStarted += MeleeAction_OnMeleeActionStarted;
-            meleeAction.OnMeleeActionCompleted += MeleeAction_OnMeleeActionCompleted;
-        }
-        */
     }
 
     private void OnEnable()
@@ -122,36 +97,6 @@ public class UnitAnimator : NetworkBehaviour
     {
         EquipRifle();
     }
-    
-    /*
-    void OnDisable()
-    {
-        
-        if (TryGetComponent<MoveAction>(out MoveAction moveAction))
-        {
-            moveAction.OnStartMoving -= MoveAction_OnStartMoving;
-            moveAction.OnStopMoving -= MoveAction_OnStopMoving;
-        }
-
-        if (TryGetComponent<ShootAction>(out ShootAction shootAction))
-        {
-            shootAction.OnShoot -= ShootAction_OnShoot;
-        }
-
-        if (TryGetComponent<GranadeAction>(out GranadeAction granadeAction))
-        {
-            granadeAction.ThrowGranade -= GrenadeAction_ThrowGranade;
-            granadeAction.ThrowReady -= GrenadeAction_ThrowReady;
-        }
-
-        if (TryGetComponent<MeleeAction>(out MeleeAction meleeAction))
-        {
-            meleeAction.OnMeleeActionStarted -= MeleeAction_OnMeleeActionStarted;
-            meleeAction.OnMeleeActionCompleted -= MeleeAction_OnMeleeActionCompleted;
-        }
-        
-    }
-    */
 
     private void MoveAction_OnStartMoving(object sender, EventArgs e)
     {
@@ -177,7 +122,7 @@ public class UnitAnimator : NetworkBehaviour
 
         float unitShoulderHeight = 2.5f;
         target.y += unitShoulderHeight;
-        NetworkSync.SpawnBullet(bulletProjectilePrefab, shootPointTransform.position, target);
+        NetworkSync.SpawnBullet(bulletProjectilePrefab, shootPointTransform.position, target,this.GetActorId());
     }
 
     private void MeleeAction_OnMeleeActionStarted(object sender, EventArgs e)
@@ -240,7 +185,7 @@ public class UnitAnimator : NetworkBehaviour
         Vector3 origin = rightHandTransform.position;
 
         // Kutsu keskitettyä synkkaa (täsmälleen kuin luodeissa)
-        NetworkSync.SpawnGrenade(granadeProjectilePrefab, origin, pendingGrenadeTarget);
+        NetworkSync.SpawnGrenade(granadeProjectilePrefab, origin, pendingGrenadeTarget,this.GetActorId());
 
         // Siivous kuten ennen
         pendingGrenadeAction?.OnGrenadeBehaviourComplete();
@@ -268,4 +213,13 @@ public class UnitAnimator : NetworkBehaviour
     {
         weaponVis.OwnerRequestSet(rifleRight: false, rifleLeft: true, meleeLeft: false, grenade: true);
     }
+
+/*
+    private uint GetActorID()
+    {
+        var actorNi = GetComponentInParent<NetworkIdentity>();
+        uint actorNetId = actorNi ? actorNi.netId : 0;
+        return actorNetId;
+    }
+*/
 }

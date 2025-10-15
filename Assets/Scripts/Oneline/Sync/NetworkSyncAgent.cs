@@ -1,8 +1,9 @@
 using Mirror;
 using UnityEngine;
 /// <summary>
+/// Attached to the PlayerController GameObject.
 /// NetworkSyncAgent is a helper NetworkBehaviour to relay Commands from clients to the server.
-/// Each client should have exactly one instance of this script in the scene, usually attached to the PlayerController GameObject.
+/// Each client should have exactly one instance of this script in the scene.
 /// 
 /// Responsibilities:
 /// - Receives local calls from NetworkSync (static helper).
@@ -29,33 +30,64 @@ public class NetworkSyncAgent : NetworkBehaviour
     /// <param name="spawnPos">World position where the bullet starts (usually weapon muzzle).</param>
     /// <param name="targetPos">World position the bullet is travelling towards.</param>
     [Command(requiresAuthority = true)]
-    public void CmdSpawnBullet(Vector3 spawnPos, Vector3 targetPos)
+    public void CmdSpawnBullet(uint actorNetId, Vector3 spawnPos, Vector3 targetPos)
     {
-        if (bulletPrefab == null) { Debug.LogWarning("[NetSync] bulletPrefab missing"); return; }
+        if (!NetworkServer.active) return;                   // server gate
+        if (bulletPrefab == null) { Debug.LogWarning("[NetSyncAgent] bulletPrefab missing"); return; }
+        if (actorNetId == 0) return;
+        if (!RightOwner(actorNetId)) return;                 // sinun funkkari
 
-        // Instantiate on the server
-        var go = Instantiate(bulletPrefab, spawnPos, Quaternion.identity);
+        // (Valinnainen jatko myöhemmin: onko oikea vuoro? AP riittääkö? range/LOS?)
 
-        // Setup target on the projectile
-        if (go.TryGetComponent<BulletProjectile>(out var bp))
+        var go = Object.Instantiate(bulletPrefab, spawnPos, Quaternion.identity);
+        if (!go.TryGetComponent<BulletProjectile>(out var bp))
         {
-            bp.Setup(targetPos);
+            Debug.LogError("[NetSyncAgent] BulletProjectile component missing on prefab.");
+            Object.Destroy(go);
+            return;
         }
 
-        // Spawn across the network
-        NetworkServer.Spawn(go);
+        bp.actorUnitNetId = actorNetId;                     // talteen (SyncVar)
+        bp.Setup(targetPos);                                // alustus serverillä
+        NetworkServer.Spawn(go); 
     }
- 
+
     [Command(requiresAuthority = true)]
-    public void CmdSpawnGrenade(Vector3 spawnPos, Vector3 targetPos)
+    public void CmdSpawnGrenade(uint actorNetId, Vector3 spawnPos, Vector3 targetPos)
     {
-        if (grenadePrefab == null) { Debug.LogWarning("[NetSync] grenadePrefab missing"); return; }
+        if (!NetworkServer.active) return;                   // server gate
+        if (grenadePrefab == null) { Debug.LogWarning("[NetSyncAgent] GrenadePrefab missing"); return; }
+        if (actorNetId == 0) return;
+        if (!RightOwner(actorNetId)) return;                 // sinun funkkari
 
-        var go = Instantiate(grenadePrefab, spawnPos, Quaternion.identity);
-        if (go.TryGetComponent<GrenadeProjectile>(out var gp))
-            gp.Setup(targetPos); // tärkeää: ennen Spawnia
+        // (Valinnainen jatko myöhemmin: onko oikea vuoro? AP riittääkö? range/LOS?)
 
-        NetworkServer.Spawn(go);
+        var go = Object.Instantiate(grenadePrefab, spawnPos, Quaternion.identity);
+        if (!go.TryGetComponent<GrenadeProjectile>(out var bp))
+        {
+            Debug.LogError("[NetSyncAgent] GrenadePrefab component missing on prefab.");
+            Object.Destroy(go);
+            return;
+        }
+
+        bp.actorUnitNetId = actorNetId;                     // talteen (SyncVar)
+        bp.Setup(targetPos);                                // alustus serverillä
+        NetworkServer.Spawn(go); 
+    }
+
+    private bool RightOwner(uint actorNetId)
+    {
+        // Varmista että soittaja omistaa kyseisen actor-yksikön
+        if (!NetworkServer.spawned.TryGetValue(actorNetId, out var actorIdentity) || actorIdentity == null) return false;
+
+        var actorUnit = actorIdentity.GetComponent<Unit>();
+        var callerOwnerId = connectionToClient.identity?.netId ?? 0;
+
+        // Unitissa on OwnerId, jonka asetus tehdään spawnaaessa (SpawnUnitsCoordinator) → käytä sitä checkissä
+        // OwnerId = PlayerController-objektin netId
+        if (actorUnit == null || actorUnit.OwnerId != callerOwnerId) return false;
+
+        return true;
     }
 
     /// <summary>
@@ -63,35 +95,90 @@ public class NetworkSyncAgent : NetworkBehaviour
     /// then broadcast the new HP to all clients for UI.
     /// </summary>
     [Command(requiresAuthority = true)]
-    public void CmdApplyDamage(uint targetNetId, int amount, Vector3 hitPosition)
+    public void CmdApplyDamage(uint actorNetId, uint targetNetId, int amount, Vector3 hitPosition)
     {
-        if (!NetworkServer.spawned.TryGetValue(targetNetId, out var targetNi) || targetNi == null)
-            return;
+        if (!NetworkServer.spawned.TryGetValue(targetNetId, out var targetNi) || targetNi == null) return;
+        if (!RightOwner(actorNetId)) return;
 
         var unit = targetNi.GetComponent<Unit>();
         var hs = targetNi.GetComponent<HealthSystem>();
         if (unit == null || hs == null)
             return;
 
-        // 1) Server tekee damagen (kuten ennenkin)
+        // --- NEW: server-side sanity cap ---
+        int maxAllowed = 0;
+        if (NetworkServer.spawned.TryGetValue(actorNetId, out var attackerNi) && attackerNi != null)
+        {
+            var attacker = attackerNi.GetComponent<Unit>();
+            var w = attacker != null ? attacker.GetCurrentWeapon() : null;
+
+            // Aseesta johdettu maksimi: Miss/Graze/Hit/Crit → enintään base + critBonus
+            if (w != null)
+                maxAllowed = Mathf.Max(maxAllowed, w.baseDamage + w.critBonusDamage); // esim. 10 + 8, jne. 
+
+            // Lähitaistelulle varmuuskatto (sinulla MeleeAction.damage = 100 → ota vähintään tämä)
+            // Vältetään riippuvuus MeleeActionin yksityiseen kenttään ottamalla varovainen fallback:
+            maxAllowed = Mathf.Max(maxAllowed, 100); // MeleeActionissa serialize'd damage=100. :contentReference[oaicite:2]{index=2}
+        }
+
+        int safe = Mathf.Clamp(amount, 0, maxAllowed);
+        if (safe != amount)
+            Debug.LogWarning($"[Server] Clamped damage from {amount} to {safe} (actor {actorNetId} → target {targetNetId}).");
+
+        // 1) Server tekee damagen
         hs.Damage(amount, hitPosition);
 
-        // 2) Heti perään broadcast → kaikki clientit päivittävät oman UI:nsa
-        //    (ServerBroadcastHp kutsuu RpcNotifyHpChanged → hs.ApplyNetworkHealth(..) clientillä)
+        // 2) Broadcast UI (kuten ennenkin)
         ServerBroadcastHp(unit, hs.GetHealth(), hs.GetHealthMax());
     }
 
     [Command(requiresAuthority = true)]
-    public void CmdApplyDamageToObject(uint targetNetId, int amount, Vector3 hitPosition)
+    public void CmdApplyDamageToObject(uint actorNetId, uint targetNetId, int amount, Vector3 hitPosition)
     {
-        if (!NetworkServer.spawned.TryGetValue(targetNetId, out var targetNi) || targetNi == null)
-            return;
+        if (!NetworkServer.spawned.TryGetValue(targetNetId, out var targetNi) || targetNi == null) return;
+        if (!RightOwner(actorNetId)) return;
 
         var obj = targetNi.GetComponent<DestructibleObject>();
-        if (obj == null)
-            return;
+        if (obj == null) return;
+        
+        // DODO Tulee ajankohtaiseksi kun kranaatti skriptable object on luotu unitille.
+        // GrenadeDeginition.cs on luotu.  
+        /*
+        // --- NEW: server-side sanity cap ---
+        int maxAllowed = 0;
+        if (NetworkServer.spawned.TryGetValue(actorNetId, out var attackerNi) && attackerNi != null)
+        {
+            var attacker = attackerNi.GetComponent<Unit>();
+            var w = attacker != null ? attacker.GetCurrentWeapon() : null;
+
+            // Aseesta johdettu maksimi: Miss/Graze/Hit/Crit → enintään base + critBonus
+            if (w != null)
+                maxAllowed = Mathf.Max(maxAllowed, w.baseDamage + w.critBonusDamage); // esim. 10 + 8, jne. 
+
+            // Lähitaistelulle varmuuskatto (sinulla MeleeAction.damage = 100 → ota vähintään tämä)
+            // Vältetään riippuvuus MeleeActionin yksityiseen kenttään ottamalla varovainen fallback:
+            maxAllowed = Mathf.Max(maxAllowed, 300); //
+        }
+
+        int safe = Mathf.Clamp(amount, 0, maxAllowed);
+        if (safe != amount)
+            Debug.LogWarning($"[Server] Clamped damage from {amount} to {safe} (actor {actorNetId} → target {targetNetId}).");
+        */
 
         obj.Damage(amount, hitPosition);
+    }
+    
+    [Command(requiresAuthority = false)]
+    public void CmdRequestHpRefresh(uint unitNetId)
+    {
+        if (!NetworkServer.active) return;
+        if (!NetworkServer.spawned.TryGetValue(unitNetId, out var id)) return;
+
+        var u  = id.GetComponent<Unit>();
+        var hs = u ? u.GetComponent<HealthSystem>() : null;
+        if (u == null || hs == null) return;
+
+        ServerBroadcastHp(u, hs.GetHealth(), hs.GetHealthMax()); // server lukee
     }
 
     // ---- SERVER-puolen helperit: kutsu näitä palvelimelta
@@ -101,8 +188,6 @@ public class NetworkSyncAgent : NetworkBehaviour
         var ni = unit.GetComponent<NetworkIdentity>();
         if (ni) RpcNotifyHpChanged(ni.netId, current, max);
     }
-
-
 
     [Server]
     public void ServerBroadcastAp(Unit unit, int ap)
@@ -149,7 +234,6 @@ public class NetworkSyncAgent : NetworkBehaviour
         if (!unit) return;
 
         unit.SetPersonalCover(Mathf.Clamp(value, 0, unit.GetPersonalCoverMax()));
-        // SetPersonalCover serverillä jo kutsuu NetworkSync.UpdateCoverUI(this)
     }
 
     // ---- SERVER → ALL CLIENTS: HP-muutos ilmoitus
@@ -185,4 +269,6 @@ public class NetworkSyncAgent : NetworkBehaviour
 
         unit.ApplyNetworkActionPoints(ap); // päivittää arvon + triggaa eventin
     }
+
+
 }

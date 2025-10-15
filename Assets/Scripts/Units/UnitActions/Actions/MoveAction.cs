@@ -9,7 +9,6 @@ using UnityEngine;
 /// </summary>
 public class MoveAction : BaseAction
 {
-
     public event EventHandler OnStartMoving;
     public event EventHandler OnStopMoving;
 
@@ -31,7 +30,7 @@ public class MoveAction : BaseAction
     {
         distance = 0;
         thisTurnStartingGridPosition = unit.GetGridPosition();
-
+        thisTurnEndridPosition = unit.GetGridPosition();
         TurnSystem.Instance.OnTurnChanged += TurnSystem_OnTurnChanged;
     }
 
@@ -42,6 +41,14 @@ public class MoveAction : BaseAction
 
     private void TurnSystem_OnTurnChanged(object sender, EventArgs e)
     {
+        // Jos Unit on liikkunut alkuperäiseltä paikaltaan katsotaan että Unit ei ole enää tulenalla.
+        // ja Unit voi esim. Saada käyttämättömistä pisteistä 
+        if (thisTurnStartingGridPosition != thisTurnEndridPosition)
+        {
+            unit.SetUnderFire(false);
+            unit.SetCoverBonus();
+        }
+        
         thisTurnStartingGridPosition = unit.GetGridPosition();
         distance = 0;
     }

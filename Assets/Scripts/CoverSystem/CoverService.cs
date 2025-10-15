@@ -4,18 +4,18 @@ public static class CoverService
 {
     public enum CoverType { None, Low, High }
 
-    public static int GetCoverMitigationBase(CoverType t)
-        => t == CoverType.High ? 50 : (t == CoverType.Low ? 25 : 0);
+    public static float GetCoverMitigationBase(CoverType t)
+        => t == CoverType.High ? .6f : (t == CoverType.Low ? .7f : 0);
 
-    public static int GetCoverMitigationPoints(CoverType t)
+    public static float GetCoverMitigationPoints(CoverType t)
     {
-        int basePts = GetCoverMitigationBase(t);
-        return Mathf.RoundToInt(basePts);
+        float basePts = GetCoverMitigationBase(t);
+        return basePts;
     }
-    
+
     public static CoverType EvaluateCoverHalfPlane(GridPosition attacker, GridPosition target, PathNode node)
     {
-        
+
         if (attacker.floor != target.floor) return CoverType.None; // pidä yksinkertaisena
 
         int dx = attacker.x - target.x;
@@ -44,6 +44,14 @@ public static class CoverService
             (facesW && node.HasLowCover(CoverMask.W));
 
         return low ? CoverType.Low : CoverType.None;
+    }
+    
+    public static CoverType GetNodeAnyCover(PathNode node) 
+    {
+    if (node == null) return CoverType.None;
+    if (node.GetHighCoverMask() != CoverMask.None) return CoverType.High;
+    if (node.GetLowCoverMask()  != CoverMask.None)  return CoverType.Low;
+    return CoverType.None;
     }
 
 }

@@ -115,63 +115,39 @@ public class ShootAction : BaseAction
                 return;
 
             case ShotTier.Miss:
-
-                if (GetCoverType(targetUnit) == CoverService.CoverType.None)
-                {
-                    MakeDamage(damage, targetUnit);
-                    return;
-                }
-                
-                if (targetUnit.GetPersonalCover() <= 0)
-                {
-                    MakeDamage(damage/3, targetUnit);
-                    return;
-                }
-
-                targetUnit.SetPersonalCover(
-                    Mathf.Max(0, targetUnit.GetPersonalCover() - result.damage));
-               // NetworkSync.UpdateCoverUI(targetUnit);
+                // Luo painetta ja vähentää henkilökohtaista suojaa mutta ei voi kuitenkaan osua.
+                ApplyHit(result.damage, targetUnit, false);
                 return;
-                
+
             case ShotTier.Graze:
+                // Luo painetta ja vähentää henkilökohtaista suojaa ja voi aiheuttaa
+                // pientävahinkoa jos suoja on kulunut loppuun.
+                // Jos suojaa ei ole ollenkaan niin tämäkin lasketaan suoraksi osumaksi.
                 if (GetCoverType(targetUnit) == CoverService.CoverType.None)
                 {
                     MakeDamage(damage, targetUnit);
                     return;
                 }
                 
-                if (targetUnit.GetPersonalCover() <= 0)
-                {
-                    MakeDamage(damage/2, targetUnit);
-                    return;
-                }
-
-                targetUnit.SetPersonalCover(
-                    Mathf.Max(0, targetUnit.GetPersonalCover() - result.damage));
-               // NetworkSync.UpdateCoverUI(targetUnit);
+                ApplyHit(result.damage, targetUnit, false);
                 return;
 
             case ShotTier.Hit:
+                // Vähentää ensin suojaa ja sitten osuu kokovahingolla.
+                // Myös suojasta jäljelle jäänyt vahinko menee vahinkoon.
                 if (GetCoverType(targetUnit) == CoverService.CoverType.None)
                 {
                     MakeDamage(damage, targetUnit);
                     return;
                 }
 
-                targetUnit.SetPersonalCover(
-                    Mathf.Max(0, targetUnit.GetPersonalCover() - result.damage));
-              //  NetworkSync.UpdateCoverUI(targetUnit);
-                // Normaali osuma → käytetään jo olemassa olevaa pipelinea
                 ApplyHit(result.damage, targetUnit, false);
                 return;
 
             case ShotTier.Crit:
-                targetUnit.SetPersonalCover(
-                    Mathf.Max(0, targetUnit.GetPersonalCover() - result.damage));
-              //  NetworkSync.UpdateCoverUI(targetUnit);
+                // Kriittinen osuma vähentää suojaa sekä menee suoraan läpi tehden vahinkoa.
                 Debug.Log("Critical hit!");
-                // Kriittinen osuma – ohitetaan cover
-                MakeDamage(result.damage, targetUnit);
+                ApplyHit(result.damage, targetUnit, false);
                 return;
         }
 

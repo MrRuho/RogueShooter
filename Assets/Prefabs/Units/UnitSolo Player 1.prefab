@@ -155,6 +155,8 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
+  newCoverBonusHalf: 15
+  newCoverBonusFull: 30
   OwnerId: 0
   archetype: {fileID: 11400000, guid: 4550bcfa4110ca445be7e3f4b337acd8, type: 2}
   currentWeapon: {fileID: 11400000, guid: 0a7d4b5dde914294784bbe40de853782, type: 2}

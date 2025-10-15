@@ -13,8 +13,6 @@ public class GranadeAction : BaseAction
 
     [SerializeField] private Transform grenadeProjectilePrefab;
 
-    private int maxThrowDistance = 7;
-
     private void Update()
     {
         if (!isActive)
@@ -34,7 +32,6 @@ public class GranadeAction : BaseAction
         {
             gridPosition = gridPosition,
             actionValue = 0,
-
         };
     }
 
@@ -44,10 +41,10 @@ public class GranadeAction : BaseAction
         List<GridPosition> validGridPositionList = new();
 
         GridPosition unitGridPosition = unit.GetGridPosition();
-
-        for (int x = -maxThrowDistance; x <= maxThrowDistance; x++)
+        int range = unit.archetype.throwingRange;
+        for (int x = -range; x <= range; x++)
         {
-            for (int z = -maxThrowDistance; z <= maxThrowDistance; z++)
+            for (int z = -range; z <= range; z++)
             {
                 GridPosition offsetGridPosition = new(x, z, 0);
                 GridPosition testGridPosition = unitGridPosition + offsetGridPosition;
@@ -55,11 +52,10 @@ public class GranadeAction : BaseAction
                 // Check if the test grid position is within the valid range
                 if (!LevelGrid.Instance.IsValidGridPosition(testGridPosition)) continue;
                 int testDistance = Mathf.Abs(x) + Mathf.Abs(z);
-                if (testDistance > maxThrowDistance) continue;
+                if (testDistance > range) continue;
 
                 validGridPositionList.Add(testGridPosition);
             }
-
         }
 
         return validGridPositionList;
@@ -67,12 +63,10 @@ public class GranadeAction : BaseAction
 
     public override void TakeAction(GridPosition gridPosition, Action onActionComplete)
     {
-
+        GetUnit().UseGrenade();
         ActionStart(onActionComplete);
         TargetWorld = LevelGrid.Instance.GetWorldPosition(gridPosition);
         StartCoroutine(TurnAndThrow(.5f, TargetWorld));
-    
-
     }
 
     private IEnumerator TurnAndThrow(float delay, Vector3 targetWorld)

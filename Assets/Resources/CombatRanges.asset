@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 10566076a9e9e974ab6f483daf3920fa, type: 3}
+  m_Name: CombatRanges
+  m_EditorClassIdentifier: Assembly-CSharp::CombatRanges
+  useTiles: 1
+  meleeMaxTiles: 1
+  closeMaxTiles: 4
+  mediumMaxTiles: 8
+  longMaxTiles: 12
+  meleeMaxWU: 1.2
+  closeMaxWU: 4
+  mediumMaxWU: 9
+  longMaxWU: 15

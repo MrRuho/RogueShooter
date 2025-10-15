@@ -2,152 +2,225 @@ using UnityEngine;
 
 public struct ShotResult {
     public ShotTier tier;
-    public int damage;          // paljonko “vahinkoa” tämä laukaus tuottaa
-    public bool bypassCover;    // true = suoraan Healthiin (Crit)
-    public bool coverOnly;      // true = vain cover-pooliin (Miss/Graze)
+    public int damage;
+    public bool bypassCover;
+    public bool coverOnly;
 }
 
 public static class ShootingResolver
 {
-    public static RangeBand GetBand(float dist, WeaponDefinition w)
+    private static CombatRanges _cachedRanges;
+    private static CombatRanges Ranges
     {
-        if (dist <= 1.2f) return RangeBand.Melee;
-        if (dist <= w.closeMax) return RangeBand.Close;
-        if (dist <= w.mediumMax) return RangeBand.Medium;
-        if (dist <= w.longMax) return RangeBand.Long;
+        get
+        {
+            if (!_cachedRanges)
+                _cachedRanges = Resources.Load<CombatRanges>("CombatRanges");
+            return _cachedRanges;
+        }
+    }
+
+    // Euclidinen etäisyys ruutuina (vastaa aiempaa world-distancea, mutta gridissä)
+    private static float TileDistance(GridPosition a, GridPosition b)
+    {
+        int dx = a.x - b.x;
+        int dz = a.z - b.z;
+        return Mathf.Sqrt(dx * dx + dz * dz);
+    }
+
+    // Uusi band-määritys ruuduilla
+    public static RangeBand GetBandTiles(Unit attacker, Unit target, WeaponDefinition w)
+    {
+        var gpA = attacker.GetGridPosition();
+        var gpT = target.GetGridPosition();
+
+        // (Valinta: jos kerros eri, voit palauttaa Extreme heti)
+        // if (gpA.floor != gpT.floor) return RangeBand.Extreme;
+
+        if (Ranges && Ranges.useTiles)
+        {
+            float tiles = TileDistance(gpA, gpT);
+            if (tiles <= Ranges.meleeMaxTiles)  return RangeBand.Melee;
+            if (tiles <= Ranges.closeMaxTiles)  return RangeBand.Close;
+            if (tiles <= Ranges.mediumMaxTiles) return RangeBand.Medium;
+            if (tiles <= Ranges.longMaxTiles)   return RangeBand.Long;
+            return RangeBand.Extreme;
+        }
+
+        // Fallback: world-yksiköt (takaperin yhteensopiva)
+        Vector3 aw = attacker.GetWorldPosition();
+        Vector3 tw = target.GetWorldPosition();
+        float distWU = Vector3.Distance(aw, tw);
+        if (Ranges)
+        {
+            if (distWU <= Ranges.meleeMaxWU)  return RangeBand.Melee;
+            if (distWU <= Ranges.closeMaxWU)  return RangeBand.Close;
+            if (distWU <= Ranges.mediumMaxWU) return RangeBand.Medium;
+            if (distWU <= Ranges.longMaxWU)   return RangeBand.Long;
+            return RangeBand.Extreme;
+        }
+
+        // Jos ei CombatRanges.assetia → käytä asekohtaisia world-rajoja (nykyinen polku)
+        if (distWU <= 1.2f)          return RangeBand.Melee;
+        if (distWU <= w.closeMax)    return RangeBand.Close;
+        if (distWU <= w.mediumMax)   return RangeBand.Medium;
+        if (distWU <= w.longMax)     return RangeBand.Long;
         return RangeBand.Extreme;
     }
 
-    public static int BaseAcc(RangeBand b, WeaponDefinition w) => b switch
-    {
-        RangeBand.Melee => w.meleeAcc,
-        RangeBand.Close => w.closeAcc,
-        RangeBand.Medium => w.mediumAcc,
-        RangeBand.Long => w.longAcc,
-        _ => w.extremeAcc
-    };
-
-    public static int CritStart(RangeBand b, WeaponDefinition w) => b switch
-    {
-        RangeBand.Melee => w.critStartMelee,
-        RangeBand.Close => w.critStartClose,
-        RangeBand.Medium => w.critStartMedium,
-        RangeBand.Long => w.critStartLong,
-        _ => w.critStartExtreme
-    };
-
-    // Palauttaa myös käytetyn cover-penaltin (UI:lle, debugiin).
+    // Päälogiikka: 1) osuma vai huti, 2) tarkempi tier
     public static ShotResult Resolve(Unit attacker, Unit target, WeaponDefinition w)
     {
-        // etäisyys & band
         Vector3 a = attacker.GetWorldPosition();
         Vector3 t = target.GetWorldPosition();
         float dist = Vector3.Distance(a, t);
-        var band = GetBand(dist, w);
+       // var band = GetBand(dist, w);
+       var band = GetBandTiles(attacker, target, w);
 
-        // lähtötarkkuus
-        int acc = BaseAcc(band, w);
+        // Skill + cover -muokkaukset vaikuttavat vain "vaihe 1: baseHitChance" -arvoon
+        int baseHit = GetBaseHitChance(band, w);
+        baseHit += GetSkillBonus(attacker);
+        baseHit -= GetCoverPenalty(attacker, target);
 
-        // skillibonus
-        // var arch = attacker ? attacker.GetComponent<Unit>()?.GetComponent<Unit>() : null; // ei tarvita, käytä suoraan:
-        // var atArch = attacker != null ? attacker.archetype : null;// jos säilytät viitteen julkisesti, käytä attacker.archetype
-        // int skill = attacker.GetComponent<Unit>().isServer ? 0 : 0; // älä näin – käytä suoraan attacker.archetype
-        //  var atkArch = attacker.GetComponent<Unit>().GetComponent<UnitArchetype>(); // jos ei ole helposti käsillä, lisää Unitille getter archetypeen
+        baseHit = Mathf.Clamp(baseHit, 0, 100);
 
-        int skillBonus = (attacker as Unit)?.archetype != null
-            ? (attacker as Unit).archetype.shootingSkill * (attacker as Unit).archetype.accPerSkill
-            : 0;
-        acc += skillBonus;
+        int roll1 = UnityEngine.Random.Range(1, 101);
+        bool isHitPool = roll1 <= baseHit;
 
-        // cover-penalty suunnasta
+        ShotTier tier = isHitPool
+            ? RollOnHit(band, w)
+            : RollOnMiss(band, w);
+
+        var res = new ShotResult { tier = tier };
+        ApplyDamageModel(ref res, w);
+
+        DebugShot(attacker, target, w, band, baseHit, roll1, res);
+        return res;
+    }
+
+    private static int GetBaseHitChance(RangeBand b, WeaponDefinition w)
+    {
+        if (w.useAdvancedAccuracy)
+            return w.GetTuning(b).baseHitChance;
+
+        // Legacy polku (taaksepäin-yhteensopiva)
+        switch (b)
+        {
+            case RangeBand.Melee:  return w.meleeAcc;
+            case RangeBand.Close:  return w.closeAcc;
+            case RangeBand.Medium: return w.mediumAcc;
+            case RangeBand.Long:   return w.longAcc;
+            default:               return w.extremeAcc;
+        }
+    }
+
+    private static int GetSkillBonus(Unit attacker)
+    {
+        if (attacker != null && attacker.archetype != null)
+            return attacker.archetype.shootingSkillLevel * attacker.archetype.accuracyBonusPerSkillLevel;
+        return 0;
+    }
+
+    private static int GetCoverPenalty(Unit attacker, Unit target)
+    {
         var targetGridPosition = target.GetGridPosition();
         var node = PathFinding.Instance.GetNode(targetGridPosition.x, targetGridPosition.z, targetGridPosition.floor);
         var ct = CoverService.EvaluateCoverHalfPlane(attacker.GetGridPosition(), target.GetGridPosition(), node);
-        int coverPenalty = 0;
-        if ((attacker as Unit)?.archetype != null)
+
+        if (attacker != null && attacker.archetype != null)
         {
-            var archA = (attacker as Unit).archetype;
-            coverPenalty = ct == CoverService.CoverType.High ? archA.highCoverPenalty :
-                           ct == CoverService.CoverType.Low ? archA.lowCoverPenalty : 0;
+            var archA = attacker.archetype;
+            if (ct == CoverService.CoverType.High) return archA.highCoverPenalty;
+            if (ct == CoverService.CoverType.Low)  return archA.lowCoverPenalty;
         }
-        acc -= coverPenalty;
+        return 0;
+    }
 
-        // rajaa 0..100 ja heitto
-        acc = Mathf.Clamp(acc, 0, 100);
-        int roll = UnityEngine.Random.Range(1, 101);
+    private static ShotTier RollOnHit(RangeBand b, WeaponDefinition w)
+    {
+        var t = w.GetTuning(b);
 
-        // määritä tier kynnysten mukaan
-        int critStart = CritStart(band, w);        // esim. 80–90
-        int hitStart = Mathf.Max(35, acc - 15);   // pehmeä siirtymä: mitä parempi acc, sitä alempaa alkaa “Hit”
-        int grazeStart = Mathf.Max(15, acc / 2);    // pienikin acc antaa mahdollisuuden grazeen
+        int c  = Mathf.Max(0, t.onHit_Close);
+        int g  = Mathf.Max(0, t.onHit_Graze);
+        int h  = Mathf.Max(0, t.onHit_Hit);
+        int cr = Mathf.Max(0, t.onHit_Crit);
 
-        ShotTier tier;
-        if (roll > Mathf.Max(critStart, acc + 5)) tier = ShotTier.Crit;        // pieni “over-roll” mahdollistaa critin
-        else if (roll > hitStart) tier = ShotTier.Hit;
-        else if (roll > grazeStart) tier = ShotTier.Graze;
-        else if (roll > 10) tier = ShotTier.Miss;
-        else tier = ShotTier.CritMiss;
+        int sum = c + g + h + cr;
+        if (sum <= 0) return ShotTier.Hit; // fallback
 
-        // rakenna tulos
-        var res = new ShotResult { tier = tier };
+        int r = UnityEngine.Random.Range(1, sum + 1);
+        if (r <= c) return ShotTier.Miss;      // "Close" = cover chip → käytetään ShotTier.Miss pipelinea
+        r -= c;
+        if (r <= g) return ShotTier.Graze;
+        r -= g;
+        if (r <= h) return ShotTier.Hit;
+        return ShotTier.Crit;
+    }
 
-        switch (tier)
+    private static ShotTier RollOnMiss(RangeBand b, WeaponDefinition w)
+    {
+        var t = w.GetTuning(b);
+
+        int m  = Mathf.Max(0, t.onMiss_Miss);
+        int cm = Mathf.Max(0, t.onMiss_CritMiss);
+        int sum = m + cm;
+        if (sum <= 0) return ShotTier.CritMiss; // fallback: rankka huti
+
+        int r = UnityEngine.Random.Range(1, sum + 1);
+        return (r <= m) ? ShotTier.Miss : ShotTier.CritMiss;
+    }
+
+    private static void ApplyDamageModel(ref ShotResult res, WeaponDefinition w)
+    {
+        switch (res.tier)
         {
             case ShotTier.CritMiss:
                 res.damage = 0;
-                res.coverOnly = false;   // ei mitään vaikutusta
+                res.coverOnly = false;
                 res.bypassCover = false;
                 break;
 
-            case ShotTier.Miss:
+            case ShotTier.Miss: // "Close call" → chip cover only
                 res.damage = Mathf.RoundToInt(w.baseDamage * w.missChipFactor);
-                res.coverOnly = true;    // vaikuttaa vain cover-pooliin
+                res.coverOnly = true;
                 res.bypassCover = false;
                 break;
 
             case ShotTier.Graze:
                 res.damage = Mathf.RoundToInt(w.baseDamage * w.grazeFactor);
-                res.coverOnly = true;    // vain cover-pooliin
+                res.coverOnly = true;
                 res.bypassCover = false;
                 break;
 
             case ShotTier.Hit:
                 res.damage = w.baseDamage;
-                res.coverOnly = false;   // normaali pipeline (ensin cover-mitigation, sitten personal cover, ylijäämä healthiin)
+                res.coverOnly = false;
                 res.bypassCover = false;
                 break;
 
             case ShotTier.Crit:
                 res.damage = w.baseDamage + w.critBonusDamage;
                 res.coverOnly = false;
-                res.bypassCover = true;  // ohita cover completely (suoraan healthiin)
+                res.bypassCover = true;
                 break;
         }
-
-//#if UNITY_EDITOR
-            DebugShot(attacker, target, w, band, acc, roll, res);
-//#endif
-
-        return res;
     }
-    
-//#if UNITY_EDITOR
-    private static void DebugShot(Unit attacker, Unit target, WeaponDefinition w, RangeBand band, int acc, int roll, ShotResult result)
+
+    private static void DebugShot(Unit attacker, Unit target, WeaponDefinition w, RangeBand band, int baseHit, int roll1, ShotResult result)
     {
+        string tierColor =
+            result.tier == ShotTier.Crit ? "Green" :
+            result.tier == ShotTier.Hit ? "Blue" :
+            result.tier == ShotTier.Graze ? "yellow" : "red";
+
         string txt =
             $"<b>{attacker.name}</b> → <b>{target.name}</b>\n" +
             $"Weapon: {w.name}\n" +
-            $"Range: {band} | Roll: {roll}\n" +
-            $"Accuracy: {acc}% | Result: <color={(result.tier==ShotTier.Crit ? "lime" : result.tier==ShotTier.Hit ? "cyan" : result.tier==ShotTier.Graze ? "yellow" : "red")}>{result.tier}</color>\n" +
-            $"Damage: {result.damage} | " +
+            $"Range: {band} | Roll1: {roll1} vs Hit%:{baseHit}\n" +
+            $"Result: <color={tierColor}>{result.tier}</color> | Dmg:{result.damage} | " +
             $"{(result.bypassCover ? "Bypass Cover" : result.coverOnly ? "Cover Only" : "Normal")}";
 
-        // Tulostaa konsoliin
         Debug.Log(txt);
-
-        // Näyttää tekstin maailmassa (Scene/Game näkymässä)
-        Vector3 pos = target.transform.position + Vector3.up * 2.0f;
-        //UnityEditor.Handles.Label(pos, txt.Replace("<b>", "").Replace("</b>", ""));
+        // Halutessa voi näyttää world-labelin editorissa (Handles), jätetty pois runtime-käytön vuoksi.
     }
-//#endif
 }

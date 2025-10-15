@@ -5,12 +5,16 @@ using System.Collections;
 
 public class GrenadeProjectile : NetworkBehaviour
 {
+    [SyncVar] public uint actorUnitNetId;
     public static event EventHandler OnAnyGranadeExploded;
 
     [SerializeField] private Transform granadeExplodeVFXPrefab;
     [SerializeField] private float damageRadius = 4f;
     [SerializeField] private int damage = 30;
     [SerializeField] private float moveSpeed = 15f;
+    [SerializeField] private int timer = 2;
+    [SerializeField] private LayerMask floorMask = ~0;
+    [SerializeField] private float landingJitterRadius = 0.18f;
     [SerializeField] private AnimationCurve arcYAnimationCurve;
 
     [SyncVar(hook = nameof(OnTargetChanged))] private Vector3 targetPosition;
@@ -21,6 +25,8 @@ public class GrenadeProjectile : NetworkBehaviour
 
     private bool isExploded = false;
 
+    private bool isLanded = false;
+
     private bool _ready;
 
     public override void OnStartClient()
@@ -30,11 +36,27 @@ public class GrenadeProjectile : NetworkBehaviour
 
     public void Setup(Vector3 targetWorld)
     {
+        TurnSystem.Instance.OnTurnChanged += TurnSystem_OnTurnChanged;
         var groundTarget = SnapToGround(targetWorld);
         // Aseta SyncVar, hook kutsutaan kaikilla (server + clientit)
         targetPosition = groundTarget;
         RecomputeDerived(); // varmistetaan serverillä heti
         _ready = true;
+        timer = 2;
+    }
+
+    private void TurnSystem_OnTurnChanged(object sender, EventArgs e)
+    {
+        timer -= 1;
+        if (timer <= 0)
+        {
+            Exlosion();
+        }
+    }
+
+    private void OnDestroy()
+    {
+        TurnSystem.Instance.OnTurnChanged -= TurnSystem_OnTurnChanged;
     }
 
     private Vector3 SnapToGround(Vector3 worldXZ)
@@ -59,8 +81,10 @@ public class GrenadeProjectile : NetworkBehaviour
     }
 
     private void Update()
-    {  
+    {
         if (!_ready || isExploded) return;
+        if (isLanded) return;
+        
 
         Vector3 moveDir = targetPosition - positionXZ;
         if (moveDir.sqrMagnitude < 1e-6f) moveDir = Vector3.forward; // varadir, ettei normalized → NaN
@@ -69,7 +93,7 @@ public class GrenadeProjectile : NetworkBehaviour
         positionXZ += moveSpeed * Time.deltaTime * moveDir;
 
         float distance = Vector3.Distance(positionXZ, targetPosition);
-        if (totalDistance < 1e-6f) totalDistance = 0.01f; 
+        if (totalDistance < 1e-6f) totalDistance = 0.01f;
         float distanceNormalized = 1f - (distance / totalDistance);
         distanceNormalized = Mathf.Clamp01(distanceNormalized);
 
@@ -84,9 +108,34 @@ public class GrenadeProjectile : NetworkBehaviour
         float reachedTargetDistance = .2f;
 
 
-        if ((Vector3.Distance(positionXZ, targetPosition) < reachedTargetDistance) && !isExploded)
+        if (!isLanded && (positionXZ - targetPosition).sqrMagnitude <= reachedTargetDistance * reachedTargetDistance)
         {
-            isExploded = true;
+            isLanded = true;
+
+            // a) ruudun keskelle (x,z) + oikea kerros-Y LevelGridistä
+            var gp = LevelGrid.Instance.GetGridPosition(targetPosition);
+            var center = LevelGrid.Instance.GetWorldPosition(gp);         // ruudun keskipiste & floor-Y 
+            
+            // b) satunnainen siirto ruudun sisällä (XZ)
+            Vector2 j2 = UnityEngine.Random.insideUnitCircle * landingJitterRadius;
+            Vector3 p = new Vector3(center.x + j2.x, center.y, center.z + j2.y);
+
+            // c) lattia-Y (voit myös käyttää pelkkää center.y)
+            float y = p.y;
+            if (Physics.Raycast(p + Vector3.up * 2f, Vector3.down, out var hit, 10f, floorMask, QueryTriggerInteraction.Ignore))
+                y = hit.point.y;
+
+            // d) jos pivot ei ole maassa, kompensoi kolliderin puoli-korkeus
+            if (TryGetComponent<Collider>(out var col)) y += col.bounds.extents.y;
+
+            // ASETUS
+            transform.position = new Vector3(p.x, y, p.z);
+        }
+    }
+
+    private void Exlosion()
+    {
+        isExploded = true;
             if (NetworkServer.active || !NetworkClient.isConnected) // Server or offline
             {
                 Collider[] colliderArray = Physics.OverlapSphere(targetPosition, damageRadius);
@@ -95,15 +144,15 @@ public class GrenadeProjectile : NetworkBehaviour
                 {
                     if (collider.TryGetComponent<Unit>(out Unit targetUnit))
                     {
-                        NetworkSync.ApplyDamageToUnit(targetUnit, damage, targetPosition);
+                        NetworkSync.ApplyDamageToUnit(targetUnit, damage, targetPosition, this.GetActorId());
                     }
                     if (collider.TryGetComponent<DestructibleObject>(out DestructibleObject targetObject))
                     {
-                         NetworkSync.ApplyDamageToObject(targetObject, damage, targetPosition);
+                        NetworkSync.ApplyDamageToObject(targetObject, damage, targetPosition, this.GetActorId());
                     }
                 }
             }
-           
+
             // Screen Shake
             OnAnyGranadeExploded?.Invoke(this, EventArgs.Empty);
             // Explode VFX
@@ -118,10 +167,9 @@ public class GrenadeProjectile : NetworkBehaviour
             // Online: Hide Granade before destroy it, so that client have time to create own explode VFX from orginal Granade pose.
             SetSoftHiddenLocal(true);
             RpcSetSoftHidden(true);
-            StartCoroutine(DestroyAfter(0.30f));      
-        }
+            StartCoroutine(DestroyAfter(0.30f));
     }
-    
+     
     private IEnumerator DestroyAfter(float seconds)
     {
         yield return new WaitForSeconds(seconds);

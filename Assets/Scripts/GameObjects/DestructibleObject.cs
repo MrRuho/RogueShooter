@@ -5,11 +5,13 @@ using System.Collections;
 
 public class DestructibleObject : NetworkBehaviour
 {
-   // public static event EventHandler OnAnyDestroyed;
 
     private GridPosition gridPosition;
     [SerializeField] private Transform objectDestroyPrefab;
     [SerializeField] private int health = 3;
+
+    // Ruutujen välissä olevat seinämät eivät blokkaa. True niille jotka täyttävät kokonaisia ruutuja.
+    [SerializeField] private bool blocksCell = false; 
 
     // To prevent multiple destruction events
     private bool isDestroyed;
@@ -23,7 +25,7 @@ public class DestructibleObject : NetworkBehaviour
     private void Start()
     {
         gridPosition = LevelGrid.Instance.GetGridPosition(transform.position);
-        TryMarkBlocked();
+        if (blocksCell) TryMarkBlocked();
     }
 
     /// <summary>

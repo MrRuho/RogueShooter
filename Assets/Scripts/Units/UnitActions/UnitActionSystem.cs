@@ -65,6 +65,11 @@ public class UnitActionSystem : MonoBehaviour
     {
         if (selectedUnit == null || selectedAction == null) return;
 
+        if (InputManager.Instance.IsMouseButtonDownThisFrame() && selectedAction is GranadeAction)
+        {       
+            if (selectedUnit.GetGrenadePCS() <= 0) return;
+        }
+        
         GridPosition targetGridPosition;
 
         if (InputManager.Instance.IsMouseButtonDownThisFrame() && selectedAction is ShootAction)
@@ -84,8 +89,7 @@ public class UnitActionSystem : MonoBehaviour
         }
         else if (InputManager.Instance.IsMouseButtonDownThisFrame())
         {
-            // entinen logiikka: klikkaus ruutuun
-            Vector3 world = MouseWorld.GetPositionOnlyHitVisible(); // lattiat ym. näkyvyysfiltteri
+            Vector3 world = MouseWorld.GetPositionOnlyHitVisible();
             targetGridPosition = LevelGrid.Instance.GetGridPosition(world);
             TryExecuteSelectedAction(targetGridPosition);
         }
@@ -93,7 +97,7 @@ public class UnitActionSystem : MonoBehaviour
 
     private void TryExecuteSelectedAction(GridPosition gp)
     {
-        // (valmiiksi olemassa olevaa logiikkaa)
+
         int steps = selectedUnit.GetMaxMoveDistance();
         int moveBudgetCost = PathFinding.CostFromSteps(steps);
         int estCost = PathFinding.Instance.CalculateDistance(selectedUnit.GetGridPosition(), gp);

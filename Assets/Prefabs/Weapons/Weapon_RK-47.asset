@@ -12,13 +12,54 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3a2416bd990fc1e4b8516fff1b10d615, type: 3}
   m_Name: Weapon_RK-47
   m_EditorClassIdentifier: Assembly-CSharp::WeaponDefinition
-  baseDamage: 40
+  baseDamage: 50
   critBonusDamage: 10
-  grazeFactor: 0.3
-  missChipFactor: 0.2
+  grazeFactor: 0.6
+  missChipFactor: 0.3
   closeMax: 5
   mediumMax: 12
   longMax: 25
+  useAdvancedAccuracy: 1
+  melee:
+    baseHitChance: 20
+    onHit_Close: 25
+    onHit_Graze: 25
+    onHit_Hit: 50
+    onHit_Crit: 10
+    onMiss_Miss: 50
+    onMiss_CritMiss: 50
+  close:
+    baseHitChance: 80
+    onHit_Close: 25
+    onHit_Graze: 25
+    onHit_Hit: 50
+    onHit_Crit: 10
+    onMiss_Miss: 80
+    onMiss_CritMiss: 20
+  medium:
+    baseHitChance: 80
+    onHit_Close: 25
+    onHit_Graze: 25
+    onHit_Hit: 50
+    onHit_Crit: 10
+    onMiss_Miss: 80
+    onMiss_CritMiss: 20
+  long:
+    baseHitChance: 65
+    onHit_Close: 25
+    onHit_Graze: 25
+    onHit_Hit: 50
+    onHit_Crit: 10
+    onMiss_Miss: 80
+    onMiss_CritMiss: 20
+  extreme:
+    baseHitChance: 0
+    onHit_Close: 0
+    onHit_Graze: 0
+    onHit_Hit: 0
+    onHit_Crit: 0
+    onMiss_Miss: 0
+    onMiss_CritMiss: 0
   meleeAcc: 30
   closeAcc: 90
   mediumAcc: 90

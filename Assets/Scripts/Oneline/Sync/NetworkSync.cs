@@ -35,34 +35,40 @@ public static class NetworkSync
     /// <param name="bulletPrefab">The bullet prefab to spawn (must have NetworkIdentity if used online).</param>
     /// <param name="spawnPos">The starting position of the bullet (usually weapon muzzle).</param>
     /// <param name="targetPos">The target world position the bullet should travel towards.</param>
-    public static void SpawnBullet(GameObject bulletPrefab, Vector3 spawnPos, Vector3 targetPos)
+    public static void SpawnBullet(GameObject bulletPrefab, Vector3 spawnPos, Vector3 targetPos, uint actorNetId)
     {
         if (NetworkServer.active) // Online: server or host
         {
             var bullet = Object.Instantiate(bulletPrefab, spawnPos, Quaternion.identity);
-            if (bullet.TryGetComponent<BulletProjectile>(out var bulletProjectile))
-                bulletProjectile.Setup(targetPos);
+            if (!bullet.TryGetComponent<BulletProjectile>(out var bulletProjectile))
+            {
+                Debug.LogError("[NetworkSync] BulletProjectile component missing on prefab.");
+                Object.Destroy(bullet);
+                return;
+            }
+            // 1) Set owner. Not currently using
+            bulletProjectile.actorUnitNetId = actorNetId;
+            // 2) Set target
+            bulletProjectile.Setup(targetPos);
+            // 3) Create bullet
             NetworkServer.Spawn(bullet);
             return;
         }
-
 
         if (NetworkClient.active) // Online: client
         {
             if (NetworkSyncAgent.Local != null)
             {
-                NetworkSyncAgent.Local.CmdSpawnBullet(spawnPos, targetPos);
+                NetworkSyncAgent.Local.CmdSpawnBullet(actorNetId, spawnPos, targetPos);
             }
             else
             {
-                // fallback if no local agent found (shouldn't happen in a correct setup)
-                Debug.LogWarning("[NetworkSync] No Local NetworkSyncAgent found, falling back to local Instantiate.");
-                var bullet = Object.Instantiate(bulletPrefab, spawnPos, Quaternion.identity);
-                if (bullet.TryGetComponent<BulletProjectile>(out var bulletProjectile))
-                    bulletProjectile.Setup(targetPos);
+                // fallback
+                Debug.LogWarning("[NetworkSync] No Local NetworkSyncAgent found, NOT Spawning.");
             }
-        }
-        else
+            return;
+
+        } else
         {
             // Offline / Singleplayer: just instantiate locally
             var bullet = Object.Instantiate(bulletPrefab, spawnPos, Quaternion.identity);
@@ -72,14 +78,23 @@ public static class NetworkSync
     }
 
     // HUOM: käytä tätä myös AE:stä (UnitAnimatorista)
-    public static void SpawnGrenade(GameObject grenadePrefab, Vector3 spawnPos, Vector3 targetPos)
+    public static void SpawnGrenade(GameObject grenadePrefab, Vector3 spawnPos, Vector3 targetPos, uint actorNetId)
     {
         if (NetworkServer.active) // Online: server tai host
         {
-            var go = Object.Instantiate(grenadePrefab, spawnPos, Quaternion.identity);
-            if (go.TryGetComponent<GrenadeProjectile>(out var gp))
-                gp.Setup(targetPos);                 // ASETUS ENNEN spawnia
-            NetworkServer.Spawn(go);
+            var grenade = Object.Instantiate(grenadePrefab, spawnPos, Quaternion.identity);
+            if (!grenade.TryGetComponent<GrenadeProjectile>(out var grenadeProjectile))
+            {
+                Debug.LogError("[NetworkSync] GranadeProjectile component missing on prefab.");
+                Object.Destroy(grenade);
+                return;
+            }
+            // 1) Set owner
+            grenadeProjectile.actorUnitNetId = actorNetId;
+            // 2) Set target
+            grenadeProjectile.Setup(targetPos);
+            // 3) Create bullet
+            NetworkServer.Spawn(grenade);
             return;
         }
 
@@ -87,15 +102,12 @@ public static class NetworkSync
         {
             if (NetworkSyncAgent.Local != null)
             {
-                NetworkSyncAgent.Local.CmdSpawnGrenade(spawnPos, targetPos);
+                NetworkSyncAgent.Local.CmdSpawnGrenade(actorNetId, spawnPos, targetPos);
             }
             else
             {
-                // Sama fallback kuin luodeissa (jos näin haluat)
-                Debug.LogWarning("[NetworkSync] No Local NetworkSyncAgent found, falling back to local Instantiate.");
-                var go = Object.Instantiate(grenadePrefab, spawnPos, Quaternion.identity);
-                if (go.TryGetComponent<GrenadeProjectile>(out var gp))
-                    gp.Setup(targetPos);
+                // fallback
+                Debug.LogWarning("[NetworkSync] No Local NetworkSyncAgent found, NOT Spawning.");
             }
         }
         else
@@ -107,14 +119,13 @@ public static class NetworkSync
         }
     }
 
-
     /// <summary>
     /// Apply damage to a Unit in SP/Host/Client modes.
     /// - Server/Host: call HealthSystem.Damage directly (authoritative).
     /// - Client: send a Command via NetworkSyncAgent to run on server.
     /// - Offline: call locally.
     /// </summary>
-    public static void ApplyDamageToUnit(Unit target, int amount, Vector3 hitPosition)
+    public static void ApplyDamageToUnit(Unit target, int amount, Vector3 hitPosition, uint actorNetId)
     {
         if (target == null) return;
 
@@ -133,16 +144,17 @@ public static class NetworkSync
             var ni = target.GetComponent<NetworkIdentity>();
             if (ni && NetworkSyncAgent.Local != null)
             {
-                NetworkSyncAgent.Local.CmdApplyDamage(ni.netId, amount, hitPosition);
+                NetworkSyncAgent.Local.CmdApplyDamage(actorNetId,ni.netId, amount, hitPosition);
                 return;
             }
         }
 
         // Offline fallback
-        target.GetComponent<HealthSystem>()?.Damage(amount, hitPosition);
+        target.GetComponent<HealthSystem>().Damage(amount, hitPosition);
+        
     }
 
-    public static void ApplyDamageToObject(DestructibleObject target, int amount, Vector3 hitPosition)
+    public static void ApplyDamageToObject(DestructibleObject target, int amount, Vector3 hitPosition, uint actorNetId)
     {
         if (target == null) return;
 
@@ -157,7 +169,7 @@ public static class NetworkSync
             var ni = target.GetComponent<NetworkIdentity>();
             if (ni && NetworkSyncAgent.Local != null)
             {
-                NetworkSyncAgent.Local.CmdApplyDamageToObject(ni.netId, amount, hitPosition);
+                NetworkSyncAgent.Local.CmdApplyDamageToObject(actorNetId,ni.netId, amount, hitPosition);
                 return;
             }
         }
@@ -168,6 +180,7 @@ public static class NetworkSync
 
     private static void UpdateHealthBarUI(HealthSystem healthSystem, Unit target)
     {
+        if (target == null || healthSystem == null) return;
         // → ilmoita kaikille clienteille, jotta UnitWorldUI saa eventin
         if (NetworkSyncAgent.Local == null)
         {
@@ -175,10 +188,14 @@ public static class NetworkSync
             var agent = Object.FindFirstObjectByType<NetworkSyncAgent>();
             if (agent != null)
                 agent.ServerBroadcastHp(target, healthSystem.GetHealth(), healthSystem.GetHealthMax());
+            return;
         }
-        else
+
+        if (NetworkClient.active && NetworkSyncAgent.Local != null)
         {
-            NetworkSyncAgent.Local.ServerBroadcastHp(target, healthSystem.GetHealth(), healthSystem.GetHealthMax());
+            var ni = target.GetComponent<NetworkIdentity>();
+            if (ni != null)
+                NetworkSyncAgent.Local.CmdRequestHpRefresh(ni.netId);
         }
     }
     
@@ -270,7 +287,6 @@ public static class NetworkSync
             unitRagdoll.Setup(originalRootBone);
         }
     }
-    
 
     public static bool IsOwnerHost(uint ownerId)
     {

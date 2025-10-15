@@ -13,12 +13,15 @@ MonoBehaviour:
   m_Name: PlayerArchetype
   m_EditorClassIdentifier: Assembly-CSharp::UnitArchetype
   personalCoverMax: 100
-  coverRegenOnMove: 5
-  coverRegenPerUnusedAP: 0
-  shootingSkill: 2
-  accPerSkill: 3
+  coverRegenOnMove: 10
+  coverRegenPerUnusedAP: 10
   lowCoverPenalty: 10
   highCoverPenalty: 20
+  basicShootinSkill: 69
+  shootingSkillLevel: 0
+  accuracyBonusPerSkillLevel: 3
+  grenadeCapacity: 2
+  throwingRange: 7
   coverMaxByLevel:
     serializedVersion: 2
     m_Curve:
