@@ -47,15 +47,17 @@ public class UnitManager : MonoBehaviour
     {
         Unit unit = sender as Unit;
         unitList.Add(unit);
-        if (GameModeManager.SelectedMode == GameMode.SinglePlayer)
+        if (GameModeManager.SelectedMode != GameMode.Versus)
         {
             if (unit.IsEnemy())
             {
                 enemyUnitList.Add(unit);
+                unit.Team = Team.Enemy;
             }
             else
             {
                 friendlyUnitList.Add(unit);
+                unit.Team = Team.Player;
             }
         }
         if (GameModeManager.SelectedMode == GameMode.Versus)
@@ -63,9 +65,11 @@ public class UnitManager : MonoBehaviour
             if(NetworkSync.IsOwnerHost(unit.OwnerId))
             {
                 friendlyUnitList.Add(unit);
+                unit.Team = Team.Player;
             } else
             {
                 enemyUnitList.Add(unit);
+                unit.Team = Team.Enemy;
             }
         }
     }
@@ -75,7 +79,7 @@ public class UnitManager : MonoBehaviour
         Unit unit = sender as Unit;
         unitList.Remove(unit);
 
-        if (GameModeManager.SelectedMode == GameMode.SinglePlayer)
+        if (GameModeManager.SelectedMode != GameMode.Versus)
         {
             if (unit.IsEnemy())
             {

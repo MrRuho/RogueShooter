@@ -24,9 +24,6 @@ public class ShootAction : BaseAction
 
     [SerializeField] private LayerMask obstaclesLayerMask;
     private State state;
-
-   // [SerializeField] private int maxShootDistance = 7;
-   // [SerializeField] private int damage = 30;
     [SerializeField] private WeaponDefinition weapon;
 
     private float stateTimer;

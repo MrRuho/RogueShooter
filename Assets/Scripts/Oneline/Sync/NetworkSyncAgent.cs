@@ -49,7 +49,7 @@ public class NetworkSyncAgent : NetworkBehaviour
 
         bp.actorUnitNetId = actorNetId;                     // talteen (SyncVar)
         bp.Setup(targetPos);                                // alustus serverillä
-        NetworkServer.Spawn(go); 
+        NetworkServer.Spawn(go);
     }
 
     [Command(requiresAuthority = true)]
@@ -72,7 +72,7 @@ public class NetworkSyncAgent : NetworkBehaviour
 
         bp.actorUnitNetId = actorNetId;                     // talteen (SyncVar)
         bp.Setup(targetPos);                                // alustus serverillä
-        NetworkServer.Spawn(go); 
+        NetworkServer.Spawn(go);
     }
 
     private bool RightOwner(uint actorNetId)
@@ -140,41 +140,17 @@ public class NetworkSyncAgent : NetworkBehaviour
 
         var obj = targetNi.GetComponent<DestructibleObject>();
         if (obj == null) return;
-        
-        // DODO Tulee ajankohtaiseksi kun kranaatti skriptable object on luotu unitille.
-        // GrenadeDeginition.cs on luotu.  
-        /*
-        // --- NEW: server-side sanity cap ---
-        int maxAllowed = 0;
-        if (NetworkServer.spawned.TryGetValue(actorNetId, out var attackerNi) && attackerNi != null)
-        {
-            var attacker = attackerNi.GetComponent<Unit>();
-            var w = attacker != null ? attacker.GetCurrentWeapon() : null;
-
-            // Aseesta johdettu maksimi: Miss/Graze/Hit/Crit → enintään base + critBonus
-            if (w != null)
-                maxAllowed = Mathf.Max(maxAllowed, w.baseDamage + w.critBonusDamage); // esim. 10 + 8, jne. 
-
-            // Lähitaistelulle varmuuskatto (sinulla MeleeAction.damage = 100 → ota vähintään tämä)
-            // Vältetään riippuvuus MeleeActionin yksityiseen kenttään ottamalla varovainen fallback:
-            maxAllowed = Mathf.Max(maxAllowed, 300); //
-        }
-
-        int safe = Mathf.Clamp(amount, 0, maxAllowed);
-        if (safe != amount)
-            Debug.LogWarning($"[Server] Clamped damage from {amount} to {safe} (actor {actorNetId} → target {targetNetId}).");
-        */
 
         obj.Damage(amount, hitPosition);
     }
-    
+
     [Command(requiresAuthority = false)]
     public void CmdRequestHpRefresh(uint unitNetId)
     {
         if (!NetworkServer.active) return;
         if (!NetworkServer.spawned.TryGetValue(unitNetId, out var id)) return;
 
-        var u  = id.GetComponent<Unit>();
+        var u = id.GetComponent<Unit>();
         var hs = u ? u.GetComponent<HealthSystem>() : null;
         if (u == null || hs == null) return;
 
@@ -195,7 +171,7 @@ public class NetworkSyncAgent : NetworkBehaviour
         var ni = unit.GetComponent<NetworkIdentity>();
         if (ni) RpcNotifyApChanged(ni.netId, ap);
     }
-    
+
     [Server]
     public void ServerBroadcastCover(Unit unit, int current, int max)
     {
@@ -236,6 +212,34 @@ public class NetworkSyncAgent : NetworkBehaviour
         unit.SetPersonalCover(Mathf.Clamp(value, 0, unit.GetPersonalCoverMax()));
     }
 
+    [Command(requiresAuthority = false)]
+    public void CmdSetUnderFire(uint unitNetId, bool value)
+    {
+        if (!NetworkServer.spawned.TryGetValue(unitNetId, out var id) || id == null) return;
+        var unit = id.GetComponent<Unit>();
+        if (!unit) return;
+
+        unit.SetUnderFireServer(value);
+    }
+
+    [Server]
+    public void ServerBroadcastUnderFire(Unit unit, bool value)
+    {
+        var ni = unit.GetComponent<NetworkIdentity>();
+        if (ni) RpcNotifyUnderFireChanged(ni.netId, value);
+    }
+
+    [ClientRpc]
+    void RpcNotifyUnderFireChanged(uint unitNetId, bool value)
+    {
+        if (!NetworkClient.spawned.TryGetValue(unitNetId, out var id) || id == null) return;
+        var unit = id.GetComponent<Unit>();
+        if (!unit) return;
+
+        unit.ApplyNetworkUnderFire(value);
+    }
+
+
     // ---- SERVER → ALL CLIENTS: HP-muutos ilmoitus
     [ClientRpc]
     void RpcNotifyHpChanged(uint unitNetId, int current, int max)
@@ -270,5 +274,28 @@ public class NetworkSyncAgent : NetworkBehaviour
         unit.ApplyNetworkActionPoints(ap); // päivittää arvon + triggaa eventin
     }
 
+    [Command]
+    public void CmdRegenCoverOnMove(uint unitNetId, int distance)
+    {
+        if (!NetworkServer.spawned.TryGetValue(unitNetId, out NetworkIdentity ni)) return;
+        var cs = ni.GetComponent<CoverSkill>();
+        if (cs != null) cs.ServerRegenCoverOnMove(distance);
+    }
+    [Command]
+    public void CmdResetCurrentCoverBonus(uint unitNetId)
+    {
+        if (!NetworkServer.spawned.TryGetValue(unitNetId, out NetworkIdentity ni)) return;
+        var cs = ni.GetComponent<CoverSkill>();
+        if (cs != null) cs.ServerResetCurrentCoverBonus();
+    }
+
+    [Command(requiresAuthority = false)]
+    public void CmdApplyCoverBonus(uint unitNetId)
+    {
+
+        if (!NetworkServer.spawned.TryGetValue(unitNetId, out NetworkIdentity ni)) return;
+        var cs = ni.GetComponent<CoverSkill>(); // tai GetComponentInChildren<CoverSkill>()
+        if (cs != null) cs.ServerApplyCoverBonus();
+    }
 
 }

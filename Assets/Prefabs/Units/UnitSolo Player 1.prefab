@@ -156,8 +156,6 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  newCoverBonusHalf: 15
-  newCoverBonusFull: 30
   OwnerId: 0
   archetype: {fileID: 11400000, guid: 4550bcfa4110ca445be7e3f4b337acd8, type: 2}
   currentWeapon: {fileID: 11400000, guid: 0a7d4b5dde914294784bbe40de853782, type: 2}
@@ -196,8 +194,6 @@ MonoBehaviour:
   obstaclesLayerMask:
     serializedVersion: 2
     m_Bits: 320
-  maxShootDistance: 10
-  damage: 80
   weapon: {fileID: 11400000, guid: 0a7d4b5dde914294784bbe40de853782, type: 2}
 --- !u!114 &5597279145825593226
 MonoBehaviour:
@@ -273,6 +269,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 15b160be1d2c45f48864f2fb11f251d7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CoverSkill
+  newCoverBonusHalf: 15
+  newCoverBonusFull: 25
 --- !u!114 &7633362043615807318
 MonoBehaviour:
   m_ObjectHideFlags: 0

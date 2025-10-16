@@ -54,6 +54,9 @@ public class PvPTurnCoordinator : NetworkBehaviour
         next.ServerSetHasEnded(false);   // avaa syötteen ja nappulan
         // ended pysyy lukossa (hasEndedThisTurn = true)
         RpcTurnChanged(GetTurnNumber(), currentOwnerNetId);
+        
+        if (TurnSystem.Instance != null)
+        TurnSystem.Instance.NextTurn();
     }
 
     int GetTurnNumber() => NetTurnManager.Instance ? NetTurnManager.Instance.turnNumber : 1;

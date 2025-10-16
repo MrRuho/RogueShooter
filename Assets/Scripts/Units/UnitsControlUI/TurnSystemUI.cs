@@ -74,19 +74,20 @@ public class TurnSystemUI : MonoBehaviour
         bool isOnline =
             NetTurnManager.Instance != null &&
             (GameNetworkManager.Instance.GetNetWorkServerActive() || GameNetworkManager.Instance.GetNetWorkClientConnected());
+
         if (!isOnline)
         {
             if (TurnSystem.Instance != null)
             {
                 TurnSystem.Instance.NextTurn();
+                return;
             }
             else
             {
                 Debug.LogWarning("[UI] TurnSystem.Instance is null");
             }
-            return;
         }
-
+        
         CacheLocalPlayerController();
         if (localPlayerController == null)
         {
@@ -103,7 +104,6 @@ public class TurnSystemUI : MonoBehaviour
         // Lähetä serverille
         localPlayerController.ClickEndTurn();
 
-        //Päivitä player ready hud
     }
 
     private void CacheLocalPlayerController()
@@ -133,6 +133,8 @@ public class TurnSystemUI : MonoBehaviour
         {
             if (pc.isLocalPlayer) { localPlayerController = pc; break; }
         }
+        
+        TurnSystem.Instance.NextTurn();
     }
 
 

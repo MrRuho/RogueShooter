@@ -3,19 +3,24 @@ using Mirror;
 using UnityEngine;
 
 [RequireComponent(typeof(Unit))]
-public class CoverSkill : MonoBehaviour
+public class CoverSkill : NetworkBehaviour
 {
     [SerializeField] private int newCoverBonusHalf = 15;
     [SerializeField] private int newCoverBonusFull = 25;
 
     private int personalCover;
     private int personalCoverMax;
-    private int thisTurnStartingCover;
+    private int thisTurnStartingPersonalCover;
+
+    private int currentTurnCoverBonus;
+
+   [SyncVar] private bool hasMoved = false;
 
     protected Unit unit;
 
-    public event Action<int, int> OnCoverPoolChanged;
+    private int _lastProcessedTurnId = -1;
 
+    public event Action<int, int> OnCoverPoolChanged;
 
     protected virtual void Awake()
     {
@@ -24,27 +29,30 @@ public class CoverSkill : MonoBehaviour
 
     private void Start()
     {
-        TurnSystem.Instance.OnTurnChanged += TurnSystem_OnTurnChanged;
         if (unit.archetype != null)
         {
             personalCoverMax = unit.archetype.personalCoverMax;
         }
 
         personalCover = personalCoverMax;
-        personalCover = personalCoverMax;
-        thisTurnStartingCover = personalCover;
+        thisTurnStartingPersonalCover = personalCover;
+        currentTurnCoverBonus = 0;
+        hasMoved = false;
 
-        // kerro UI:lle heti
         OnCoverPoolChanged?.Invoke(personalCover, personalCoverMax);
+    }
+
+    private void OnEnable()
+    {
+        TurnSystem.Instance.OnTurnStarted += OnTurnStarted_HandleTurnStarted;
+        TurnSystem.Instance.OnTurnEnded += OnTurnEnded_HandleTurnEnded;
     }
 
     private void OnDisable()
     {
-        TurnSystem.Instance.OnTurnChanged -= TurnSystem_OnTurnChanged;
+        TurnSystem.Instance.OnTurnStarted -= OnTurnStarted_HandleTurnStarted;
+        TurnSystem.Instance.OnTurnEnded -= OnTurnEnded_HandleTurnEnded;
     }
-
-
-    ///****** CoverSystem!************
 
     public int GetPersonalCover()
     {
@@ -53,32 +61,60 @@ public class CoverSkill : MonoBehaviour
 
     public void SetPersonalCover(int value)
     {
-        // OFFLINE: ei Mirroria → päivitä suoraan paikallisesti
         if (!NetworkServer.active && !NetworkClient.active)
         {
             ApplyCoverLocal(value);
             return;
         }
 
-        // ONLINE SERVER/HOST: päivitä totuusarvo ja broadcastaa
         if (NetworkServer.active)
         {
             ApplyCoverServer(value);
             return;
         }
 
-        // ONLINE CLIENT: pyydä serveriä asettamaan (EI paikallista asettamista → ei "välähdystä")
         var ni = GetComponent<NetworkIdentity>();
         if (NetworkClient.active && NetworkSyncAgent.Local != null && ni != null)
         {
             NetworkSyncAgent.Local.CmdSetUnitCover(ni.netId, value);
         }
-        // ei paikallista muutosta täällä
     }
 
     public void SetCoverBonus()
     {
-        if (unit.IsUnderFire) return;
+        // CLIENT: pyydä serveriä tekemään
+        if (NetworkClient.active && !NetworkServer.active)
+        {
+            var ni = GetComponent<NetworkIdentity>();
+            NetworkSyncAgent.Local?.CmdApplyCoverBonus(ni.netId);
+            return;
+        }
+
+        // SERVER / OFFLINE: varsinainen työ
+        ServerApplyCoverBonus();
+    }
+    
+    [Server]
+    public void ServerApplyCoverBonus()
+    {
+        // TÄRKEÄ: Jos on jo liikuttu tällä vuorolla, resetoi bonus ENSIN
+        if (hasMoved && currentTurnCoverBonus != 0)
+        {
+            int newCover = personalCover - currentTurnCoverBonus;
+            if (newCover < thisTurnStartingPersonalCover)
+                newCover = thisTurnStartingPersonalCover;
+            
+            personalCover = newCover;
+            currentTurnCoverBonus = 0;
+        }
+        hasMoved = true;
+        if (unit.IsUnderFire)
+        {
+            personalCover = thisTurnStartingPersonalCover;
+            OnCoverPoolChanged?.Invoke(personalCover, personalCoverMax);
+            NetworkSync.UpdateCoverUI(unit);
+            return;
+        }
 
         var gp = unit.GetGridPosition();
         var pf = PathFinding.Instance;
@@ -91,60 +127,83 @@ public class CoverSkill : MonoBehaviour
         int bonus = t == CoverService.CoverType.High ? newCoverBonusFull :
                     t == CoverService.CoverType.Low  ? newCoverBonusHalf : 0;
 
-        if (bonus > 0) AddPersonalCover(bonus);
+        currentTurnCoverBonus = bonus;
+         if (bonus > 0)
+        {
+            if (unit.IsUnderFire)
+            {
+                SetPersonalCover(thisTurnStartingPersonalCover);
+            }
+            else
+            {
+                SetPersonalCover(personalCover + bonus);
+            }
+            
+        }
+        else
+        {
+            NetworkSync.UpdateCoverUI(unit);
+        }
     }
 
     private void ApplyCoverLocal(int value)
     {
         personalCover = Mathf.Clamp(value, 0, personalCoverMax);
-        OnCoverPoolChanged?.Invoke(personalCover, personalCoverMax); // UI päivittyy heti
+        OnCoverPoolChanged?.Invoke(personalCover, personalCoverMax);
     }
 
-    [Server] // kutsutaan vain serverillä
+    [Server]
     private void ApplyCoverServer(int value)
     {
         personalCover = Mathf.Clamp(value, 0, personalCoverMax);
         OnCoverPoolChanged?.Invoke(personalCover, personalCoverMax);
-        NetworkSync.UpdateCoverUI(unit); // server → Rpc → kaikkien UI:t
+        NetworkSync.UpdateCoverUI(unit);
     }
 
     public void RegenCoverOnMove(int distance)
+    {
+        if (NetworkClient.active && !NetworkServer.active)
+        {
+            var ni = GetComponent<NetworkIdentity>();
+            NetworkSyncAgent.Local?.CmdRegenCoverOnMove(ni.netId, distance);
+            return;
+        }
+
+        ServerRegenCoverOnMove(distance);
+    }
+
+    [Server]
+    public void ServerRegenCoverOnMove(int distance)
     {
         int regenPerTile = unit.archetype != null ? unit.archetype.coverRegenOnMove : 5;
         int tileDelta = distance / 10;
         int coverChange = regenPerTile * tileDelta;
         int newCover = personalCover + coverChange;
 
-        if (newCover <= thisTurnStartingCover)
+        if (newCover <= thisTurnStartingPersonalCover)
         {
-            newCover = thisTurnStartingCover;
+            newCover = thisTurnStartingPersonalCover;
         }
 
-        personalCover = Mathf.Clamp(newCover, 0, personalCoverMax);
-
-        OnCoverPoolChanged?.Invoke(personalCover, personalCoverMax);
+        SetPersonalCover(Mathf.Clamp(newCover, 0, personalCoverMax));
     }
 
     public void RegenCoverBy(int amount)
     {
-        int before = personalCover;
-        personalCover = Mathf.Clamp(personalCover + amount, 0, personalCoverMax);
-
-
-        OnCoverPoolChanged?.Invoke(personalCover, personalCoverMax);
+        if (amount == 0) return;
+        SetPersonalCover(personalCover + amount);
     }
 
     public int GetCoverRegenPerUnusedAP()
     {
         if (!unit.IsUnderFire)
         {
-            return unit.archetype != null ? unit.archetype.coverRegenPerUnusedAP : 1;
+            return unit.archetype != null ? unit.archetype.coverRegenPerUnusedAP : 0;
         }
         return 0;
     }
 
     public int GetPersonalCoverMax() => personalCoverMax;
-
 
     public float GetCoverNormalized()
     {
@@ -158,16 +217,65 @@ public class CoverSkill : MonoBehaviour
         OnCoverPoolChanged?.Invoke(personalCover, personalCoverMax);
     }
 
-    private void AddPersonalCover(int delta)
+    public int GetCurrentCoverBonus()
     {
-        if (delta == 0) return;
-        personalCover = Mathf.Clamp(personalCover + delta, 0, personalCoverMax);
-        OnCoverPoolChanged?.Invoke(personalCover, personalCoverMax);
-        NetworkSync.UpdateCoverUI(unit); // jos verkossa
+        return currentTurnCoverBonus;
     }
 
-    private void TurnSystem_OnTurnChanged(object sender, EventArgs e)
+    public void ResetCurrentCoverBonus()
     {
-        thisTurnStartingCover = personalCover;
+        if (NetworkClient.active && !NetworkServer.active)
+        {
+            var ni = GetComponent<NetworkIdentity>();
+            NetworkSyncAgent.Local?.CmdResetCurrentCoverBonus(ni.netId);
+            return;
+        }
+
+        ServerResetCurrentCoverBonus();
+    }
+
+
+    
+    [Server]
+    public void ServerResetCurrentCoverBonus()
+    {
+        if (currentTurnCoverBonus != 0)
+        {
+            int newCover = personalCover - currentTurnCoverBonus;
+            if (newCover < thisTurnStartingPersonalCover)
+                newCover = thisTurnStartingPersonalCover; // vuoron aloitus on minimi
+
+            SetPersonalCover(newCover);
+            currentTurnCoverBonus = 0; // estää tuplavähennykset
+        }
+    }
+
+    public bool HasMoved()
+    {
+        return hasMoved;
+    }
+
+    private void OnTurnStarted_HandleTurnStarted(Team startTurnTeam, int turnId)
+    {
+        if (NetworkClient.active && !NetworkServer.active) return;
+        // Vain oman puolen vuorolla
+        if (unit.Team != startTurnTeam) return;
+
+        // (Valinnainen) suoja duplikaateilta, jos eventti laukeaa useammin samassa vuorossa
+        if (_lastProcessedTurnId == turnId) return;
+        _lastProcessedTurnId = turnId;
+
+        // Resetit vain omalle puolelle:
+        thisTurnStartingPersonalCover = personalCover;
+        currentTurnCoverBonus = 0;
+        hasMoved = false;
+    }
+    
+    private void OnTurnEnded_HandleTurnEnded(Team endTurnTeam, int turnId)
+    {
+        if (NetworkClient.active && !NetworkServer.active) return;
+        // Vain kun toisen vuoro alkaa. Unitit eivät ole enää tulen alla.
+        if (unit.Team != endTurnTeam) return;
+        unit.SetUnderFire(false);
     }
 }

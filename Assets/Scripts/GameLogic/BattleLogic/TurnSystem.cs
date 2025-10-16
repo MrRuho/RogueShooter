@@ -1,10 +1,18 @@
 using System;
 using System.Collections.Generic;
+using Mirror;
 using UnityEngine;
 
 public class TurnSystem : MonoBehaviour
 {
     public static TurnSystem Instance { get; private set; }
+    public Team CurrentTeam { get; private set; } = Team.Player;
+    public int TurnId { get; private set; } = 0;
+
+
+
+    public event Action<Team,int> OnTurnStarted;
+    public event Action<Team,int> OnTurnEnded;
 
     public event EventHandler OnTurnChanged;
     private int turnNumber = 1;
@@ -25,6 +33,8 @@ public class TurnSystem : MonoBehaviour
 
     private void Start()
     {
+        // Ensimmäinen vuoro.
+        OnTurnStarted?.Invoke(CurrentTeam, TurnId);
         // Varmista, että alkutila lähetetään kaikille UI:lle
         PlayerLocalTurnGate.Set(isPlayerTurn); // true = Player turn alussa
         OnTurnChanged?.Invoke(this, EventArgs.Empty); // jos haluat myös muut UI:t liikkeelle
@@ -32,36 +42,57 @@ public class TurnSystem : MonoBehaviour
 
     public void NextTurn()
     {
-        // Tarkista pelimoodi
+        if (GameModeManager.SelectedMode != GameMode.SinglePlayer && !NetworkServer.active)
+        {
+            Debug.LogWarning("Client yritti kääntää vuoroa lokaalisti, ignoroidaan.");
+            return;
+        }
+            OnTurnEnded?.Invoke(CurrentTeam, TurnId);
+            CurrentTeam = (CurrentTeam == Team.Player) ? Team.Enemy : Team.Player;
+            TurnId++;
+            OnTurnStarted?.Invoke(CurrentTeam, TurnId);
+
         if (GameModeManager.SelectedMode == GameMode.SinglePlayer)
         {
-            // 1) Muunna käyttämättömät AP:t suojaksi (vain omat unitit)
-            ConvertUnusedActionPointsToCoverPoints();
-
-
-            Debug.Log("SinglePlayer NextTurn");
             turnNumber++;
             isPlayerTurn = !isPlayerTurn;
-
             OnTurnChanged?.Invoke(this, EventArgs.Empty);
-
-            //Set Unit UI visibility
             PlayerLocalTurnGate.Set(isPlayerTurn);
         }
         else if (GameModeManager.SelectedMode == GameMode.CoOp)
         {
             Debug.Log("Co-Op mode: Proceeding to the next turn.");
-            // Tee jotain erityistä CoOp-tilassa
         }
         else if (GameModeManager.SelectedMode == GameMode.Versus)
         {
             Debug.Log("Versus mode: Proceeding to the next turn.");
-            // Tee jotain erityistä Versus-tilassa
         }
     }
 
+    
+    public void ForcePhase(bool isPlayerTurn, bool incrementTurnNumber)
+    {
+        if (incrementTurnNumber) turnNumber++;
+        
+        if (NetworkServer.active && isPlayerTurn)
+        {
+            ConvertUnusedActionPointsToCoverPoints();
+        }
+        
+        this.isPlayerTurn = isPlayerTurn;
+        OnTurnChanged?.Invoke(this, EventArgs.Empty);
+    }
+
+    public void SetHudFromNetwork(int newTurnNumber, bool isPlayersPhase)
+    {
+        turnNumber = newTurnNumber;
+        isPlayerTurn = isPlayersPhase;
+        OnTurnChanged?.Invoke(this, EventArgs.Empty);
+    }
+
     private void ConvertUnusedActionPointsToCoverPoints()
-    { 
+    {
+        Debug.Log("Konvertoidaan käyttämättömät pisteet coveriksi");
         List<Unit> ownUnits = UnitManager.Instance.GetFriendlyUnitList();
             for (int i = 0; i < ownUnits.Count; i++)
             {
@@ -83,19 +114,6 @@ public class TurnSystem : MonoBehaviour
         return isPlayerTurn;
     }
 
-    // ForcePhase on serverin kutsuma. Päivittää vuoron ja kutsuu OnTurnChanged
-    public void ForcePhase(bool isPlayerTurn, bool incrementTurnNumber)
-    {
-        if (incrementTurnNumber) turnNumber++;
-        this.isPlayerTurn = isPlayerTurn;
-        OnTurnChanged?.Invoke(this, EventArgs.Empty);
-    }
+    public bool IsUnitsTurn(Unit u) => u.Team == CurrentTeam;
 
-    // Päivitä HUD verkon kautta (co-op)
-    public void SetHudFromNetwork(int newTurnNumber, bool isPlayersPhase)
-    {
-        turnNumber = newTurnNumber;
-        isPlayerTurn = isPlayersPhase;
-        OnTurnChanged?.Invoke(this, EventArgs.Empty); // <- päivitää HUDin kuten SP:ssä
-    }  
 }

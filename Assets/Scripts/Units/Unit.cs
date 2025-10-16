@@ -8,12 +8,15 @@ using UnityEngine;
 ///     Actions can be called on the unit to perform various actions like moving or shooting.
 ///     The class inherits from NetworkBehaviour to support multiplayer functionality.
 /// </summary>
+public enum Team { Player, Enemy }
 [RequireComponent(typeof(HealthSystem))]
 [RequireComponent(typeof(MoveAction))]
 [RequireComponent(typeof(TurnTowardsAction))]
 [RequireComponent(typeof(CoverSkill))]
 public class Unit : NetworkBehaviour
-{   
+{
+    public Team Team; 
+
     [SerializeField] public CoverSkill Cover { get; private set; }
 
     private const int ACTION_POINTS_MAX = 2;
@@ -55,6 +58,7 @@ public class Unit : NetworkBehaviour
     private Animator anim;
 
     private int grenadePCS;
+    
 
     private void Awake()
     {
@@ -76,7 +80,8 @@ public class Unit : NetworkBehaviour
             LevelGrid.Instance.AddUnitAtGridPosition(gridPosition, this);
         }
 
-        TurnSystem.Instance.OnTurnChanged += TurnSystem_OnTurnChanged;
+        TurnSystem.Instance.OnTurnStarted += OnTurnStarted_HandleTurnStarted;
+        TurnSystem.Instance.OnTurnEnded += OnTurnEnded_HandleTurnEnded;
 
         healthSystem.OnDead += HealthSystem_OnDead;
         OnAnyUnitSpawned?.Invoke(this, EventArgs.Empty);
@@ -94,7 +99,9 @@ public class Unit : NetworkBehaviour
 
     private void OnDisable()
     {
-        TurnSystem.Instance.OnTurnChanged -= TurnSystem_OnTurnChanged;
+        TurnSystem.Instance.OnTurnStarted -= OnTurnStarted_HandleTurnStarted;
+        TurnSystem.Instance.OnTurnEnded -= OnTurnEnded_HandleTurnEnded;
+
         if (Cover != null) Cover.OnCoverPoolChanged -= ForwardCoverChanged;
     }
 
@@ -182,15 +189,7 @@ public class Unit : NetworkBehaviour
         return actionPoints;
     }
 
-    /// <summary>
-    ///     This method is called when the turn changes. It resets the action points to the maximum value.
-    /// </summary>
-    private void TurnSystem_OnTurnChanged(object sender, EventArgs e)
-    {
-        actionPoints = ACTION_POINTS_MAX;
-       // thisTurnStartingCover = personalCover;
-        OnAnyActionPointsChanged?.Invoke(this, EventArgs.Empty);
-    }
+
 
     /// <summary>
     ///    Online: Updating ActionPoints usage to otherplayers. 
@@ -257,17 +256,59 @@ public class Unit : NetworkBehaviour
         return maxMoveDistance;
     }
 
-    public void SetUnderFire(bool value) => underFire = value;
+    //public void SetUnderFire(bool value) => underFire = value;
+    public void SetUnderFire(bool value)
+    {
+        if (!NetworkServer.active && !NetworkClient.active)
+        {
+            Debug.Log("Set underfire:" + value);
+            underFire = value;
+            return;
+        }
+
+        if (NetworkServer.active)
+        {
+            SetUnderFireServer(value);
+            return;
+        }
+
+        var ni = GetComponent<NetworkIdentity>();
+        if (NetworkClient.active && NetworkSyncAgent.Local != null && ni != null)
+        {
+            NetworkSyncAgent.Local.CmdSetUnderFire(ni.netId, value);
+        }
+    }
+
+    [Server]
+    public void SetUnderFireServer(bool value)
+    {
+        underFire = value;
+        var agent = FindFirstObjectByType<NetworkSyncAgent>();
+        if (agent != null)
+            agent.ServerBroadcastUnderFire(this, value);
+    }
+
+    public void ApplyNetworkUnderFire(bool value)
+    {
+        underFire = value;
+    }
+
 
     // ****** Cover Skill ***********
     public int  GetPersonalCover() => Cover ? Cover.GetPersonalCover() : 0;
     public int  GetPersonalCoverMax() => Cover ? Cover.GetPersonalCoverMax() : 1;
     public float GetCoverNormalized() => Cover ? Cover.GetCoverNormalized() : 0f;
-    public int  GetCoverRegenPerUnusedAP() => Cover ? Cover.GetCoverRegenPerUnusedAP() : 0;
+    public int GetCoverRegenPerUnusedAP() => Cover ? Cover.GetCoverRegenPerUnusedAP() : 0;
+
+    public bool HasMoved() => Cover ? Cover.HasMoved() : false;
 
     public void SetPersonalCover(int v) { if (Cover) Cover.SetPersonalCover(v); }
-    public void SetCoverBonus() { if (Cover) Cover.SetCoverBonus(); }
-    
+    //public void SetCoverBonus() { if (Cover) Cover.SetCoverBonus(); }
+    public void SetCoverBonus() { if (Cover) Cover.ServerApplyCoverBonus(); }
+
+    public int GetCurrentCoverBonus() => Cover ? Cover.GetCurrentCoverBonus() : 0;
+    public void ResetCurrentCoverBonus() { if (Cover) Cover.ResetCurrentCoverBonus(); }
+
     public void RegenCoverBy(int amount) { if (Cover) Cover.RegenCoverBy(amount); }
     public void RegenCoverOnMove(int distance){ if (Cover) Cover.RegenCoverOnMove(distance); }
 
@@ -295,4 +336,33 @@ public class Unit : NetworkBehaviour
         return currentWeapon;
     }
 
+    private int _lastApStartTurnId = -1;
+    private void OnTurnStarted_HandleTurnStarted(Team startTurnTeam, int turnId)
+    {
+        if (NetworkClient.active && !NetworkServer.active) return;
+        if (Team != startTurnTeam) return;            // vain oman puolen alussa
+        if (_lastApStartTurnId == turnId) return;       // duplikaattisuojaksi
+        _lastApStartTurnId = turnId;
+
+        actionPoints = ACTION_POINTS_MAX;
+        OnAnyActionPointsChanged?.Invoke(this, EventArgs.Empty);
+
+        // LISÄÄ TÄMÄ: Broadcastaa AP-muutos myös verkossa
+        if (NetworkServer.active || NetworkClient.active)
+        {
+            NetworkSync.BroadcastActionPoints(this, actionPoints);
+        }
+    }
+    
+    private void OnTurnEnded_HandleTurnEnded(Team endTurnTeam, int turnId)
+    {
+        if (NetworkClient.active && !NetworkServer.active) return;
+        if (Team != endTurnTeam) return;            // vain sen puolen lopussa joka oli vuorossa
+        int ap  = GetActionPoints();
+        int per = GetCoverRegenPerUnusedAP();           // palauttaa >0 vain jos ei underFire
+        if (ap > 0 && per > 0) Cover.RegenCoverBy(ap * per);  // coverSkill hoitaa clampit jne.
+        // (valinnainen) nollaa AP:t heti vuoron päättyessä:
+        actionPoints = 0;
+        OnAnyActionPointsChanged?.Invoke(this, EventArgs.Empty);
+    }
 }

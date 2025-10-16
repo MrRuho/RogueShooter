@@ -146,7 +146,7 @@ public class SpawnUnitsCoordinator : MonoBehaviour
     {
         Instantiate(enemyPrefab, enemySpawnPositions[0], Quaternion.identity);
         Instantiate(enemyPrefab, enemySpawnPositions[1], Quaternion.identity);
-        Instantiate(enemyPrefab, enemySpawnPositions[2], Quaternion.identity);
-        Instantiate(enemyPrefab, enemySpawnPositions[3], Quaternion.identity);
+      //  Instantiate(enemyPrefab, enemySpawnPositions[2], Quaternion.identity);
+      //  Instantiate(enemyPrefab, enemySpawnPositions[3], Quaternion.identity);
     }   
 }

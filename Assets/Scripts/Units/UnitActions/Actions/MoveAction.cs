@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Mirror;
 using UnityEngine;
 
 
@@ -28,6 +29,7 @@ public class MoveAction : BaseAction
 
     private void Start()
     {
+
         distance = 0;
         thisTurnStartingGridPosition = unit.GetGridPosition();
         thisTurnEndridPosition = unit.GetGridPosition();
@@ -40,15 +42,7 @@ public class MoveAction : BaseAction
     }
 
     private void TurnSystem_OnTurnChanged(object sender, EventArgs e)
-    {
-        // Jos Unit on liikkunut alkuperäiseltä paikaltaan katsotaan että Unit ei ole enää tulenalla.
-        // ja Unit voi esim. Saada käyttämättömistä pisteistä 
-        if (thisTurnStartingGridPosition != thisTurnEndridPosition)
-        {
-            unit.SetUnderFire(false);
-            unit.SetCoverBonus();
-        }
-        
+    {   
         thisTurnStartingGridPosition = unit.GetGridPosition();
         distance = 0;
     }
@@ -87,8 +81,7 @@ public class MoveAction : BaseAction
             float moveSpeed = 6f;
             transform.position += moveSpeed * Time.deltaTime * moveDirection;
         }
-
-
+          
         float stoppingDistance = 0.2f;
         if (Vector3.Distance(transform.position, targetPosition) < stoppingDistance)
         {
@@ -98,10 +91,22 @@ public class MoveAction : BaseAction
             currentPositionIndex++;
             if (currentPositionIndex >= positionList.Count)
             {
-                
+
+                if (thisTurnStartingGridPosition != thisTurnEndridPosition)
+                {
+                    unit.SetUnderFire(false);
+                    CheckAndApplyCoverBonus();
+                }
+                else
+                {
+                    unit.SetUnderFire(true);
+                    CheckAndApplyCoverBonus();
+                }
+
                 OnStopMoving?.Invoke(this, EventArgs.Empty);
                 ActionComplete();
             }
+
             else
             {
                 targetPosition = positionList[currentPositionIndex];
@@ -114,6 +119,33 @@ public class MoveAction : BaseAction
                     isChangingFloors = true;
                     differentFloorsTeleportTimer = differentFloorsTeleportTimerMax;
                 }
+            }
+        }
+    }
+
+    private void CheckAndApplyCoverBonus()
+    {
+        // Offline
+        if (!NetworkServer.active && !NetworkClient.active)
+        {
+            unit.SetCoverBonus();
+            return;
+        }
+
+        // Server suorittaa suoraan
+        if (NetworkServer.active)
+        {
+            unit.SetCoverBonus();
+            return;
+        }
+
+        // Client lähettää Command Serverille
+        if (NetworkClient.active && NetworkSyncAgent.Local != null)
+        {
+            var ni = unit.GetComponent<NetworkIdentity>();
+            if (ni != null)
+            {
+                NetworkSyncAgent.Local.CmdApplyCoverBonus(ni.netId);
             }
         }
     }
