@@ -94,9 +94,12 @@ public class CoverSkill : NetworkBehaviour
         ServerApplyCoverBonus();
     }
     
-    [Server]
+    //[Server]
     public void ServerApplyCoverBonus()
     {
+        // Vain Server TAI Offline saa suorittaa
+        if (NetworkClient.active && !NetworkServer.active) return;
+        
         // TÄRKEÄ: Jos on jo liikuttu tällä vuorolla, resetoi bonus ENSIN
         if (hasMoved && currentTurnCoverBonus != 0)
         {
@@ -152,9 +155,12 @@ public class CoverSkill : NetworkBehaviour
         OnCoverPoolChanged?.Invoke(personalCover, personalCoverMax);
     }
 
-    [Server]
+    //[Server]
     private void ApplyCoverServer(int value)
     {
+        // Vain Server TAI Offline saa suorittaa
+        if (NetworkClient.active && !NetworkServer.active) return;
+        
         personalCover = Mathf.Clamp(value, 0, personalCoverMax);
         OnCoverPoolChanged?.Invoke(personalCover, personalCoverMax);
         NetworkSync.UpdateCoverUI(unit);
@@ -172,9 +178,12 @@ public class CoverSkill : NetworkBehaviour
         ServerRegenCoverOnMove(distance);
     }
 
-    [Server]
+    //[Server]
     public void ServerRegenCoverOnMove(int distance)
     {
+        // Vain Server TAI Offline saa suorittaa
+        if (NetworkClient.active && !NetworkServer.active) return;
+
         int regenPerTile = unit.archetype != null ? unit.archetype.coverRegenOnMove : 5;
         int tileDelta = distance / 10;
         int coverChange = regenPerTile * tileDelta;
@@ -236,9 +245,12 @@ public class CoverSkill : NetworkBehaviour
 
 
     
-    [Server]
+   // [Server]
     public void ServerResetCurrentCoverBonus()
     {
+        // Vain Server TAI Offline saa suorittaa
+        if (NetworkClient.active && !NetworkServer.active) return;
+        
         if (currentTurnCoverBonus != 0)
         {
             int newCover = personalCover - currentTurnCoverBonus;

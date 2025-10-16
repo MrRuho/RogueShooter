@@ -33,11 +33,14 @@ public class TurnSystem : MonoBehaviour
 
     private void Start()
     {
+       // OnTurnEnded += TurnSystem_OnTurnEnded;
         // Ensimmäinen vuoro.
         OnTurnStarted?.Invoke(CurrentTeam, TurnId);
         // Varmista, että alkutila lähetetään kaikille UI:lle
         PlayerLocalTurnGate.Set(isPlayerTurn); // true = Player turn alussa
         OnTurnChanged?.Invoke(this, EventArgs.Empty); // jos haluat myös muut UI:t liikkeelle
+
+
     }
 
     public void NextTurn()
@@ -47,6 +50,11 @@ public class TurnSystem : MonoBehaviour
             Debug.LogWarning("Client yritti kääntää vuoroa lokaalisti, ignoroidaan.");
             return;
         }
+
+            GridSystemVisual.Instance.HideAllGridPositions();
+            UnitActionSystem.Instance.ResetSelectedAction();
+            UnitActionSystem.Instance.ResetSelectedUnit();
+            
             OnTurnEnded?.Invoke(CurrentTeam, TurnId);
             CurrentTeam = (CurrentTeam == Team.Player) ? Team.Enemy : Team.Player;
             TurnId++;

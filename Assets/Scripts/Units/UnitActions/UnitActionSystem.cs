@@ -191,6 +191,16 @@ public class UnitActionSystem : MonoBehaviour
     {
         return selectedAction;
     }
+
+    public void ResetSelectedAction()
+    {
+        selectedAction = null;
+    }
+
+    public void ResetSelectedUnit()
+    {
+        selectedUnit = null;
+    }
     
     // Lock/Unlock input methods for PlayerController when playing online
     public void LockInput() { if (!isBusy) SetBusy(); }

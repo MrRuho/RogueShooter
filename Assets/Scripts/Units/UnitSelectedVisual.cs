@@ -7,6 +7,7 @@ using UnityEngine;
 /// </summary>
 public class UnitSelectedVisual : MonoBehaviour
 {
+
     [SerializeField] private Unit unit;
     [SerializeField] private MeshRenderer meshRenderer;
 
@@ -16,17 +17,6 @@ public class UnitSelectedVisual : MonoBehaviour
         if (meshRenderer) meshRenderer.enabled = false;
     }
 
-    private void Start()
-    {
-        /*
-        if (UnitActionSystem.Instance != null)
-        {
-            UnitActionSystem.Instance.OnSelectedUnitChanged += UnitActionSystem_OnSelectedUnitChanged;
-            UpdateVisual();
-        }
-        */
-    }
-
     void OnEnable()
     {
         if (UnitActionSystem.Instance != null)
@@ -34,6 +24,8 @@ public class UnitSelectedVisual : MonoBehaviour
             UnitActionSystem.Instance.OnSelectedUnitChanged += UnitActionSystem_OnSelectedUnitChanged;
             UpdateVisual();
         }
+
+        TurnSystem.Instance.OnTurnEnded += OnTurnEnded_HandleTurnEnded;
     }
 
     void OnDisable()
@@ -43,15 +35,10 @@ public class UnitSelectedVisual : MonoBehaviour
             UnitActionSystem.Instance.OnSelectedUnitChanged -= UnitActionSystem_OnSelectedUnitChanged;
             UpdateVisual();
         }
+
+        TurnSystem.Instance.OnTurnEnded -= OnTurnEnded_HandleTurnEnded;
     }
 
-    /*
-    private void OnDestroy()
-    {
-        if (UnitActionSystem.Instance != null)
-            UnitActionSystem.Instance.OnSelectedUnitChanged -= UnitActionSystem_OnSelectedUnitChanged;
-    }
-    */
     private void UnitActionSystem_OnSelectedUnitChanged(object sender, EventArgs empty)
     {
         UpdateVisual();
@@ -62,5 +49,15 @@ public class UnitSelectedVisual : MonoBehaviour
         if (!this || meshRenderer == null || UnitActionSystem.Instance == null) return;
         var selected = UnitActionSystem.Instance.GetSelectedUnit();
         meshRenderer.enabled = unit != null && selected == unit;
+    }
+
+    public void ResetSelectedVisual()
+    {
+        if (meshRenderer) meshRenderer.enabled = false;
+    }
+
+    private void OnTurnEnded_HandleTurnEnded(Team team, int arg2)
+    {
+        ResetSelectedVisual();
     }
 }
