@@ -25,8 +25,10 @@ public class UnitSelectedVisual : MonoBehaviour
             UpdateVisual();
         }
 
-        TurnSystem.Instance.OnTurnEnded += OnTurnEnded_HandleTurnEnded;
+        TurnSystem.Instance.OnTurnChanged += turnSystem_OnTurnChanged;
     }
+
+    
 
     void OnDisable()
     {
@@ -36,7 +38,7 @@ public class UnitSelectedVisual : MonoBehaviour
             UpdateVisual();
         }
 
-        TurnSystem.Instance.OnTurnEnded -= OnTurnEnded_HandleTurnEnded;
+        TurnSystem.Instance.OnTurnChanged -= turnSystem_OnTurnChanged;
     }
 
     private void UnitActionSystem_OnSelectedUnitChanged(object sender, EventArgs empty)
@@ -56,7 +58,7 @@ public class UnitSelectedVisual : MonoBehaviour
         if (meshRenderer) meshRenderer.enabled = false;
     }
 
-    private void OnTurnEnded_HandleTurnEnded(Team team, int arg2)
+    private void turnSystem_OnTurnChanged(object sender, EventArgs e)
     {
         ResetSelectedVisual();
     }

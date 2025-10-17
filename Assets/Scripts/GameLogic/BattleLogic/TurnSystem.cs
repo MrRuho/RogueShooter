@@ -33,7 +33,8 @@ public class TurnSystem : MonoBehaviour
 
     private void Start()
     {
-       // OnTurnEnded += TurnSystem_OnTurnEnded;
+        OnTurnChanged += turnSystem_OnTurnChanged;
+        // OnTurnEnded += TurnSystem_OnTurnEnded;
         // Ensimmäinen vuoro.
         OnTurnStarted?.Invoke(CurrentTeam, TurnId);
         // Varmista, että alkutila lähetetään kaikille UI:lle
@@ -43,22 +44,31 @@ public class TurnSystem : MonoBehaviour
 
     }
 
+    private void OnDisable()
+    {
+        OnTurnChanged -= turnSystem_OnTurnChanged;
+    }
+
+    private void turnSystem_OnTurnChanged(object sender, EventArgs e)
+    {
+        GridSystemVisual.Instance.HideAllGridPositions();
+        UnitActionSystem.Instance.ResetSelectedAction();
+        UnitActionSystem.Instance.ResetSelectedUnit();
+    }
+
     public void NextTurn()
     {
+            
         if (GameModeManager.SelectedMode != GameMode.SinglePlayer && !NetworkServer.active)
         {
             Debug.LogWarning("Client yritti kääntää vuoroa lokaalisti, ignoroidaan.");
             return;
         }
-
-            GridSystemVisual.Instance.HideAllGridPositions();
-            UnitActionSystem.Instance.ResetSelectedAction();
-            UnitActionSystem.Instance.ResetSelectedUnit();
-            
-            OnTurnEnded?.Invoke(CurrentTeam, TurnId);
-            CurrentTeam = (CurrentTeam == Team.Player) ? Team.Enemy : Team.Player;
-            TurnId++;
-            OnTurnStarted?.Invoke(CurrentTeam, TurnId);
+      
+        OnTurnEnded?.Invoke(CurrentTeam, TurnId);
+        CurrentTeam = (CurrentTeam == Team.Player) ? Team.Enemy : Team.Player;
+        TurnId++;
+        OnTurnStarted?.Invoke(CurrentTeam, TurnId);
 
         if (GameModeManager.SelectedMode == GameMode.SinglePlayer)
         {
