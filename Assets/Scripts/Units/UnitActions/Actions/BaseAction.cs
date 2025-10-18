@@ -112,11 +112,15 @@ public abstract class BaseAction : NetworkBehaviour
         }
 
         int toCover = Mathf.RoundToInt(damage * mitigate);
-
         int before = targetUnit.GetPersonalCover();
-        int after  = before - toCover;
+        int after = before - toCover;
+        
+        if (melee)
+        {
+            after -= damage;
+        } 
 
-        if (after > 0)
+        if (after >= 0)
         {
             targetUnit.SetPersonalCover(after);
             NetworkSync.UpdateCoverUI(targetUnit);
@@ -125,7 +129,7 @@ public abstract class BaseAction : NetworkBehaviour
         {
             targetUnit.SetPersonalCover(0);
             NetworkSync.UpdateCoverUI(targetUnit);
-            MakeDamage(damage, targetUnit);
+            MakeDamage(damage - before, targetUnit);
         }
     }
 

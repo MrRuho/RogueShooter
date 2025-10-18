@@ -256,7 +256,6 @@ public class Unit : NetworkBehaviour
         return maxMoveDistance;
     }
 
-    //public void SetUnderFire(bool value) => underFire = value;
     public void SetUnderFire(bool value)
     {
         if (!NetworkServer.active && !NetworkClient.active)

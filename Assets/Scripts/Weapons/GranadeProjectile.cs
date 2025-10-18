@@ -51,6 +51,11 @@ public class GrenadeProjectile : NetworkBehaviour
         if (timer <= 0)
         {
             Exlosion();
+
+            if (NetMode.IsOnline)
+            {
+                RpcExplodeVFX();
+            }
         }
     }
 
@@ -180,6 +185,13 @@ public class GrenadeProjectile : NetworkBehaviour
     private void RpcSetSoftHidden(bool hidden)
     {
         SetSoftHiddenLocal(hidden);
+    }
+
+    [ClientRpc]
+    private void RpcExplodeVFX()
+    {
+        OnAnyGranadeExploded?.Invoke(this, EventArgs.Empty);
+        Instantiate(granadeExplodeVFXPrefab, targetPosition + Vector3.up * 1f, Quaternion.identity);
     }
 
     private void SetSoftHiddenLocal(bool hidden)

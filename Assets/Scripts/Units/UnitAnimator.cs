@@ -5,6 +5,7 @@ using Mirror;
 [RequireComponent(typeof(MoveAction))]
 public class UnitAnimator : NetworkBehaviour
 {
+
     [Header("UnitWeaponVisibilitySync")]
     [SerializeField] private WeaponVisibilitySync weaponVis;
 
@@ -27,9 +28,18 @@ public class UnitAnimator : NetworkBehaviour
     private GranadeAction _grenade;
     private MeleeAction _melee;
 
+    private bool useNetwork;
 
     private void Awake()
     {
+        if (!animator) animator = GetComponent<Animator>();
+        if (!netAnim)  netAnim  = GetComponent<NetworkAnimator>();
+       // if (!netId)    netId    = GetComponent<NetworkIdentity>();
+
+        useNetwork = NetMode.IsOnline
+             && netAnim != null
+             && (isServer || isOwned);   // NetworkBehaviourin omat propertyt
+        
         TryGetComponent(out _move);
         TryGetComponent(out _shoot);
         TryGetComponent(out _grenade);
@@ -97,6 +107,13 @@ public class UnitAnimator : NetworkBehaviour
     {
         EquipRifle();
     }
+    
+    // Valitsee automaattisesti oikean verkko/offline animaation.
+    public void SetTrigger(string name)
+    {
+        if (useNetwork) netAnim.SetTrigger(name);
+        else            animator.SetTrigger(name);
+    }
 
     private void MoveAction_OnStartMoving(object sender, EventArgs e)
     {
@@ -107,27 +124,35 @@ public class UnitAnimator : NetworkBehaviour
         animator.SetBool("IsRunning", false);
     }
 
+    public Transform ShootPoint => shootPointTransform;
+    public GameObject BulletPrefab => bulletProjectilePrefab;
+
     private void ShootAction_OnShoot(object sender, ShootAction.OnShootEventArgs e)
     {
-        if (!IsNetworkActive())
+        SetTrigger("Shoot");
+
+        Vector3 target = e.targetUnit.GetWorldPosition();
+        float unitShoulderHeight = 2.5f;
+        target.y += unitShoulderHeight;
+
+        if (NetMode.IsOnline)
         {
-            animator.SetTrigger("Shoot");
+
+            NetworkSync.SpawnBullet(bulletProjectilePrefab, shootPointTransform.position, target, this.GetActorId());
+
         }
         else
         {
-            netAnim.SetTrigger("Shoot");
+            OfflineGameSimulator.SpawnBullet(bulletProjectilePrefab, shootPointTransform.position, target);
         }
-
-        Vector3 target = e.targetUnit.GetWorldPosition();
-
-        float unitShoulderHeight = 2.5f;
-        target.y += unitShoulderHeight;
-        NetworkSync.SpawnBullet(bulletProjectilePrefab, shootPointTransform.position, target,this.GetActorId());
     }
 
     private void MeleeAction_OnMeleeActionStarted(object sender, EventArgs e)
     {
         EquipMelee();
+        SetTrigger("Melee");
+
+        /*
         if (!IsNetworkActive())
         {
             animator.SetTrigger("Melee");
@@ -136,6 +161,8 @@ public class UnitAnimator : NetworkBehaviour
         {
             netAnim.SetTrigger("Melee");
         }
+        */
+        
     }
     private void MeleeAction_OnMeleeActionCompleted(object sender, EventArgs e)
     {
@@ -153,14 +180,8 @@ public class UnitAnimator : NetworkBehaviour
         pendingGrenadeAction = (GranadeAction)sender;
         pendingGrenadeTarget = pendingGrenadeAction.TargetWorld;
         GranadeActionStart();
-        if (!IsNetworkActive())
-        {
-            animator.SetTrigger("ThrowGrenade");
-        }
-        else
-        { 
-            netAnim.SetTrigger("ThrowGrenade");
-        }
+        SetTrigger("ThrowGrenade");
+   
     }
 
     // --------- START Grenade Animation events START -----------------------
@@ -169,6 +190,10 @@ public class UnitAnimator : NetworkBehaviour
     {
         EguipGranade();
     }
+
+    public Transform ThrowPoint => rightHandTransform;
+    public GameObject GrenadePrefab => granadeProjectilePrefab;
+
     public void AE_ThrowGrenadeStandRelease()
     {
         // --- GUARD: jos pending on jo käytetty, älä tee mitään (estää tuplan samalta koneelta)
@@ -185,12 +210,16 @@ public class UnitAnimator : NetworkBehaviour
         Vector3 origin = rightHandTransform.position;
 
         // Kutsu keskitettyä synkkaa (täsmälleen kuin luodeissa)
-        NetworkSync.SpawnGrenade(granadeProjectilePrefab, origin, pendingGrenadeTarget,this.GetActorId());
+        if (NetMode.IsOnline)
+            NetworkSync.SpawnGrenade(granadeProjectilePrefab, origin, pendingGrenadeTarget, this.GetActorId());
+        else
+            OfflineGameSimulator.SpawnGrenade(granadeProjectilePrefab, origin, pendingGrenadeTarget);
 
         // Siivous kuten ennen
         pendingGrenadeAction?.OnGrenadeBehaviourComplete();
         pendingGrenadeAction = null;
     }
+    
     public void AE_OnGrenadeThrowStandFinished()
     {
         EquipRifle();
@@ -213,13 +242,4 @@ public class UnitAnimator : NetworkBehaviour
     {
         weaponVis.OwnerRequestSet(rifleRight: false, rifleLeft: true, meleeLeft: false, grenade: true);
     }
-
-/*
-    private uint GetActorID()
-    {
-        var actorNi = GetComponentInParent<NetworkIdentity>();
-        uint actorNetId = actorNi ? actorNi.netId : 0;
-        return actorNetId;
-    }
-*/
 }

@@ -95,7 +95,17 @@ public class DestructibleObject : NetworkBehaviour
 
     private void PlayDestroyFx(Vector3 hitPosition, int overkill)
     {
-        var t = Instantiate(objectDestroyPrefab, transform.position, Quaternion.identity);
+        // var t = Instantiate(objectDestroyPrefab, transform.position, Quaternion.identity);
+        // Sama sijainti, sama rotaatio, sama parent kuin alkuperäisellä
+        var t = Instantiate(
+            objectDestroyPrefab, 
+            transform.position, 
+            transform.rotation,            // <- tärkein muutos
+            transform.parent               // <- jos alkuperäinen on jonkin parentin alla
+        );
+
+        // Jos alkuperäinen on skaalattu scenessä, kopioi skaala
+       // t.localScale = transform.localScale;
         ApplyPushForceToChildren(t, 10f * overkill, hitPosition, 10f);
     }
 
@@ -147,13 +157,6 @@ public class DestructibleObject : NetworkBehaviour
     private void RpcOnDestroyed(GridPosition pos)
     {
 
-        /*
-        // Clientin paikallinen kopio/visualisointi
-        if (PathFinding.Instance != null)
-            PathFinding.Instance.SetIsWalkableGridPosition(pos, true);
-        EdgeBaker.Instance.RebakeEdgesAround(pos);
-        */
-
         var lg = LevelGrid.Instance;
         var pf = PathFinding.Instance;
         var eb = EdgeBaker.Instance;
@@ -168,11 +171,7 @@ public class DestructibleObject : NetworkBehaviour
     // Varmistus myös tilanteeseen, jossa RPC hukkuu tai tulee myöhässä
     public override void OnStopClient() 
     {
-        /*
-        if (PathFinding.Instance != null)
-            PathFinding.Instance.SetIsWalkableGridPosition(gridPosition, true);
-        EdgeBaker.Instance.RebakeEdgesAround(gridPosition);
-        */
+
         var lg = LevelGrid.Instance;
         var pf = PathFinding.Instance;
         var eb = EdgeBaker.Instance;

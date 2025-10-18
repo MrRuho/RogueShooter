@@ -564,7 +564,7 @@ public class PathFinding : MonoBehaviour
         return LevelGrid.Instance.GetGridSystem(gridPosition.floor).IsValidGridPosition(gridPosition);
     }
 
-    private bool IsWalkable(GridPosition gridPosition)
+    public bool IsWalkable(GridPosition gridPosition)
     {
         PathNode node = GetNode(gridPosition.x, gridPosition.z, gridPosition.floor);
         return node != null && node.GetIsWalkable();

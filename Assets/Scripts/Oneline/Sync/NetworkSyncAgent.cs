@@ -13,6 +13,9 @@ using UnityEngine;
 public class NetworkSyncAgent : NetworkBehaviour
 {
     public static NetworkSyncAgent Local;   // Easy access for NetworkSync static helper
+    public override void OnStartAuthority()  { Local = this; }
+    public override void OnStopAuthority() { if (Local == this) Local = null; }
+    
     [SerializeField] private GameObject bulletPrefab; // Prefab for the bullet projectile
     [SerializeField] private GameObject grenadePrefab;
 
@@ -28,18 +31,28 @@ public class NetworkSyncAgent : NetworkBehaviour
     /// The server instantiates the prefab, sets it up, and spawns it to all connected clients.
     /// </summary>
     /// <param name="spawnPos">World position where the bullet starts (usually weapon muzzle).</param>
-    /// <param name="targetPos">World position the bullet is travelling towards.</param>
+    /// <param name="clientSuggestedTarget">World position the bullet is travelling towards.</param>
     [Command(requiresAuthority = true)]
-    public void CmdSpawnBullet(uint actorNetId, Vector3 spawnPos, Vector3 targetPos)
+    public void CmdSpawnBullet(uint actorNetId, Vector3 clientSuggestedTarget)
     {
-        if (!NetworkServer.active) return;                   // server gate
+        if (!NetworkServer.active) return;                         // server gate
         if (bulletPrefab == null) { Debug.LogWarning("[NetSyncAgent] bulletPrefab missing"); return; }
         if (actorNetId == 0) return;
-        if (!RightOwner(actorNetId)) return;                 // sinun funkkari
+        if (!RightOwner(actorNetId)) return;                       // sinun oma tarkistus
 
-        // (Valinnainen jatko myöhemmin: onko oikea vuoro? AP riittääkö? range/LOS?)
+        // 1) Hae actor serveriltä ja laske ORIGIN serverin tilasta (älä käytä clientin spawnPosia)
+        if (!NetworkServer.spawned.TryGetValue(actorNetId, out var actorNi)) return;
 
-        var go = Object.Instantiate(bulletPrefab, spawnPos, Quaternion.identity);
+        var ua = actorNi.GetComponent<UnitAnimator>();
+        Vector3 origin = (ua != null && ua.ShootPoint != null)
+            ? ua.ShootPoint.position
+            : actorNi.transform.position;
+
+        // 2) TARGET: toistaiseksi käytä clientin ehdottamaa sijaintia (voit myöhemmin validoida LOS/range)
+        Vector3 target = clientSuggestedTarget;
+
+        // 3) Spawnaa verkkoon vain serverillä
+        var go = Object.Instantiate(bulletPrefab, origin, Quaternion.identity);
         if (!go.TryGetComponent<BulletProjectile>(out var bp))
         {
             Debug.LogError("[NetSyncAgent] BulletProjectile component missing on prefab.");
@@ -47,22 +60,28 @@ public class NetworkSyncAgent : NetworkBehaviour
             return;
         }
 
-        bp.actorUnitNetId = actorNetId;                     // talteen (SyncVar)
-        bp.Setup(targetPos);                                // alustus serverillä
+        bp.actorUnitNetId = actorNetId;      // talteen (SyncVar tms.)
+        bp.Setup(target);                    // alustus serverillä
         NetworkServer.Spawn(go);
     }
 
     [Command(requiresAuthority = true)]
-    public void CmdSpawnGrenade(uint actorNetId, Vector3 spawnPos, Vector3 targetPos)
+    public void CmdSpawnGrenade(uint actorNetId, Vector3 clientSuggestedTarget)
     {
         if (!NetworkServer.active) return;                   // server gate
         if (grenadePrefab == null) { Debug.LogWarning("[NetSyncAgent] GrenadePrefab missing"); return; }
         if (actorNetId == 0) return;
         if (!RightOwner(actorNetId)) return;                 // sinun funkkari
 
-        // (Valinnainen jatko myöhemmin: onko oikea vuoro? AP riittääkö? range/LOS?)
+        if (!NetworkServer.spawned.TryGetValue(actorNetId, out var ni)) return;
 
-        var go = Object.Instantiate(grenadePrefab, spawnPos, Quaternion.identity);
+        var ua = ni.GetComponent<UnitAnimator>();
+        if (ua == null || ua.GrenadePrefab == null || ua.ThrowPoint == null) return;
+
+        Vector3 origin = ua.ThrowPoint.position;       // SERVER-ORIGIN
+        Vector3 target = clientSuggestedTarget;        // lisää LOS/range -validointi kun ehdit
+
+        var go = Object.Instantiate(grenadePrefab, origin, Quaternion.identity);
         if (!go.TryGetComponent<GrenadeProjectile>(out var bp))
         {
             Debug.LogError("[NetSyncAgent] GrenadePrefab component missing on prefab.");
@@ -70,8 +89,8 @@ public class NetworkSyncAgent : NetworkBehaviour
             return;
         }
 
-        bp.actorUnitNetId = actorNetId;                     // talteen (SyncVar)
-        bp.Setup(targetPos);                                // alustus serverillä
+        bp.actorUnitNetId = actorNetId;
+        go.GetComponent<GrenadeProjectile>().Setup(target);
         NetworkServer.Spawn(go);
     }
 
@@ -80,7 +99,10 @@ public class NetworkSyncAgent : NetworkBehaviour
         // Varmista että soittaja omistaa kyseisen actor-yksikön
         if (!NetworkServer.spawned.TryGetValue(actorNetId, out var actorIdentity) || actorIdentity == null) return false;
 
+        // actorin todellinen omistaja. 
         var actorUnit = actorIdentity.GetComponent<Unit>();
+
+        // Client joka lähetti comennon.
         var callerOwnerId = connectionToClient.identity?.netId ?? 0;
 
         // Unitissa on OwnerId, jonka asetus tehdään spawnaaessa (SpawnUnitsCoordinator) → käytä sitä checkissä
@@ -238,7 +260,6 @@ public class NetworkSyncAgent : NetworkBehaviour
 
         unit.ApplyNetworkUnderFire(value);
     }
-
 
     // ---- SERVER → ALL CLIENTS: HP-muutos ilmoitus
     [ClientRpc]

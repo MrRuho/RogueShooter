@@ -141,6 +141,10 @@ public class SpawnUnitsCoordinator : MonoBehaviour
     {
         Instantiate(unitHostPrefab, hostSpawnPositions[0], Quaternion.identity);
         Instantiate(unitHostPrefab, hostSpawnPositions[1], Quaternion.identity);
+        Instantiate(unitHostPrefab, hostSpawnPositions[2], Quaternion.identity);
+        Instantiate(unitHostPrefab, hostSpawnPositions[3], Quaternion.identity);
+        Instantiate(unitHostPrefab, hostSpawnPositions[4], Quaternion.identity);
+        Instantiate(unitHostPrefab, hostSpawnPositions[5], Quaternion.identity);
     }
     private void SpawnEnemyUnitsOffline()
     {

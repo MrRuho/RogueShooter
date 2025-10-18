@@ -55,26 +55,10 @@ public static class NetworkSync
             return;
         }
 
-        if (NetworkClient.active) // Online: client
+        if (NetworkClient.active && NetworkSyncAgent.Local != null) // Online: client
         {
-            if (NetworkSyncAgent.Local != null)
-            {
-                NetworkSyncAgent.Local.CmdSpawnBullet(actorNetId, spawnPos, targetPos);
-            }
-            else
-            {
-                // fallback
-                Debug.LogWarning("[NetworkSync] No Local NetworkSyncAgent found, NOT Spawning.");
-            }
-            return;
-
-        } else
-        {
-            // Offline / Singleplayer: just instantiate locally
-            var bullet = Object.Instantiate(bulletPrefab, spawnPos, Quaternion.identity);
-            if (bullet.TryGetComponent<BulletProjectile>(out var bulletProjectile))
-                bulletProjectile.Setup(targetPos);
-        }
+            NetworkSyncAgent.Local.CmdSpawnBullet(actorNetId, targetPos);
+        } 
     }
 
     // HUOM: käytä tätä myös AE:stä (UnitAnimatorista)
@@ -98,24 +82,9 @@ public static class NetworkSync
             return;
         }
 
-        if (NetworkClient.active) // Online: client
-        {
-            if (NetworkSyncAgent.Local != null)
-            {
-                NetworkSyncAgent.Local.CmdSpawnGrenade(actorNetId, spawnPos, targetPos);
-            }
-            else
-            {
-                // fallback
-                Debug.LogWarning("[NetworkSync] No Local NetworkSyncAgent found, NOT Spawning.");
-            }
-        }
-        else
-        {
-            // Offline / Singleplayer
-            var go = Object.Instantiate(grenadePrefab, spawnPos, Quaternion.identity);
-            if (go.TryGetComponent<GrenadeProjectile>(out var gp))
-                gp.Setup(targetPos);
+        if (NetworkClient.active && NetworkSyncAgent.Local != null) // Online: client
+        {     
+            NetworkSyncAgent.Local.CmdSpawnGrenade(actorNetId, targetPos);         
         }
     }
 
@@ -144,12 +113,13 @@ public static class NetworkSync
             var ni = target.GetComponent<NetworkIdentity>();
             if (ni && NetworkSyncAgent.Local != null)
             {
-                NetworkSyncAgent.Local.CmdApplyDamage(actorNetId,ni.netId, amount, hitPosition);
+                NetworkSyncAgent.Local.CmdApplyDamage(actorNetId, ni.netId, amount, hitPosition);
                 return;
             }
         }
 
         // Offline fallback
+        Debug.Log("ApplyDamageToUnit.");
         target.GetComponent<HealthSystem>().Damage(amount, hitPosition);
         
     }
@@ -299,4 +269,5 @@ public static class NetworkSync
         }
         return false;
     }
+
 }

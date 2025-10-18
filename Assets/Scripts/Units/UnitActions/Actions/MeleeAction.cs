@@ -73,30 +73,37 @@ public class MeleeAction : BaseAction
 
     public override List<GridPosition> GetValidGridPositionList()
     {
-        List<GridPosition> validGridPositionList = new();
+        var valid = new List<GridPosition>();
+        GridPosition origin = unit.GetGridPosition();
 
-        GridPosition unitGridPosition = unit.GetGridPosition();
-
-        for (int x = -maxMeleedDistance; x <= maxMeleedDistance; x++)
+        for (int dx = -maxMeleedDistance; dx <= maxMeleedDistance; dx++)
         {
-            for (int z = -maxMeleedDistance; z <= maxMeleedDistance; z++)
+            for (int dz = -maxMeleedDistance; dz <= maxMeleedDistance; dz++)
             {
-                GridPosition offsetGridPosition = new(x, z, 0);
-                GridPosition testGridPosition = unitGridPosition + offsetGridPosition;
+                if (dx == 0 && dz == 0) continue; // ei itseään
 
-                if (!LevelGrid.Instance.HasAnyUnitOnGridPosition(testGridPosition)) continue;
+                var gp = origin + new GridPosition(dx, dz, 0);
 
-                Unit targetUnit = LevelGrid.Instance.GetUnitAtGridPosition(testGridPosition);
-                // Make sure we don't include friendly units.
-                if (targetUnit.IsEnemy() == unit.IsEnemy()) continue;
-                // Check if the test grid position is within the valid range
-                if (!LevelGrid.Instance.IsValidGridPosition(testGridPosition)) continue;
+                // 1) RAJAT ENSIN -> estää out-of-range -virheen
+                if (!LevelGrid.Instance.IsValidGridPosition(gp)) continue;
 
-                validGridPositionList.Add(testGridPosition);
+                // Manhattan -> sulkee diagonaalit
+                // if (Mathf.Abs(dx) + Mathf.Abs(dz) > maxMeleedDistance) continue;
+
+                // Chebyshev -> sallii diagonaalit
+                if (Mathf.Max(Mathf.Abs(dx), Mathf.Abs(dz)) > maxMeleedDistance) continue;
+
+                // 2) onko ruudussa ketään?
+                if (!LevelGrid.Instance.HasAnyUnitOnGridPosition(gp)) continue;
+
+                var target = LevelGrid.Instance.GetUnitAtGridPosition(gp);
+                if (target == null || target == unit) continue;           // varmistus
+                if (target.IsEnemy() == unit.IsEnemy()) continue;         // ei omia
+
+                valid.Add(gp);
             }
         }
-
-        return validGridPositionList;
+        return valid;
     }
 
     public override void TakeAction(GridPosition gridPosition, Action onActionComplete)

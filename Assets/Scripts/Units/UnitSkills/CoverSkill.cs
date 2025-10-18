@@ -242,9 +242,7 @@ public class CoverSkill : NetworkBehaviour
 
         ServerResetCurrentCoverBonus();
     }
-
-
-    
+ 
    // [Server]
     public void ServerResetCurrentCoverBonus()
     {
