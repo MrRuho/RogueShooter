@@ -15,11 +15,16 @@ public enum Team { Player, Enemy }
 [RequireComponent(typeof(CoverSkill))]
 public class Unit : NetworkBehaviour
 {
-    public Team Team; 
+    public Team Team;
 
     [SerializeField] public CoverSkill Cover { get; private set; }
 
-    private const int ACTION_POINTS_MAX = 2;
+    //  This is off long as this is under dvelopment... 
+    //  private const int ACTION_POINTS_MAX = 2;
+    //  private int actionPoints = ACTION_POINTS_MAX;
+
+    [SerializeField, Min(0)] private int ACTION_POINTS_MAX = 2;
+    private int actionPoints;
 
     [SyncVar] public uint OwnerId;
 
@@ -46,8 +51,6 @@ public class Unit : NetworkBehaviour
 
     private BaseAction[] baseActionsArray;
 
-    private int actionPoints = ACTION_POINTS_MAX;
-
     private int maxMoveDistance;
 
     [SyncVar(hook = nameof(OnHiddenChanged))]
@@ -58,7 +61,7 @@ public class Unit : NetworkBehaviour
     private Animator anim;
 
     private int grenadePCS;
-    
+
 
     private void Awake()
     {
@@ -80,10 +83,12 @@ public class Unit : NetworkBehaviour
             LevelGrid.Instance.AddUnitAtGridPosition(gridPosition, this);
         }
 
+        actionPoints = ACTION_POINTS_MAX;
+
         TurnSystem.Instance.OnTurnStarted += OnTurnStarted_HandleTurnStarted;
         TurnSystem.Instance.OnTurnEnded += OnTurnEnded_HandleTurnEnded;
-
         healthSystem.OnDead += HealthSystem_OnDead;
+
         OnAnyUnitSpawned?.Invoke(this, EventArgs.Empty);
         underFire = false;
 
@@ -189,8 +194,6 @@ public class Unit : NetworkBehaviour
         return actionPoints;
     }
 
-
-
     /// <summary>
     ///    Online: Updating ActionPoints usage to otherplayers. 
     /// </summary>
@@ -292,10 +295,9 @@ public class Unit : NetworkBehaviour
         underFire = value;
     }
 
-
     // ****** Cover Skill ***********
-    public int  GetPersonalCover() => Cover ? Cover.GetPersonalCover() : 0;
-    public int  GetPersonalCoverMax() => Cover ? Cover.GetPersonalCoverMax() : 1;
+    public int GetPersonalCover() => Cover ? Cover.GetPersonalCover() : 0;
+    public int GetPersonalCoverMax() => Cover ? Cover.GetPersonalCoverMax() : 1;
     public float GetCoverNormalized() => Cover ? Cover.GetCoverNormalized() : 0f;
     public int GetCoverRegenPerUnusedAP() => Cover ? Cover.GetCoverRegenPerUnusedAP() : 0;
 
@@ -309,12 +311,12 @@ public class Unit : NetworkBehaviour
     public void ResetCurrentCoverBonus() { if (Cover) Cover.ResetCurrentCoverBonus(); }
 
     public void RegenCoverBy(int amount) { if (Cover) Cover.RegenCoverBy(amount); }
-    public void RegenCoverOnMove(int distance){ if (Cover) Cover.RegenCoverOnMove(distance); }
+    public void RegenCoverOnMove(int distance) { if (Cover) Cover.RegenCoverOnMove(distance); }
 
     public void ApplyNetworkCover(int cur, int max) { if (Cover) Cover.ApplyNetworkCover(cur, max); }
-    
-   // public void AddPersonalCover(int delta) { if (Cover) Cover.AddPersonalCover(delta); }
-     
+
+    // public void AddPersonalCover(int delta) { if (Cover) Cover.AddPersonalCover(delta); }
+
     //*********************************
 
     // ***** weapons ******
@@ -352,12 +354,12 @@ public class Unit : NetworkBehaviour
             NetworkSync.BroadcastActionPoints(this, actionPoints);
         }
     }
-    
+
     private void OnTurnEnded_HandleTurnEnded(Team endTurnTeam, int turnId)
     {
         if (NetworkClient.active && !NetworkServer.active) return;
         if (Team != endTurnTeam) return;            // vain sen puolen lopussa joka oli vuorossa
-        int ap  = GetActionPoints();
+        int ap = GetActionPoints();
         int per = GetCoverRegenPerUnusedAP();           // palauttaa >0 vain jos ei underFire
         if (ap > 0 && per > 0) Cover.RegenCoverBy(ap * per);  // coverSkill hoitaa clampit jne.
         // (valinnainen) nollaa AP:t heti vuoron päättyessä:

@@ -41,7 +41,6 @@ public class GridSystem<TGridObject>
 /// It multiplies the grid coordinates by the cell size to get the world position.
     public Vector3 GetWorldPosition(GridPosition gridPosition)
     {
-
         return new Vector3(gridPosition.x, 0, gridPosition.z) * cellSize +
         new Vector3(0, gridPosition.floor, 0) * floorHeigth;
     }
