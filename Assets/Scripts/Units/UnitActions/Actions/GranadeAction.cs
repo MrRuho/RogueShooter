@@ -51,8 +51,9 @@ public class GranadeAction : BaseAction
 
                 // Check if the test grid position is within the valid range
                 if (!LevelGrid.Instance.IsValidGridPosition(testGridPosition)) continue;
-                int testDistance = Mathf.Abs(x) + Mathf.Abs(z);
-                if (testDistance > range) continue;
+ 
+                int cost = SircleCalculator.Sircle(x, z);
+                if (cost > 10 * range) continue;
 
                 validGridPositionList.Add(testGridPosition);
             }

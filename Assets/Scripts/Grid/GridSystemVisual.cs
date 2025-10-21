@@ -6,6 +6,7 @@ using UnityEngine;
 /// This class is responsible for visualizing the grid system in the game.
 /// It creates a grid of visual objects that represent the grid positions.
 /// </summary>
+[DefaultExecutionOrder(-100)]
 public class GridSystemVisual : MonoBehaviour
 {
 
@@ -112,11 +113,8 @@ public class GridSystemVisual : MonoBehaviour
                     continue;
                 }
 
-                int testDistance = Mathf.Abs(x) + Mathf.Abs(z);
-                if (testDistance > range)
-                {
-                    continue;
-                }
+                int cost = SircleCalculator.Sircle(x, z);
+                if (cost > 10 * range) continue;
 
                 gridPositionsList.Add(testGridPosition);
             }

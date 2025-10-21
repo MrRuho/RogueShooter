@@ -17,6 +17,12 @@ public class GrenadeProjectile : NetworkBehaviour
     [SerializeField] private float landingJitterRadius = 0.18f;
     [SerializeField] private AnimationCurve arcYAnimationCurve;
 
+    // Pieni hajonta, muutaman sadasosan verran
+    [SerializeField] private float explosionJitterMin = 0.02f;
+    [SerializeField] private float explosionJitterMax = 0.08f;
+
+    private bool _explosionScheduled; // vartija, ettei ajeta kahta kertaa
+
     [SyncVar(hook = nameof(OnTargetChanged))] private Vector3 targetPosition;
 
     private float totalDistance;
@@ -48,14 +54,35 @@ public class GrenadeProjectile : NetworkBehaviour
     private void TurnSystem_OnTurnChanged(object sender, EventArgs e)
     {
         timer -= 1;
-        if (timer <= 0)
+        if (timer <= 0 && !_explosionScheduled && !isExploded)
         {
+            _explosionScheduled = true;
+            StartCoroutine(ExplodeAfterJitter());
+            /*
             Exlosion();
 
             if (NetMode.IsOnline)
             {
                 RpcExplodeVFX();
             }
+            */
+        }
+    }
+
+    private IEnumerator ExplodeAfterJitter()
+    {
+        // Deterministinen "satunnaisuus": sama viive serverillä ja clienteillä tälle kranaatille
+        uint id = GetComponent<NetworkIdentity>() ? GetComponent<NetworkIdentity>().netId : 0u;
+        float t = Mathf.Abs(Mathf.Sin(id * 12.9898f + targetPosition.x * 78.233f + targetPosition.z * 37.719f));
+        float delay = Mathf.Lerp(explosionJitterMin, explosionJitterMax, t);
+
+        yield return new WaitForSeconds(delay);
+
+        Exlosion();
+
+        if (NetMode.IsOnline)
+        {
+            RpcExplodeVFX();
         }
     }
 

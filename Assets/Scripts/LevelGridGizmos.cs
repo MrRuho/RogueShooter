@@ -125,30 +125,6 @@ public class LevelGridGizmos : MonoBehaviour
         }
     }
 
-    /*
-    private void DrawGridLines(int width, int height, float cellSize, int floor)
-    {
-        Gizmos.color = gridColor;
-        float floorY = floor * LevelGrid.FLOOR_HEIGHT;
-        float o = 0.5f * cellSize;
-
-        // pystyviivat
-        for (int x = 0; x <= width; x++)
-        {
-            Vector3 start = new Vector3(x * cellSize - o, floorY, -o);
-            Vector3 end   = new Vector3(x * cellSize - o, floorY, height * cellSize - o);
-            DrawThickLine(start, end, gridLineThickness);
-        }
-        // vaakaviivat
-        for (int z = 0; z <= height; z++)
-        {
-            Vector3 start = new Vector3(-o, floorY, z * cellSize - o);
-            Vector3 end   = new Vector3(width * cellSize - o, floorY, z * cellSize - o);
-            DrawThickLine(start, end, gridLineThickness);
-        }
-    }
-    */
-
 
     private void DrawGridLines(int width, int height, float cellSize, int floor)
     {
@@ -380,14 +356,4 @@ public class LevelGridGizmos : MonoBehaviour
             DrawThickLine(start, end, coverLineThickness);
         }
     }
-    /*
-    private void DrawThickLine(Vector3 start, Vector3 end, float thickness)
-    {
-#if UNITY_EDITOR
-        Handles.DrawBezier(start, end, start, end, Gizmos.color, null, thickness);
-#else
-        Gizmos.DrawLine(start, end);
-#endif
-    }
-    */
 }

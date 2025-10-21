@@ -63,7 +63,7 @@ public class PathFinding : MonoBehaviour
     public static PathFinding Instance { get; private set; }
 
     private const int MOVE_STRAIGHT_COST = 10;
-    private const int MOVE_DIAGONAL_COST = 20;
+    private const int MOVE_DIAGONAL_COST = 14;
 
     [Header("Debug")]
     [SerializeField] private bool showDebug = false;

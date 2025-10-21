@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::WeaponDefinition
   maxShootRange: 15
   baseDamage: 50
-  critBonusDamage: 10
+  critBonusDamage: 20
   grazeFactor: 0.6
   missChipFactor: 0.3
   closeMax: 5

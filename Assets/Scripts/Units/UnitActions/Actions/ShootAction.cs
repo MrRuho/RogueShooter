@@ -123,7 +123,7 @@ public class ShootAction : BaseAction
                 // Jos suojaa ei ole ollenkaan niin tämäkin lasketaan suoraksi osumaksi.
                 if (GetCoverType(targetUnit) == CoverService.CoverType.None)
                 {
-                    MakeDamage(result.damage, targetUnit);
+                    MakeDamage(result.damage + weapon.NoCoverDamageBonus, targetUnit);
                     return;
                 }
                 
@@ -135,7 +135,7 @@ public class ShootAction : BaseAction
                 // Myös suojasta jäljelle jäänyt vahinko menee vahinkoon.
                 if (GetCoverType(targetUnit) == CoverService.CoverType.None)
                 {
-                    MakeDamage(result.damage, targetUnit);
+                    MakeDamage(result.damage + weapon.NoCoverDamageBonus, targetUnit);
                     return;
                 }
 
@@ -144,6 +144,11 @@ public class ShootAction : BaseAction
 
             case ShotTier.Crit:
                 // Kriittinen osuma vähentää suojaa sekä menee suoraan läpi tehden vahinkoa.
+                if (GetCoverType(targetUnit) == CoverService.CoverType.None)
+                {
+                    ApplyHit(result.damage + weapon.NoCoverDamageBonus, targetUnit, false);
+                    return;
+                }
                 Debug.Log("Critical hit!");
                 ApplyHit(result.damage, targetUnit, false);
                 return;
@@ -176,8 +181,10 @@ public class ShootAction : BaseAction
 
                     // Check if the test grid position is within the valid range and not occupied by another unit
                     if (!LevelGrid.Instance.IsValidGridPosition(testGridPosition)) continue;
-                    int testDistance = Mathf.Abs(x) + Mathf.Abs(z);
-                    if (testDistance > weapon.maxShootRange) continue;
+             
+                    int cost = SircleCalculator.Sircle(x, z);
+
+                    if (cost > 10 * weapon.maxShootRange) continue;
                     if (!LevelGrid.Instance.HasAnyUnitOnGridPosition(testGridPosition)) continue;
 
                     Unit targetUnit = LevelGrid.Instance.GetUnitAtGridPosition(testGridPosition);

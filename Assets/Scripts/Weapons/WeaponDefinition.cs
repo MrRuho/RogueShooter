@@ -27,6 +27,9 @@ public class WeaponDefinition : ScriptableObject
 {
     [Header("Range: Weapon basic max Range (No upgrades)")]
     public int maxShootRange = 10;
+
+    [Header("Bonus when the target is not behind cover")]
+    public int NoCoverDamageBonus = 30;
     
     [Header("Base damage")]
     public int baseDamage = 10;

@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using UnityEngine;
 
 [DefaultExecutionOrder(500)] // After Pathfindingin
@@ -96,7 +97,12 @@ public class EdgeBaker : MonoBehaviour
     {
         if (Instance != null && Instance != this) { Destroy(gameObject); return; }
         Instance = this;
+    }
 
+    private IEnumerator Start()
+    {
+        yield return new WaitUntil(() => LevelGrid.Instance != null && PathFinding.Instance != null);
+        
         if (pathfinding == null) pathfinding = FindFirstObjectByType<PathFinding>();
         if (levelGrid == null) levelGrid = LevelGrid.Instance;
 
@@ -105,11 +111,6 @@ public class EdgeBaker : MonoBehaviour
         FloorAmount = levelGrid.GetFloorAmount();
         CellSize = levelGrid.GetCellSize();
 
-
-    }
-
-    private void Start()
-    {
         if (GameModeManager.SelectedMode == GameMode.SinglePlayer && autoBakeOnStart)
         {
             BakeAllEdges();   // offline / yksinpeli

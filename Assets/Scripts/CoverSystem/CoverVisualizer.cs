@@ -1,6 +1,6 @@
 using UnityEngine;
 
-
+[DefaultExecutionOrder(200)]
 [DisallowMultipleComponent]
 public class CoverVisualizer : MonoBehaviour
 {
@@ -32,6 +32,8 @@ public class CoverVisualizer : MonoBehaviour
         if (!pathfinding) pathfinding = FindFirstObjectByType<PathFinding>();
         if (!levelGrid)  levelGrid  = LevelGrid.Instance;
         if (!cam) cam = Camera.main;
+
+        if (levelGrid == null) { enabled = false; return; }
 
         cell = levelGrid.GetCellSize();
         (n,rn) = CreateBar("N");

@@ -93,6 +93,8 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 0
     m_RotationOrder: 4
+  explosionJitterMin: 0.02
+  explosionJitterMax: 0.5
 --- !u!114 &5695312915198751386
 MonoBehaviour:
   m_ObjectHideFlags: 0

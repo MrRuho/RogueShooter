@@ -157,7 +157,7 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0
   Team: 0
-  ACTION_POINTS_MAX: 2
+  ACTION_POINTS_MAX: 100
   OwnerId: 0
   archetype: {fileID: 11400000, guid: 4550bcfa4110ca445be7e3f4b337acd8, type: 2}
   currentWeapon: {fileID: 11400000, guid: 0a7d4b5dde914294784bbe40de853782, type: 2}

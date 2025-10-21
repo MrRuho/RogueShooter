@@ -5,6 +5,7 @@ using UnityEngine;
 /// This object is only placeholder, which spawns the actual object and then destroys itself.
 /// Because spawning must be done by the server, this object must exist on the server.
 /// </summary>
+/*
 public class ObjectSpawnPlaceHolder : MonoBehaviour
 {
     [SerializeField] private GameObject objectPrefab;
@@ -39,5 +40,43 @@ public class ObjectSpawnPlaceHolder : MonoBehaviour
             Destroy(gameObject);
             return;
         }
+    }
+}
+*/
+using UnityEngine.SceneManagement;
+
+public class ObjectSpawnPlaceHolder : MonoBehaviour
+{
+    [SerializeField] private GameObject objectPrefab;
+    public GameObject Prefab => objectPrefab;
+
+    private void Start()
+    {
+        if (!NetworkClient.active && !NetworkServer.active)
+        {
+            var go = Instantiate(objectPrefab, transform.position, transform.rotation);
+            SceneManager.MoveGameObjectToScene(go, gameObject.scene);
+            Destroy(gameObject);
+        }
+
+        if (NetworkClient.active && !NetworkServer.active)
+        {
+            Destroy(gameObject);
+            return;
+        }
+    }
+
+    public GameObject CreteObject()
+    {
+        if (NetworkServer.active)
+        {
+            Debug.Log($"[ObjectSpawnPlaceHolder] Spawning {objectPrefab.name} at {transform.position} in scene {gameObject.scene.name}");
+            var go = Instantiate(objectPrefab, transform.position, transform.rotation);
+            
+            NetworkServer.Spawn(go);
+            Destroy(gameObject);
+            return go;
+        }
+        return null;
     }
 }
