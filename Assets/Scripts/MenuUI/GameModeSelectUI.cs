@@ -80,7 +80,7 @@ public class GameModeSelectUI : MonoBehaviour
     {
         // Pieni “siivous” ennen reloadia on ok, mutta ei pakollinen
         FieldCleaner.ClearAll();
-
+        /*
         if (Mirror.NetworkServer.active)
         {
             ResetService.Instance.HardResetServerAuthoritative();
@@ -88,6 +88,11 @@ public class GameModeSelectUI : MonoBehaviour
         else if (Mirror.NetworkClient.active)
         {
             ResetService.Instance.CmdRequestHardReset();
+        }
+        */
+        if (Mirror.NetworkServer.active)
+        {
+           // ResetService.Instance.RequestReset();
         }
         else
         {

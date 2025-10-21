@@ -9,9 +9,9 @@ public class CombatRanges : ScriptableObject
 
     [Header("Max distance per band (in tiles)")]
     public int meleeMaxTiles  = 1;  // "vieressä"
-    public int closeMaxTiles  = 3;
-    public int mediumMaxTiles = 6;
-    public int longMaxTiles = 10;
+    public int closeMaxTiles  = 5;
+    public int mediumMaxTiles = 15;
+    public int longMaxTiles = 20;
     
     [Header("Legacy world units (fallback if useTiles==false)")]
     public float meleeMaxWU  = 1.2f;

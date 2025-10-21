@@ -124,50 +124,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 1557453764427617190, guid: 40f949899514dff4eaec305697fb8209, type: 3}
   m_PrefabInstance: {fileID: 6716602818121382171}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &623229327
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 623229329}
-  - component: {fileID: 623229328}
-  m_Layer: 0
-  m_Name: PostLevelBootstarp
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &623229328
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 623229327}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2dea20e4332f02d4694264db063df77e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::PostLevelBootstrap
---- !u!4 &623229329
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 623229327}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &887723289 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1157305390598345530, guid: b596f28a7c4aae14c8aac70122b4b67e, type: 3}
@@ -183,7 +139,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1079314471}
   - component: {fileID: 1079314472}
-  - component: {fileID: 1079314473}
   m_Layer: 0
   m_Name: LevelLoader
   m_TagString: Untagged
@@ -213,34 +168,13 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1079314469}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3e9d216bffa153e46b40f3fa9f0cb697, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LevelLoader
-  offlineWarmBoot: 1
-  warmBootDelay: 0.25
-  coreSceneName: Core
-  defaultLevel: Level 0
-  forceDefaultOnStart: 1
---- !u!114 &1079314473
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1079314469}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9b91ecbcc199f4492b9a91e820070131, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Mirror::Mirror.NetworkIdentity
-  sceneId: 2222155675
-  _assetId: 0
-  serverOnly: 0
-  visibility: 0
-  hasSpawned: 0
---- !u!1 &2070847046
+  defaultLevel: Testing 3
+--- !u!1 &1486369915
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -248,63 +182,43 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 2070847048}
-  - component: {fileID: 2070847047}
-  - component: {fileID: 2070847049}
+  - component: {fileID: 1486369916}
+  - component: {fileID: 1486369917}
   m_Layer: 0
-  m_Name: NetLevelLoader
+  m_Name: LevelLoaderManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &2070847047
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2070847046}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d379e49c00b87cd42bbd5780e34c2367, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::NetLevelLoader
-  syncDirection: 0
-  syncMode: 0
-  syncInterval: 0
---- !u!4 &2070847048
+--- !u!4 &1486369916
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2070847046}
+  m_GameObject: {fileID: 1486369915}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &2070847049
+--- !u!114 &1486369917
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2070847046}
-  m_Enabled: 1
+  m_GameObject: {fileID: 1486369915}
+  m_Enabled: 0
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9b91ecbcc199f4492b9a91e820070131, type: 3}
+  m_Script: {fileID: 11500000, guid: 3e9d216bffa153e46b40f3fa9f0cb697, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Mirror::Mirror.NetworkIdentity
-  sceneId: 2615140110
-  _assetId: 0
-  serverOnly: 0
-  visibility: 0
-  hasSpawned: 0
+  m_EditorClassIdentifier: Assembly-CSharp::LevelLoader
+  defaultLevel: Testing 3
 --- !u!114 &78181853193641648
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2936,7 +2850,7 @@ Transform:
   m_GameObject: {fileID: 6377728322039176206}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 11.93482, y: 4, z: 19.90744}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -8269,8 +8183,6 @@ MonoBehaviour:
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
-  - {fileID: 1079314471}
-  - {fileID: 2070847048}
   - {fileID: 8522553479684866999}
   - {fileID: 3057080016544345226}
   - {fileID: 8014395951264911403}
@@ -8297,8 +8209,9 @@ SceneRoots:
   - {fileID: 7846904143741721139}
   - {fileID: 3617673252779425267}
   - {fileID: 5807115044121319916}
+  - {fileID: 1486369916}
   - {fileID: 7298625969003297105}
   - {fileID: 2503047609936241901}
   - {fileID: 2879545021986288569}
   - {fileID: 7833105941633400819}
-  - {fileID: 623229329}
+  - {fileID: 1079314471}

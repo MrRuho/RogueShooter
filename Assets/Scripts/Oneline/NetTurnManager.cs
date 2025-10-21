@@ -96,7 +96,7 @@ public class NetTurnManager : NetworkBehaviour
     }
 
     public void SetPlayerStartState()
-    { 
+    {
         // Asettaa pelaajan tilan pelaajan vuoroksi.
         foreach (var kvp in NetworkServer.connections)
         {
@@ -105,5 +105,30 @@ public class NetTurnManager : NetworkBehaviour
             var pc = id.GetComponent<PlayerController>();
             if (pc) pc.ServerSetHasEnded(false);  // <<< TÄRKEIN RIVI
         }
+    }
+    
+    /// <summary>
+/// Serverillä: nollaa vuorot ja aloittaa Players-vaiheen. Kutsutaan aina kun leveli latautuu (myös reloadissa).
+/// </summary>
+/// <param name="resetTurnNumber">Jos true, turnNumber asetetaan 1:een. Jos false, säilytetään nykyinen (tai voit itse inkrementoida muualla).</param>
+    [Server]
+    public void ServerResetAndBegin(bool resetTurnNumber = true)
+    {
+        // Co-op: laske tällä hetkellä aktiiviset pelaajat ja päivitä requiredCount
+        if (GameModeManager.SelectedMode == GameMode.CoOp)
+        {
+            int playersNow = 0;
+            foreach (var kv in NetworkServer.connections)
+                if (kv.Value != null && kv.Value.identity != null) playersNow++;
+
+            ServerUpdateRequiredCount(playersNow);
+        }
+
+        if (resetTurnNumber)
+            turnNumber = 1;
+
+        // Aloita aina Players-vaiheesta ja nollaa ready-tila
+        ResetTurnState(); // kutsuu SetPlayerStartState() ja tyhjentää ended-listat
+        
     }
 }

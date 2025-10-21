@@ -11,6 +11,8 @@ namespace Utp
 	{
 		public static GameNetworkManager Instance { get; private set; }
 
+		private readonly List<NetworkConnectionToClient> _pendingConns = new();
+
 		[SerializeField] private int hideJoinCodeAfterConnections = 2; // Host + 1 client
 		private UtpTransport utpTransport;
 
@@ -24,6 +26,7 @@ namespace Utp
 		{
 			if (Instance != null && Instance != this)
 			{
+				Debug.LogError("There's more than one GameNetworkManager! " + transform + " - " + Instance);
 				Destroy(gameObject);
 				return;
 			}
@@ -59,13 +62,38 @@ namespace Utp
 		public override void OnStartServer()
 		{
 			base.OnStartServer();
+			
+			// ÄLÄ kutsu SpawnObjects() tässä – NetLevelLoader hoitaa sen!
+			
+			LevelLoader.LevelReady += OnLevelReady_Server;
 			SpawnUnitsCoordinator.Instance.SetEnemiesSpawned(false);
 
 			if (GameModeManager.SelectedMode == GameMode.CoOp)
 			{
 				ServerSpawnEnemies();
 			}
+		}
 
+		[ServerCallback]
+		public  override void OnDestroy()
+		{
+			LevelLoader.LevelReady -= OnLevelReady_Server;
+		}
+
+		[Server]
+		private void OnLevelReady_Server(UnityEngine.SceneManagement.Scene mapScene)
+		{
+			// Level on nyt varmasti ladattu → tyhjennä jono
+        foreach (var c in _pendingConns)
+            if (c != null) ServerFinalizeAddPlayer(c);
+
+        _pendingConns.Clear();
+
+        // (Tähän voit halutessasi laittaa vihollis-spawnit, ruudukon rebuildin ja vuoron aloituksen)
+        // Example:
+        // SpawnUnitsCoordinator.Instance?.ServerSpawnEnemiesForLevel();
+        // LevelGrid.Instance?.RebuildOccupancyFromScene();
+        // NetTurnManager.Instance?.ServerResetAndBegin();
 		}
 
 		/// <summary>
@@ -163,28 +191,45 @@ namespace Utp
 		{
 			base.OnValidate();
 		}
-		
+
 		/// <summary>
 		/// Make sure that the clien sends a AddPlayer request once the scene is loaded.
 		/// </summary>
 		public override void OnClientSceneChanged()
 		{
-	
 			base.OnClientSceneChanged();
 
-			// (1) aina ready
-			if (!NetworkClient.ready) NetworkClient.Ready();
+			Debug.Log($"[NM] OnClientSceneChanged - ready: {NetworkClient.ready}");
+			
+			if (!NetworkClient.ready) 
+				NetworkClient.Ready();
 
-			// (2) nollaa per scene, ettei jää päälle resetissä
-			//addPlayerRequested = false;
-
-			// (3) jos ei vielä Player-identityä tässä scenessä -> pyydä se
-			if (NetworkClient.connection != null &&
-				NetworkClient.connection.identity == null)
+			// Pyydä pelaaja jos ei vielä ole
+			if (NetworkClient.connection != null && NetworkClient.connection.identity == null)
 			{
+				Debug.Log("[NM] OnClientSceneChanged requesting player via AddPlayer()");
 				NetworkClient.AddPlayer();
 			}
-
+		}
+		
+		public override void OnClientConnect()
+		{
+			base.OnClientConnect();
+			
+			Debug.Log($"[NM] OnClientConnect - NetworkClient.ready: {NetworkClient.ready}");
+			
+			// Varmista että client on ready
+			if (!NetworkClient.ready)
+			{
+				NetworkClient.Ready();
+			}
+			
+			// Pyydä pelaaja heti
+			if (NetworkClient.connection != null && NetworkClient.connection.identity == null)
+			{
+				Debug.Log("[NM] Client requesting player via AddPlayer()");
+				NetworkClient.AddPlayer();
+			}
 		}
 
 		public override void OnStopClient()
@@ -200,48 +245,177 @@ namespace Utp
 		/// <summary>
 		/// Tämä metodi spawnaa jokaiselle clientille oman Unitin ja tekee siitä heidän ohjattavan yksikkönsä.
 		/// </summary>
+		/*
 		public override void OnServerAddPlayer(NetworkConnectionToClient conn)
 		{
-
-			if (playerPrefab == null)
+			
+			// Jos Level ei ole vielä valmis, jonota ja palaa
+			if (!LevelLoader.IsServerLevelReady)
 			{
-				Debug.LogError("[NM] Player Prefab (EmptySquad) puuttuu!");
+				_pendingConns.Add(conn);
+				Debug.Log($"[NM] Queued player join (conn {conn.connectionId}) until LevelReady.");
 				return;
 			}
-			base.OnServerAddPlayer(conn);
+			
+			ServerFinalizeAddPlayer(conn);
+		}
+		*/
+		public override void OnServerAddPlayer(NetworkConnectionToClient conn)
+		{
+			Debug.Log($"[NM] ===== OnServerAddPlayer called for conn {conn.connectionId} =====");
+			Debug.Log($"[NM] LevelLoader.IsServerLevelReady = {LevelLoader.IsServerLevelReady}");
+			Debug.Log($"[NM] NetworkServer.active = {NetworkServer.active}");
 
-			int count = NetworkServer.connections?.Count ?? 0;
-			if (count >= hideJoinCodeAfterConnections)
+			if (!LevelLoader.IsServerLevelReady)
 			{
-				// Piilota koodilaatikko
-				RelayJoinCodeUI.Instance.Hide();
+				_pendingConns.Add(conn);
+				Debug.Log($"[NM] ⏸️ Queued player join (conn {conn.connectionId}) until LevelReady. Pending count: {_pendingConns.Count}");
+				return;
 			}
 
-			// 2) päätä host vs client
+			Debug.Log($"[NM] ✅ Level ready, calling ServerFinalizeAddPlayer for conn {conn.connectionId}");
+			ServerFinalizeAddPlayer(conn);
+		}
+
+	[Server]
+	private void ServerFinalizeAddPlayer(NetworkConnectionToClient conn)
+	{
+		Debug.Log($"[NM] >>> ServerFinalizeAddPlayer START for conn {conn.connectionId}");
+		
+		if (conn.identity == null)
+		{
+			if (playerPrefab == null)
+			{
+				Debug.LogError("[NM] ❌ Player Prefab (EmptySquad) puuttuu!");
+				return;
+			}
+			Debug.Log($"[NM] Creating player identity for conn {conn.connectionId}");
+			base.OnServerAddPlayer(conn);
+			Debug.Log($"[NM] Player identity created: {conn.identity?.name}");
+		}
+		else
+		{
+			Debug.Log($"[NM] Player identity already exists: {conn.identity.name}");
+		}
+
+		bool isHost = conn.connectionId == 0;
+		Debug.Log($"[NM] isHost = {isHost} for conn {conn.connectionId}");
+
+		var spawner = SpawnUnitsCoordinator.Instance;
+		if (spawner == null)
+		{
+			Debug.LogError("[NM] ❌❌❌ SpawnUnitsCoordinator.Instance is NULL!");
+			Debug.LogError("[NM] TARKISTA että SpawnUnitsCoordinator GameObject on Level 0 scenessä!");
+			
+			return;
+		}
+
+		Debug.Log($"[NM] ✅ SpawnUnitsCoordinator found, spawning units for conn {conn.connectionId}, isHost={isHost}");
+		var units = spawner.SpawnPlayersForNetwork(conn, isHost);
+		
+		if (units == null)
+		{
+			Debug.LogError($"[NM] ❌ SpawnPlayersForNetwork returned NULL for conn {conn.connectionId}!");
+			return;
+		}
+		
+		if (units.Length == 0)
+		{
+			Debug.LogError($"[NM] ❌ SpawnPlayersForNetwork returned EMPTY array for conn {conn.connectionId}!");
+			return;
+		}
+		
+		Debug.Log($"[NM] SpawnPlayersForNetwork returned {units.Length} units");
+		
+		foreach (var unit in units)
+		{
+			if (unit == null)
+			{
+				Debug.LogError($"[NM] ❌ Unit is null in array for conn {conn.connectionId}!");
+				continue;
+			}
+			Debug.Log($"[NM] 🎮 Spawning player unit '{unit.name}' at {unit.transform.position} for connection {conn.connectionId}");
+			NetworkServer.Spawn(unit, conn);
+			Debug.Log($"[NM] ✅ Unit '{unit.name}' spawned with netId {unit.GetComponent<NetworkIdentity>()?.netId}");
+		}
+
+		Debug.Log($"[NM] <<< ServerFinalizeAddPlayer COMPLETE for conn {conn.connectionId}, spawned {units.Length} units");
+
+		var turnMgr = NetTurnManager.Instance;
+		if (turnMgr != null)
+			turnMgr.ServerUpdateRequiredCount(NetworkServer.connections.Count);
+
+		if (NetTurnManager.Instance && NetTurnManager.Instance.phase == TurnPhase.Players)
+		{
+			var pc = conn.identity ? conn.identity.GetComponent<PlayerController>() : null;
+			if (pc != null) pc.ServerSetHasEnded(false);
+		}
+
+		if (CoopTurnCoordinator.Instance && NetTurnManager.Instance)
+		{
+			CoopTurnCoordinator.Instance.RpcTurnPhaseChanged(
+				NetTurnManager.Instance.phase,
+				NetTurnManager.Instance.turnNumber,
+				true
+			);
+		}
+
+		if (GameModeManager.SelectedMode == GameMode.Versus)
+		{
+			var pc = conn.identity ? conn.identity.GetComponent<PlayerController>() : null;
+			if (pc != null && PvPTurnCoordinator.Instance != null)
+				PvPTurnCoordinator.Instance.ServerRegisterPlayer(pc);
+			else
+				Debug.LogWarning("[NM] PvP rekisteröinti epäonnistui: PlayerController tai PvPTurnCoordinator puuttuu.");
+		}
+	}
+/*
+		
+		[Server]
+		private void ServerFinalizeAddPlayer(NetworkConnectionToClient conn)
+		{
+			// 1) Luo player-identity tälle connectionille (vain jos sitä ei ole jo tehty)
+			if (conn.identity == null)
+			{
+				if (playerPrefab == null)
+				{
+					Debug.LogError("[NM] Player Prefab (EmptySquad) puuttuu!");
+					return;
+				}
+				base.OnServerAddPlayer(conn); // NetworkServer.AddPlayerForConnection(...)
+			}
+
+			// 2) Päätä host vs client
 			bool isHost = conn.connectionId == 0;
 
-			// 3) spawnaa pelaajan yksiköt ja anna authority niihin
-			var units = SpawnUnitsCoordinator.Instance.SpawnPlayersForNetwork(conn, isHost);
+			// 3) Spawnaa pelaajan unitit ja anna niihin authority (siirron Level-scenelle hoitaa teidän SpawnUnitsCoordinator/SpawnRouter)
+			var spawner = SpawnUnitsCoordinator.Instance;
+			if (spawner == null)
+			{
+				Debug.LogError("[NM] SpawnUnitsCoordinator.Instance puuttuu (ei löydy Level-scenestä?).");
+				return;
+			}
+
+			var units = spawner.SpawnPlayersForNetwork(conn, isHost);
 			foreach (var unit in units)
 			{
 				Debug.Log($"[NM] Spawning player unit {unit.name} for connection {conn.connectionId}, isHost={isHost}");
-				NetworkServer.Spawn(unit, conn); // authority tälle pelaajalle
+				NetworkServer.Spawn(unit, conn);
 			}
 
-			// päivitä pelaajamäärä koordinaattorille
-			var coord = NetTurnManager.Instance;
-			//var coord = CoopTurnCoordinator.Instance;
-			if (coord != null)
-				coord.ServerUpdateRequiredCount(NetworkServer.connections.Count);
+			// 4) Päivitä vuoronhallinnan pelaajamäärä
+			var turnMgr = NetTurnManager.Instance;
+			if (turnMgr != null)
+				turnMgr.ServerUpdateRequiredCount(NetworkServer.connections.Count);
 
-			//  Jos nyt on Players-vuoro, avaa toiminta tälle uudelle clientille
+			// 5) Jos nyt on Players-vuoro, avaa UI tälle uudelle pelaajalle
 			if (NetTurnManager.Instance && NetTurnManager.Instance.phase == TurnPhase.Players)
 			{
 				var pc = conn.identity ? conn.identity.GetComponent<PlayerController>() : null;
-				if (pc != null) pc.ServerSetHasEnded(false);   // -> TargetRpc avaa UI:n
+				if (pc != null) pc.ServerSetHasEnded(false);
 			}
 
-			// Asettaa pelaajan UI.n pelaajan vuoroksi.
+			// 6) Coop-UI päivitys
 			if (CoopTurnCoordinator.Instance && NetTurnManager.Instance)
 			{
 				CoopTurnCoordinator.Instance.RpcTurnPhaseChanged(
@@ -251,21 +425,18 @@ namespace Utp
 				);
 			}
 
-			// --- VERSUS (PvP) — host aloittaa ---
+			// 7) PvP-rekisteröinti
 			if (GameModeManager.SelectedMode == GameMode.Versus)
 			{
-				var pc = conn.identity != null ? conn.identity.GetComponent<PlayerController>() : null;
+				var pc = conn.identity ? conn.identity.GetComponent<PlayerController>() : null;
 				if (pc != null && PvPTurnCoordinator.Instance != null)
-				{
-					// Rekisteröi pelaaja PvP-vuoroon (host saa aloitusvuoron PvPTurnCoordinatorissa)
 					PvPTurnCoordinator.Instance.ServerRegisterPlayer(pc);
-				}
 				else
-				{
 					Debug.LogWarning("[NM] PvP rekisteröinti epäonnistui: PlayerController tai PvPTurnCoordinator puuttuu.");
-				}
 			}
 		}
+		
+	*/	
 
 		[Server]
 		public void ServerSpawnEnemies()
@@ -282,7 +453,6 @@ namespace Utp
 				}
 			}
 		}
-
 
 		public override void OnServerDisconnect(NetworkConnectionToClient conn)
 		{

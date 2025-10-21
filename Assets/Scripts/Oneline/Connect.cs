@@ -1,3 +1,4 @@
+
 using UnityEngine;
 using TMPro;
 using Mirror;
@@ -14,8 +15,6 @@ using UnityEngine.UI;
 public class Connect : MonoBehaviour
 {
     [SerializeField] private GameNetworkManager gameNetworkManager; // vedä tämä Inspectorissa
-
-
     [SerializeField] private TMP_InputField ipField;
     [SerializeField] private GameModeSelectUI gameModeSelectUI;
 
@@ -39,7 +38,15 @@ public class Connect : MonoBehaviour
 
     public void HostLAN()
     {
-        LoadSceneToAllHostLAN();
+        if (!gameNetworkManager)
+        {
+            gameNetworkManager = NetworkManager.singleton as GameNetworkManager
+                            ?? FindFirstObjectByType<GameNetworkManager>();
+            if (!gameNetworkManager) { Debug.LogError("[Connect] GameNetworkManager not found."); return; }
+        }
+
+        gameNetworkManager.StartStandardHost();
+
     }
 
 
@@ -50,6 +57,7 @@ public class Connect : MonoBehaviour
                       ? ipField.text.Trim()
                       : "localhost"; // tai 127.0.0.1
 
+        Debug.Log($"[Connect] Joining server at {ip}");
         gameNetworkManager.networkAddress = ip;   // <<< TÄRKEIN KOHTA
         gameNetworkManager.JoinStandardServer();  // useRelay=false ja StartClient()
     }
@@ -58,24 +66,75 @@ public class Connect : MonoBehaviour
     {
         if (!gameNetworkManager)
         {
-            Debug.LogError("[Connect] GameNetworkManager not found in scene.");
-            return;
+            gameNetworkManager = NetworkManager.singleton as GameNetworkManager
+                            ?? FindFirstObjectByType<GameNetworkManager>();
+            if (!gameNetworkManager) { Debug.LogError("[Connect] GameNetworkManager not found."); return; }
         }
 
-        LoadSceneToAllHost();
+        StartCoroutine(StartRelayHostThenShowCode());
+    }
+
+    private IEnumerator StartRelayHostThenShowCode()
+    {
+        if (NetworkServer.active) yield break;
+
+        gameNetworkManager.StartRelayHost(2, null);
+
+        yield return new WaitUntil(() => !string.IsNullOrEmpty(gameNetworkManager.relayJoinCode));
+        RelayJoinCodeUI.Instance.ShowCode(gameNetworkManager.relayJoinCode);
+
+        // NetLevelLoader hoitaa kentän latauksen automaattisesti
+
+        yield return new WaitUntil(() => NetworkServer.connections != null &&
+                                        NetworkServer.connections.Count >= 2);
+        RelayJoinCodeUI.Instance.Hide();
+    }
+
+
+    private IEnumerator StartRelayHostThenLoadLevel()
+    {
+        if (NetworkServer.active) yield break;
+
+        gameNetworkManager.StartRelayHost(2, null);
+
+        // odota koodi & serveri aktiiviseksi
+        yield return new WaitUntil(() => !string.IsNullOrEmpty(gameNetworkManager.relayJoinCode));
+        RelayJoinCodeUI.Instance.ShowCode(gameNetworkManager.relayJoinCode);
+
+        yield return new WaitUntil(() => NetworkServer.active);
+
+        // ÄLÄ tee ServerChangeScenea. Varmista additiivinen lataus kuten LAN-case:
+        yield return EnsureLevelLoadedAfterServerUp();
+
+        // pidä koodi näkyvissä kunnes 2. pelaaja on mukana (host + 1 client)
+        yield return new WaitUntil(() => NetworkServer.connections != null &&
+                                        NetworkServer.connections.Count >= 2);
+        RelayJoinCodeUI.Instance.Hide();
+    }
+    
+    private IEnumerator EnsureLevelLoadedAfterServerUp()
+    {
+        // odota hetki, että NetLevelLoader ehtii startata
+        yield return new WaitUntil(() => NetworkServer.active);
+        yield return null;
+
+        // jos NetLevelLoader ei ole vielä ehtinyt merkitä leveliä valmiiksi,
+        // pyydä se lataamaan nykyinen/defu-level
+        if (!LevelLoader.IsServerLevelReady)
+        {
+            string target = LevelLoader.Instance
+                ? (LevelLoader.Instance.CurrentLevel ?? LevelLoader.Instance.DefaultLevel)
+                : "Level 0";
+
+            if (NetLevelLoader.Instance)
+                NetLevelLoader.Instance.ServerLoadLevel(target);
+            else
+                Debug.LogError("[Connect] NetLevelLoader.Instance puuttuu Core-scenestä!");
+        }
     }
 
     public void Client()
     {
-        /*
-        if (!gameNetworkManager)
-        {
-            Debug.LogError("[Connect] GameNetworkManager not found in scene.");
-            return;
-        }
-
-        gameNetworkManager.JoinRelayServer();
-        */
 
         if (!gameNetworkManager)
         {
@@ -112,9 +171,6 @@ public class Connect : MonoBehaviour
 
         gameNetworkManager.relayJoinCode = code;
         gameNetworkManager.JoinRelayServer();
-
-        // (valinnainen) lukitse UI: 
-        // joinButton.interactable = false; joinCodeField.interactable = false;
     }
 
     // Cancel tai Back
@@ -173,9 +229,9 @@ public class Connect : MonoBehaviour
         yield return new WaitUntil(() => NetworkServer.active);
 
         // 2b) (Tarvitsetko varmasti scene-reloadin? Jos et, KOMMENTOI tämä pois.)
-        NetworkManager.singleton.ServerChangeScene(
-            UnityEngine.SceneManagement.SceneManager.GetActiveScene().name
-        );
+       // NetworkManager.singleton.ServerChangeScene(
+        //    UnityEngine.SceneManagement.SceneManager.GetActiveScene().name
+       // );
 
         // 3) Pidä koodi näkyvissä kunnes 2. pelaaja on mukana (host + 1 client)
         yield return new WaitUntil(() =>

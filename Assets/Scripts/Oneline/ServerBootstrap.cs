@@ -66,7 +66,7 @@ public class ServerBootstrap : NetworkBehaviour
         UnitUIBroadcaster.Instance.BroadcastUnitWorldUIVisibility(false);
 
         // (valinnainen) client-init, jos sinulla on tällainen
-        ResetService.Instance.RpcPostResetClientInit(NetTurnManager.Instance.turnNumber);
+       // ResetService.Instance.RpcPostResetClientInit(NetTurnManager.Instance.turnNumber);
 
         NetTurnManager.Instance.SetPlayerStartState();
     }

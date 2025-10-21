@@ -89,24 +89,13 @@ public class WinBattle : MonoBehaviour
         if (titleText) titleText.text = title;
         if (panel) panel.SetActive(true);
 
-        // (valinnainen) lukitse input
-        // UnitActionSystem.Instance?.LockInput();
     }
 
     private void OnClickPlayAgain()
     {
-        // Sama malli kuin GameModeSelectUI.Reset
-        if (NetworkServer.active)
-        {
-            ResetService.Instance.HardResetServerAuthoritative();
-        }
-        else if (NetworkClient.active)
-        {
-            ResetService.Instance.CmdRequestHardReset();
-        }
-        else
-        {
-            GameReset.HardReloadSceneKeepMode();
-        }
+        gameEnded = false;
+        if (panel) panel.SetActive(false);
+        // Yksi reitti kaikkeen: ResetService → LevelLoader
+         ResetService.Instance.RequestReset();
     }
 }

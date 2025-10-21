@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Weapon_RK-47
   m_EditorClassIdentifier: Assembly-CSharp::WeaponDefinition
   maxShootRange: 15
+  NoCoverDamageBonus: 30
   baseDamage: 50
   critBonusDamage: 20
   grazeFactor: 0.6
@@ -46,7 +47,7 @@ MonoBehaviour:
     onMiss_Miss: 80
     onMiss_CritMiss: 20
   long:
-    baseHitChance: 65
+    baseHitChance: 60
     onHit_Close: 25
     onHit_Graze: 25
     onHit_Hit: 50
@@ -54,13 +55,13 @@ MonoBehaviour:
     onMiss_Miss: 80
     onMiss_CritMiss: 20
   extreme:
-    baseHitChance: 0
-    onHit_Close: 0
-    onHit_Graze: 0
-    onHit_Hit: 0
-    onHit_Crit: 0
-    onMiss_Miss: 0
-    onMiss_CritMiss: 0
+    baseHitChance: 10
+    onHit_Close: 25
+    onHit_Graze: 25
+    onHit_Hit: 50
+    onHit_Crit: 10
+    onMiss_Miss: 20
+    onMiss_CritMiss: 80
   meleeAcc: 30
   closeAcc: 90
   mediumAcc: 90

@@ -134,4 +134,36 @@ public class TurnSystem : MonoBehaviour
 
     public bool IsUnitsTurn(Unit u) => u.Team == CurrentTeam;
 
+    /// <summary>
+    /// Offline/SP: nollaa paikallisen vuorotilan ja aloittaa alusta.
+    /// Kutsu tätä heti, kun yksiköt on spawnattu uudelleen level-reloadin jälkeen.
+    /// </summary>
+    /// <param name="resetTurnNumber">Asetetaanko turnNumber takaisin 1:een.</param>
+    /// <param name="playersPhase">Aloitetaanko Players-vaiheesta (yleensä true).</param>
+    public void ResetAndBegin(bool resetTurnNumber = true, bool playersPhase = true)
+    {
+        // Online-tilassa varoitetaan: online-reset hoidetaan NetTurnManagerin kautta
+        if (GameModeManager.SelectedMode != GameMode.SinglePlayer && Mirror.NetworkServer.active)
+        {
+            Debug.LogWarning("[TurnSystem] ResetAndBegin() on offline/SP-apu. Verkossa käytä NetTurnManager.ServerResetAndBegin().");
+        }
+
+        // Nollaa paikalliset laskurit/tila
+        if (resetTurnNumber) turnNumber = 1;
+
+        // UI-/SP-luupin peruskentät
+        CurrentTeam = playersPhase ? Team.Player : Team.Enemy;
+        TurnId = 0;                 // sisäinen vaihtolaskuri, alkaa alusta
+        var wasPlayerTurn = IsPlayerTurn();
+
+        // Päivitä “onko pelaajan vuoro” -portti ja kerro UI:lle
+        ForcePhase(isPlayerTurn: playersPhase, incrementTurnNumber: false); // kutsuu OnTurnChanged, käyttää nykyistä logiikkaasi
+        PlayerLocalTurnGate.Set(playersPhase);                               // HUD/input-portti heti oikein
+
+        // Ilmoita uuden vuoron alkamisesta niille, jotka kuuntelevat OnTurnStarted
+        OnTurnStarted?.Invoke(CurrentTeam, TurnId);
+
+        // Jos haluat täydellisen synkan HUDissa, voit vielä varmistaa:
+        // SetHudFromNetwork(turnNumber, playersPhase);
+    }
 }
