@@ -219,96 +219,9 @@ public static class NetworkSync
         }
     }
 
-    /*
-    public static void SpawnRagdoll(GameObject prefab, Vector3 pos, Quaternion rot, uint sourceUnitNetId, Transform originalRootBone, Vector3 lastHitPosition, int overkill)
-    {
-
-        if (NetworkServer.active)
-        {
-            var go = Object.Instantiate(prefab, pos, rot);
-
-            if (go.TryGetComponent<UnitRagdoll>(out var rg))
-            {
-                rg.SetOverkill(overkill);
-                rg.SetLastHitPosition(lastHitPosition);
-            }
-
-            // Set sourceUnitNetId so that clients can find the original unit
-            if (go.TryGetComponent<RagdollPoseBinder>(out var ragdollBinder))
-            {
-                ragdollBinder.sourceUnitNetId = sourceUnitNetId;
-                ragdollBinder.lastHitPos = lastHitPosition;
-                ragdollBinder.overkill = overkill;
-            }
-
-            else
-            {
-                Debug.LogWarning("[Ragdoll] Ragdoll prefab lacks RagdollPoseBinder component.");
-            }
-
-            NetworkServer.Spawn(go);
-            return;
-        }
-
-        // offline fallback
-        var off = Object.Instantiate(prefab, pos, rot);
-        if (off.TryGetComponent<UnitRagdoll>(out var unitRagdoll))
-        {
-            unitRagdoll.SetOverkill(overkill);
-            unitRagdoll.SetLastHitPosition(lastHitPosition);
-            unitRagdoll.Setup(originalRootBone);
-        }
-    }
-    */
     public static void SpawnRagdoll(GameObject prefab, Vector3 pos, Quaternion rot, uint sourceUnitNetId, Transform originalRootBone, Vector3 lastHitPosition, int overkill)
     {   
-        /*
-        if (NetworkServer.active)
-        {
-            var go = Object.Instantiate(prefab, pos, rot);
 
-            Scene CurrentlevelScene = GetLevelScene();
-            if (CurrentlevelScene.IsValid())
-            {
-                SceneManager.MoveGameObjectToScene(go, CurrentlevelScene);
-            }
-
-            if (go.TryGetComponent<UnitRagdoll>(out var rg))
-            {
-                rg.SetOverkill(overkill);
-                rg.SetLastHitPosition(lastHitPosition);
-            }
-
-            if (go.TryGetComponent<RagdollPoseBinder>(out var ragdollBinder))
-            {
-                ragdollBinder.sourceUnitNetId = sourceUnitNetId;
-                ragdollBinder.lastHitPos = lastHitPosition;
-                ragdollBinder.overkill = overkill;
-            }
-            else
-            {
-                Debug.LogWarning("[Ragdoll] Ragdoll prefab lacks RagdollPoseBinder component.");
-            }
-
-            NetworkServer.Spawn(go);
-            return;
-        }
-
-        var off = Object.Instantiate(prefab, pos, rot);
-        
-        Scene levelScene = GetLevelScene();
-        if (levelScene.IsValid())
-        {
-            SceneManager.MoveGameObjectToScene(off, levelScene);
-        }
-        
-        if (off.TryGetComponent<UnitRagdoll>(out var unitRagdoll))
-        {
-            unitRagdoll.SetOverkill(overkill);
-            unitRagdoll.SetLastHitPosition(lastHitPosition);
-            unitRagdoll.Setup(originalRootBone);
-        }
-        */
         if (NetworkServer.active)
         {
             // 1) Hae kaatuneen unitin Transform serveriltä netId:llä

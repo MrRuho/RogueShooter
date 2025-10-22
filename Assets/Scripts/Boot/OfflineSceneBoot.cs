@@ -4,7 +4,7 @@ using UnityEngine.SceneManagement;
 using Mirror;
 public static class OfflineSceneBoot
 {   
-    
+
     // Nimeä nämä Build Settings -listan mukaan 1:1
     const string CORE = "Core";
     const string LEVEL0 = "Level 0";   // vaihda halutuksi “oletuskentäksi”
@@ -88,6 +88,5 @@ public static class OfflineSceneBoot
             }
             return _inst.StartCoroutine(e);
         }
-    }
-    
+    } 
 }

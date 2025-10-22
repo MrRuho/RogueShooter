@@ -52,16 +52,26 @@ public class Connect : MonoBehaviour
 
     public void ClientLAN()
     {
-        // Jos syötekenttä puuttuu/tyhjä → oletus localhost (sama kone)
         string ip = (ipField != null && !string.IsNullOrWhiteSpace(ipField.text))
                       ? ipField.text.Trim()
                       : "localhost"; // tai 127.0.0.1
 
         Debug.Log($"[Connect] Joining server at {ip}");
-        gameNetworkManager.networkAddress = ip;   // <<< TÄRKEIN KOHTA
-        gameNetworkManager.JoinStandardServer();  // useRelay=false ja StartClient()
+    
+        gameNetworkManager.networkAddress = ip;
+        // 1) Puhdista clientin oma kenttä ja offline-jäänteet
+        StartCoroutine(CleanThenJoin());
+
     }
 
+    private IEnumerator CleanThenJoin()
+    {
+        // 1) Puhdista clientin oma kenttä ja offline-jäänteet
+        yield return ClientPreJoinCleaner.PrepareForOnlineJoin();
+        gameNetworkManager.JoinStandardServer();  // useRelay=false ja StartClient()
+        
+    }
+    
     public void Host()
     {
         if (!gameNetworkManager)
@@ -169,6 +179,17 @@ public class Connect : MonoBehaviour
             return;
         }
 
+        // gameNetworkManager.relayJoinCode = code;
+        // gameNetworkManager.JoinRelayServer();
+        StartCoroutine(Co_CleanThenJoin(code));
+    }
+
+    private IEnumerator Co_CleanThenJoin(string code)
+    {
+        // 1) Puhdista clientin oma kenttä ja offline-jäänteet
+        yield return ClientPreJoinCleaner.PrepareForOnlineJoin();
+
+        // 2) Aseta koodi ja liity
         gameNetworkManager.relayJoinCode = code;
         gameNetworkManager.JoinRelayServer();
     }

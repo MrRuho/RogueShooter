@@ -32,10 +32,30 @@ public class SpawnUnitsCoordinator : MonoBehaviour
     {
         if (Instance != null && Instance != this)
         {
-            Debug.LogError("There's more than one SpawnUnitsCoordinator! " + transform + " - " + Instance);
-            Destroy(gameObject); return;
+            var myScene = gameObject.scene;
+            var oldScene = Instance.gameObject.scene;
+
+            // Jos edellinen on eri scenessä (jäänne purkamatta), tuhoa se ja ota tämä käyttöön
+            if (oldScene != myScene)
+            {
+                Debug.LogWarning($"[SpawnUnitsCoordinator] Replacing leftover instance from scene '{oldScene.name}' with current '{myScene.name}'.");
+                Destroy(Instance.gameObject);
+                Instance = this;
+                return;
+            }
+
+            // Sama scene → tämä on tupla oikeasti: tuhoa tämä
+            Debug.LogError($"There's more than one SpawnUnitsCoordinator! {Instance} - {this}");
+            Destroy(gameObject);
+            return;
         }
+
         Instance = this;
+    }
+    
+    void OnDestroy()
+    {
+        if (Instance == this) Instance = null;
     }
 
     public GameObject[] SpawnPlayersForNetwork(NetworkConnectionToClient conn, bool isHost)
@@ -56,12 +76,29 @@ public class SpawnUnitsCoordinator : MonoBehaviour
 
         var spawnedPlayersUnit = new GameObject[spawnPoints.Length];
         
+        // Hae Level-scene (tämä SpawnUnitsCoordinator on Level-scenessä)
+        Scene levelScene = gameObject.scene;
+        Debug.Log($"[SpawnUnitsCoordinator] Spawning {spawnPoints.Length} units for {(isHost ? "HOST" : "CLIENT")} to scene '{levelScene.name}'");
+        
         for (int i = 0; i < spawnPoints.Length; i++)
         {
-            var playerUnit = Instantiate(unitPrefab, spawnPoints[i], Quaternion.identity);
+            // Käytä SpawnRouteria → varmistaa että unitit menevät Level-sceneen
+            var playerUnit = SpawnRouter.SpawnNetworkServer(
+                prefab: unitPrefab,
+                pos: spawnPoints[i],
+                rot: Quaternion.identity,
+                source: transform,  // Käytä tämän objektin sceneä
+                sceneName: levelScene.name,
+                parent: null,
+                owner: conn,
+                beforeSpawn: (go) => 
+                {
+                    if (go.TryGetComponent<Unit>(out var u) && conn.identity != null)
+                        u.OwnerId = conn.identity.netId;
+                }
+            );
             
-            if (playerUnit.TryGetComponent<Unit>(out var u) && conn.identity != null)
-                u.OwnerId = conn.identity.netId;
+            Debug.Log($"[SpawnUnitsCoordinator] Spawned unit '{playerUnit.name}' at {spawnPoints[i]} in scene '{playerUnit.scene.name}'");
             spawnedPlayersUnit[i] = playerUnit;
         }
 
@@ -93,11 +130,40 @@ public class SpawnUnitsCoordinator : MonoBehaviour
     public GameObject[] SpawnEnemies()
     {
         var spawnedEnemies = new GameObject[enemySpawnPositions.Length];
+        Scene levelScene = gameObject.scene;
+        
+        Debug.Log($"[SpawnUnitsCoordinator] Spawning {enemySpawnPositions.Length} enemies to scene '{levelScene.name}'");
 
         for (int i = 0; i < enemySpawnPositions.Length; i++)
         {
-            var enemy = Instantiate(GetEnemyPrefab(), enemySpawnPositions[i], Quaternion.identity);
-            spawnedEnemies[i] = enemy;
+            // Käytä SpawnRouteria verkkopelaamisessa
+            if (NetworkServer.active)
+            {
+                var enemy = SpawnRouter.SpawnNetworkServer(
+                    prefab: GetEnemyPrefab(),
+                    pos: enemySpawnPositions[i],
+                    rot: Quaternion.identity,
+                    source: transform,
+                    sceneName: levelScene.name,
+                    parent: null,
+                    owner: null
+                );
+                spawnedEnemies[i] = enemy;
+                Debug.Log($"[SpawnUnitsCoordinator] Network spawned enemy '{enemy.name}' in scene '{enemy.scene.name}'");
+            }
+            else
+            {
+                // Offline-spawni
+                var enemy = SpawnRouter.SpawnLocal(
+                    prefab: GetEnemyPrefab(),
+                    pos: enemySpawnPositions[i],
+                    rot: Quaternion.identity,
+                    source: transform,
+                    sceneName: levelScene.name
+                );
+                spawnedEnemies[i] = enemy;
+                Debug.Log($"[SpawnUnitsCoordinator] Local spawned enemy '{enemy.name}' in scene '{enemy.scene.name}'");
+            }
         }
 
         SetEnemiesSpawned(true);
@@ -145,33 +211,37 @@ public class SpawnUnitsCoordinator : MonoBehaviour
     {
         Scene targetScene = gameObject.scene;
         
-        var unit1 = Instantiate(unitHostPrefab, hostSpawnPositions[0], Quaternion.identity);
-        SceneManager.MoveGameObjectToScene(unit1, targetScene);
+        Debug.Log($"[SpawnUnitsCoordinator] Spawning offline player units to '{targetScene.name}'");
         
-        var unit2 = Instantiate(unitHostPrefab, hostSpawnPositions[1], Quaternion.identity);
-        SceneManager.MoveGameObjectToScene(unit2, targetScene);
-        
-        var unit3 = Instantiate(unitHostPrefab, hostSpawnPositions[2], Quaternion.identity);
-        SceneManager.MoveGameObjectToScene(unit3, targetScene);
-        
-        var unit4 = Instantiate(unitHostPrefab, hostSpawnPositions[3], Quaternion.identity);
-        SceneManager.MoveGameObjectToScene(unit4, targetScene);
-        
-        var unit5 = Instantiate(unitHostPrefab, hostSpawnPositions[4], Quaternion.identity);
-        SceneManager.MoveGameObjectToScene(unit5, targetScene);
-        
-        var unit6 = Instantiate(unitHostPrefab, hostSpawnPositions[5], Quaternion.identity);
-        SceneManager.MoveGameObjectToScene(unit6, targetScene);
+        for (int i = 0; i < Mathf.Min(6, hostSpawnPositions.Length); i++)
+        {
+            var unit = SpawnRouter.SpawnLocal(
+                prefab: unitHostPrefab,
+                pos: hostSpawnPositions[i],
+                rot: Quaternion.identity,
+                source: transform,
+                sceneName: targetScene.name
+            );
+            Debug.Log($"[SpawnUnitsCoordinator] Offline player unit spawned in '{unit.scene.name}'");
+        }
     }
-    
+
     private void SpawnEnemyUnitsOffline()
     {
         Scene targetScene = gameObject.scene;
-        
-        var enemy1 = Instantiate(enemyPrefab, enemySpawnPositions[0], Quaternion.identity);
-        SceneManager.MoveGameObjectToScene(enemy1, targetScene);
-        
-        var enemy2 = Instantiate(enemyPrefab, enemySpawnPositions[1], Quaternion.identity);
-        SceneManager.MoveGameObjectToScene(enemy2, targetScene);
+
+        Debug.Log($"[SpawnUnitsCoordinator] Spawning offline enemy units to '{targetScene.name}'");
+
+        for (int i = 0; i < Mathf.Min(2, enemySpawnPositions.Length); i++)
+        {
+            var enemy = SpawnRouter.SpawnLocal(
+                prefab: enemyPrefab,
+                pos: enemySpawnPositions[i],
+                rot: Quaternion.identity,
+                source: transform,
+                sceneName: targetScene.name
+            );
+            Debug.Log($"[SpawnUnitsCoordinator] Offline enemy spawned in '{enemy.scene.name}'");
+        }
     }
 }

@@ -1,63 +1,3 @@
-/*
-using System.Collections;
-using UnityEngine;
-using Utp;
-
-/// <summary>
-/// This class is responsible for managing the game mode
-/// It checks if the game is being played online or offline and spawns units accordingly.
-/// </summary>
-public enum GameMode { SinglePlayer, CoOp, Versus }
-public class GameModeManager : MonoBehaviour
-{
-    public static GameModeManager Instance { get; private set; }
-    public static GameMode SelectedMode { get; private set; } = GameMode.SinglePlayer;
-    public static void SetSinglePlayer() => SelectedMode = GameMode.SinglePlayer;
-    public static void SetCoOp() => SelectedMode = GameMode.CoOp;
-    public static void SetVersus() => SelectedMode = GameMode.Versus;
-
-    void Awake()
-    {
-        if (Instance != null)
-        {
-            Debug.LogError("More than one GameModeManager in the scene!" + transform + " " + Instance);
-            Destroy(gameObject);
-            return;
-        }
-
-        Instance = this;
-    }
-    
-    void Start()
-    {
-        // if game is offline, spawn singleplayer units
-        if (!GameNetworkManager.Instance.IsNetworkActive())
-        {
-            StartCoroutine(OfflineBootstrap());
-        }
-        else
-        {
-            Debug.Log("Game is online, waiting for host/client to spawn units.");
-        }
-    }
-
-    private IEnumerator OfflineBootstrap()
-    {
-        // Odota että Level-scenessä oleva SpawnUnitsCoordinator on herännyt
-        yield return new WaitUntil(() => SpawnUnitsCoordinator.Instance != null);
-
-        // (Valinnaiset mutta suositeltavat guardit)
-        yield return new WaitUntil(() => LevelGrid.Instance != null && PathFinding.Instance != null);
-
-        if (SelectedMode == GameMode.SinglePlayer)
-        {
-            SpawnUnitsCoordinator.Instance.SpwanSinglePlayerUnits(); // sama metodi kuin ennen
-            // Jos haluat varmistaa ruudukon tilan heti spawnausten jälkeen:
-            LevelGrid.Instance.RebuildOccupancyFromScene();
-        }
-    }
-}
-*/
 using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -67,8 +7,7 @@ public enum GameMode { SinglePlayer, CoOp, Versus }
 
 public class GameModeManager : MonoBehaviour
 {
-    public static GameModeManager Instance { get; private set; }
-    
+    public static GameModeManager Instance { get; private set; } 
     public static GameMode SelectedMode { get; private set; } = GameMode.SinglePlayer;
     
     public static void SetSinglePlayer() => SelectedMode = GameMode.SinglePlayer;
@@ -85,16 +24,20 @@ public class GameModeManager : MonoBehaviour
         Instance = this;
     }
 
-    void Start()
+    private void OnEnable()
     {
-        if (!GameNetworkManager.Instance.IsNetworkActive())
-        {
-            StartCoroutine(OfflineBootstrap());
-        }
-        else
-        {
-            Debug.Log("Game is online, waiting for host/client to spawn units.");
-        }
+        LevelLoader.LevelReady += OnLevelReady;    // ← kuuntele jokaista level-latausta
+    }
+
+    private void OnDisable()
+    {
+        LevelLoader.LevelReady -= OnLevelReady;
+    }
+
+     private void OnLevelReady(Scene _)
+    {
+        if (!NetMode.IsOnline) return; // vain offline
+        StartCoroutine(OfflineBootstrap()); // ← käynnistä spawnaus myös reloadin jälkeen
     }
 
     public bool LevelIsLoaded()
@@ -123,28 +66,41 @@ public class GameModeManager : MonoBehaviour
         return default;
     }
 
-    private void SpawnUnits()
-    {
-        if (SelectedMode == GameMode.SinglePlayer)
-        {
-            SpawnUnitsCoordinator.Instance.SpwanSinglePlayerUnits();
-            return;
-        }
-    }
-
     private IEnumerator OfflineBootstrap()
     {
-        yield return new WaitUntil(() => LevelIsLoaded());
-        
+        // Nämä guardit ovat jo projektissa: odota että kaikki on olemassa
         yield return new WaitUntil(() => SpawnUnitsCoordinator.Instance != null);
-
         yield return new WaitUntil(() => LevelGrid.Instance != null && PathFinding.Instance != null);
 
         if (SelectedMode == GameMode.SinglePlayer)
         {
+            // Spawn offline -unitit siihen sceneen, missä koordinaattori on
             SpawnUnitsCoordinator.Instance.SpwanSinglePlayerUnits();
             LevelGrid.Instance.RebuildOccupancyFromScene();
         }
     }
+    
+    void Handle_LevelReady(Scene s)
+    {
+        if (!NetMode.IsServer) return;           // vain server
+        StartCoroutine(Co_ServerSpawnUnits());
+    }
+
+    IEnumerator Co_ServerSpawnUnits()
+    {
+        // odota riippuvuudet
+        yield return new WaitUntil(() =>
+            SpawnUnitsCoordinator.Instance != null &&
+            LevelGrid.Instance != null &&
+            PathFinding.Instance != null);
+
+        // Spawnaa serveriltä nykyisen pelitilan mukaan
+        // (tee koordinaattoriin yksi sisäänajo, ettei tarvitse miettiä moodia tässä)
+        //SpawnUnitsCoordinator.Instance.ServerSpawnUnitsForCurrentMode();
+
+        // päivitä miehitys varmuudeksi
+        LevelGrid.Instance.RebuildOccupancyFromScene();
+    }
+    
 }
 

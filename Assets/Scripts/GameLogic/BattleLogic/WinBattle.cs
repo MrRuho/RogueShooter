@@ -96,6 +96,12 @@ public class WinBattle : MonoBehaviour
         gameEnded = false;
         if (panel) panel.SetActive(false);
         // Yksi reitti kaikkeen: ResetService → LevelLoader
-         ResetService.Instance.RequestReset();
+        if (NetMode.IsOnline)
+        {
+            ResetService.Instance.RequestReset();
+            return;
+        }
+        // OFFLINE → suoraan LevelLoaderin kautta
+        LevelLoader.Instance.ReloadOffline(LevelLoader.Instance.DefaultLevel);
     }
 }

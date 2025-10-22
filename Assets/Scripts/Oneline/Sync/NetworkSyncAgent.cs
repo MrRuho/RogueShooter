@@ -1,3 +1,4 @@
+using System.Collections;
 using Mirror;
 using UnityEngine;
 /// <summary>
@@ -13,9 +14,9 @@ using UnityEngine;
 public class NetworkSyncAgent : NetworkBehaviour
 {
     public static NetworkSyncAgent Local;   // Easy access for NetworkSync static helper
-    public override void OnStartAuthority()  { Local = this; }
+    public override void OnStartAuthority() { Local = this; }
     public override void OnStopAuthority() { if (Local == this) Local = null; }
-    
+
     [SerializeField] private GameObject bulletPrefab; // Prefab for the bullet projectile
     [SerializeField] private GameObject grenadePrefab;
 
@@ -317,6 +318,37 @@ public class NetworkSyncAgent : NetworkBehaviour
         if (!NetworkServer.spawned.TryGetValue(unitNetId, out NetworkIdentity ni)) return;
         var cs = ni.GetComponent<CoverSkill>(); // tai GetComponentInChildren<CoverSkill>()
         if (cs != null) cs.ServerApplyCoverBonus();
+    }
+
+
+    static bool _clientBakedThisScene;
+
+    [Server]
+    public void ServerBroadcastBakeEdges()
+    {
+        RpcBakeEdgesGuarded();
+    }
+
+    [ClientRpc]
+    void RpcBakeEdgesGuarded()
+    {
+        if (isServer) return; // host ei tarvitse tätä (server bake tehty)
+        GlobalCoroutineHost.StartRoutine(Co_BakeGuarded());
+    }
+
+    static IEnumerator Co_BakeGuarded()
+    {
+        if (_clientBakedThisScene) yield break;
+
+        yield return new WaitUntil(() =>
+            EdgeBaker.Instance != null &&
+            LevelGrid.Instance  != null &&
+            PathFinding.Instance != null
+        );
+        yield return null;
+
+        EdgeBaker.Instance.BakeAllEdges();
+        _clientBakedThisScene = true;
     }
 
 }

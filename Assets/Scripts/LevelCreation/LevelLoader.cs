@@ -2,22 +2,17 @@ using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using Mirror;
 
 public class LevelLoader : MonoBehaviour
 {
-    
-    [SerializeField] bool offlineWarmBoot = true;
-    [SerializeField] float warmBootDelay = 0.25f; // sekuntia
-
     public static LevelLoader Instance { get; private set; }
 
     [SerializeField] private string coreSceneName = "Core";
-    [SerializeField] private string defaultLevel  = "Level 0";
+    [SerializeField] private string defaultLevel = "Level 0";
 
     public string CoreSceneName => coreSceneName;
-    public string DefaultLevel  => defaultLevel;
-    public string CurrentLevel  { get; private set; }
+    public string DefaultLevel => defaultLevel;
+    public string CurrentLevel { get; private set; }
 
     [SerializeField] private bool forceDefaultOnStart = true;
 
@@ -31,45 +26,10 @@ public class LevelLoader : MonoBehaviour
 
     private void Awake()
     {
-        
+
         if (Instance != null && Instance != this) { Destroy(gameObject); return; }
         Instance = this;
         if (string.IsNullOrEmpty(CurrentLevel)) CurrentLevel = defaultLevel;
-    }
-
-    private void Start()
-    {
-
-        // ONLINE → NetLevelLoader hoitaa
-        if (NetworkServer.active || NetworkClient.active) 
-        {
-            Debug.Log("[LevelLoader] Net mode → NetLevelLoader will load.");
-            return;
-        }
-
-        // OFFLINE → tässä vasta ladataan lokaalisti
-       // Debug.Log($"[LevelLoader] Offline start → '{defaultLevel}'");
-       // StartCo(Co_LoadLevel_Local(defaultLevel));
-        //if (offlineWarmBoot) StartCo(Co_OfflineWarmBoot());
-    }
-    
-    private IEnumerator Co_OfflineWarmBoot()
-    {
-        yield return new WaitForSeconds(warmBootDelay);
-
-        // jos ei ole ladattuna yhtään ei-Core -sceneä, lataa default
-        bool anyLevelLoaded = false;
-        for (int i = 0; i < SceneManager.sceneCount; i++)
-        {
-            var s = SceneManager.GetSceneAt(i);
-            if (s.isLoaded && s.name != coreSceneName) { anyLevelLoaded = true; break; }
-        }
-
-        if (!anyLevelLoaded)
-        {
-            Debug.Log($"[LevelLoader] WarmBoot: no level yet → loading '{defaultLevel}'");
-            StartCo(Co_LoadLevel_Local(defaultLevel));
-        }
     }
 
     private void StartCo(IEnumerator r)
@@ -82,38 +42,95 @@ public class LevelLoader : MonoBehaviour
     {
         var target = string.IsNullOrWhiteSpace(levelName) ? CurrentLevel ?? defaultLevel : levelName;
         StopAllCoroutines();
-        StartCo(Co_LoadLevel_Local(target));
+        //StartCo(Co_LoadLevel_Local(target));
     }
 
-    private bool _localLoading;
-
-    private IEnumerator Co_LoadLevel_Local(string levelName)
+    // Kutsu tämä Play Again -napista OFFLINE-tilassa
+    public void ReloadOffline(string levelName = null)
     {
-        if (_localLoading) yield break;
-        _localLoading = true;
-        try
-        {
-            // ... NYKYINEN sisältö ...
-            var op = SceneManager.LoadSceneAsync(levelName, LoadSceneMode.Additive);
-            while (!op.isDone) yield return null;
-
-            var map = SceneManager.GetSceneByName(levelName);
-            if (!map.IsValid() || !map.isLoaded)
-            {
-                Debug.LogError($"[LevelLoader] '{levelName}' is not loaded (Build Settings?) aborting.");
-                yield break;
-            }
-
-            SceneManager.SetActiveScene(map);
-            yield return null;
-
-            EdgeBaker.Instance?.BakeAllEdges();
-            SceneManager.SetActiveScene(SceneManager.GetSceneByName(coreSceneName));
-
-            CurrentLevel = levelName;
-            RaiseLevelReady(map);
-        }
-        finally { _localLoading = false; }
+        var target = string.IsNullOrWhiteSpace(levelName) ? (CurrentLevel ?? DefaultLevel) : levelName;
+        StopAllCoroutines();
+        StartCoroutine(Co_ReloadOffline(target));
     }
 
+    private IEnumerator Co_ReloadOffline(string levelName)
+    {
+        string coreName = CoreSceneName ?? "Core";
+
+        Debug.Log($"[LevelLoader] ===== OFFLINE RELOAD START: '{levelName}' =====");
+
+        // 0) Lista ennen (debug)
+        for (int i = 0; i < SceneManager.sceneCount; i++)
+        {
+            var s = SceneManager.GetSceneAt(i);
+            Debug.Log($"[LevelLoader] BEFORE: {i} → '{s.name}' (loaded={s.isLoaded})");
+        }
+
+        // 1) Pura kaikki ei-Core -scenet
+        for (int i = 0; i < SceneManager.sceneCount; i++)
+        {
+            var s = SceneManager.GetSceneAt(i);
+            if (!s.isLoaded || s.name == coreName) continue;
+
+            Debug.Log($"[LevelLoader] Unloading scene '{s.name}'");
+            var op = SceneManager.UnloadSceneAsync(s);
+            if (op != null) while (!op.isDone) yield return null;
+
+            // koska sceneCount muuttuu, aloita alusta
+            i = -1;
+        }
+
+        // 2) Varmista Core ladattu + aktiivinen
+        var core = SceneManager.GetSceneByName(coreName);
+        if (!core.IsValid() || !core.isLoaded)
+        {
+            Debug.Log($"[LevelLoader] Loading Core scene");
+            var loadCore = SceneManager.LoadSceneAsync(coreName, LoadSceneMode.Additive);
+            while (!loadCore.isDone) yield return null;
+            core = SceneManager.GetSceneByName(coreName);
+        }
+        SceneManager.SetActiveScene(core);
+
+        // (siivoa roskat – vapauttaa tuhotun scenen assetteja)
+        yield return Resources.UnloadUnusedAssets();
+        yield return null;
+
+        // 3) Lataa uusi taso additiivisesti
+        Debug.Log($"[LevelLoader] Loading new level '{levelName}'");
+        var op2 = SceneManager.LoadSceneAsync(levelName, LoadSceneMode.Additive);
+        while (!op2.isDone) yield return null;
+
+        var map = SceneManager.GetSceneByName(levelName);
+        if (!map.IsValid() || !map.isLoaded)
+        {
+            Debug.LogError($"[LevelLoader] Failed to load '{levelName}'. Is it in Build Settings?");
+            yield break;
+        }
+
+        // 4) Aseta map aktiiviseksi yhdeksi frameksi (Start/Awake/OnEnable → placeholderit spawn)
+        SceneManager.SetActiveScene(map);
+        yield return null;                  // 1 frame
+        yield return new WaitForEndOfFrame(); // varmistaa että scene-Startit ehtii
+
+        // 5) Hookit (kuten OfflineBootissa)
+        var edgeBaker = UnityEngine.Object.FindFirstObjectByType<EdgeBaker>();
+        if (edgeBaker != null) edgeBaker.BakeAllEdges();
+
+        // (valinn.) jos käytössä: miehitys uudelleen sceneen spawneista
+        if (LevelGrid.Instance != null) LevelGrid.Instance.RebuildOccupancyFromScene();
+
+        // 6) Core takaisin aktiiviseksi, ilmoita että valmis
+        SceneManager.SetActiveScene(core);
+        CurrentLevel = levelName;
+
+        try { RaiseLevelReady(map); } catch { }
+
+        // Debug-listaus
+        Debug.Log($"[LevelLoader] ===== OFFLINE RELOAD DONE: '{levelName}' =====");
+        for (int i = 0; i < SceneManager.sceneCount; i++)
+        {
+            var s = SceneManager.GetSceneAt(i);
+            Debug.Log($"[LevelLoader] AFTER: {i} → '{s.name}' (loaded={s.isLoaded})");
+        }
+    }
 }

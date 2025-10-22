@@ -63,8 +63,7 @@ namespace Utp
 		{
 			base.OnStartServer();
 			
-			// ÄLÄ kutsu SpawnObjects() tässä – NetLevelLoader hoitaa sen!
-			
+		
 			LevelLoader.LevelReady += OnLevelReady_Server;
 			SpawnUnitsCoordinator.Instance.SetEnemiesSpawned(false);
 
@@ -75,7 +74,7 @@ namespace Utp
 		}
 
 		[ServerCallback]
-		public  override void OnDestroy()
+		public override void OnDestroy()
 		{
 			LevelLoader.LevelReady -= OnLevelReady_Server;
 		}
@@ -84,18 +83,18 @@ namespace Utp
 		private void OnLevelReady_Server(UnityEngine.SceneManagement.Scene mapScene)
 		{
 			// Level on nyt varmasti ladattu → tyhjennä jono
-        foreach (var c in _pendingConns)
-            if (c != null) ServerFinalizeAddPlayer(c);
+			foreach (var c in _pendingConns)
+				if (c != null) ServerFinalizeAddPlayer(c);
 
-        _pendingConns.Clear();
+			_pendingConns.Clear();
 
-        // (Tähän voit halutessasi laittaa vihollis-spawnit, ruudukon rebuildin ja vuoron aloituksen)
-        // Example:
-        // SpawnUnitsCoordinator.Instance?.ServerSpawnEnemiesForLevel();
-        // LevelGrid.Instance?.RebuildOccupancyFromScene();
-        // NetTurnManager.Instance?.ServerResetAndBegin();
+			// (Tähän voit halutessasi laittaa vihollis-spawnit, ruudukon rebuildin ja vuoron aloituksen)
+			// Example:
+			// SpawnUnitsCoordinator.Instance?.ServerSpawnEnemiesForLevel();
+			// LevelGrid.Instance?.RebuildOccupancyFromScene();
+			// NetTurnManager.Instance?.ServerResetAndBegin();
 		}
-
+		
 		/// <summary>
 		/// Get the port the server is listening on.
 		/// </summary>
@@ -245,21 +244,6 @@ namespace Utp
 		/// <summary>
 		/// Tämä metodi spawnaa jokaiselle clientille oman Unitin ja tekee siitä heidän ohjattavan yksikkönsä.
 		/// </summary>
-		/*
-		public override void OnServerAddPlayer(NetworkConnectionToClient conn)
-		{
-			
-			// Jos Level ei ole vielä valmis, jonota ja palaa
-			if (!LevelLoader.IsServerLevelReady)
-			{
-				_pendingConns.Add(conn);
-				Debug.Log($"[NM] Queued player join (conn {conn.connectionId}) until LevelReady.");
-				return;
-			}
-			
-			ServerFinalizeAddPlayer(conn);
-		}
-		*/
 		public override void OnServerAddPlayer(NetworkConnectionToClient conn)
 		{
 			Debug.Log($"[NM] ===== OnServerAddPlayer called for conn {conn.connectionId} =====");
@@ -277,145 +261,51 @@ namespace Utp
 			ServerFinalizeAddPlayer(conn);
 		}
 
-	[Server]
-	private void ServerFinalizeAddPlayer(NetworkConnectionToClient conn)
-	{
-		Debug.Log($"[NM] >>> ServerFinalizeAddPlayer START for conn {conn.connectionId}");
-		
-		if (conn.identity == null)
-		{
-			if (playerPrefab == null)
-			{
-				Debug.LogError("[NM] ❌ Player Prefab (EmptySquad) puuttuu!");
-				return;
-			}
-			Debug.Log($"[NM] Creating player identity for conn {conn.connectionId}");
-			base.OnServerAddPlayer(conn);
-			Debug.Log($"[NM] Player identity created: {conn.identity?.name}");
-		}
-		else
-		{
-			Debug.Log($"[NM] Player identity already exists: {conn.identity.name}");
-		}
-
-		bool isHost = conn.connectionId == 0;
-		Debug.Log($"[NM] isHost = {isHost} for conn {conn.connectionId}");
-
-		var spawner = SpawnUnitsCoordinator.Instance;
-		if (spawner == null)
-		{
-			Debug.LogError("[NM] ❌❌❌ SpawnUnitsCoordinator.Instance is NULL!");
-			Debug.LogError("[NM] TARKISTA että SpawnUnitsCoordinator GameObject on Level 0 scenessä!");
-			
-			return;
-		}
-
-		Debug.Log($"[NM] ✅ SpawnUnitsCoordinator found, spawning units for conn {conn.connectionId}, isHost={isHost}");
-		var units = spawner.SpawnPlayersForNetwork(conn, isHost);
-		
-		if (units == null)
-		{
-			Debug.LogError($"[NM] ❌ SpawnPlayersForNetwork returned NULL for conn {conn.connectionId}!");
-			return;
-		}
-		
-		if (units.Length == 0)
-		{
-			Debug.LogError($"[NM] ❌ SpawnPlayersForNetwork returned EMPTY array for conn {conn.connectionId}!");
-			return;
-		}
-		
-		Debug.Log($"[NM] SpawnPlayersForNetwork returned {units.Length} units");
-		
-		foreach (var unit in units)
-		{
-			if (unit == null)
-			{
-				Debug.LogError($"[NM] ❌ Unit is null in array for conn {conn.connectionId}!");
-				continue;
-			}
-			Debug.Log($"[NM] 🎮 Spawning player unit '{unit.name}' at {unit.transform.position} for connection {conn.connectionId}");
-			NetworkServer.Spawn(unit, conn);
-			Debug.Log($"[NM] ✅ Unit '{unit.name}' spawned with netId {unit.GetComponent<NetworkIdentity>()?.netId}");
-		}
-
-		Debug.Log($"[NM] <<< ServerFinalizeAddPlayer COMPLETE for conn {conn.connectionId}, spawned {units.Length} units");
-
-		var turnMgr = NetTurnManager.Instance;
-		if (turnMgr != null)
-			turnMgr.ServerUpdateRequiredCount(NetworkServer.connections.Count);
-
-		if (NetTurnManager.Instance && NetTurnManager.Instance.phase == TurnPhase.Players)
-		{
-			var pc = conn.identity ? conn.identity.GetComponent<PlayerController>() : null;
-			if (pc != null) pc.ServerSetHasEnded(false);
-		}
-
-		if (CoopTurnCoordinator.Instance && NetTurnManager.Instance)
-		{
-			CoopTurnCoordinator.Instance.RpcTurnPhaseChanged(
-				NetTurnManager.Instance.phase,
-				NetTurnManager.Instance.turnNumber,
-				true
-			);
-		}
-
-		if (GameModeManager.SelectedMode == GameMode.Versus)
-		{
-			var pc = conn.identity ? conn.identity.GetComponent<PlayerController>() : null;
-			if (pc != null && PvPTurnCoordinator.Instance != null)
-				PvPTurnCoordinator.Instance.ServerRegisterPlayer(pc);
-			else
-				Debug.LogWarning("[NM] PvP rekisteröinti epäonnistui: PlayerController tai PvPTurnCoordinator puuttuu.");
-		}
-	}
-/*
 		
 		[Server]
 		private void ServerFinalizeAddPlayer(NetworkConnectionToClient conn)
 		{
-			// 1) Luo player-identity tälle connectionille (vain jos sitä ei ole jo tehty)
+			Debug.Log($"[NM] ServerFinalizeAddPlayer for conn {conn.connectionId}");
+			
 			if (conn.identity == null)
 			{
 				if (playerPrefab == null)
 				{
-					Debug.LogError("[NM] Player Prefab (EmptySquad) puuttuu!");
+					Debug.LogError("[NM] Player Prefab puuttuu!");
 					return;
 				}
-				base.OnServerAddPlayer(conn); // NetworkServer.AddPlayerForConnection(...)
+				base.OnServerAddPlayer(conn);
 			}
 
-			// 2) Päätä host vs client
 			bool isHost = conn.connectionId == 0;
-
-			// 3) Spawnaa pelaajan unitit ja anna niihin authority (siirron Level-scenelle hoitaa teidän SpawnUnitsCoordinator/SpawnRouter)
+			
 			var spawner = SpawnUnitsCoordinator.Instance;
 			if (spawner == null)
 			{
-				Debug.LogError("[NM] SpawnUnitsCoordinator.Instance puuttuu (ei löydy Level-scenestä?).");
+				Debug.LogError("[NM] SpawnUnitsCoordinator.Instance puuttuu!");
 				return;
 			}
 
+			// Spawna yksiköt JOKAISELLE pelaajalle (host JA client)
+			Debug.Log($"[NM] Spawning units for {(isHost ? "HOST" : "CLIENT")} conn {conn.connectionId}");
 			var units = spawner.SpawnPlayersForNetwork(conn, isHost);
-			foreach (var unit in units)
+			
+			if (units != null && units.Length > 0)
 			{
-				Debug.Log($"[NM] Spawning player unit {unit.name} for connection {conn.connectionId}, isHost={isHost}");
-				NetworkServer.Spawn(unit, conn);
+				Debug.Log($"[NM] Spawned {units.Length} units for conn {conn.connectionId}");
 			}
 
-			// 4) Päivitä vuoronhallinnan pelaajamäärä
+			// Loput koodista...
 			var turnMgr = NetTurnManager.Instance;
 			if (turnMgr != null)
 				turnMgr.ServerUpdateRequiredCount(NetworkServer.connections.Count);
 
-			// 5) Jos nyt on Players-vuoro, avaa UI tälle uudelle pelaajalle
 			if (NetTurnManager.Instance && NetTurnManager.Instance.phase == TurnPhase.Players)
 			{
 				var pc = conn.identity ? conn.identity.GetComponent<PlayerController>() : null;
 				if (pc != null) pc.ServerSetHasEnded(false);
 			}
 
-			// 6) Coop-UI päivitys
 			if (CoopTurnCoordinator.Instance && NetTurnManager.Instance)
 			{
 				CoopTurnCoordinator.Instance.RpcTurnPhaseChanged(
@@ -425,18 +315,13 @@ namespace Utp
 				);
 			}
 
-			// 7) PvP-rekisteröinti
 			if (GameModeManager.SelectedMode == GameMode.Versus)
 			{
 				var pc = conn.identity ? conn.identity.GetComponent<PlayerController>() : null;
 				if (pc != null && PvPTurnCoordinator.Instance != null)
 					PvPTurnCoordinator.Instance.ServerRegisterPlayer(pc);
-				else
-					Debug.LogWarning("[NM] PvP rekisteröinti epäonnistui: PlayerController tai PvPTurnCoordinator puuttuu.");
 			}
 		}
-		
-	*/	
 
 		[Server]
 		public void ServerSpawnEnemies()

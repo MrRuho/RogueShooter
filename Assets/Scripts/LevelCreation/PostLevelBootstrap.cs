@@ -1,4 +1,3 @@
-
 using System.Collections;
 using Mirror;
 using UnityEngine;
@@ -19,22 +18,35 @@ public class PostLevelBootstrap : MonoBehaviour
 
     private void OnLevelReady(Scene mapScene)
     {
-        // Aja bootstrap aina yhdestä paikasta:
+        if (NetMode.IsRemoteClient) return;
         StartCoroutine(Co_BootstrapAfterLevelReady(mapScene));
+
     }
-    
+      
     private IEnumerator Co_BootstrapAfterLevelReady(Scene mapScene)
     {
         // Odota 1 frame että Level-skenen Start/OnStartServer ehtivät
         yield return null;
 
         var spawner = FindFirstObjectByType<SpawnUnitsCoordinator>(FindObjectsInactive.Include);
+
         if (!spawner)
         {
             Debug.LogError("[Bootstrap] SpawnUnitsCoordinator not found in Level scene.");
             yield break;
         }
 
+        // OFFLINE: (jos haluat tukea SP-tilan bootstrapin tässä)
+        if (!NetworkClient.active && !NetworkServer.active)
+        {
+            // Kutsu suoraan omaa SP-metodiasi, esim:
+            spawner.SpwanSinglePlayerUnits();
+            LevelGrid.Instance?.RebuildOccupancyFromScene();
+            TurnSystem.Instance?.ResetAndBegin();
+        }
+
+
+        /*
         if (NetworkServer.active)
         {
             // --- Pelaajien unitit kaikille nykyisille conn:eille ---
@@ -49,17 +61,7 @@ public class PostLevelBootstrap : MonoBehaviour
                 // 1) tee unittien prefab-instanssit
                 var units = spawner.SpawnPlayersForNetwork(conn, isHost);
                 if (units == null) continue;
-
-                // 2) varmistus: siirrä unitit map-scenelle & verkkoon
-                foreach (var unit in units)
-                {
-                    if (!unit) continue;
-
-                    if (unit.scene != mapScene)
-                        SceneManager.MoveGameObjectToScene(unit, mapScene);
-
-                    NetworkServer.Spawn(unit, conn);
-                }
+      
             }
 
             // --- Viholliset / kenttäkohtaiset spawniit ---
@@ -75,14 +77,29 @@ public class PostLevelBootstrap : MonoBehaviour
             NetTurnManager.Instance?.ServerResetAndBegin();
             yield break;
         }
-
-        // OFFLINE: (jos haluat tukea SP-tilan bootstrapin tässä)
-        if (!NetworkClient.active && !NetworkServer.active)
-        {
-            // Kutsu suoraan omaa SP-metodiasi, esim:
-            // spawner.SpawnSinglePlayerUnits();
-            LevelGrid.Instance?.RebuildOccupancyFromScene();
-            TurnSystem.Instance?.ResetAndBegin();
-        }
+        */
     }
+   
+/*
+    private IEnumerator Co_BootstrapAfterLevelReady(Scene mapScene)
+    {
+        yield return new WaitUntil(() =>
+            SpawnUnitsCoordinator.Instance != null &&
+            LevelGrid.Instance != null &&
+            PathFinding.Instance != null);
+
+        foreach (var kvp in NetworkServer.connections)
+        {
+            var conn = kvp.Value;
+            if (conn == null) continue;
+            bool isHost = (conn == NetworkServer.localConnection);
+            SpawnUnitsCoordinator.Instance.SpawnPlayersForNetwork(conn, isHost);
+        }
+
+        // jätä nämä, ne ovat ok
+        LevelGrid.Instance.RebuildOccupancyFromScene();
+        EdgeBaker.Instance?.BakeAllEdges();
+    }
+*/
+    
 }

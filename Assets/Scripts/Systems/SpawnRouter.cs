@@ -30,7 +30,7 @@ public static class SpawnRouter
         beforeReturn?.Invoke(go);
         return go;
     }
-
+    
     /// <summary>
     /// Server-spawn (Mirror). Luo instanssin, siirtää sen level-scenelle ja kutsuu NetworkServer.Spawn.
     /// </summary>
@@ -53,11 +53,23 @@ public static class SpawnRouter
         var go = UnityEngine.Object.Instantiate(prefab, pos, rot);
         if (parent != null) go.transform.SetParent(parent, true);
 
+        // 1) Siirrä instanssi oikeaan level-scenelle (host/servu puolella)
         var targetScene = ResolveScene(source, sceneName);
         if (targetScene.IsValid()) SceneManager.MoveGameObjectToScene(go, targetScene);
 
+        // 2) Tee mahdolliset initit ennen spawnia
         beforeSpawn?.Invoke(go);
 
+        // 3) (UUSI) Kerro myös clienteille mihin sceneen tämä kuuluu
+        var binder = go.GetComponent<NetworkSceneBinder>();
+        if (binder != null && targetScene.IsValid())
+            binder.targetSceneName = targetScene.name;
+    #if UNITY_EDITOR
+        else
+            Debug.LogWarning($"[SpawnRouter] Prefab '{prefab.name}' lacks NetworkSceneBinder. Client will keep it in Core.");
+    #endif
+
+        // 4) Verkkoon
         if (!go.TryGetComponent<NetworkIdentity>(out _))
             Debug.LogWarning("[SpawnRouter] Network spawn prefab has no NetworkIdentity.");
 
