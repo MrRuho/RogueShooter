@@ -25,6 +25,14 @@ public class DestructibleObject : NetworkBehaviour
     private void Start()
     {
         gridPosition = LevelGrid.Instance.GetGridPosition(transform.position);
+
+        // UUSI: älä tee mitään jos tämä prop on gridin ulkopuolella
+        if (!LevelGrid.Instance.IsValidGridPosition(gridPosition))
+        {
+            Debug.LogWarning($"[DestructibleObject] {name} at {transform.position} maps OUTSIDE grid ({gridPosition}). Skip walkability.");
+            return;
+        }
+
         if (blocksCell) TryMarkBlocked();
     }
 
@@ -34,6 +42,13 @@ public class DestructibleObject : NetworkBehaviour
     private void TryMarkBlocked()
     {
         if (_walkabilitySet) return;
+
+        // UUSI: jos PF ei ole valmis, deferoi kunnes leveys > 0
+        if (PathFinding.Instance == null || PathFinding.Instance.GetWidth() <= 0)
+        {
+            StartCoroutine(DeferBlockUntilReady());
+            return;
+        }
 
         if (PathFinding.Instance != null)
         {
@@ -45,6 +60,18 @@ public class DestructibleObject : NetworkBehaviour
             // jos PathFinding käynnistyy myöhemmin (scene-reload + spawn)
             StartCoroutine(DeferBlockOneFrame());
         }
+    }
+
+    private IEnumerator DeferBlockUntilReady()
+    {
+        yield return new WaitUntil(() =>
+            PathFinding.Instance != null &&
+            PathFinding.Instance.GetWidth() > 0);
+
+        if (!LevelGrid.Instance.IsValidGridPosition(gridPosition)) yield break;
+
+        PathFinding.Instance.SetIsWalkableGridPosition(gridPosition, false);
+        _walkabilitySet = true;
     }
 
     private IEnumerator DeferBlockOneFrame()

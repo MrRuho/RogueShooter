@@ -53,7 +53,7 @@ public class LevelGrid : MonoBehaviour
     // [SerializeField] private bool debugVisible = true;
     [SerializeField] private int width;
     [SerializeField] private int height;
-    [SerializeField] private float cellSize;
+    private const float CELLSIZE = 2f;
     [SerializeField] private int floorAmount;
 
     private List<GridSystem<GridObject>> gridSystemList;
@@ -75,7 +75,7 @@ public class LevelGrid : MonoBehaviour
         for (int floor = 0; floor < floorAmount; floor++)
         {
             var gridSystem = new GridSystem<GridObject>(
-                width, height, cellSize, floor, FLOOR_HEIGHT,
+                width, height, CELLSIZE, floor, FLOOR_HEIGHT,
                 (GridSystem<GridObject> g, GridPosition gridPosition) => new GridObject(g, gridPosition)
                 );
             //gridSystem.CreateDebugObjects(debugPrefab);
@@ -86,7 +86,7 @@ public class LevelGrid : MonoBehaviour
 
     private void Start()
     {
-        PathFinding.Instance.Setup(width, height, cellSize, floorAmount);
+        PathFinding.Instance.Setup(width, height, CELLSIZE, floorAmount);
     }
 
     public GridSystem<GridObject> GetGridSystem(int floor)
@@ -172,7 +172,7 @@ public class LevelGrid : MonoBehaviour
 
     public int GetFloorAmount() => floorAmount;
 
-    public float GetCellSize() => cellSize;
+    public float GetCellSize() => CELLSIZE;
 
     public bool HasAnyUnitOnGridPosition(GridPosition gridPosition)
     {

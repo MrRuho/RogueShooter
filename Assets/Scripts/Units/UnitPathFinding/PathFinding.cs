@@ -727,9 +727,21 @@ public class PathFinding : MonoBehaviour
     /// Implementation notes:
     /// - Consider calling <see cref="EdgeBaker.RebakeEdgesAround"/> if geometry changes near this tile.
     /// </summary>
+    /*
     public void SetIsWalkableGridPosition(GridPosition gridPosition, bool isWalkable)
         => GetGridSystem(gridPosition.floor).GetGridObject(gridPosition).SetIsWalkable(isWalkable);
+    */
+    public void SetIsWalkableGridPosition(GridPosition gridPosition, bool isWalkable)
+    {
+        if (LevelGrid.Instance == null) { Debug.LogWarning("[PF] SetIsWalkable before LevelGrid"); return; }
+        if (!LevelGrid.Instance.IsValidGridPosition(gridPosition))
+        {
+            Debug.LogWarning($"[PF] Ignore SetIsWalkable for OUT-OF-BOUNDS {gridPosition}");
+            return;
+        }
 
+        GetGridSystem(gridPosition.floor).GetGridObject(gridPosition).SetIsWalkable(isWalkable);
+    }
     /// <summary>
     /// Lazily resets per-search A* fields on a node using a generation ID guard.
     ///
