@@ -25,7 +25,7 @@ public class EndgameAnnouncer : NetworkBehaviour
         bool end = (enemy <= 0) || (friendly <= 0);
         if (!end) return;
 
-        bool hostWon = (enemy <= 0);
+        bool hostWon = enemy <= 0;
 
         // Lähetä kullekin clientille oma viesti
         foreach (var kv in NetworkServer.connections)
@@ -36,7 +36,7 @@ public class EndgameAnnouncer : NetworkBehaviour
             var pc = conn.identity.GetComponent<PlayerController>();
             if (pc == null) continue;
 
-            bool isHostConn = (conn.connectionId == 0);
+            bool isHostConn = conn.connectionId == 0;
             bool youWon = hostWon ? isHostConn : !isHostConn;
 
             pc.TargetShowEnd(conn, youWon);

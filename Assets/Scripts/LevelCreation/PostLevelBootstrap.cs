@@ -3,9 +3,12 @@ using Mirror;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
+/// <summary>
+///  Tämä toistaiseksi auttaa vain Solopelissä alussa lataamaan pelaajan yksiköt.
+/// </summary>
 public class PostLevelBootstrap : MonoBehaviour
 {
-    
+
     private void OnEnable()
     {
         LevelLoader.LevelReady += OnLevelReady;
@@ -22,7 +25,7 @@ public class PostLevelBootstrap : MonoBehaviour
         StartCoroutine(Co_BootstrapAfterLevelReady(mapScene));
 
     }
-      
+
     private IEnumerator Co_BootstrapAfterLevelReady(Scene mapScene)
     {
         // Odota 1 frame että Level-skenen Start/OnStartServer ehtivät
@@ -44,62 +47,5 @@ public class PostLevelBootstrap : MonoBehaviour
             LevelGrid.Instance?.RebuildOccupancyFromScene();
             TurnSystem.Instance?.ResetAndBegin();
         }
-
-
-        /*
-        if (NetworkServer.active)
-        {
-            // --- Pelaajien unitit kaikille nykyisille conn:eille ---
-            foreach (var kv in NetworkServer.connections)
-            {
-                var conn = kv.Value;
-                if (conn == null) continue;
-
-                // isHost => connectionId == 0
-                bool isHost = conn.connectionId == 0;
-
-                // 1) tee unittien prefab-instanssit
-                var units = spawner.SpawnPlayersForNetwork(conn, isHost);
-                if (units == null) continue;
-      
-            }
-
-            // --- Viholliset / kenttäkohtaiset spawniit ---
-            // kutsu suoraan sitä metodia, jota oikeasti käytät (esim. ServerSpawnEnemiesForLevel):
-            // spawner.ServerSpawnEnemiesForLevel();
-            // tai
-            // spawner.ServerSpawnEnemies();
-
-            // Ruudukko ajan tasalle
-            LevelGrid.Instance?.RebuildOccupancyFromScene();
-
-            // Vuorologiikka alkuun
-            NetTurnManager.Instance?.ServerResetAndBegin();
-            yield break;
-        }
-        */
     }
-   
-/*
-    private IEnumerator Co_BootstrapAfterLevelReady(Scene mapScene)
-    {
-        yield return new WaitUntil(() =>
-            SpawnUnitsCoordinator.Instance != null &&
-            LevelGrid.Instance != null &&
-            PathFinding.Instance != null);
-
-        foreach (var kvp in NetworkServer.connections)
-        {
-            var conn = kvp.Value;
-            if (conn == null) continue;
-            bool isHost = (conn == NetworkServer.localConnection);
-            SpawnUnitsCoordinator.Instance.SpawnPlayersForNetwork(conn, isHost);
-        }
-
-        // jätä nämä, ne ovat ok
-        LevelGrid.Instance.RebuildOccupancyFromScene();
-        EdgeBaker.Instance?.BakeAllEdges();
-    }
-*/
-    
 }

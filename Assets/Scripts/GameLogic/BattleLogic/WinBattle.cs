@@ -30,6 +30,7 @@ public class WinBattle : MonoBehaviour
 
     private void Start()
     {
+        if (panel) panel.SetActive(false);
         if (playAgainButton)
         {
             playAgainButton.onClick.RemoveAllListeners();

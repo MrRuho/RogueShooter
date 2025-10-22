@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using Mirror;
 using UnityEngine;
 using Unity.Services.Relay.Models;
+using System.Collections;
+using UnityEngine.SceneManagement;
 
 namespace Utp
 {
@@ -62,9 +64,7 @@ namespace Utp
 		public override void OnStartServer()
 		{
 			base.OnStartServer();
-			
-		
-			LevelLoader.LevelReady += OnLevelReady_Server;
+
 			SpawnUnitsCoordinator.Instance.SetEnemiesSpawned(false);
 
 			if (GameModeManager.SelectedMode == GameMode.CoOp)
@@ -73,28 +73,105 @@ namespace Utp
 			}
 		}
 
+		void OnEnable()  { LevelLoader.LevelReady += OnLevelReady_Server; }
+		void OnDisable() { LevelLoader.LevelReady -= OnLevelReady_Server; }
+
 		[ServerCallback]
 		public override void OnDestroy()
 		{
 			LevelLoader.LevelReady -= OnLevelReady_Server;
 		}
 
+
 		[Server]
-		private void OnLevelReady_Server(UnityEngine.SceneManagement.Scene mapScene)
+		private void OnLevelReady_Server(Scene mapScene)
 		{
-			// Level on nyt varmasti ladattu → tyhjennä jono
+			if (!NetworkServer.active) return;
+
+			Debug.Log("[GameNetworkManager] OnLevelReady_Server - Processing level ready");
+
+			// 1) Ensilataus: pending-jonon finalisointi
 			foreach (var c in _pendingConns)
 				if (c != null) ServerFinalizeAddPlayer(c);
-
 			_pendingConns.Clear();
 
-			// (Tähän voit halutessasi laittaa vihollis-spawnit, ruudukon rebuildin ja vuoron aloituksen)
-			// Example:
-			// SpawnUnitsCoordinator.Instance?.ServerSpawnEnemiesForLevel();
-			// LevelGrid.Instance?.RebuildOccupancyFromScene();
-			// NetTurnManager.Instance?.ServerResetAndBegin();
+			// 2) RELOAD: spawn kaikille aktiivisille conneille
+			Debug.Log($"[GameNetworkManager] Active connections: {NetworkServer.connections.Count}");
+			
+			foreach (var kv in NetworkServer.connections)
+			{
+				var conn = kv.Value;
+				if (conn == null) continue;
+
+				Debug.Log($"[GameNetworkManager] Processing conn {conn.connectionId}, identity: {(conn.identity != null ? conn.identity.name : "NULL")}");
+
+				// Jos identity on null, luo se uudelleen
+				if (conn.identity == null)
+				{
+					Debug.Log($"[GameNetworkManager] Creating new PlayerController for conn {conn.connectionId}");
+					if (playerPrefab != null)
+					{
+						base.OnServerAddPlayer(conn);
+					}
+					else
+					{
+						Debug.LogError("[GameNetworkManager] PlayerPrefab is null!");
+						continue;
+					}
+				}
+
+				// Tarkista onko uniteja
+				uint ownerId = conn.identity != null ? conn.identity.netId : 0u;
+				bool hasUnits = ownerId != 0 && HasOwnedUnit(ownerId);
+				
+				Debug.Log($"[GameNetworkManager] Conn {conn.connectionId} - ownerId: {ownerId}, hasUnits: {hasUnits}");
+
+				if (!hasUnits)
+				{
+					bool isHost = conn == NetworkServer.localConnection;
+					Debug.Log($"[GameNetworkManager] Spawning units for {(isHost ? "HOST" : "CLIENT")} (conn {conn.connectionId})");
+					
+					var units = SpawnUnitsCoordinator.Instance?.SpawnPlayersForNetwork(conn, isHost);
+					if (units != null)
+					{
+						Debug.Log($"[GameNetworkManager] Successfully spawned {units.Length} units for conn {conn.connectionId}");
+					}
+					else
+					{
+						Debug.LogWarning($"[GameNetworkManager] Failed to spawn units for conn {conn.connectionId}");
+					}
+				}
+			}
+
+			// 3) Viholliset jos tarvitaan
+			if (GameModeManager.SelectedMode == GameMode.CoOp)
+			{
+				if (!SpawnUnitsCoordinator.Instance.AreEnemiesSpawned())
+				{
+					Debug.Log("[GameNetworkManager] Spawning enemies for Co-op mode");
+					ServerSpawnEnemies();
+				}
+			}
+
+			// 4) Käynnistä uusi matsi
+			LevelGrid.Instance?.RebuildOccupancyFromScene();
+			EdgeBaker.Instance?.BakeAllEdges();
+			NetTurnManager.Instance?.ServerResetAndBegin();
+			
+			Debug.Log("[GameNetworkManager] OnLevelReady_Server - Complete");
 		}
-		
+
+
+		[Server]
+		private bool HasOwnedUnit(uint ownerNetId)
+		{
+			var units = FindObjectsByType<Unit>(FindObjectsSortMode.None);
+			for (int i = 0; i < units.Length; i++)
+				if (units[i] && units[i].OwnerId == ownerNetId)
+					return true;
+			return false;
+		}
+
 		/// <summary>
 		/// Get the port the server is listening on.
 		/// </summary>
