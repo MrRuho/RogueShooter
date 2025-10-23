@@ -7,7 +7,7 @@ public class DestructibleObject : NetworkBehaviour
 {
 
     private GridPosition gridPosition;
-    [SerializeField] private Transform objectDestroyPrefab;
+    [SerializeField] private GameObject objectDestroyPrefab;
     [SerializeField] private int health = 3;
 
     // Ruutujen välissä olevat seinämät eivät blokkaa. True niille jotka täyttävät kokonaisia ruutuja.
@@ -122,18 +122,22 @@ public class DestructibleObject : NetworkBehaviour
 
     private void PlayDestroyFx(Vector3 hitPosition, int overkill)
     {
-        // var t = Instantiate(objectDestroyPrefab, transform.position, Quaternion.identity);
-        // Sama sijainti, sama rotaatio, sama parent kuin alkuperäisellä
-        var t = Instantiate(
-            objectDestroyPrefab, 
-            transform.position, 
-            transform.rotation,            // <- tärkein muutos
-            transform.parent               // <- jos alkuperäinen on jonkin parentin alla
-        );
 
-        // Jos alkuperäinen on skaalattu scenessä, kopioi skaala
-       // t.localScale = transform.localScale;
-        ApplyPushForceToChildren(t, 10f * overkill, hitPosition, 10f);
+        // Sama sijainti, sama rotaatio, sama parent kuin alkuperäisellä
+        var go = SpawnRouter.SpawnLocal(
+            prefab: objectDestroyPrefab,
+            pos: transform.position,
+            rot: transform.rotation,
+            source: transform,               // ⟵ ohjaa samaan sceneen kuin tuhottava objekti
+            sceneName: null,
+            parent: null,                    // ⟵ älä periytä Core-parenttia vahingossa
+            beforeReturn: g =>
+            {
+                // jos haluat säilyttää skaalan:
+                g.transform.localScale = transform.localScale;
+                ApplyPushForceToChildren(g.transform, 10f * overkill, hitPosition, 10f);
+            }
+        );
     }
 
     [ClientRpc]

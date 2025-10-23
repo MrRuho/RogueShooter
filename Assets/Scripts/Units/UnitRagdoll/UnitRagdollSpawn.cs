@@ -34,7 +34,18 @@ public class UnitRagdollSpawn : MonoBehaviour
         var ni = GetComponentInParent<Mirror.NetworkIdentity>();
         uint id = ni ? ni.netId : 0;
 
-        NetworkSync.SpawnRagdoll(
+        if (NetMode.IsServer)
+        {
+            NetworkSync.SpawnRagdoll(
+            ragdollPrefab.gameObject,
+            transform.position,
+            transform.rotation,
+            id,
+            lastHitPosition,
+            overkill);
+        } else
+        {
+            OfflineGameSimulator.SpawnRagdoll(
             ragdollPrefab.gameObject,
             transform.position,
             transform.rotation,
@@ -42,6 +53,8 @@ public class UnitRagdollSpawn : MonoBehaviour
             orginalRagdollRootBone,
             lastHitPosition,
             overkill);
+        }
+        
         
         healthSystem.OnDead -= HealthSystem_OnDied;
     } 

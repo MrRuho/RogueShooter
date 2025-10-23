@@ -44,6 +44,7 @@ GameObject:
   - component: {fileID: -7443027622413687500}
   - component: {fileID: 1468619499921668903}
   - component: {fileID: 9127241160500895107}
+  - component: {fileID: -3108741921217337948}
   m_Layer: 7
   m_Name: UnitSolo Player 1 Ragdoll
   m_TagString: Untagged
@@ -149,6 +150,22 @@ MonoBehaviour:
   sourceUnitNetId: 0
   lastHitPos: {x: 0, y: 0, z: 0}
   overkill: 0
+--- !u!114 &-3108741921217337948
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3233335089446238902}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f2baa346805801742a29181e12469786, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::NetworkSceneBinder
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  targetSceneName: 
 --- !u!1001 &3343234419788994428
 PrefabInstance:
   m_ObjectHideFlags: 0

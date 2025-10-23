@@ -33,66 +33,66 @@ public class NetworkSyncAgent : NetworkBehaviour
     /// </summary>
     /// <param name="spawnPos">World position where the bullet starts (usually weapon muzzle).</param>
     /// <param name="clientSuggestedTarget">World position the bullet is travelling towards.</param>
+
     [Command(requiresAuthority = true)]
     public void CmdSpawnBullet(uint actorNetId, Vector3 clientSuggestedTarget)
     {
-        if (!NetworkServer.active) return;                         // server gate
+        if (!NetworkServer.active) return;
         if (bulletPrefab == null) { Debug.LogWarning("[NetSyncAgent] bulletPrefab missing"); return; }
-        if (actorNetId == 0) return;
-        if (!RightOwner(actorNetId)) return;                       // sinun oma tarkistus
+        if (actorNetId == 0 || !RightOwner(actorNetId)) return;
 
-        // 1) Hae actor serveriltä ja laske ORIGIN serverin tilasta (älä käytä clientin spawnPosia)
-        if (!NetworkServer.spawned.TryGetValue(actorNetId, out var actorNi)) return;
+        if (!NetworkServer.spawned.TryGetValue(actorNetId, out var actorNi) || actorNi == null) return;
 
         var ua = actorNi.GetComponent<UnitAnimator>();
-        Vector3 origin = (ua != null && ua.ShootPoint != null)
-            ? ua.ShootPoint.position
-            : actorNi.transform.position;
-
-        // 2) TARGET: toistaiseksi käytä clientin ehdottamaa sijaintia (voit myöhemmin validoida LOS/range)
+        Vector3 origin = (ua && ua.ShootPoint) ? ua.ShootPoint.position : actorNi.transform.position;
         Vector3 target = clientSuggestedTarget;
 
-        // 3) Spawnaa verkkoon vain serverillä
-        var go = Object.Instantiate(bulletPrefab, origin, Quaternion.identity);
-        if (!go.TryGetComponent<BulletProjectile>(out var bp))
-        {
-            Debug.LogError("[NetSyncAgent] BulletProjectile component missing on prefab.");
-            Object.Destroy(go);
-            return;
-        }
-
-        bp.actorUnitNetId = actorNetId;      // talteen (SyncVar tms.)
-        bp.Setup(target);                    // alustus serverillä
-        NetworkServer.Spawn(go);
+        // tärkeää: käytä SpawnRouteria ja anna source = actor
+        SpawnRouter.SpawnNetworkServer(
+            bulletPrefab, origin, Quaternion.identity,
+            source: actorNi.transform,
+            sceneName: null,
+            parent: null,
+            owner: connectionToClient,         // omistajuus halutessa
+            beforeSpawn: go =>
+            {
+                if (go.TryGetComponent<BulletProjectile>(out var bp))
+                {
+                    bp.actorUnitNetId = actorNetId;
+                    bp.Setup(target);
+                }
+            });
     }
 
     [Command(requiresAuthority = true)]
     public void CmdSpawnGrenade(uint actorNetId, Vector3 clientSuggestedTarget)
     {
-        if (!NetworkServer.active) return;                   // server gate
+        if (!NetworkServer.active) return;
         if (grenadePrefab == null) { Debug.LogWarning("[NetSyncAgent] GrenadePrefab missing"); return; }
-        if (actorNetId == 0) return;
-        if (!RightOwner(actorNetId)) return;                 // sinun funkkari
+        if (actorNetId == 0 || !RightOwner(actorNetId)) return;
 
-        if (!NetworkServer.spawned.TryGetValue(actorNetId, out var ni)) return;
+        if (!NetworkServer.spawned.TryGetValue(actorNetId, out var actorNi) || actorNi == null) return;
 
-        var ua = ni.GetComponent<UnitAnimator>();
-        if (ua == null || ua.GrenadePrefab == null || ua.ThrowPoint == null) return;
+        var ua = actorNi.GetComponent<UnitAnimator>();
+        if (!ua || !ua.ThrowPoint) return;
 
-        Vector3 origin = ua.ThrowPoint.position;       // SERVER-ORIGIN
-        Vector3 target = clientSuggestedTarget;        // lisää LOS/range -validointi kun ehdit
+        Vector3 origin = ua.ThrowPoint.position;
+        Vector3 target = clientSuggestedTarget;
 
-        var go = Object.Instantiate(grenadePrefab, origin, Quaternion.identity);
-        if (!go.TryGetComponent<GrenadeProjectile>(out var bp))
-        {
-            Debug.LogError("[NetSyncAgent] GrenadePrefab component missing on prefab.");
-            Object.Destroy(go);
-            return;
-        }
-
-        bp.actorUnitNetId = actorNetId;
-        go.GetComponent<GrenadeProjectile>().Setup(target);
-        NetworkServer.Spawn(go);
+        SpawnRouter.SpawnNetworkServer(
+            grenadePrefab, origin, Quaternion.identity,
+            source: actorNi.transform,
+            sceneName: null,
+            parent: null,
+            owner: connectionToClient,
+            beforeSpawn: go =>
+            {
+                if (go.TryGetComponent<GrenadeProjectile>(out var gp))
+                {
+                    gp.actorUnitNetId = actorNetId;
+                    gp.Setup(target);
+                }
+            });
     }
 
     private bool RightOwner(uint actorNetId)
@@ -342,7 +342,7 @@ public class NetworkSyncAgent : NetworkBehaviour
 
         yield return new WaitUntil(() =>
             EdgeBaker.Instance != null &&
-            LevelGrid.Instance  != null &&
+            LevelGrid.Instance != null &&
             PathFinding.Instance != null
         );
         yield return null;
@@ -350,5 +350,6 @@ public class NetworkSyncAgent : NetworkBehaviour
         EdgeBaker.Instance.BakeAllEdges();
         _clientBakedThisScene = true;
     }
+
 
 }

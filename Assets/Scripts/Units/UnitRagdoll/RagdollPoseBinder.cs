@@ -1,6 +1,8 @@
+/*
 using System.Collections;
 using Mirror;
 using UnityEngine;
+
 
 /// <summary>
 /// Online: Client need this to get destroyed unit rootbone to create ragdoll form it.
@@ -53,4 +55,68 @@ public class RagdollPoseBinder : NetworkBehaviour
         return (spawner.OriginalRagdollRootBone, null);
     }
 
+}
+*/
+using Mirror;
+using UnityEngine;
+using System.Collections;
+
+public class RagdollPoseBinder : NetworkBehaviour
+{
+    [SyncVar] public uint sourceUnitNetId;
+    [SyncVar] public Vector3 lastHitPos;
+    [SyncVar] public int overkill;
+
+    [SerializeField] float bindTimeout = 0.75f;   // varalta jos hierarkia/NetID tulee myöhässä
+
+    UnitRagdoll ragdoll;
+
+    void Awake()
+    {
+        ragdoll = GetComponent<UnitRagdoll>();
+    }
+
+    public override void OnStartClient()
+    {
+        base.OnStartClient();
+        StartCoroutine(Co_TryBindUntilFound());
+    }
+
+    IEnumerator Co_TryBindUntilFound()
+    {
+        float t = 0f;
+        while (t < bindTimeout)
+        {
+            Transform rootBone = TryResolveOriginalRootBoneOnClient();
+            if (rootBone != null)
+            {
+                // siirrä metadatat ja sido pose
+                if (ragdoll != null)
+                {
+                    ragdoll.SetOverkill(overkill);
+                    ragdoll.SetLastHitPosition(lastHitPos);
+                    ragdoll.Setup(rootBone);
+                }
+                yield break;
+            }
+
+            t += Time.deltaTime;
+            yield return null;
+        }
+
+        Debug.LogWarning("[RagdollPoseBinder] Failed to bind original root bone in time.");
+    }
+
+    Transform TryResolveOriginalRootBoneOnClient()
+    {
+        if (!NetworkClient.active) return null;
+        if (!NetworkClient.spawned.TryGetValue(sourceUnitNetId, out var srcNi) || srcNi == null) return null;
+
+        // Hae kaatuneen unitin spawneri, jossa viite on serialized
+        var spawner = srcNi.GetComponentInChildren<UnitRagdollSpawn>(true);
+        if (spawner != null && spawner.OriginalRagdollRootBone != null)   // (huom. kirjoitusasu)
+            return spawner.OriginalRagdollRootBone;
+
+        return null;
+    }
 }

@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 8325894434035461216}
   - component: {fileID: 5695312915198751386}
   - component: {fileID: 8641355737707481325}
+  - component: {fileID: -5832321910042178392}
   m_Layer: 0
   m_Name: GranadeProjectile
   m_TagString: Untagged
@@ -51,7 +52,7 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0
   actorUnitNetId: 0
-  granadeExplodeVFXPrefab: {fileID: 4642304544289128, guid: 3798030c2f7dd8a469e24dfa3223de79, type: 3}
+  grenadeExplodeVFXPrefab: {fileID: 4642304544289128, guid: 3798030c2f7dd8a469e24dfa3223de79, type: 3}
   damageRadius: 3
   damage: 100
   moveSpeed: 15
@@ -146,6 +147,22 @@ MonoBehaviour:
   positionSensitivity: 0.01
   rotationSensitivity: 0.01
   scaleSensitivity: 0.01
+--- !u!114 &-5832321910042178392
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7374537704562805240}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f2baa346805801742a29181e12469786, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::NetworkSceneBinder
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  targetSceneName: 
 --- !u!1001 &3712377068640779720
 PrefabInstance:
   m_ObjectHideFlags: 0

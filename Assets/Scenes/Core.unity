@@ -461,6 +461,22 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!114 &397660767085114019
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3971122764259285636}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cd47c54c29815454895f780faed5e4ef, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  debugPrefab: {fileID: 4065277641708893935, guid: a2a3e6bf15eea204bae732d499eea307, type: 3}
+  width: 50
+  height: 50
+  floorAmount: 3
 --- !u!224 &401945947729290159
 RectTransform:
   m_ObjectHideFlags: 0
@@ -3301,6 +3317,24 @@ MonoBehaviour:
   m_PointerBehavior: 0
   m_CursorLockBehavior: 0
   m_ScrollDeltaPerTick: 6
+--- !u!1 &3971122764259285636
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8522553479684866999}
+  - component: {fileID: 397660767085114019}
+  - component: {fileID: 8288886700344897173}
+  m_Layer: 0
+  m_Name: LevelGrid
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
 --- !u!114 &3983265639636091804
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7285,6 +7319,36 @@ MonoBehaviour:
   turnNumber: 1
   endedCount: 0
   requiredCount: 0
+--- !u!114 &8288886700344897173
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3971122764259285636}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e38d543bc37a3e948bec89a47a835418, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LevelGridGizmos
+  showGrid: 1
+  showGridNumbers: 0
+  showEdgeWalls: 0
+  showCoverLines: 0
+  editorWidth: 50
+  editorHeight: 50
+  editorCellSize: 2
+  editorFloorAmount: 1
+  gridColor: {r: 0.6306579, g: 1, b: 0.5330188, a: 0.45490196}
+  wallColor: {r: 1, g: 0, b: 0, a: 0.8}
+  lowCoverColor: {r: 0, g: 0.077390194, b: 1, a: 0.6}
+  highCoverColor: {r: 1, g: 0.5, b: 0, a: 0.8}
+  gridLineThickness: 10
+  wallLineThickness: 10
+  coverLineThickness: 10
+  depthMode: 1
+  gridYOffset: 0.01
+  levelGrid: {fileID: 397660767085114019}
 --- !u!114 &8297571352298544890
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7612,6 +7676,21 @@ MonoBehaviour:
   panel: {fileID: 4434647065541151500}
   titleText: {fileID: 8297571352298544890}
   playAgainButton: {fileID: 4314934442842558675}
+--- !u!4 &8522553479684866999
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3971122764259285636}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &8652462728931378474
 GameObject:
   m_ObjectHideFlags: 0
@@ -8170,6 +8249,7 @@ SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
   - {fileID: 1079314471}
+  - {fileID: 8522553479684866999}
   - {fileID: 2070847048}
   - {fileID: 3057080016544345226}
   - {fileID: 8014395951264911403}

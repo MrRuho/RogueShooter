@@ -129,7 +129,7 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  objectDestroyPrefab: {fileID: 137789730194543124, guid: b62997dcc8f66f4449e876ba780a7c18, type: 3}
+  objectDestroyPrefab: {fileID: 7036520133036405100, guid: b62997dcc8f66f4449e876ba780a7c18, type: 3}
   health: 260
   blocksCell: 0
 --- !u!114 &-4836675571754053904

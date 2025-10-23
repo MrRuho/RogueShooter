@@ -40,20 +40,27 @@ public static class NetworkSync
     {
         if (NetworkServer.active) // Online: server or host
         {
-            var bullet = Object.Instantiate(bulletPrefab, spawnPos, Quaternion.identity);
-            if (!bullet.TryGetComponent<BulletProjectile>(out var bulletProjectile))
-            {
-                Debug.LogError("[NetworkSync] BulletProjectile component missing on prefab.");
-                Object.Destroy(bullet);
-                return;
-            }
-            // 1) Set owner. Not currently using
-            bulletProjectile.actorUnitNetId = actorNetId;
-            // 2) Set target
-            bulletProjectile.Setup(targetPos);
-            // 3) Create bullet
-            NetworkServer.Spawn(bullet);
+            Transform src = null;
+            if (NetworkServer.spawned.TryGetValue(actorNetId, out var srcNI) && srcNI != null)
+                src = srcNI.transform;
+
+            SpawnRouter.SpawnNetworkServer(
+                bulletPrefab, spawnPos, Quaternion.identity,
+                source: src,            // löydetty actorNetId:llä
+                sceneName: null,
+                parent: null,
+                owner: null,
+                beforeSpawn: go =>
+                {
+                    if (go.TryGetComponent<BulletProjectile>(out var gp))
+                    {
+                        gp.actorUnitNetId = actorNetId;
+                        gp.Setup(targetPos);
+                    }
+                });
+
             return;
+
         }
 
         if (NetworkClient.active && NetworkSyncAgent.Local != null) // Online: client
@@ -65,26 +72,34 @@ public static class NetworkSync
     // HUOM: käytä tätä myös AE:stä (UnitAnimatorista)
     public static void SpawnGrenade(GameObject grenadePrefab, Vector3 spawnPos, Vector3 targetPos, uint actorNetId)
     {
+
         if (NetworkServer.active) // Online: server tai host
         {
-            var grenade = Object.Instantiate(grenadePrefab, spawnPos, Quaternion.identity);
-            if (!grenade.TryGetComponent<GrenadeProjectile>(out var grenadeProjectile))
-            {
-                Debug.LogError("[NetworkSync] GranadeProjectile component missing on prefab.");
-                Object.Destroy(grenade);
-                return;
-            }
-            // 1) Set owner
-            grenadeProjectile.actorUnitNetId = actorNetId;
-            // 2) Set target
-            grenadeProjectile.Setup(targetPos);
-            // 3) Create bullet
-            NetworkServer.Spawn(grenade);
+            Transform src = null;
+            if (NetworkServer.spawned.TryGetValue(actorNetId, out var srcNI) && srcNI != null)
+                src = srcNI.transform;
+
+            SpawnRouter.SpawnNetworkServer(
+                grenadePrefab, spawnPos, Quaternion.identity,
+                source: src,            // löydetty actorNetId:llä
+                sceneName: null,
+                parent: null,
+                owner: null,
+                beforeSpawn: go =>
+                {
+                    if (go.TryGetComponent<GrenadeProjectile>(out var gp)) {
+                        gp.actorUnitNetId = actorNetId;
+                        gp.Setup(targetPos);
+                    }
+                });
+
             return;
+
         }
 
         if (NetworkClient.active && NetworkSyncAgent.Local != null) // Online: client
-        {     
+        {   
+             
             NetworkSyncAgent.Local.CmdSpawnGrenade(actorNetId, targetPos);         
         }
     }
@@ -219,8 +234,8 @@ public static class NetworkSync
         }
     }
 
-    public static void SpawnRagdoll(GameObject prefab, Vector3 pos, Quaternion rot, uint sourceUnitNetId, Transform originalRootBone, Vector3 lastHitPosition, int overkill)
-    {   
+    public static void SpawnRagdoll(GameObject prefab, Vector3 pos, Quaternion rot, uint sourceUnitNetId, Vector3 lastHitPosition, int overkill)
+    {
 
         if (NetworkServer.active)
         {
@@ -246,8 +261,8 @@ public static class NetworkSync
                     if (go.TryGetComponent<RagdollPoseBinder>(out var binder))
                     {
                         binder.sourceUnitNetId = sourceUnitNetId;
-                        binder.lastHitPos      = lastHitPosition;
-                        binder.overkill        = overkill;
+                        binder.lastHitPos = lastHitPosition;
+                        binder.overkill = overkill;
                     }
                     else
                     {
@@ -257,22 +272,6 @@ public static class NetworkSync
 
             return;
         }
-
-        // OFFLINE: paikallinen spawn, ohjaa samaan sceneen kuin originalRootBone
-        SpawnRouter.SpawnLocal(
-            prefab, pos, rot,
-            source: originalRootBone, // → sama scene kuin ruumiilla/luurangolla (level)
-            sceneName: null,
-            parent: null,
-            beforeReturn: go =>
-            {
-                if (go.TryGetComponent<UnitRagdoll>(out var unitRagdoll))
-                {
-                    unitRagdoll.SetOverkill(overkill);
-                    unitRagdoll.SetLastHitPosition(lastHitPosition);
-                    unitRagdoll.Setup(originalRootBone);
-                }
-            });
     }
 
     public static bool IsOwnerHost(uint ownerId)

@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 5831782022596138965}
   - component: {fileID: -6806895541940959385}
   - component: {fileID: 6271034069317388405}
+  - component: {fileID: -8921942545827714148}
   m_Layer: 0
   m_Name: BulletProjectile
   m_TagString: Untagged
@@ -49,6 +50,7 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
+  actorUnitNetId: 0
   trailRenderer: {fileID: 5442639809319685186}
   bulletHitVfxPrefab: {fileID: 3887590015569303107, guid: 97e5eca1246813a41a0884cd819b587b, type: 3}
 --- !u!114 &6271034069317388405
@@ -68,6 +70,22 @@ MonoBehaviour:
   serverOnly: 0
   visibility: 0
   hasSpawned: 0
+--- !u!114 &-8921942545827714148
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7196073207834334459}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f2baa346805801742a29181e12469786, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::NetworkSceneBinder
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  targetSceneName: 
 --- !u!1 &8627578146048925340
 GameObject:
   m_ObjectHideFlags: 0

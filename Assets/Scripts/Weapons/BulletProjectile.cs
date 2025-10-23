@@ -39,10 +39,21 @@ public class BulletProjectile : NetworkBehaviour
             transform.position = targetPosition;
 
             if (trailRenderer) trailRenderer.transform.parent = null;
-
+            /*
             if (bulletHitVfxPrefab)
                 Instantiate(bulletHitVfxPrefab, targetPosition, Quaternion.identity);
+            */
 
+            if (bulletHitVfxPrefab)
+            {
+                SpawnRouter.SpawnLocal(
+                    bulletHitVfxPrefab.gameObject,
+                    targetPosition,
+                    Quaternion.identity,
+                    source: transform   // -> sama scene kuin luodilla
+                );
+            }
+            
             // Network-aware destruction
             if (isServer) NetworkServer.Destroy(gameObject);
             else Destroy(gameObject);

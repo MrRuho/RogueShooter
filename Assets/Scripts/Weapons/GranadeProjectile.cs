@@ -8,7 +8,7 @@ public class GrenadeProjectile : NetworkBehaviour
     [SyncVar] public uint actorUnitNetId;
     public static event EventHandler OnAnyGranadeExploded;
 
-    [SerializeField] private Transform granadeExplodeVFXPrefab;
+    [SerializeField] private Transform grenadeExplodeVFXPrefab;
     [SerializeField] private float damageRadius = 4f;
     [SerializeField] private int damage = 30;
     [SerializeField] private float moveSpeed = 15f;
@@ -58,14 +58,6 @@ public class GrenadeProjectile : NetworkBehaviour
         {
             _explosionScheduled = true;
             StartCoroutine(ExplodeAfterJitter());
-            /*
-            Exlosion();
-
-            if (NetMode.IsOnline)
-            {
-                RpcExplodeVFX();
-            }
-            */
         }
     }
 
@@ -79,11 +71,6 @@ public class GrenadeProjectile : NetworkBehaviour
         yield return new WaitForSeconds(delay);
 
         Exlosion();
-
-        if (NetMode.IsOnline)
-        {
-            RpcExplodeVFX();
-        }
     }
 
     private void OnDestroy()
@@ -185,21 +172,30 @@ public class GrenadeProjectile : NetworkBehaviour
                 }
             }
 
-            // Screen Shake
-            OnAnyGranadeExploded?.Invoke(this, EventArgs.Empty);
-            // Explode VFX
-            Instantiate(granadeExplodeVFXPrefab, targetPosition + Vector3.up * 1f, Quaternion.identity);
+        // Screen Shake
+        OnAnyGranadeExploded?.Invoke(this, EventArgs.Empty);
 
-            if (!NetworkServer.active)
-            {
-                Destroy(gameObject);
-                return;
-            }
+        SpawnRouter.SpawnLocal(
+            grenadeExplodeVFXPrefab.gameObject,
+            targetPosition + Vector3.up * 1f,
+            Quaternion.identity,
+            source: transform   // <- scene päätellään lähteestä
+            );
 
-            // Online: Hide Granade before destroy it, so that client have time to create own explode VFX from orginal Granade pose.
-            SetSoftHiddenLocal(true);
-            RpcSetSoftHidden(true);
-            StartCoroutine(DestroyAfter(0.30f));
+        if (!NetworkServer.active)
+        {
+            Destroy(gameObject);
+            return;
+        }
+
+        // Online: Hide Granade before destroy it, so that client have time to create own explode VFX from orginal Granade pose.
+        SetSoftHiddenLocal(true);
+        RpcSetSoftHidden(true);
+
+        // Kerro asiakkaille missä scenessä VFX pitää luoda
+        RpcExplodeVFX(gameObject.scene.name, targetPosition);
+            
+        StartCoroutine(DestroyAfter(0.30f));
     }
      
     private IEnumerator DestroyAfter(float seconds)
@@ -215,10 +211,18 @@ public class GrenadeProjectile : NetworkBehaviour
     }
 
     [ClientRpc]
-    private void RpcExplodeVFX()
+    private void RpcExplodeVFX(string sceneName, Vector3 pos)
     {
         OnAnyGranadeExploded?.Invoke(this, EventArgs.Empty);
-        Instantiate(granadeExplodeVFXPrefab, targetPosition + Vector3.up * 1f, Quaternion.identity);
+
+        // Luodaan VFX oikeaan Level-sceeneen clientillä
+        SpawnRouter.SpawnLocal(
+            grenadeExplodeVFXPrefab.gameObject,
+            pos + Vector3.up * 1f,
+            Quaternion.identity,
+            source: null,
+            sceneName: sceneName
+        );
     }
 
     private void SetSoftHiddenLocal(bool hidden)
