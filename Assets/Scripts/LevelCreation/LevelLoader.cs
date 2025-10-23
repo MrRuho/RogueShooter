@@ -42,7 +42,6 @@ public class LevelLoader : MonoBehaviour
     {
         var target = string.IsNullOrWhiteSpace(levelName) ? CurrentLevel ?? defaultLevel : levelName;
         StopAllCoroutines();
-        //StartCo(Co_LoadLevel_Local(target));
     }
 
     // Kutsu tämä Play Again -napista OFFLINE-tilassa

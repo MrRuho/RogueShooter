@@ -124,6 +124,11 @@ public class NetTurnManager : NetworkBehaviour
             ServerUpdateRequiredCount(playersNow);
         }
 
+        if (GameModeManager.SelectedMode == GameMode.Versus && PvPTurnCoordinator.Instance)
+        {
+            PvPTurnCoordinator.Instance.ServerGiveFirstTurnToHost();
+        }
+
         if (resetTurnNumber)
             turnNumber = 1;
 

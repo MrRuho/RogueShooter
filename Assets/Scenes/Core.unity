@@ -219,7 +219,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::LevelLoader
   coreSceneName: Core
   defaultLevel: Level 0
-  forceDefaultOnStart: 1
 --- !u!1 &2070847046
 GameObject:
   m_ObjectHideFlags: 0
@@ -8248,8 +8247,8 @@ MonoBehaviour:
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
-  - {fileID: 1079314471}
   - {fileID: 8522553479684866999}
+  - {fileID: 1079314471}
   - {fileID: 2070847048}
   - {fileID: 3057080016544345226}
   - {fileID: 8014395951264911403}

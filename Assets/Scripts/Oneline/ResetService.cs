@@ -15,18 +15,22 @@ public class ResetService : NetworkBehaviour
         {
             var win = FindFirstObjectByType<WinBattle>(FindObjectsInactive.Include);
             if (win != null) win.HideEndPanel();
+
+            // UUSI: tyhjennä unit-listat ennen reloadia
+            var um = FindFirstObjectByType<UnitManager>(FindObjectsInactive.Include);
+            if (um) um.ClearAllUnitLists();
+
             NetTurnManager.Instance.ResetTurnState();
             TurnSystem.Instance.ResetTurnId();
-            // Kevyt client pre-cleanup (ei mitään gameplay/HUD-lukituksia!)
-            RpcPreResetHud();
-            // GameNetworkManager hoitaa levelin uudelleenlatauksen ja aloituksen
+
+            RpcPreResetHud(); // siistii kaikkien HUDit
             NetLevelLoader.Instance.ServerReloadCurrentLevel();
             return;
         }
 
         if (NetworkClient.active)                 // PUHDAS CLIENT
         {
-            // Ei tehdä mitään lokaalisti — serveri vaihtaa levelin ja käynnistää matsin
+            // Serveri hoitaa reloadin ja aloituksen
             return;
         }
 
@@ -35,15 +39,18 @@ public class ResetService : NetworkBehaviour
     }
 
     /// <summary>
-    /// Kevyt ja 100% turvallinen UI-siistintä: piilota end-panelit ja join overlay.
-    /// EI kosketa TurnSystemUI/UnitActionSystem/WorldUI/TurnGate!
+    /// Kevyt ja turvallinen UI-siistintä: piilota end-panelit.
     /// </summary>
     [ClientRpc]
     void RpcPreResetHud()
     {
-        // Piilota end-paneeli (WinBattle on Core-scenessä)
+        TurnSystem.Instance.ResetTurnId();
         var win = FindFirstObjectByType<WinBattle>(FindObjectsInactive.Include);
         if (win != null) win.HideEndPanel();
 
+        // UUSI: myös asiakkaan UnitManager nollaan
+        var um = FindFirstObjectByType<UnitManager>(FindObjectsInactive.Include);
+        if (um) um.ClearAllUnitLists();
     }
 }
+

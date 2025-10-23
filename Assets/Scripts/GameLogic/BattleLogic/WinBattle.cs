@@ -43,46 +43,60 @@ public class WinBattle : MonoBehaviour
 
     private void Unit_OnAnyUnitDead(object sender, System.EventArgs e)
     {
-        EvaluateWin();
-    }
-
-    private void EvaluateWin()
-    {
-
-        if (gameEnded) return;
-        var um = UnitManager.Instance;
-        if (um == null) return;
-
-        int friendCount = um.GetFriendlyUnitList().Count;
-        int enemyCount = um.GetEnemyUnitList().Count;
-
         if (GameModeManager.SelectedMode == GameMode.Versus)
         {
-            bool hostWins = enemyCount <= 0;
-            bool hostLoses = friendCount <= 0;
+            if (NetMode.IsOnline) EvaluateWin_Server(); // vain server päättää
+            return;
+        }
 
-            if (hostWins || hostLoses)
-            {
-                bool isLocalHost = IsLocalHost();
-                bool localWins = (hostWins && isLocalHost) || (hostLoses && !isLocalHost);
-                ShowEnd(localWins ? "You win!" : "You lost");
-            }
-        }
-        else // SinglePlayer
+        // Offline/SP
+        EvaluateWin_Local();
+    }
+
+    // ---- UUSI: vain server ----
+    [Server]
+    private void EvaluateWin_Server()
+    {
+        if (gameEnded) return;
+        var um = UnitManager.Instance; if (um == null) return;
+
+        int friendCount = um.GetFriendlyUnitList().Count;
+        int enemyCount  = um.GetEnemyUnitList().Count;
+
+        bool hostWins  = enemyCount  <= 0;
+        bool hostLoses = friendCount <= 0;
+        if (!(hostWins || hostLoses)) return;
+
+        gameEnded = true; // gate, kunnes ResetService nollaa
+
+        // Lähetä tulos jokaiselle pelaajalle henkilökohtaisesti
+        foreach (var kvp in NetworkServer.connections)
         {
-            if (enemyCount <= 0) ShowEnd("Players Win!");
-            else if (friendCount <= 0) ShowEnd("Enemies Win!");
+            var conn = kvp.Value;
+            if (conn?.identity == null) continue;
+
+            var pc = conn.identity.GetComponent<PlayerController>();
+            if (!pc) continue;
+
+            bool isHost = conn.connectionId == 0; // hostin connectionId on 0
+            bool youWon = (hostWins && isHost) || (hostLoses && !isHost);
+            pc.TargetShowEnd(conn, youWon); // näyttää WinBattle-paneelin clientillä
         }
+    }
+
+    // ---- Vanhasta EvaluateWinistä jää SinglePlayer-haara tähän ----
+    private void EvaluateWin_Local()
+    {
+        if (gameEnded) return;
+        var um = UnitManager.Instance; if (um == null) return;
+
+        int friendCount = um.GetFriendlyUnitList().Count;
+        int enemyCount  = um.GetEnemyUnitList().Count;
+
+        if (enemyCount <= 0) ShowEnd("Players Win!");
+        else if (friendCount <= 0) ShowEnd("Enemies Win!");
     }
     
-    // Host-koneella (server+client samassa) tämä palauttaa true. Etäklientillä false.
-    private bool IsLocalHost()
-    {
-        // Varmistetaan, että ollaan host-clientissä: sekä server että client aktiiviset,
-        // ja “paikallinen serveriyhteys” on sama kuin clientin oma yhteys.
-        return NetworkServer.active && NetworkClient.active;
-    }
-
     public void ShowEnd(string title)
     {
         gameEnded = true;

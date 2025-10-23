@@ -87,4 +87,20 @@ public class PvPTurnCoordinator : NetworkBehaviour
             if (pc) yield return pc;
         }
     }
+
+    [Server]
+    public void ServerGiveFirstTurnToHost()
+    {
+        var players = GetAllPlayers().ToList();
+        var host = players.FirstOrDefault(p => p.connectionToClient != null && p.connectionToClient.connectionId == 0);
+        if (host == null) return;
+
+        currentOwnerNetId = host.netId;
+
+        // Host saa toimia, vastustaja lukkoon
+        foreach (var p in players)
+            p.ServerSetHasEnded(p != host);
+
+        RpcTurnChanged(GetTurnNumber(), currentOwnerNetId);
+    }
 }
