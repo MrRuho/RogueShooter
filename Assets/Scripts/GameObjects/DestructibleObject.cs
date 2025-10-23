@@ -129,13 +129,14 @@ public class DestructibleObject : NetworkBehaviour
             pos: transform.position,
             rot: transform.rotation,
             source: transform,               // ⟵ ohjaa samaan sceneen kuin tuhottava objekti
-            sceneName: null,
+            sceneName: LevelLoader.Instance.CurrentLevel,
             parent: null,                    // ⟵ älä periytä Core-parenttia vahingossa
-            beforeReturn: g =>
+            beforeReturn: go =>
             {
+
                 // jos haluat säilyttää skaalan:
-                g.transform.localScale = transform.localScale;
-                ApplyPushForceToChildren(g.transform, 10f * overkill, hitPosition, 10f);
+                go.transform.localScale = transform.localScale;
+                ApplyPushForceToChildren(go.transform, 10f * overkill, hitPosition, 10f);
             }
         );
     }

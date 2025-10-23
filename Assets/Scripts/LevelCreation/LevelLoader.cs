@@ -14,7 +14,7 @@ public class LevelLoader : MonoBehaviour
     public string DefaultLevel => defaultLevel;
     public string CurrentLevel { get; private set; }
 
-    [SerializeField] private bool forceDefaultOnStart = true;
+    // [SerializeField] private bool forceDefaultOnStart = true;
 
     // --- NÄMÄ KAKSI UUTTA ---
     public static bool IsServerLevelReady { get; private set; }

@@ -34,14 +34,11 @@ public class TurnSystem : MonoBehaviour
     private void Start()
     {
         OnTurnChanged += turnSystem_OnTurnChanged;
-        // OnTurnEnded += TurnSystem_OnTurnEnded;
         // Ensimmäinen vuoro.
         OnTurnStarted?.Invoke(CurrentTeam, TurnId);
         // Varmista, että alkutila lähetetään kaikille UI:lle
         PlayerLocalTurnGate.Set(isPlayerTurn); // true = Player turn alussa
         OnTurnChanged?.Invoke(this, EventArgs.Empty); // jos haluat myös muut UI:t liikkeelle
-
-
     }
 
     private void OnDisable()
@@ -165,5 +162,10 @@ public class TurnSystem : MonoBehaviour
 
         // Jos haluat täydellisen synkan HUDissa, voit vielä varmistaa:
         // SetHudFromNetwork(turnNumber, playersPhase);
+    }
+
+    public void ResetTurnId()
+    {
+        TurnId = 0;
     }
 }

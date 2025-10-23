@@ -1,15 +1,21 @@
 using System.Collections;
+using System.Collections.Generic;
+using Mirror;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using Mirror;
 
 public class NetLevelLoader : NetworkBehaviour
 {
-
     public static NetLevelLoader Instance { get; private set; }
 
     [SyncVar(hook = nameof(OnLevelChanged))]
     private string _currentLevel;
+
+    private int _reloadTick = 0;
+    private readonly HashSet<int> _clientReadyAcks = new HashSet<int>();
+
+    private static bool _clientIsLoading;
+    private static string _clientPreparedLevel;
 
     private void Awake()
     {
@@ -29,137 +35,86 @@ public class NetLevelLoader : NetworkBehaviour
         if (string.IsNullOrEmpty(_currentLevel))
             _currentLevel = LevelLoader.Instance?.DefaultLevel ?? "Level 0";
 
-        Debug.Log($"[NetLevelLoader] OnStartServer → loading '{_currentLevel}'");
+        Debug.Log($"[NetLevelLoader] (SERVER) OnStartServer → loading '{_currentLevel}'");
         StartCo(Co_LoadLevel(_currentLevel));
     }
 
     public override void OnStartClient()
     {
         base.OnStartClient();
-       // if (!isServer && !string.IsNullOrEmpty(_currentLevel))
-       //     StartCoroutine(Co_LoadLevel_Client(_currentLevel));
     }
 
     void OnLevelChanged(string oldValue, string newValue)
     {
-        /*
         if (isServer) return;
-        if (!string.IsNullOrEmpty(newValue))
-            StartCoroutine(Co_LoadLevel_Client(newValue));
-        */
-        if (isServer) return;
-        if (string.IsNullOrEmpty(newValue) || newValue.StartsWith("__RELOAD_TICK__")) return;
+        if (string.IsNullOrEmpty(newValue)) return;
+        if (newValue.StartsWith("__RELOAD_TICK__")) return;
+
+        if (_clientPreparedLevel == newValue)
+        {
+            Debug.Log($"[NetLevelLoader] (CLIENT) OnLevelChanged ignored - already prepared '{newValue}'");
+            _clientPreparedLevel = null;
+            return;
+        }
+
+        Debug.Log($"[NetLevelLoader] (CLIENT) OnLevelChanged triggered → '{newValue}'");
         StartCoroutine(Co_LoadLevel_Client(newValue));
-    }
-    
-
-    private static bool _clientIsLoading;
-    private static string _clientLastLoaded;
-
-    [Client]
-    private IEnumerator Co_LoadLevel_Client(string levelName)
-    {
-        if (_clientIsLoading) yield break;
-        _clientIsLoading = true;
-        try
-        {
-            //nopea duplikaattivarmistus
-            if (_clientLastLoaded == levelName && SceneManager.GetSceneByName(levelName).isLoaded)
-                yield break;
-            
-            string coreName = LevelLoader.Instance?.CoreSceneName ?? "Core";
-
-            // varmista Core ladattuna + aktiivinen
-            var core = SceneManager.GetSceneByName(coreName);
-            if (!core.IsValid() || !core.isLoaded)
-            {
-                var loadCore = SceneManager.LoadSceneAsync(coreName, LoadSceneMode.Additive);
-                while (!loadCore.isDone) yield return null;
-                core = SceneManager.GetSceneByName(coreName);
-            }
-            SceneManager.SetActiveScene(core);
-
-            // unload kaikki ei-Core
-            for (int i = 0; i < SceneManager.sceneCount; i++)
-            {
-                var s = SceneManager.GetSceneAt(i);
-                if (s.isLoaded && s.name != coreName)
-                {
-                    var op = SceneManager.UnloadSceneAsync(s);
-                    if (op != null) while (!op.isDone) yield return null;
-                    i = -1;
-                }
-            }
-
-            // lataa level additiivisesti
-            var op2 = SceneManager.LoadSceneAsync(levelName, LoadSceneMode.Additive);
-            while (!op2.isDone) yield return null;
-
-            var map = SceneManager.GetSceneByName(levelName);
-            if (!map.IsValid() || !map.isLoaded)
-            {
-                Debug.LogError($"[NetLevelLoader] Client failed to load '{levelName}' (Build Settings?).");
-                yield break;
-            }
-
-            // hetkeksi aktiivinen, sitten Core takaisin
-            SceneManager.SetActiveScene(map);
-            yield return null;
-            SceneManager.SetActiveScene(core);
-
-            // ilmoita että clientin level on valmis (jos teillä on tällainen event)
-            LevelLoader.RaiseLevelReady(map);
-
-            _clientLastLoaded = levelName;
-        }
-        finally
-        {
-            _clientIsLoading = false;
-        }
-    }
-
-    private void StartCo(IEnumerator r)
-    {
-        if (isActiveAndEnabled) StartCoroutine(r);
-        else GlobalCoroutineHost.StartRoutine(r);
-    }
-
-    [Server]
-    public void ServerReloadCurrentLevel()
-    {
-        
-        var target = string.IsNullOrEmpty(_currentLevel)
-            ? (LevelLoader.Instance?.DefaultLevel ?? "Level 0")
-            : _currentLevel;
-        StopAllCoroutines();
-        StartCo(Co_LoadLevel(target));
-        
-       //StopAllCoroutines();
-       // StartCoroutine(Co_ReloadSame());
-    }
-
-    [Server]
-    IEnumerator Co_ReloadSame()
-    {
-        // Pakota hook käyntiin myös “samaan” kenttään
-        var lvl = string.IsNullOrEmpty(_currentLevel) ? (LevelLoader.Instance?.DefaultLevel ?? "Level 0") : _currentLevel;
-
-        // 1) kerro klienteille “väliarvo” → ei ladata tyhjää (hookissa ohita null/tyhjä)
-        _currentLevel = "__RELOAD_TICK__" + Time.frameCount; 
-        yield return null;
-
-        // 2) normaali server-lataus
-        yield return Co_LoadLevel(lvl);
-
-        // 3) aseta oikea nimi (hook → client Co_LoadLevel_Client)
-        _currentLevel = lvl;
     }
 
     [Server]
     public void ServerLoadLevel(string levelName)
     {
         StopAllCoroutines();
-        StartCo(Co_LoadLevel(levelName));
+        StartCo(Co_ReloadLevel_All(levelName));
+    }
+
+    [Server]
+    public void ServerReloadCurrentLevel()
+    {
+        var target = string.IsNullOrEmpty(_currentLevel)
+            ? (LevelLoader.Instance?.DefaultLevel ?? "Level 0")
+            : _currentLevel;
+
+        StopAllCoroutines();
+        StartCo(Co_ReloadLevel_All(target));
+    }
+
+    [Server]
+    private IEnumerator Co_ReloadLevel_All(string levelName)
+    {
+        string coreName = LevelLoader.Instance?.CoreSceneName ?? "Core";
+
+        _reloadTick++;
+        _clientReadyAcks.Clear();
+
+        Debug.Log($"[NetLevelLoader] (SERVER) ===== RELOAD ALL START → '{levelName}', tick={_reloadTick} =====");
+
+        _currentLevel = $"__RELOAD_TICK__{_reloadTick}";
+
+        RpcClientPrepareReload(coreName, levelName, _reloadTick);
+
+        int expectedClients = ExpectedClientCount();
+        Debug.Log($"[NetLevelLoader] (SERVER) Waiting for {expectedClients} clients to be ready...");
+
+        float timeout = 15f;
+        float elapsed = 0f;
+
+        while (_clientReadyAcks.Count < expectedClients && elapsed < timeout)
+        {
+            yield return null;
+            elapsed += Time.deltaTime;
+        }
+
+        if (elapsed >= timeout)
+        {
+            Debug.LogWarning($"[NetLevelLoader] (SERVER) Timeout! Got {_clientReadyAcks.Count}/{expectedClients} acks");
+        }
+        else
+        {
+            Debug.Log($"[NetLevelLoader] (SERVER) All {_clientReadyAcks.Count} clients ready!");
+        }
+
+        yield return StartCoroutine(Co_LoadLevel(levelName));
     }
 
     [Server]
@@ -167,121 +122,192 @@ public class NetLevelLoader : NetworkBehaviour
     {
         var coreName = LevelLoader.Instance?.CoreSceneName ?? "Core";
 
-        Debug.Log($"[NetLevelLoader] ===== STARTING LEVEL LOAD: '{levelName}' =====");
-
-        // Lista kaikki ladatut scenet ENNEN unloadausta
-        Debug.Log($"[NetLevelLoader] Currently loaded scenes BEFORE unload:");
-        for (int i = 0; i < SceneManager.sceneCount; i++)
-        {
-            var s = SceneManager.GetSceneAt(i);
-            Debug.Log($"[NetLevelLoader]   Scene {i}: '{s.name}' (isLoaded: {s.isLoaded}, path: {s.path})");
-        }
+        Debug.Log($"[NetLevelLoader] (SERVER) ===== STARTING LEVEL LOAD: '{levelName}' =====");
 
         LevelLoader.SetServerLevelReady(false);
 
-        // 1) Tuhoa runtime-verkko-instanssit
         int destroyedCount = 0;
         foreach (var ni in FindObjectsByType<NetworkIdentity>(FindObjectsSortMode.None))
+        {
             if (ni && ni.sceneId == 0)
             {
-                Debug.Log($"[NetLevelLoader] Destroying runtime object: {ni.name}");
                 NetworkServer.Destroy(ni.gameObject);
                 destroyedCount++;
             }
-        Debug.Log($"[NetLevelLoader] Destroyed {destroyedCount} runtime network objects");
+        }
+        Debug.Log($"[NetLevelLoader] (SERVER) Destroyed {destroyedCount} runtime network objects");
 
-        // 2) Unloadaa kaikki ei-Core -scenet
-        Debug.Log($"[NetLevelLoader] Starting scene unload loop...");
-        int unloadedCount = 0;
         for (int i = 0; i < SceneManager.sceneCount; i++)
         {
             var s = SceneManager.GetSceneAt(i);
-            Debug.Log($"[NetLevelLoader] Checking scene {i}: '{s.name}', isLoaded={s.isLoaded}, isCore={s.name == coreName}");
+            if (!s.isLoaded) continue;
+            if (s.name == coreName) continue;
 
-            if (!s.isLoaded)
-            {
-                Debug.Log($"[NetLevelLoader] Skipping '{s.name}' - not loaded");
-                continue;
-            }
-            if (s.name == coreName)
-            {
-                Debug.Log($"[NetLevelLoader] Skipping '{s.name}' - is Core scene");
-                continue;
-            }
-
-            Debug.Log($"[NetLevelLoader] UNLOADING scene: '{s.name}'");
+            Debug.Log($"[NetLevelLoader] (SERVER) Unloading scene '{s.name}'");
             yield return SceneManager.UnloadSceneAsync(s);
-            unloadedCount++;
-            Debug.Log($"[NetLevelLoader] Unloaded '{s.name}', restarting loop");
             i = -1;
         }
-        Debug.Log($"[NetLevelLoader] Unloaded {unloadedCount} scenes");
 
-        // Lista scenet JÄLKEEN unloadauksen
-        Debug.Log($"[NetLevelLoader] Currently loaded scenes AFTER unload:");
-        for (int i = 0; i < SceneManager.sceneCount; i++)
-        {
-            var s = SceneManager.GetSceneAt(i);
-            Debug.Log($"[NetLevelLoader]   Scene {i}: '{s.name}' (isLoaded: {s.isLoaded})");
-        }
-
-        // 3) Varmista Core aktiiviseksi
         var core = SceneManager.GetSceneByName(coreName);
         if (!core.IsValid() || !core.isLoaded)
         {
-            Debug.Log($"[NetLevelLoader] Loading Core scene");
+            Debug.Log($"[NetLevelLoader] (SERVER) Loading Core scene");
             var loadCore = SceneManager.LoadSceneAsync(coreName, LoadSceneMode.Additive);
             while (!loadCore.isDone) yield return null;
             core = SceneManager.GetSceneByName(coreName);
         }
         SceneManager.SetActiveScene(core);
-        Debug.Log($"[NetLevelLoader] Core scene is active");
 
-        // 4) Lataa level additiivisesti
-        Debug.Log($"[NetLevelLoader] Loading NEW level scene '{levelName}'");
+        Debug.Log($"[NetLevelLoader] (SERVER) Loading level '{levelName}'");
         var op = SceneManager.LoadSceneAsync(levelName, LoadSceneMode.Additive);
         while (!op.isDone) yield return null;
 
         var map = SceneManager.GetSceneByName(levelName);
         if (!map.IsValid() || !map.isLoaded)
         {
-            Debug.LogError($"[NetLevelLoader] Failed to load '{levelName}'. Is it in Build Settings?");
+            Debug.LogError($"[NetLevelLoader] (SERVER) Failed to load '{levelName}'. Is it in Build Settings?");
             yield break;
         }
 
-        Debug.Log($"[NetLevelLoader] Loaded '{levelName}', setting as active scene temporarily");
-
-        // 5) Aseta map aktiiviseksi hetkeksi
         SceneManager.SetActiveScene(map);
         yield return null;
 
-        // 6) Spawn scene-objektit
-        Debug.Log($"[NetLevelLoader] Calling NetworkServer.SpawnObjects()");
+        Debug.Log($"[NetLevelLoader] (SERVER) Spawning network objects");
         NetworkServer.SpawnObjects();
-
         yield return null;
         yield return null;
 
-        Debug.Log($"[NetLevelLoader] Scene objects spawned");
-
-        // 7) Hookit
         EdgeBaker.Instance?.BakeAllEdges();
 
-        // 8) Core takaisin aktiiviseksi
         SceneManager.SetActiveScene(core);
         _currentLevel = levelName;
 
         LevelLoader.SetServerLevelReady(true);
         LevelLoader.RaiseLevelReady(map);
 
-        Debug.Log($"[NetLevelLoader] ===== LEVEL LOAD COMPLETE: '{levelName}' =====");
+        Debug.Log($"[NetLevelLoader] (SERVER) ===== LEVEL LOAD COMPLETE: '{levelName}' =====");
+    }
 
-        // Lista lopulliset scenet
-        Debug.Log($"[NetLevelLoader] Final loaded scenes:");
+    [ClientRpc]
+    private void RpcClientPrepareReload(string coreName, string levelName, int tick)
+    {
+        if (isServer) return;
+
+        StartCoroutine(Co_ClientPrepareAndAck(coreName, levelName, tick));
+    }
+
+    [Client]
+    private IEnumerator Co_ClientPrepareAndAck(string coreName, string levelName, int tick)
+    {
+        Debug.Log($"[NetLevelLoader] (CLIENT) ===== PREPARE RELOAD START → '{levelName}', tick={tick} =====");
+
+        int n = DebrisUtil.DestroyAllDebrisExceptCore(coreName);
+        if (n > 0) Debug.Log($"[NetLevelLoader] (CLIENT) Cleared {n} debris objects");
+
+        yield return Co_LoadLevel_Client_Internal(levelName);
+
+        _clientPreparedLevel = levelName;
+
+        Debug.Log($"[NetLevelLoader] (CLIENT) Scene ready, sending ACK for tick {tick}");
+        CmdAckSceneReady(tick);
+    }
+
+    [Command(requiresAuthority = false)]
+    void CmdAckSceneReady(int tick, NetworkConnectionToClient sender = null)
+    {
+        if (tick != _reloadTick || sender == null) return;
+
+        Debug.Log($"[NetLevelLoader] (SERVER) Received ACK from conn {sender.connectionId} for tick {tick}");
+        _clientReadyAcks.Add(sender.connectionId);
+    }
+
+    [Server]
+    int ExpectedClientCount()
+    {
+        int c = 0;
+        foreach (var kv in NetworkServer.connections)
+        {
+            if (kv.Value != null && kv.Value.isAuthenticated)
+            {
+                if (kv.Value == NetworkServer.localConnection)
+                    continue;
+                c++;
+            }
+        }
+        return c;
+    }
+
+    [Client]
+    private IEnumerator Co_LoadLevel_Client(string levelName)
+    {
+        if (_clientIsLoading)
+        {
+            Debug.Log($"[NetLevelLoader] (CLIENT) Already loading, skipping duplicate");
+            yield break;
+        }
+
+        _clientIsLoading = true;
+
+        try
+        {
+            yield return Co_LoadLevel_Client_Internal(levelName);
+        }
+        finally
+        {
+            _clientIsLoading = false;
+        }
+    }
+
+    [Client]
+    private IEnumerator Co_LoadLevel_Client_Internal(string levelName)
+    {
+        string coreName = LevelLoader.Instance?.CoreSceneName ?? "Core";
+
+        Debug.Log($"[NetLevelLoader] (CLIENT) Start reload → '{levelName}'");
+
+        var core = SceneManager.GetSceneByName(coreName);
+        if (!core.IsValid() || !core.isLoaded)
+        {
+            Debug.Log($"[NetLevelLoader] (CLIENT) Loading Core scene");
+            var loadCore = SceneManager.LoadSceneAsync(coreName, LoadSceneMode.Additive);
+            while (!loadCore.isDone) yield return null;
+            core = SceneManager.GetSceneByName(coreName);
+        }
+        SceneManager.SetActiveScene(core);
+
         for (int i = 0; i < SceneManager.sceneCount; i++)
         {
             var s = SceneManager.GetSceneAt(i);
-            Debug.Log($"[NetLevelLoader]   Scene {i}: '{s.name}' (isLoaded: {s.isLoaded})");
+            if (!s.isLoaded || s.name == coreName) continue;
+
+            Debug.Log($"[NetLevelLoader] (CLIENT) Unloading scene '{s.name}'");
+            yield return SceneManager.UnloadSceneAsync(s);
+            i = -1;
         }
+
+        Debug.Log($"[NetLevelLoader] (CLIENT) Loading level '{levelName}'");
+        var op2 = SceneManager.LoadSceneAsync(levelName, LoadSceneMode.Additive);
+        while (!op2.isDone) yield return null;
+
+        var map = SceneManager.GetSceneByName(levelName);
+        if (!map.IsValid() || !map.isLoaded)
+        {
+            Debug.LogError($"[NetLevelLoader] (CLIENT) Failed to load '{levelName}'. Is it in Build Settings?");
+            yield break;
+        }
+
+        SceneManager.SetActiveScene(map);
+        yield return null;
+        SceneManager.SetActiveScene(core);
+
+        LevelLoader.RaiseLevelReady(map);
+
+        Debug.Log($"[NetLevelLoader] (CLIENT) Reload complete → '{levelName}'");
+    }
+
+    private void StartCo(IEnumerator r)
+    {
+        if (isActiveAndEnabled) StartCoroutine(r);
+        else GlobalCoroutineHost.StartRoutine(r);
     }
 }

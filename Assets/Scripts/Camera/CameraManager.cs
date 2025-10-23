@@ -6,13 +6,6 @@ public class CameraManager : MonoBehaviour
     [SerializeField] private GameObject actionCameraGameObject;
 
     [SerializeField] private float actionCameraVerticalPosition = 2.5f;
-    private void Start()
-    {
-      //  BaseAction.OnAnyActionStarted += BaseAction_OnAnyActionStarted;
-      //  BaseAction.OnAnyActionCompleted += BaseAction_OnAnyActionCompleted;
-
-      //  HideActionCamera();
-    }
 
     void OnEnable()
     {

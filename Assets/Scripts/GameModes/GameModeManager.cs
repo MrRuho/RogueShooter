@@ -80,6 +80,7 @@ public class GameModeManager : MonoBehaviour
         }
     }
     
+    /*
     void Handle_LevelReady(Scene s)
     {
         if (!NetMode.IsServer) return;           // vain server
@@ -101,6 +102,7 @@ public class GameModeManager : MonoBehaviour
         // päivitä miehitys varmuudeksi
         LevelGrid.Instance.RebuildOccupancyFromScene();
     }
+    */
     
 }
 

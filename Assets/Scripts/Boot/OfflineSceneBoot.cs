@@ -1,7 +1,7 @@
 using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using Mirror;
+// using Mirror;
 public static class OfflineSceneBoot
 {   
 
@@ -13,7 +13,8 @@ public static class OfflineSceneBoot
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
     static void EnsureOfflineLevel()
     {
-        if (NetworkServer.active || NetworkClient.active) return;
+        // if (NetworkServer.active || NetworkClient.active) return;
+        if (NetMode.IsOnline) return;
         // Jos jokin muu kuin Core on jo auki (esim. online host muuttaa scenen),
         // älä tee mitään.
         for (int i = 0; i < SceneManager.sceneCount; i++)

@@ -13,6 +13,10 @@ public class ResetService : NetworkBehaviour
     {
         if (NetworkServer.active)                 // HOST / DEDISERVER
         {
+            var win = FindFirstObjectByType<WinBattle>(FindObjectsInactive.Include);
+            if (win != null) win.HideEndPanel();
+            NetTurnManager.Instance.ResetTurnState();
+            TurnSystem.Instance.ResetTurnId();
             // Kevyt client pre-cleanup (ei mitään gameplay/HUD-lukituksia!)
             RpcPreResetHud();
             // GameNetworkManager hoitaa levelin uudelleenlatauksen ja aloituksen
@@ -41,7 +45,5 @@ public class ResetService : NetworkBehaviour
         var win = FindFirstObjectByType<WinBattle>(FindObjectsInactive.Include);
         if (win != null) win.HideEndPanel();
 
-        // Piilota mahdollinen Relay-join -overlay
-        if (RelayJoinCodeUI.Instance != null) RelayJoinCodeUI.Instance.Hide();
     }
 }
