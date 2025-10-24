@@ -1,15 +1,14 @@
 using UnityEngine;
 using TMPro;
-using System.Text.RegularExpressions;
-using Utp;
-using Mirror;
 
+[DefaultExecutionOrder(-100)]
 public class RelayJoinCodeUI : MonoBehaviour
 {
     public static RelayJoinCodeUI Instance { get; private set; }
 
     [SerializeField] private GameObject root;      // vedä tähän CodeCanvas TAI paneelin juuri
     [SerializeField] private TMP_Text codeText;    // vedä JoinCodeText
+
 
     void Awake()
     {
@@ -18,7 +17,21 @@ public class RelayJoinCodeUI : MonoBehaviour
 
         if (root == null) root = gameObject;       // fallback: käytä CodeCanvasia juurena
         DontDestroyOnLoad(root);                   // pysyy scene-vaihdon yli
-        Hide();
+        if (root.activeSelf) root.SetActive(false);
+        //Hide();
+    }
+
+    // Turvahaku siltä varalta, että Instance ei ole vielä asetettu
+    public static RelayJoinCodeUI GetOrFind()
+    {
+        if (Instance != null) return Instance;
+        var found = FindFirstObjectByType<RelayJoinCodeUI>(FindObjectsInactive.Include);
+        if (found != null)
+        {
+            Instance = found;
+            if (found.root == null) found.root = found.gameObject;
+        }
+        return Instance;
     }
 
     public void ShowCode(string code)
@@ -29,5 +42,5 @@ public class RelayJoinCodeUI : MonoBehaviour
     }
 
     public void Hide() => root.SetActive(false);
-    
+
 }

@@ -69,7 +69,7 @@ public class Connect : MonoBehaviour
         gameNetworkManager.JoinStandardServer();  // useRelay=false ja StartClient()
         
     }
-    
+
     public void Host()
     {
         if (!gameNetworkManager)
@@ -79,25 +79,15 @@ public class Connect : MonoBehaviour
             if (!gameNetworkManager) { Debug.LogError("[Connect] GameNetworkManager not found."); return; }
         }
 
-        StartCoroutine(StartRelayHostThenShowCode());
+        StartCoroutine(StartRelayHostThenLoadLevel());
     }
 
-    private IEnumerator StartRelayHostThenShowCode()
+    private RelayJoinCodeUI GetJoinUI()
     {
-        if (NetworkServer.active) yield break;
-
-        gameNetworkManager.StartRelayHost(2, null);
-
-        yield return new WaitUntil(() => !string.IsNullOrEmpty(gameNetworkManager.relayJoinCode));
-        RelayJoinCodeUI.Instance.ShowCode(gameNetworkManager.relayJoinCode);
-
-        // NetLevelLoader hoitaa kentän latauksen automaattisesti
-
-        yield return new WaitUntil(() => NetworkServer.connections != null &&
-                                        NetworkServer.connections.Count >= 2);
-        RelayJoinCodeUI.Instance.Hide();
+        // Etsi ensin singletonista, jos puuttuu, etsi hierarkiasta (myös inaktiivisista)
+        return RelayJoinCodeUI.Instance
+            ?? FindFirstObjectByType<RelayJoinCodeUI>(FindObjectsInactive.Include);
     }
-
 
     private IEnumerator StartRelayHostThenLoadLevel()
     {
@@ -105,20 +95,29 @@ public class Connect : MonoBehaviour
 
         gameNetworkManager.StartRelayHost(2, null);
 
-        // odota koodi & serveri aktiiviseksi
+        // 1) Odota että oikea join-koodi valmistuu
         yield return new WaitUntil(() => !string.IsNullOrEmpty(gameNetworkManager.relayJoinCode));
-        RelayJoinCodeUI.Instance.ShowCode(gameNetworkManager.relayJoinCode);
 
+        // 2) Näytä koodi turvallisesti (ei NRE:tä vaikka Instance olisi vielä null)
+        var ui = GetJoinUI();
+        if (ui != null) ui.ShowCode(gameNetworkManager.relayJoinCode);
+        else Debug.LogError("[Connect] RelayJoinCodeUI puuttuu Corescenestä – ei voida näyttää koodia.");
+
+        // 3) Odota että serveri on varmasti aktiivinen
         yield return new WaitUntil(() => NetworkServer.active);
 
-        // ÄLÄ tee ServerChangeScenea. Varmista additiivinen lataus kuten LAN-case:
+        // 4) Varmista että level on ladattu additiivisesti
         yield return EnsureLevelLoadedAfterServerUp();
 
-        // pidä koodi näkyvissä kunnes 2. pelaaja on mukana (host + 1 client)
+        // 5) Pidä koodi näkyvissä kunnes 2. pelaaja on mukana (host + 1 client)
+        var minConn = gameNetworkManager ? gameNetworkManager.HideJoinCodeAfterConnections : 2;
         yield return new WaitUntil(() => NetworkServer.connections != null &&
-                                        NetworkServer.connections.Count >= 2);
-        RelayJoinCodeUI.Instance.Hide();
+                                        NetworkServer.connections.Count >= minConn);
+
+        HideJoinPanel();
+        if (ui != null) ui.Hide();
     }
+
 
     private IEnumerator EnsureLevelLoadedAfterServerUp()
     {
@@ -148,6 +147,7 @@ public class Connect : MonoBehaviour
             }
         }
     }
+    
     public void Client()
     {
 
@@ -166,7 +166,6 @@ public class Connect : MonoBehaviour
 
     }
 
-    // Join-nappi (tai Enter) — lukee kentän, asettaa koodin ja liittyy
     private void JoinWithFieldValue()
     {
         if (!gameNetworkManager)
@@ -176,31 +175,32 @@ public class Connect : MonoBehaviour
         }
 
         string code = (joinCodeField ? joinCodeField.text : "").Trim().ToUpperInvariant();
-
-        // kevyt validointi: 6 merkkiä, a–z/0–9 (muuta jos tarvitset)
         if (string.IsNullOrEmpty(code) || code.Length != 6)
         {
             Debug.LogWarning("[Connect] Join code missing/invalid.");
             return;
         }
 
-        gameNetworkManager.relayJoinCode = code;
-        gameNetworkManager.JoinRelayServer();
+        // Käynnistä join-prosessi yhdestä paikasta (coroutinesta)
         StartCoroutine(Co_CleanThenJoin(code));
     }
 
     private IEnumerator Co_CleanThenJoin(string code)
     {
-        // 1) Puhdista clientin oma kenttä ja offline-jäänteet
+        // Piilota UI heti kun liitytään (ettei jää päälle kentän latautuessa)
+        HideJoinPanel();
+        if (joinButton) joinButton.interactable = false;
+
+        // Puhdista ennen liittymistä
         yield return ClientPreJoinCleaner.PrepareForOnlineJoin();
 
-        // 2) Aseta koodi ja liity
+        // Aseta koodi ja liity (vain KERRAN)
         gameNetworkManager.relayJoinCode = code;
         gameNetworkManager.JoinRelayServer();
     }
 
     // Cancel tai Back
-    private void HideJoinPanel()
+    public void HideJoinPanel()
     {
         if (joinInputPanel) joinInputPanel.SetActive(false);
         if (joinCodeField) { joinCodeField.text = ""; joinCodeField.DeactivateInputField(); }

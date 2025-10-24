@@ -27,7 +27,7 @@ public static class ClientPreJoinCleaner
         DestroyServerProvidedLeftoversInCore(core);
 
         // (valinnainen)
-        yield return Resources.UnloadUnusedAssets();
+         yield return Resources.UnloadUnusedAssets();
     }
 
     static void DestroyServerProvidedLeftoversInCore(string core)

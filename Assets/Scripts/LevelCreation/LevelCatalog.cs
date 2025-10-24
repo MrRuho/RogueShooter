@@ -16,19 +16,23 @@ public class LevelCatalog : ScriptableObject {
     public LevelEntry Get(int i) => (i >= 0 && i < Count) ? levels[i] : null;
     public int IndexOfScene(string sceneName) => levels.FindIndex(l => l != null && l.sceneName == sceneName);
 
-    private void OnValidate() {
-    #if UNITY_EDITOR
-        foreach (var l in levels) {
+    private void OnValidate()
+    {
+#if UNITY_EDITOR
+        foreach (var l in levels)
+        {
             if (l == null || string.IsNullOrEmpty(l.sceneName)) continue;
             bool inBuild = false;
-            foreach (var s in EditorBuildSettings.scenes) {
+            foreach (var s in EditorBuildSettings.scenes)
+            {
                 if (s.enabled && s.path.EndsWith($"{l.sceneName}.unity")) { inBuild = true; break; }
             }
             if (!inBuild)
                 Debug.LogWarning($"[LevelCatalog] '{l.sceneName}' ei ole Build Settingsissä (enabled).");
         }
-    #endif
+#endif
     }
+
 }
 
 [Serializable]

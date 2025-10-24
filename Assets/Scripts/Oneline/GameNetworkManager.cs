@@ -15,6 +15,9 @@ namespace Utp
 		private readonly List<NetworkConnectionToClient> _pendingConns = new();
 
 		[SerializeField] private int hideJoinCodeAfterConnections = 2; // Host + 1 client
+		
+		public int HideJoinCodeAfterConnections => Mathf.Max(1, hideJoinCodeAfterConnections);
+
 		private UtpTransport utpTransport;
 
 		/// <summary>
@@ -78,9 +81,14 @@ namespace Utp
 			LevelLoader.LevelReady -= OnLevelReady_Server;
 			base.OnStopServer();
 		}
-
-	//	void OnEnable()  { LevelLoader.LevelReady += OnLevelReady_Server; }
-	//	void OnDisable() { LevelLoader.LevelReady -= OnLevelReady_Server; }
+		/*
+		void OnEnable()
+		{
+			LevelLoader.LevelReady += OnLevelReady_Server;
+		}
+		*/
+		
+		void OnDisable() { LevelLoader.LevelReady -= OnLevelReady_Server; }
 
 		[ServerCallback]
 		public override void OnDestroy()
