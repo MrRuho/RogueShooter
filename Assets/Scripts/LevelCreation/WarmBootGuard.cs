@@ -6,6 +6,7 @@ using Mirror;
 // Tämä on vain fallback – jos LevelLoader toimii, tämä tekee ei mitään.
 public static class WarmBootGuard
 {
+    /*
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
     static void AfterSceneLoad()
     {
@@ -21,4 +22,5 @@ public static class WarmBootGuard
             SceneManager.LoadSceneAsync("Level 0", LoadSceneMode.Additive);
         }
     }
+    */
 }

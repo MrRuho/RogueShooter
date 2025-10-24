@@ -10,12 +10,17 @@ public class NetLevelLoader : NetworkBehaviour
 
     [SyncVar(hook = nameof(OnLevelChanged))]
     private string _currentLevel;
+    [SerializeField] private string _fallbackDefaultLevelName; // valinnainen: aseta Inspectorissa jos haluat
 
     private int _reloadTick = 0;
     private readonly HashSet<int> _clientReadyAcks = new HashSet<int>();
 
     private static bool _clientIsLoading;
     private static string _clientPreparedLevel;
+
+    [Header("Catalog")]
+    [SerializeField] private LevelCatalog catalog;
+    [SerializeField] private int currentIndex = 0;
 
     private void Awake()
     {
@@ -27,14 +32,32 @@ public class NetLevelLoader : NetworkBehaviour
         }
         Instance = this;
     }
+    /*
+    public override void OnStartServer()
+    {
+        base.OnStartServer();
+        
+        if (string.IsNullOrEmpty(_currentLevel))
+            _currentLevel = LevelLoader.Instance?.DefaultLevel ?? "Level 0";
+        
+
+        Debug.Log($"[NetLevelLoader] (SERVER) OnStartServer → loading '{_currentLevel}'");
+        StartCo(Co_LoadLevel(_currentLevel));
+    }
+    */
 
     public override void OnStartServer()
     {
         base.OnStartServer();
 
-        if (string.IsNullOrEmpty(_currentLevel))
-            _currentLevel = LevelLoader.Instance?.DefaultLevel ?? "Level 0";
+        var nameToLoad = ResolveDefaultLevelName();
+        if (string.IsNullOrEmpty(nameToLoad))
+        {
+            Debug.LogError("[NetLevelLoader] Ei tasoa ladattavaksi OnStartServerissä.");
+            return;
+        }
 
+        _currentLevel = nameToLoad; // pidä kirjaa
         Debug.Log($"[NetLevelLoader] (SERVER) OnStartServer → loading '{_currentLevel}'");
         StartCo(Co_LoadLevel(_currentLevel));
     }
@@ -63,20 +86,15 @@ public class NetLevelLoader : NetworkBehaviour
 
     [Server]
     public void ServerLoadLevel(string levelName)
-    {
+    {    
+        if (string.IsNullOrEmpty(levelName))
+        {
+            Debug.LogError("[NetLevelLoader] ServerLoadLevel sai tyhjän scenenimen.");
+            return;
+        }
+
         StopAllCoroutines();
         StartCo(Co_ReloadLevel_All(levelName));
-    }
-
-    [Server]
-    public void ServerReloadCurrentLevel()
-    {
-        var target = string.IsNullOrEmpty(_currentLevel)
-            ? (LevelLoader.Instance?.DefaultLevel ?? "Level 0")
-            : _currentLevel;
-
-        StopAllCoroutines();
-        StartCo(Co_ReloadLevel_All(target));
     }
 
     [Server]
@@ -309,5 +327,112 @@ public class NetLevelLoader : NetworkBehaviour
     {
         if (isActiveAndEnabled) StartCoroutine(r);
         else GlobalCoroutineHost.StartRoutine(r);
+    }
+
+    /*
+    [Server]
+    public void ServerReloadCurrentLevel()
+    {
+        var target = string.IsNullOrEmpty(_currentLevel)
+            ? (LevelLoader.Instance?.DefaultLevel ?? "Level 0")
+            : _currentLevel;
+
+        StopAllCoroutines();
+        StartCo(Co_ReloadLevel_All(target));
+    }
+    */
+
+    //Uudet
+
+    [Server]
+    public void ServerReloadCurrentLevel() => ServerLoadLevelByIndex(currentIndex);
+    public string CurrentSceneName =>
+        (catalog != null && catalog.Count > 0) ? catalog.Get(currentIndex)?.sceneName : null;
+
+    // Julkinen entry point: lataa nimen perusteella
+    [Server]
+    public void ServerLoadLevelByName(string sceneName) {
+        if (catalog == null) { Debug.LogError("[NetLevelLoader] Catalog puuttuu"); return; }
+        int i = catalog.IndexOfScene(sceneName);
+        if (i < 0) { Debug.LogError($"[NetLevelLoader] Scene '{sceneName}' ei löydy catalogista"); return; }
+        ServerLoadLevelByIndex(i);
+    }
+
+    // Julkinen entry point: lataa indeksillä
+    [Server]
+    public void ServerLoadLevelByIndex(int index) {
+        if (catalog == null || catalog.Count == 0) { Debug.LogError("[NetLevelLoader] Catalog tyhjä"); return; }
+        if (index < 0 || index >= catalog.Count) { Debug.LogError("[NetLevelLoader] Index out of range"); return; }
+
+        StartCoroutine(Co_LoadLevel(index));
+    }
+
+    [Server]
+    public void ServerLoadNextLevelLoop() {
+        if (catalog == null || catalog.Count == 0) return;
+        int next = (currentIndex + 1) % catalog.Count;
+        ServerLoadLevelByIndex(next);
+    }
+
+    private IEnumerator Co_LoadLevel(int index) {
+        // Siivoa ennen vaihtoa (UnitManager tyhjäksi, turnit nollaksi tms.)
+        UnitManager.Instance?.ClearAllUnitLists();
+
+        // Unload vanha
+        var current = CurrentSceneName;
+        if (!string.IsNullOrEmpty(current)) {
+            var s = SceneManager.GetSceneByName(current);
+            if (s.isLoaded) {
+                var opUnload = SceneManager.UnloadSceneAsync(s);
+                while (!opUnload.isDone) yield return null;
+            }
+        }
+
+        // Lataa uusi additiivisesti
+        var entry = catalog.Get(index);
+        var sceneName = entry.sceneName;
+
+        var opLoad = SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Additive);
+        while (!opLoad.isDone) yield return null;
+
+        // Aseta aktiiviseksi
+        Scene newScene = SceneManager.GetSceneByName(sceneName);
+        SceneManager.SetActiveScene(newScene);
+
+        // Päivitä indeksi vasta onnistuneen vaihdon jälkeen
+        currentIndex = index;
+
+        // Jatkologiikka (spawnit, bake, vuoroalku, jne.)
+        // Esim: SpawnUnitsCoordinator.Instance?.ServerSpawnEnemiesForLevel();
+        //       EdgeBaker.Instance?.BakeAllEdges();
+
+        // Synkkaa klienteille (jos käytät jo valmista RPC:ää, kutsu sitä tässä)
+        RpcOnLevelLoaded(sceneName, currentIndex);
+    }
+
+    [ClientRpc]
+    void RpcOnLevelLoaded(string sceneName, int index)
+    {
+        // Client-päässä: UI/HUD siivous, WinPanel piiloon jne.
+        var win = FindFirstObjectByType<WinBattle>(FindObjectsInactive.Include);
+        if (win) win.HideEndPanel();
+    }
+
+    public string ResolveDefaultLevelName()
+    {
+        // 1) Jos _currentLevel on jo asetettu (esim. edellisestä pelistä / valikosta)
+        if (!string.IsNullOrEmpty(_currentLevel)) return _currentLevel;
+
+        // 2) Jos LevelLoaderissa on määritelty oletus
+        if (LevelLoader.Instance && !string.IsNullOrEmpty(LevelLoader.Instance.DefaultLevel))
+            return LevelLoader.Instance.DefaultLevel;
+
+        // 3) Lopuksi oma (inspectorista asetettava) fallback
+        if (!string.IsNullOrEmpty(_fallbackDefaultLevelName))
+            return _fallbackDefaultLevelName;
+
+        // 4) Ei keksitty mitään
+        Debug.LogError("[NetLevelLoader] ResolveDefaultLevelName() epäonnistui: ei current/default/fallback-nimeä.");
+        return null;
     }
 }

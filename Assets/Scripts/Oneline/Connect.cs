@@ -35,7 +35,6 @@ public class Connect : MonoBehaviour
 
     }
 
-
     public void HostLAN()
     {
         if (!gameNetworkManager)
@@ -48,7 +47,6 @@ public class Connect : MonoBehaviour
         gameNetworkManager.StartStandardHost();
 
     }
-
 
     public void ClientLAN()
     {
@@ -121,28 +119,35 @@ public class Connect : MonoBehaviour
                                         NetworkServer.connections.Count >= 2);
         RelayJoinCodeUI.Instance.Hide();
     }
-    
+
     private IEnumerator EnsureLevelLoadedAfterServerUp()
     {
-        // odota hetki, että NetLevelLoader ehtii startata
+        // Odota että serveri on oikeasti ylhäällä
         yield return new WaitUntil(() => NetworkServer.active);
-        yield return null;
+        yield return null; // 1 frame väliin, että Core-komponentit ehtivät herätä
 
-        // jos NetLevelLoader ei ole vielä ehtinyt merkitä leveliä valmiiksi,
-        // pyydä se lataamaan nykyinen/defu-level
+        // Jos taso ei ole vielä valmis → kysy lataus NetLevelLoaderilta
         if (!LevelLoader.IsServerLevelReady)
         {
-            string target = LevelLoader.Instance
+            // 1) Jos LevelLoader kertoo nykyisen tai oletustason, käytä sitä
+            string desired = LevelLoader.Instance
                 ? (LevelLoader.Instance.CurrentLevel ?? LevelLoader.Instance.DefaultLevel)
-                : "Level 0";
+                : null;
 
-            if (NetLevelLoader.Instance)
-                NetLevelLoader.Instance.ServerLoadLevel(target);
+            // 2) Muuten pyydä NetLevelLoaderilta sen oletustaso
+            if (string.IsNullOrEmpty(desired) && NetLevelLoader.Instance)
+                desired = NetLevelLoader.Instance.ResolveDefaultLevelName();
+
+            if (!string.IsNullOrEmpty(desired) && NetLevelLoader.Instance)
+            {
+                NetLevelLoader.Instance.ServerLoadLevel(desired);
+            }
             else
-                Debug.LogError("[Connect] NetLevelLoader.Instance puuttuu Core-scenestä!");
+            {
+                Debug.LogError("[Connects] Ei pystytty ratkaisemaan ladattavaa leveliä: puuttuuko LevelLoader.DefaultLevel tai NetLevelLoader?");
+            }
         }
     }
-
     public void Client()
     {
 
@@ -179,8 +184,8 @@ public class Connect : MonoBehaviour
             return;
         }
 
-        // gameNetworkManager.relayJoinCode = code;
-        // gameNetworkManager.JoinRelayServer();
+        gameNetworkManager.relayJoinCode = code;
+        gameNetworkManager.JoinRelayServer();
         StartCoroutine(Co_CleanThenJoin(code));
     }
 
@@ -239,7 +244,6 @@ public class Connect : MonoBehaviour
 
         if (NetworkServer.active) yield break;
 
-
         gameNetworkManager.StartRelayHost(2, null);
 
         // 1) Odota kunnes OIKEA relay-join-koodi on valmis
@@ -248,11 +252,6 @@ public class Connect : MonoBehaviour
 
         // 2) Odota kunnes serveri on aktiivinen
         yield return new WaitUntil(() => NetworkServer.active);
-
-        // 2b) (Tarvitsetko varmasti scene-reloadin? Jos et, KOMMENTOI tämä pois.)
-       // NetworkManager.singleton.ServerChangeScene(
-        //    UnityEngine.SceneManagement.SceneManager.GetActiveScene().name
-       // );
 
         // 3) Pidä koodi näkyvissä kunnes 2. pelaaja on mukana (host + 1 client)
         yield return new WaitUntil(() =>

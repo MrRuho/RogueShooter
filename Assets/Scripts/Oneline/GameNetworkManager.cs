@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using Mirror;
 using UnityEngine;
 using Unity.Services.Relay.Models;
-using System.Collections;
 using UnityEngine.SceneManagement;
 
 namespace Utp
@@ -64,6 +63,7 @@ namespace Utp
 		public override void OnStartServer()
 		{
 			base.OnStartServer();
+			LevelLoader.LevelReady += OnLevelReady_Server;
 
 			SpawnUnitsCoordinator.Instance.SetEnemiesSpawned(false);
 
@@ -73,8 +73,14 @@ namespace Utp
 			}
 		}
 
-		void OnEnable()  { LevelLoader.LevelReady += OnLevelReady_Server; }
-		void OnDisable() { LevelLoader.LevelReady -= OnLevelReady_Server; }
+		public override void OnStopServer()
+		{
+			LevelLoader.LevelReady -= OnLevelReady_Server;
+			base.OnStopServer();
+		}
+
+	//	void OnEnable()  { LevelLoader.LevelReady += OnLevelReady_Server; }
+	//	void OnDisable() { LevelLoader.LevelReady -= OnLevelReady_Server; }
 
 		[ServerCallback]
 		public override void OnDestroy()

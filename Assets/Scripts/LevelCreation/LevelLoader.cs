@@ -24,18 +24,59 @@ public class LevelLoader : MonoBehaviour
     public static event Action<Scene> LevelReady;
     public static void RaiseLevelReady(Scene scene) => LevelReady?.Invoke(scene);
 
+    [SerializeField] private LevelCatalog catalog;
+    [SerializeField] private int currentIndex;
+
+#if UNITY_EDITOR
+    private const string EDITOR_REQ_KEY = "RS_EditorRequestedLevel";
+#endif
+
     private void Awake()
     {
 
         if (Instance != null && Instance != this) { Destroy(gameObject); return; }
         Instance = this;
-        if (string.IsNullOrEmpty(CurrentLevel)) CurrentLevel = defaultLevel;
+
+#if UNITY_EDITOR
+
+        // 1) Lue editorin one-shot-pyyntö
+        string req = PlayerPrefs.GetString(EDITOR_REQ_KEY, string.Empty);
+        if (!string.IsNullOrEmpty(req))
+        {
+            // 2) Siivoa avain heti (one-shot)
+            PlayerPrefs.DeleteKey(EDITOR_REQ_KEY);
+
+            // 3) Varmista että kenttä on ladattavissa (Build Settingsissä)
+            if (Application.CanStreamedLevelBeLoaded(req))
+            {
+                // 4) Ohjaa sekä CurrentLevel että DefaultLevel tähän
+                CurrentLevel = req;
+                defaultLevel = req;
+
+                Debug.Log($"[LevelLoader] Editor one-shot → Current & Default = '{req}'");
+            }
+            else
+            {
+                Debug.LogWarning($"[LevelLoader] Pyydetty '{req}', mutta sitä ei löydy Build Settingsistä.");
+            }
+        }
+#endif
+       // if (string.IsNullOrEmpty(CurrentLevel)) CurrentLevel = defaultLevel;
     }
 
-    private void StartCo(IEnumerator r)
+    public void LoadByIndex(int index)
     {
-        if (isActiveAndEnabled) StartCoroutine(r);
-        else GlobalCoroutineHost.StartRoutine(r);
+        StartCoroutine(Co_LoadLocal(index));
+    }
+    
+    public void Reload() => LoadByIndex(currentIndex);
+
+    private IEnumerator Co_LoadLocal(int index)
+    {
+        // Unload edellinen, load uusi, set active...
+        // Sama pattern kuin NetLevelLoaderissa, mutta ilman RPC:itä
+        currentIndex = index;
+        yield break;
     }
 
     public void StartLocalReload(string levelName = null)
