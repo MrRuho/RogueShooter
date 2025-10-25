@@ -22,6 +22,7 @@ public class ResetService : NetworkBehaviour
 
             NetTurnManager.Instance.ResetTurnState();
             TurnSystem.Instance.ResetTurnId();
+            TurnSystem.Instance.ResetTurnNumber();
 
             RpcPreResetHud(); // siistii kaikkien HUDit
             NetLevelLoader.Instance.ServerReloadCurrentLevel();

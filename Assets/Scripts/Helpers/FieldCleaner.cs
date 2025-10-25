@@ -5,8 +5,10 @@ using Utp;
 
 public class FieldCleaner : MonoBehaviour
 {
+
     public static void ClearAll()
     {
+
         // Varmista: älä yritä siivota puhtaalta clientiltä verkossa
         if (GameNetworkManager.Instance != null &&
             GameNetworkManager.Instance.GetNetWorkClientConnected() &&
@@ -21,15 +23,13 @@ public class FieldCleaner : MonoBehaviour
                           .Where(u => u != null && u.gameObject.scene.IsValid());
         var enemies = Resources.FindObjectsOfTypeAll<EnemyUnit>()
                           .Where(u => u != null && u.gameObject.scene.IsValid());
-
+        
         foreach (var u in friendlies) Despawn(u.gameObject);
         foreach (var e in enemies) Despawn(e.gameObject);
 
-        // Tyhjennä UnitManagerin listat (suojattu null-checkillä)
-        UnitManager.Instance?.ClearAllUnitLists();
+        UnitManager.Instance.ClearAllUnitLists();
+        LevelGrid.Instance.ClearAllOccupancy();
 
-        // Nollaa myös ruudukon miehitys – sceneen jääneet objektit eivät jää kummittelemaan
-        LevelGrid.Instance?.ClearAllOccupancy();
     }
 
     static void Despawn(GameObject go)
@@ -43,11 +43,15 @@ public class FieldCleaner : MonoBehaviour
         {
             Destroy(go);
         }
+
     }
-    
+
     public static void ReloadMap()
     {
+
         Debug.Log("[FieldCleaner] Reloading map.");
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+
     }
+
 }

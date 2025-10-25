@@ -3,10 +3,12 @@ using UnityEngine;
 
 public sealed class GlobalCoroutineHost : MonoBehaviour
 {
+    /*
     private static GlobalCoroutineHost _instance;
 
     public static Coroutine StartRoutine(IEnumerator routine)
     {
+        
         if (_instance == null)
         {
             var go = new GameObject("[GlobalCoroutineHost]");
@@ -14,5 +16,7 @@ public sealed class GlobalCoroutineHost : MonoBehaviour
             _instance = go.AddComponent<GlobalCoroutineHost>();
         }
         return _instance.StartCoroutine(routine);
+        
     }
+    */
 }

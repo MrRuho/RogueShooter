@@ -218,7 +218,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LevelLoader
   coreSceneName: Core
-  defaultLevel: Kekki
+  defaultLevel: Level 0
   catalog: {fileID: 11400000, guid: 693a375c89ab7d0498025c205a0695f9, type: 2}
   currentIndex: 0
 --- !u!1 &2070847046

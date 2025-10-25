@@ -124,6 +124,16 @@ public class TurnSystem : MonoBehaviour
         return turnNumber;
     }
 
+    public void ResetTurnNumber()
+    {
+        turnNumber = 1;
+    }
+
+     public void ResetTurnId()
+    {
+        TurnId = 0;
+    }
+
     public bool IsPlayerTurn()
     {
         return isPlayerTurn;
@@ -164,8 +174,4 @@ public class TurnSystem : MonoBehaviour
         // SetHudFromNetwork(turnNumber, playersPhase);
     }
 
-    public void ResetTurnId()
-    {
-        TurnId = 0;
-    }
 }

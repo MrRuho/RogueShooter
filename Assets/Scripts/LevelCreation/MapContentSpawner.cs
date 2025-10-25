@@ -1,16 +1,11 @@
 using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-// using Mirror;
 
 public class MapContentSpawner : MonoBehaviour // ⟵ EI NetworkBehaviour
 {
-   // private bool _serverDone;
-
-  //  [ServerCallback]
     private void Start()
     {
-     //   if (!NetworkServer.active) return;   // varmistus
         if (!NetMode.IsServer) return;   // varmistus
         StartCoroutine(SpawnThenBake_ServerOnly());
     }
@@ -41,11 +36,6 @@ public class MapContentSpawner : MonoBehaviour // ⟵ EI NetworkBehaviour
         // Server bake
         EdgeBaker.Instance.BakeAllEdges();
 
-        // Lähetä bake-pyyntö asiakkaille NetworkSyncAgentin kautta
-        var agent = FindFirstObjectByType<NetworkSyncAgent>(FindObjectsInactive.Include);
-        if (agent != null) agent.ServerBroadcastBakeEdges();
-
-       // _serverDone = true;
     }
 }
 

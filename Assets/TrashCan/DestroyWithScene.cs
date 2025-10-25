@@ -3,6 +3,7 @@ using UnityEngine.SceneManagement;
 
 public sealed class DestroyWithScene : MonoBehaviour
 {
+    /*
     Scene boundScene;
     public void BindToSceneOf(GameObject go)
     {
@@ -15,4 +16,5 @@ public sealed class DestroyWithScene : MonoBehaviour
     {
         if (s == boundScene) Destroy(gameObject);  // siivoaa varmasti
     }
+    */
 }

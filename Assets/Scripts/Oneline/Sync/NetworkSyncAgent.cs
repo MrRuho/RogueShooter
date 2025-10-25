@@ -319,37 +319,5 @@ public class NetworkSyncAgent : NetworkBehaviour
         var cs = ni.GetComponent<CoverSkill>(); // tai GetComponentInChildren<CoverSkill>()
         if (cs != null) cs.ServerApplyCoverBonus();
     }
-
-
-    static bool _clientBakedThisScene;
-
-    [Server]
-    public void ServerBroadcastBakeEdges()
-    {
-        RpcBakeEdgesGuarded();
-    }
-
-    [ClientRpc]
-    void RpcBakeEdgesGuarded()
-    {
-        if (isServer) return; // host ei tarvitse tätä (server bake tehty)
-        GlobalCoroutineHost.StartRoutine(Co_BakeGuarded());
-    }
-
-    static IEnumerator Co_BakeGuarded()
-    {
-        if (_clientBakedThisScene) yield break;
-
-        yield return new WaitUntil(() =>
-            EdgeBaker.Instance != null &&
-            LevelGrid.Instance != null &&
-            PathFinding.Instance != null
-        );
-        yield return null;
-
-        EdgeBaker.Instance.BakeAllEdges();
-        _clientBakedThisScene = true;
-    }
-
-
+    
 }

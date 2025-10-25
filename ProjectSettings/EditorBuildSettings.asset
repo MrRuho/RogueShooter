@@ -12,8 +12,11 @@ EditorBuildSettings:
     path: Assets/Scenes/Level 0.unity
     guid: 4bad6c6886012754481b36d7baafba37
   - enabled: 1
-    path: Assets/Scenes/Kekki.unity
+    path: Assets/Kekki/Kekki.unity
     guid: f280cee11201fee4ba27481346ec10d3
+  - enabled: 0
+    path: Assets/Scenes/Kekkonen.unity
+    guid: 0847b6cf912fdfd4898b87a6e106db15
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   m_UseUCBPForAssetBundles: 0

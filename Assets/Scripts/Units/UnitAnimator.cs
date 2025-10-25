@@ -34,7 +34,6 @@ public class UnitAnimator : NetworkBehaviour
     {
         if (!animator) animator = GetComponent<Animator>();
         if (!netAnim)  netAnim  = GetComponent<NetworkAnimator>();
-       // if (!netId)    netId    = GetComponent<NetworkIdentity>();
 
         useNetwork = NetMode.IsOnline
              && netAnim != null

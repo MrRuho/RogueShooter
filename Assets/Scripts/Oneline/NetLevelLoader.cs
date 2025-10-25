@@ -296,7 +296,7 @@ public class NetLevelLoader : NetworkBehaviour
     private void StartCo(IEnumerator r)
     {
         if (isActiveAndEnabled) StartCoroutine(r);
-        else GlobalCoroutineHost.StartRoutine(r);
+        //else GlobalCoroutineHost.StartRoutine(r);
     }
 
     [Server]

@@ -8,11 +8,13 @@ using UnityEngine.SceneManagement;
 /// </summary>
 public class UiResetOnLevelReady : MonoBehaviour
 {
+    /*
     void OnEnable()  => SceneManager.sceneLoaded += OnSceneLoaded;
     void OnDisable() => SceneManager.sceneLoaded -= OnSceneLoaded;
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
+        Debug.Log("[UIResetOnLevelReady] Starting UI reset");
         // Odota 1 frame, että uudet instanssit ehtivät Start():iin
         StartCoroutine(Co_ResetHudNextFrame());
     }
@@ -20,7 +22,7 @@ public class UiResetOnLevelReady : MonoBehaviour
     private IEnumerator Co_ResetHudNextFrame()
     {
         yield return null;
-
+        Debug.Log("[UIResetOnLevelReady] Resetting HUD and UI elements");
         // 1) HUD (nappi pois / READY pois)
         var hud = FindFirstObjectByType<TurnSystemUI>(FindObjectsInactive.Include);
         if (hud != null)
@@ -41,5 +43,7 @@ public class UiResetOnLevelReady : MonoBehaviour
         var worldUIs = FindObjectsByType<UnitWorldUI>(FindObjectsSortMode.None);
         foreach (var ui in worldUIs)
             ui.SetVisible(false);
+
     }
+    */
 }
