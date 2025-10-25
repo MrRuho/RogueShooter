@@ -14,9 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CombatRanges
   useTiles: 1
   meleeMaxTiles: 1
-  closeMaxTiles: 4
-  mediumMaxTiles: 8
-  longMaxTiles: 12
+  closeMaxTiles: 5
+  mediumMaxTiles: 10
+  longMaxTiles: 20
   meleeMaxWU: 1.2
   closeMaxWU: 4
   mediumMaxWU: 9

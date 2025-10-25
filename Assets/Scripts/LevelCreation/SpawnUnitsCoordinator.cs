@@ -1,10 +1,20 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using Mirror;
+using System.Collections.Generic;
+using System.Linq;
 
 public class SpawnUnitsCoordinator : MonoBehaviour
 {
     public static SpawnUnitsCoordinator Instance { get; private set; }
+
+    // ...luokan sisälle:
+    [Header("Use placeholders instead of arrays")]
+    public bool usePlaceholders = true;
+
+    [Tooltip("Jos true, koordinaattori disabloi/tuhouttaa käytetyt placeholderit serverillä heti spawnin jälkeen.")]
+    public bool consumePlaceholdersOnServer = true;
+
     private bool enemiesSpawned;
 
     [Header("Co-op squad prefabs")]
@@ -116,71 +126,6 @@ public class SpawnUnitsCoordinator : MonoBehaviour
         return isHost ? unitHostPrefab : unitClientPrefab;
     }
 
-    public Vector3[] GetSpawnPositionsForPlayer(bool isHost)
-    {
-        if (hostSpawnPositions.Length == 0 || clientSpawnPositions.Length == 0)
-        {
-            Debug.LogError("Spawn position arrays not set in SpawnUnitsCoordinator!");
-            return new Vector3[0];
-        }
-
-        return isHost ? hostSpawnPositions : clientSpawnPositions;
-    }
-
-    public GameObject[] SpawnEnemies()
-    {
-        var spawnedEnemies = new GameObject[enemySpawnPositions.Length];
-        Scene levelScene = gameObject.scene;
-        
-        Debug.Log($"[SpawnUnitsCoordinator] Spawning {enemySpawnPositions.Length} enemies to scene '{levelScene.name}'");
-
-        for (int i = 0; i < enemySpawnPositions.Length; i++)
-        {
-            // Käytä SpawnRouteria verkkopelaamisessa
-            if (NetworkServer.active)
-            {
-                var enemy = SpawnRouter.SpawnNetworkServer(
-                    prefab: GetEnemyPrefab(),
-                    pos: enemySpawnPositions[i],
-                    rot: Quaternion.identity,
-                    source: transform,
-                    sceneName: levelScene.name,
-                    parent: null,
-                    owner: null
-                );
-                spawnedEnemies[i] = enemy;
-                Debug.Log($"[SpawnUnitsCoordinator] Network spawned enemy '{enemy.name}' in scene '{enemy.scene.name}'");
-            }
-            else
-            {
-                // Offline-spawni
-                var enemy = SpawnRouter.SpawnLocal(
-                    prefab: GetEnemyPrefab(),
-                    pos: enemySpawnPositions[i],
-                    rot: Quaternion.identity,
-                    source: transform,
-                    sceneName: levelScene.name
-                );
-                spawnedEnemies[i] = enemy;
-                Debug.Log($"[SpawnUnitsCoordinator] Local spawned enemy '{enemy.name}' in scene '{enemy.scene.name}'");
-            }
-        }
-
-        SetEnemiesSpawned(true);
-        return spawnedEnemies;
-    }
-
-    public Vector3[] GetEnemySpawnPositions()
-    {
-        if (enemySpawnPositions.Length == 0)
-        {
-            Debug.LogError("Enemy spawn position array not set in SpawnUnitsCoordinator!");
-            return new Vector3[0];
-        }
-
-        return enemySpawnPositions;
-    }
-
     public void SetEnemiesSpawned(bool value)
     {
         enemiesSpawned = value;
@@ -201,47 +146,154 @@ public class SpawnUnitsCoordinator : MonoBehaviour
         return enemyPrefab;
     }
 
-    public void SpwanSinglePlayerUnits()
+    // Get Spawn positions from placeholders in the scene
+
+
+    private Vector3[] GetSpawnPositionsFromPlaceholders(UnitSpawnPlaceholder.Side side)
     {
-        SpawnPlayer1UnitsOffline();
-        SpawnEnemyUnitsOffline();
+        var scene = gameObject.scene;
+        var all = FindObjectsByType<UnitSpawnPlaceholder>(FindObjectsSortMode.None);
+        var mine = new List<UnitSpawnPlaceholder>(all.Length);
+
+        foreach (var ph in all)
+        {
+            if (!ph) continue;
+            if (ph.gameObject.scene != scene) continue; // vain tämän Level-skenen placeholderit
+            if (ph.side != side) continue;
+            mine.Add(ph);
+        }
+
+        if (mine.Count == 0) return System.Array.Empty<Vector3>();
+
+        // deterministinen järjestys order-kentän mukaan, sitten nimi/instanceID fallback
+        var ordered = mine.OrderBy(p => p.order).ThenBy(p => p.name).ToList();
+
+        var result = new Vector3[ordered.Count];
+        for (int i = 0; i < ordered.Count; i++)
+            result[i] = ordered[i].GetSpawnWorldPosition();
+
+        // serverillä siivotaan placeholderit jos niin halutaan
+        if (consumePlaceholdersOnServer && Mirror.NetworkServer.active)
+            foreach (var ph in ordered) ph.Consume();
+
+        return result;
     }
 
-    private void SpawnPlayer1UnitsOffline()
+    public Vector3[] GetEnemySpawnPositions()
+    {
+        Debug.Log("[SpawnUnitsCoordinator] GetEnemySpawnPositions() called.");
+        if (usePlaceholders)
+        {
+            var pos = GetSpawnPositionsFromPlaceholders(UnitSpawnPlaceholder.Side.Enemy);
+            if (pos.Length > 0) return pos;
+            Debug.LogWarning("[SpawnUnitsCoordinator] No enemy placeholders found, falling back to arrays.");
+        }
+
+        if (enemySpawnPositions.Length == 0)
+        {
+            Debug.LogError("Enemy spawn position array not set in SpawnUnitsCoordinator!");
+            return new Vector3[0];
+        }
+        return enemySpawnPositions;
+    }
+
+    public Vector3[] GetSpawnPositionsForPlayer(bool isHost)
+    {
+        Debug.Log("[SpawnUnitsCoordinator] GetSpawnPositionsForPlayer() called.");
+        if (usePlaceholders)
+        {
+            var side = isHost ? UnitSpawnPlaceholder.Side.Host : UnitSpawnPlaceholder.Side.Client;
+            var pos = GetSpawnPositionsFromPlaceholders(side);
+            if (pos.Length > 0) return pos;
+            Debug.LogWarning("[SpawnUnitsCoordinator] No placeholders found, falling back to arrays.");
+        }
+
+        if (hostSpawnPositions.Length == 0 || clientSpawnPositions.Length == 0)
+        {
+            Debug.LogError("Spawn position arrays not set in SpawnUnitsCoordinator!");
+            return new Vector3[0];
+        }
+        return isHost ? hostSpawnPositions : clientSpawnPositions;
+    }
+
+    public void SpawnSinglePlayerUnits()
     {
         Scene targetScene = gameObject.scene;
-        
-        Debug.Log($"[SpawnUnitsCoordinator] Spawning offline player units to '{targetScene.name}'");
-        
-        for (int i = 0; i < Mathf.Min(6, hostSpawnPositions.Length); i++)
+
+        // PLAYER (Host) – hae paikat placeholdereista (tai fallback taulukkoon)
+        var playerSpawns = GetSpawnPositionsForPlayer(true);
+        Debug.Log($"[SpawnUnitsCoordinator] Offline spawn PLAYER units: {playerSpawns.Length} pcs → scene '{targetScene.name}'");
+        for (int i = 0; i < playerSpawns.Length; i++)
         {
             var unit = SpawnRouter.SpawnLocal(
                 prefab: unitHostPrefab,
-                pos: hostSpawnPositions[i],
+                pos: playerSpawns[i],
                 rot: Quaternion.identity,
                 source: transform,
                 sceneName: targetScene.name
             );
-            Debug.Log($"[SpawnUnitsCoordinator] Offline player unit spawned in '{unit.scene.name}'");
+            Debug.Log($"[SpawnUnitsCoordinator] Offline PLAYER unit spawned '{unit.name}' at {playerSpawns[i]} in '{unit.scene.name}'");
         }
-    }
 
-    private void SpawnEnemyUnitsOffline()
-    {
-        Scene targetScene = gameObject.scene;
-
-        Debug.Log($"[SpawnUnitsCoordinator] Spawning offline enemy units to '{targetScene.name}'");
-
-        for (int i = 0; i < Mathf.Min(2, enemySpawnPositions.Length); i++)
+        // ENEMY – samoin placeholdereista (tai fallback)
+        var enemySpawns = GetEnemySpawnPositions();
+        Debug.Log($"[SpawnUnitsCoordinator] Offline spawn ENEMY units: {enemySpawns.Length} pcs → scene '{targetScene.name}'");
+        for (int i = 0; i < enemySpawns.Length; i++)
         {
             var enemy = SpawnRouter.SpawnLocal(
-                prefab: enemyPrefab,
-                pos: enemySpawnPositions[i],
+                prefab: GetEnemyPrefab(),
+                pos: enemySpawns[i],
                 rot: Quaternion.identity,
                 source: transform,
                 sceneName: targetScene.name
             );
-            Debug.Log($"[SpawnUnitsCoordinator] Offline enemy spawned in '{enemy.scene.name}'");
+            Debug.Log($"[SpawnUnitsCoordinator] Offline ENEMY unit spawned '{enemy.name}' at {enemySpawns[i]} in '{enemy.scene.name}'");
         }
+
+        SetEnemiesSpawned(true);
     }
+    
+    public GameObject[] SpawnEnemies()
+    {
+        // 1) Hae paikat (placeholderit jos käytössä, muuten fallback-taulukko)
+        var enemySpawns = GetEnemySpawnPositions();
+        Scene targetScene = gameObject.scene;
+
+        var spawnedEnemies = new GameObject[enemySpawns.Length];
+        Debug.Log($"[SpawnUnitsCoordinator] {(NetworkServer.active ? "Network" : "Local")} spawn ENEMY units: {enemySpawns.Length} pcs → scene '{targetScene.name}'");
+
+        for (int i = 0; i < enemySpawns.Length; i++)
+        {
+            if (NetworkServer.active)
+            {
+                var go = SpawnRouter.SpawnNetworkServer(
+                    prefab: GetEnemyPrefab(),
+                    pos: enemySpawns[i],
+                    rot: Quaternion.identity,
+                    source: transform,
+                    sceneName: targetScene.name,
+                    parent: null,
+                    owner: null
+                );
+                spawnedEnemies[i] = go;
+                Debug.Log($"[SpawnUnitsCoordinator] Network ENEMY spawned '{go.name}' at {enemySpawns[i]} in '{go.scene.name}'");
+            }
+            else
+            {
+                var go = SpawnRouter.SpawnLocal(
+                    prefab: GetEnemyPrefab(),
+                    pos: enemySpawns[i],
+                    rot: Quaternion.identity,
+                    source: transform,
+                    sceneName: targetScene.name
+                );
+                spawnedEnemies[i] = go;
+                Debug.Log($"[SpawnUnitsCoordinator] Local ENEMY spawned '{go.name}' at {enemySpawns[i]} in '{go.scene.name}'");
+            }
+        }
+
+        SetEnemiesSpawned(true);
+        return spawnedEnemies;
+    }
+
 }

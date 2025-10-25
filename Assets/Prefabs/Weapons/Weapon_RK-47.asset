@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3a2416bd990fc1e4b8516fff1b10d615, type: 3}
   m_Name: Weapon_RK-47
   m_EditorClassIdentifier: Assembly-CSharp::WeaponDefinition
-  maxShootRange: 15
+  maxShootRange: 20
   NoCoverDamageBonus: 30
   baseDamage: 50
   critBonusDamage: 20
@@ -31,7 +31,7 @@ MonoBehaviour:
     onMiss_Miss: 50
     onMiss_CritMiss: 50
   close:
-    baseHitChance: 80
+    baseHitChance: 70
     onHit_Close: 25
     onHit_Graze: 25
     onHit_Hit: 50
@@ -55,7 +55,7 @@ MonoBehaviour:
     onMiss_Miss: 80
     onMiss_CritMiss: 20
   extreme:
-    baseHitChance: 10
+    baseHitChance: 0
     onHit_Close: 25
     onHit_Graze: 25
     onHit_Hit: 50

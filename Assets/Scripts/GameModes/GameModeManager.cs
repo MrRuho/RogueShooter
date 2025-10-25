@@ -75,7 +75,7 @@ public class GameModeManager : MonoBehaviour
         if (SelectedMode == GameMode.SinglePlayer)
         {
             // Spawn offline -unitit siihen sceneen, missä koordinaattori on
-            SpawnUnitsCoordinator.Instance.SpwanSinglePlayerUnits();
+            SpawnUnitsCoordinator.Instance.SpawnSinglePlayerUnits();
             LevelGrid.Instance.RebuildOccupancyFromScene();
         }
     }

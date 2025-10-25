@@ -20,12 +20,21 @@ public static class ShootingResolver
         }
     }
 
+    /*
     // Euclidinen etäisyys ruutuina (vastaa aiempaa world-distancea, mutta gridissä)
     private static float TileDistance(GridPosition a, GridPosition b)
     {
         int dx = a.x - b.x;
         int dz = a.z - b.z;
         return Mathf.Sqrt(dx * dx + dz * dz);
+    }
+    */
+    private static float TileDistance(GridPosition a, GridPosition b) 
+    {
+    int dx = Mathf.Abs(a.x - b.x);
+    int dz = Mathf.Abs(a.z - b.z);
+    int cost = SircleCalculator.Sircle(dx, dz);
+    return cost / 10f; // muunna takaisin "ruuduiksi"
     }
 
     // Uusi band-määritys ruuduilla

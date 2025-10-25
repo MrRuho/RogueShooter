@@ -43,7 +43,7 @@ public class PostLevelBootstrap : MonoBehaviour
         if (!NetworkClient.active && !NetworkServer.active)
         {
             // Kutsu suoraan omaa SP-metodiasi, esim:
-            spawner.SpwanSinglePlayerUnits();
+            spawner.SpawnSinglePlayerUnits();
             LevelGrid.Instance?.RebuildOccupancyFromScene();
             TurnSystem.Instance?.ResetAndBegin();
         }
