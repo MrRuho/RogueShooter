@@ -124,16 +124,14 @@ public class NetTurnManager : NetworkBehaviour
             ServerUpdateRequiredCount(playersNow);
         }
 
+        if (resetTurnNumber)
+            turnNumber = 1;
+
         if (GameModeManager.SelectedMode == GameMode.Versus && PvPTurnCoordinator.Instance)
         {
             PvPTurnCoordinator.Instance.ServerGiveFirstTurnToHost();
         }
 
-        if (resetTurnNumber)
-            turnNumber = 1;
-
-        // Aloita aina Players-vaiheesta ja nollaa ready-tila
-        ResetTurnState(); // kutsuu SetPlayerStartState() ja tyhjentää ended-listat
-        
+        ResetTurnState();     
     }
 }

@@ -91,6 +91,13 @@ public class PvPTurnCoordinator : NetworkBehaviour
     [Server]
     public void ServerGiveFirstTurnToHost()
     {
+        // heti kun ensimmäinen vuoro on annettu hostille:
+        if (TurnSystem.Instance != null)
+        {
+            TurnSystem.Instance.ResetTurnId();                // siisti lähtö (0)
+            TurnSystem.Instance.ResetAndBegin(false, true);   // älä koske turnNumberiin; aloita Players-vaiheesta
+        }
+        
         var players = GetAllPlayers().ToList();
         var host = players.FirstOrDefault(p => p.connectionToClient != null && p.connectionToClient.connectionId == 0);
         if (host == null) return;
