@@ -176,10 +176,21 @@ public class GridSystemVisual : MonoBehaviour
             case TurnTowardsAction turnTowardsAction:
                 gridVisualType = GridVisualType.Blue;
                 break;
+
             case ShootAction shootAction:
-                gridVisualType = GridVisualType.Red;
-                ShowGridPositionRange(selectedUnit.GetGridPosition(), shootAction.GetMaxShootDistance(), GridVisualType.RedSoft);
+            {
+                gridVisualType = GridSystemVisual.GridVisualType.Red;
+
+                var origin = selectedUnit.GetGridPosition();
+                int range  = shootAction.GetMaxShootDistance();
+
+                // UUSI: näytä vain ne ruudut, joihin on LoS ilman korkeita blokkeja tai väli-uniteja
+                var visible = VisibilityService.ComputeVisibleTiles(origin, range, occludeByUnits: true);
+
+                // Piirrä “pehmeä kehä” vain näkyvistä ruuduista
+                ShowGridPositionList(new List<GridPosition>(visible), GridVisualType.RedSoft);
                 break;
+            }
             case GranadeAction granadeAction:
                 gridVisualType = GridVisualType.Yellow;
                 break;

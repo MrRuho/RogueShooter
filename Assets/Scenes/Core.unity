@@ -5959,8 +5959,24 @@ PrefabInstance:
       value: 768
       objectReference: {fileID: 0}
     - target: {fileID: 3109579176460009631, guid: 40f949899514dff4eaec305697fb8209, type: 3}
+      propertyPath: tallWallThresholdY
+      value: 1.9
+      objectReference: {fileID: 0}
+    - target: {fileID: 3109579176460009631, guid: 40f949899514dff4eaec305697fb8209, type: 3}
+      propertyPath: obstaclesMask.m_Bits
+      value: 512
+      objectReference: {fileID: 0}
+    - target: {fileID: 3109579176460009631, guid: 40f949899514dff4eaec305697fb8209, type: 3}
+      propertyPath: orientationAnisotropy
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3109579176460009631, guid: 40f949899514dff4eaec305697fb8209, type: 3}
       propertyPath: edgeBlockerMask.m_Bits
       value: 768
+      objectReference: {fileID: 0}
+    - target: {fileID: 3109579176460009631, guid: 40f949899514dff4eaec305697fb8209, type: 3}
+      propertyPath: edgeProbeThicknessFactor
+      value: 0.08
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

@@ -59,6 +59,13 @@ public class EdgeBaker : MonoBehaviour
 {
     public static EdgeBaker Instance { get; private set; }
 
+    // ==== TallWall (kapeat korkeat seinät) - asetukset ====
+    [SerializeField] private LayerMask obstaclesMask;      // aseta Inspectorissa "Obstacles"
+    [SerializeField] private float tallWallThresholdY = 1.8f;  // yli tämän = blokkaa LoS
+    [SerializeField] private float edgeProbeHeight = 6f;       // kaistan korkeus
+    /// ==== 
+
+
     [Header("References")]
     [SerializeField] private PathFinding pathfinding;
     [SerializeField] private LevelGrid levelGrid;
@@ -102,7 +109,7 @@ public class EdgeBaker : MonoBehaviour
     private IEnumerator Start()
     {
         yield return new WaitUntil(() => LevelGrid.Instance != null && PathFinding.Instance != null);
-        
+
         if (pathfinding == null) pathfinding = FindFirstObjectByType<PathFinding>();
         if (levelGrid == null) levelGrid = LevelGrid.Instance;
 
@@ -153,6 +160,9 @@ public class EdgeBaker : MonoBehaviour
 
                     BakeEdgesForCell(gp);
                 }
+
+        // 3) Update TallWall registry for LoS checks
+        BakeTallWalls();
     }
 
     /// <summary>
@@ -233,8 +243,8 @@ public class EdgeBaker : MonoBehaviour
         WallCovers(north, south, east, west, sellSize, node, gridPosition);
     }
 
-    private void PathBlocker(Vector3 north, Vector3 south, Vector3 east, Vector3 west, float sellSize, PathNode node, GridPosition gridPosition) 
-    { 
+    private void PathBlocker(Vector3 north, Vector3 south, Vector3 east, Vector3 west, float sellSize, PathNode node, GridPosition gridPosition)
+    {
         // Define half-extents for the thin scanning strips:
         // - North/South strips are long along Z, thin along X.
         // - East/West strips are long along X, thin along Z.
@@ -426,6 +436,104 @@ public class EdgeBaker : MonoBehaviour
         if (gridSystem != null) return gridSystem.IsValidGridPosition(gp);
 
         return gp.x >= 0 && gp.z >= 0 && gp.x < Width && gp.z < Height && gp.floor >= 0 && gp.floor < FloorAmount;
+    }
+
+    public void BakeTallWalls()
+    {
+        Debug.Log("[EdgeBaker] Baking TallWall data for LoS checks...");
+        var lg = LevelGrid.Instance;
+        if (lg == null) return;
+
+        EdgeOcclusion.Clear();
+
+        int w = lg.GetWidth();
+        int h = lg.GetHeight();
+        int floors = lg.GetFloorAmount();
+
+        float cell = lg.GetCellSize();
+        float halfCell = cell * 0.5f;
+
+        float castDistance = 0.3f;
+        float boxThickness = cell * 0.8f;
+        float boxHeight = edgeProbeHeight;
+        float boxDepth = 0.1f;
+
+        var boxExtN = new UnityEngine.Vector3(boxThickness * 0.5f, boxHeight * 0.5f, boxDepth * 0.5f);
+        var boxExtE = new UnityEngine.Vector3(boxDepth * 0.5f, boxHeight * 0.5f, boxThickness * 0.5f);
+
+        for (int f = 0; f < floors; f++)
+        {
+            for (int z = 0; z < h; z++)
+            {
+                for (int x = 0; x < w; x++)
+                {
+                    var gp = new GridPosition(x, z, f);
+                    var basePos = lg.GetWorldPosition(gp);
+                    float baseY = basePos.y;
+
+                    // N-reuna (z+ suuntaan)
+                    {
+                        var startPos = basePos + new UnityEngine.Vector3(0f, boxHeight * 0.5f, halfCell - castDistance * 0.5f);
+                        var direction = UnityEngine.Vector3.forward;
+
+                        UnityEngine.RaycastHit[] hits = UnityEngine.Physics.BoxCastAll(
+                            startPos, boxExtN, direction, UnityEngine.Quaternion.identity,
+                            castDistance, obstaclesMask, UnityEngine.QueryTriggerInteraction.Ignore);
+
+                        float maxTopAboveBase = 0f;
+                        foreach (var hit in hits)
+                        {
+                            float topRel = hit.collider.bounds.max.y - baseY;
+                            if (topRel > maxTopAboveBase) maxTopAboveBase = topRel;
+                        }
+
+                        if (maxTopAboveBase >= tallWallThresholdY)
+                        {
+                            EdgeOcclusion.AddSymmetric(gp, EdgeMask.N);
+                        }
+                    }
+
+                    // E-reuna (x+ suuntaan)
+                    {
+                        var startPos = basePos + new UnityEngine.Vector3(halfCell - castDistance * 0.5f, boxHeight * 0.5f, 0f);
+                        var direction = UnityEngine.Vector3.right;
+
+                        UnityEngine.RaycastHit[] hits = UnityEngine.Physics.BoxCastAll(
+                            startPos, boxExtE, direction, UnityEngine.Quaternion.identity,
+                            castDistance, obstaclesMask, UnityEngine.QueryTriggerInteraction.Ignore);
+
+                        float maxTopAboveBase = 0f;
+                        foreach (var hit in hits)
+                        {
+                            float topRel = hit.collider.bounds.max.y - baseY;
+                            if (topRel > maxTopAboveBase) maxTopAboveBase = topRel;
+                        }
+
+                        if (maxTopAboveBase >= tallWallThresholdY)
+                        {
+                            EdgeOcclusion.AddSymmetric(gp, EdgeMask.E);
+                        }
+                    }
+                }
+            }
+        }
+
+        int totalEdges = 0;
+        for (int f = 0; f < floors; f++)
+        {
+            for (int z = 0; z < h; z++)
+            {
+                for (int x = 0; x < w; x++)
+                {
+                    var gp = new GridPosition(x, z, f);
+                    if (EdgeOcclusion.HasTallWall(gp, EdgeMask.N)) totalEdges++;
+                    if (EdgeOcclusion.HasTallWall(gp, EdgeMask.E)) totalEdges++;
+                    if (EdgeOcclusion.HasTallWall(gp, EdgeMask.S)) totalEdges++;
+                    if (EdgeOcclusion.HasTallWall(gp, EdgeMask.W)) totalEdges++;
+                }
+            }
+        }
+        Debug.Log($"[EdgeBaker] BakeTallWalls complete. Found {totalEdges} tall wall edges. ObstaclesMask: {obstaclesMask.value}");
     }
 
 }

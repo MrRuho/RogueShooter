@@ -7,6 +7,7 @@ public class MapContentSpawner : MonoBehaviour // ⟵ EI NetworkBehaviour
     private void Start()
     {
         if (!NetMode.IsServer) return;   // varmistus
+        LoSBlockerRegistry.Reset();
         StartCoroutine(SpawnThenBake_ServerOnly());
     }
 

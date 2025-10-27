@@ -195,6 +195,8 @@ public class ShootAction : BaseAction
                     Vector3 unitWorldPosition = LevelGrid.Instance.GetWorldPosition(unitGridPosition);
                     Vector3 shootDir = (targetUnit.GetWorldPosition() - unitWorldPosition).normalized;
                     float unitShoulderHeight = 2.5f;
+
+                    // Check for obstacles between the shooting unit and the target unit
                     if (Physics.Raycast(
                         unitWorldPosition + Vector3.up * unitShoulderHeight,
                         shootDir,
@@ -203,7 +205,10 @@ public class ShootAction : BaseAction
                     {
                         //Target Unit is Blocked by an Obstacle
                         continue;
-                    }                    
+                    }
+
+                    // Check if there is a unit between the shooting unit and the target unit 
+
                     validGridPositionList.Add(testGridPosition);
                 }
             }

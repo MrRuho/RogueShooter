@@ -18,7 +18,7 @@ public class DestructibleObject : NetworkBehaviour
 
     private bool _walkabilitySet;
     void Awake()
-    {
+    {        
         isDestroyed = false;
     }
 
