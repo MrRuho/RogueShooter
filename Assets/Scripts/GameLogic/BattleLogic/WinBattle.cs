@@ -43,7 +43,7 @@ public class WinBattle : MonoBehaviour
 
     private void Unit_OnAnyUnitDead(object sender, System.EventArgs e)
     {
-        if (GameModeManager.SelectedMode == GameMode.Versus)
+        if (GameModeManager.SelectedMode != GameMode.SinglePlayer)
         {
             if (NetMode.IsOnline) EvaluateWin_Server(); // vain server päättää
             return;
@@ -61,7 +61,9 @@ public class WinBattle : MonoBehaviour
         var um = UnitManager.Instance; if (um == null) return;
 
         int friendCount = um.GetFriendlyUnitList().Count;
-        int enemyCount  = um.GetEnemyUnitList().Count;
+        int enemyCount = um.GetEnemyUnitList().Count;
+        
+        Debug.Log($"[WinBattle] EvaluateWin_Server: Friends={friendCount}, Enemies={enemyCount}");
 
         bool hostWins  = enemyCount  <= 0;
         bool hostLoses = friendCount <= 0;

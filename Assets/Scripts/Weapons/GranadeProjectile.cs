@@ -42,17 +42,26 @@ public class GrenadeProjectile : NetworkBehaviour
 
     public void Setup(Vector3 targetWorld)
     {
+
         TurnSystem.Instance.OnTurnChanged += TurnSystem_OnTurnChanged;
         var groundTarget = SnapToGround(targetWorld);
         // Aseta SyncVar, hook kutsutaan kaikilla (server + clientit)
         targetPosition = groundTarget;
         RecomputeDerived(); // varmistetaan serverillä heti
         _ready = true;
-        timer = 2;
+
+        if(GameModeManager.SelectedMode == GameMode.CoOp)
+        {
+            timer += 1; // pidennä kranaatin aikaa COOPissa yhdellä vuorolla
+        } else
+        {
+            timer = 2;
+        }
     }
 
     private void TurnSystem_OnTurnChanged(object sender, EventArgs e)
     {
+
         timer -= 1;
         if (timer <= 0 && !_explosionScheduled && !isExploded)
         {
@@ -155,7 +164,7 @@ public class GrenadeProjectile : NetworkBehaviour
     private void Exlosion()
     {
         isExploded = true;
-            if (NetworkServer.active || !NetworkClient.isConnected) // Server or offline
+            if (NetMode.ServerOrOff) // Server or offline. NetworkServer.active || !NetworkClient.isConnected
             {
                 Collider[] colliderArray = Physics.OverlapSphere(targetPosition, damageRadius);
 
@@ -182,7 +191,7 @@ public class GrenadeProjectile : NetworkBehaviour
             source: transform   // <- scene päätellään lähteestä
             );
 
-        if (!NetworkServer.active)
+        if (!NetMode.IsServer) // NetworkServer.active
         {
             Destroy(gameObject);
             return;

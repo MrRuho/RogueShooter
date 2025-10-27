@@ -1,15 +1,13 @@
 using System;
 using System.Collections.Generic;
-using Mirror;
+//using Mirror;
 using UnityEngine;
 
 public class TurnSystem : MonoBehaviour
 {
     public static TurnSystem Instance { get; private set; }
-    public Team CurrentTeam { get; private set; } = Team.Player;
-    public int TurnId { get; private set; } = 0;
-
-
+    public Team CurrentTeam { get; set; } = Team.Player;
+    public int TurnId { get; set; } = 0;
 
     public event Action<Team,int> OnTurnStarted;
     public event Action<Team,int> OnTurnEnded;
@@ -57,8 +55,9 @@ public class TurnSystem : MonoBehaviour
     {
         
         Debug.Log($"[TurnSystem] NextTurn(): end={CurrentTeam}, id={TurnId}");
-        if (GameModeManager.SelectedMode != GameMode.SinglePlayer && !NetworkServer.active)
+        if (GameModeManager.SelectedMode != GameMode.SinglePlayer && !NetMode.IsOnline) // !NetworkServer.active
         {
+
             Debug.LogWarning("Client yritti kääntää vuoroa lokaalisti, ignoroidaan.");
             return;
         }
@@ -84,13 +83,12 @@ public class TurnSystem : MonoBehaviour
             Debug.Log("Versus mode: Proceeding to the next turn.");
         }
     }
-
-    
+ 
     public void ForcePhase(bool isPlayerTurn, bool incrementTurnNumber)
     {
         if (incrementTurnNumber) turnNumber++;
         
-        if (NetworkServer.active && isPlayerTurn)
+        if (NetMode.IsOnline && isPlayerTurn) // NetworkServer.active
         {
             ConvertUnusedActionPointsToCoverPoints();
         }
@@ -175,4 +173,19 @@ public class TurnSystem : MonoBehaviour
         // SetHudFromNetwork(turnNumber, playersPhase);
     }
 
+    public void BeginPlayersTurn(bool incrementTurnId)
+    {
+        if (incrementTurnId) TurnId++;
+        CurrentTeam = Team.Player;
+        OnTurnStarted?.Invoke(CurrentTeam, TurnId);
+        ForcePhase(isPlayerTurn: true, incrementTurnNumber: false);
+    }
+
+    public void BeginEnemyTurn(bool incrementTurnId)
+    {
+        if (incrementTurnId) TurnId++;
+        CurrentTeam = Team.Enemy;
+        OnTurnStarted?.Invoke(CurrentTeam, TurnId);
+        ForcePhase(isPlayerTurn: false, incrementTurnNumber: false);
+    }
 }

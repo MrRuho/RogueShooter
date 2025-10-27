@@ -15,6 +15,8 @@ public class UnitManager : MonoBehaviour
     private List<Unit> friendlyUnitList;
     private List<Unit> enemyUnitList;
 
+    private readonly HashSet<Unit> unitSet = new();
+
     private void Awake()
     {
         if (Instance != null)
@@ -44,11 +46,20 @@ public class UnitManager : MonoBehaviour
     
 
     private void Unit_OnAnyUnitSpawned(object sender, EventArgs e)
-    {
+    {   
+        /*
         Unit unit = sender as Unit;
         unitList.Add(unit);
-        if (GameModeManager.SelectedMode != GameMode.Versus)
+        */
+        // 1) Estä duplikaatit
+        Unit unit = sender as Unit;
+        if (!unitSet.Add(unit)) return;
+        if (!unitList.Contains(unit)) unitList.Add(unit);
+
+        if (GameModeManager.SelectedMode == GameMode.SinglePlayer || GameModeManager.SelectedMode == GameMode.CoOp)
         {
+
+            /*
             if (unit.IsEnemy())
             {
                 enemyUnitList.Add(unit);
@@ -59,6 +70,19 @@ public class UnitManager : MonoBehaviour
                 friendlyUnitList.Add(unit);
                 unit.Team = Team.Player;
             }
+            */
+
+            if (unit.IsEnemy())
+            {
+                if (!enemyUnitList.Contains(unit)) enemyUnitList.Add(unit);
+                unit.Team = Team.Enemy;
+            }
+            else
+            {
+                if (!friendlyUnitList.Contains(unit)) friendlyUnitList.Add(unit);
+                unit.Team = Team.Player;
+            }
+
         }
         if (GameModeManager.SelectedMode == GameMode.Versus)
         {
@@ -77,9 +101,15 @@ public class UnitManager : MonoBehaviour
     private void Unit_OnAnyUnitDead(object sender, EventArgs e)
     {
         Unit unit = sender as Unit;
-        unitList.Remove(unit);
+       // unitList.Remove(unit);
+        unitSet.Remove(unit);
 
-        if (GameModeManager.SelectedMode != GameMode.Versus)
+        // Poista kaikki esiintymät JA siivoa nullit samalla
+        unitList.RemoveAll(u => u == null || u == unit);
+        friendlyUnitList.RemoveAll(u => u == null || u == unit);
+        enemyUnitList.RemoveAll(u => u == null || u == unit);
+        /*
+        if (GameModeManager.SelectedMode == GameMode.SinglePlayer || GameModeManager.SelectedMode == GameMode.CoOp)
         {
             if (unit.IsEnemy())
             {
@@ -93,14 +123,24 @@ public class UnitManager : MonoBehaviour
         }
         if (GameModeManager.SelectedMode == GameMode.Versus)
         {
-            if(NetworkSync.IsOwnerHost(unit.OwnerId))
+            if (NetworkSync.IsOwnerHost(unit.OwnerId))
             {
                 friendlyUnitList.Remove(unit);
-            } else
+            }
+            else
             {
                 enemyUnitList.Remove(unit);
             }
-        }    
+        }
+        */
+    }
+    
+    
+    // Yksinkertainen "puhdas" read-API
+    public IReadOnlyList<Unit> GetEnemyUnitList()
+    {
+        enemyUnitList.RemoveAll(u => u == null);
+        return enemyUnitList;
     }
 
     public List<Unit> GetUnitList()
@@ -113,10 +153,12 @@ public class UnitManager : MonoBehaviour
         return friendlyUnitList;
     }
 
+    /*
     public List<Unit> GetEnemyUnitList()
     {
         return enemyUnitList;
     }
+    */
 
     public void ClearAllUnitLists()
     {

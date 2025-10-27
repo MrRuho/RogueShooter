@@ -13,7 +13,6 @@ public class CoopTurnCoordinator : NetworkBehaviour
         Instance = this;
     }
 
-
     [Server]
     public void TryAdvanceIfReady()
     {
@@ -26,34 +25,22 @@ public class CoopTurnCoordinator : NetworkBehaviour
     [Server]
     private IEnumerator ServerEnemyTurnThenNextPlayers()
     {
-        // Asettaa vihollisen WordUI: (Action Points) näkyviin.
         UnitUIBroadcaster.Instance.BroadcastUnitWorldUIVisibility(true);
 
-        // 1) Vihollisvuoro alkaa
-        RpcTurnPhaseChanged(NetTurnManager.Instance.phase = TurnPhase.Enemy, NetTurnManager.Instance.turnNumber, false);
-
-        // Silta unit/AP-logiikalle (sama kuin nyt)
-        if (TurnSystem.Instance != null)
-        {
-            TurnSystem.Instance.ForcePhase(isPlayerTurn: false, incrementTurnNumber: false);
-        }
+        // Vihollisvuoro alkaa domainissa
+        TurnSystem.Instance.BeginEnemyTurn(incrementTurnId:false);
+        RpcTurnPhaseChanged(TurnPhase.Enemy, NetTurnManager.Instance.turnNumber, false);
 
         // Aja AI
         yield return RunEnemyAI();
 
-        // 2) Paluu pelaajille + turn-numero + resetit
+        // Siirtymä pelaajille
         NetTurnManager.Instance.turnNumber++;
         NetTurnManager.Instance.ResetTurnState();
 
-        if (TurnSystem.Instance != null)
-        {
-            TurnSystem.Instance.ForcePhase(isPlayerTurn: true, incrementTurnNumber: false);
-        }
+        TurnSystem.Instance.BeginPlayersTurn(incrementTurnId:true); // laukoo eventit coresta
+        RpcTurnPhaseChanged(TurnPhase.Players, NetTurnManager.Instance.turnNumber, true);
 
-        // 3) Lähetä *kaikille* (host + clientit) HUD-päivitys SP-logiikan kautta
-        RpcTurnPhaseChanged(NetTurnManager.Instance.phase = TurnPhase.Players, NetTurnManager.Instance.turnNumber, true);
-        
-        // Asettaa pelaajien WordUI: (Action Points) näkyviin.
         UnitUIBroadcaster.Instance.BroadcastUnitWorldUIVisibility(false);
     }
 

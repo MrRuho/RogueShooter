@@ -243,7 +243,7 @@ public class CoverSkill : NetworkBehaviour
         ServerResetCurrentCoverBonus();
     }
  
-   // [Server]
+    //[Server]
     public void ServerResetCurrentCoverBonus()
     {
         // Vain Server TAI Offline saa suorittaa

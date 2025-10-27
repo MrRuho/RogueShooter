@@ -69,11 +69,6 @@ namespace Utp
 			LevelLoader.LevelReady += OnLevelReady_Server;
 
 			SpawnUnitsCoordinator.Instance.SetEnemiesSpawned(false);
-
-			if (GameModeManager.SelectedMode == GameMode.CoOp)
-			{
-				ServerSpawnEnemies();
-			}
 		}
 
 		public override void OnStopServer()
@@ -352,12 +347,12 @@ namespace Utp
 			ServerFinalizeAddPlayer(conn);
 		}
 
-		
+
 		[Server]
 		private void ServerFinalizeAddPlayer(NetworkConnectionToClient conn)
 		{
 			Debug.Log($"[NM] ServerFinalizeAddPlayer for conn {conn.connectionId}");
-			
+
 			if (conn.identity == null)
 			{
 				if (playerPrefab == null)
@@ -369,7 +364,7 @@ namespace Utp
 			}
 
 			bool isHost = conn.connectionId == 0;
-			
+
 			var spawner = SpawnUnitsCoordinator.Instance;
 			if (spawner == null)
 			{
@@ -380,7 +375,7 @@ namespace Utp
 			// Spawna yksiköt JOKAISELLE pelaajalle (host JA client)
 			Debug.Log($"[NM] Spawning units for {(isHost ? "HOST" : "CLIENT")} conn {conn.connectionId}");
 			var units = spawner.SpawnPlayersForNetwork(conn, isHost);
-			
+
 			if (units != null && units.Length > 0)
 			{
 				Debug.Log($"[NM] Spawned {units.Length} units for conn {conn.connectionId}");
@@ -414,6 +409,7 @@ namespace Utp
 			}
 		}
 
+		/*
 		[Server]
 		public void ServerSpawnEnemies()
 		{
@@ -427,6 +423,24 @@ namespace Utp
 				{
 					NetworkServer.Spawn(enemy);
 				}
+			}
+		}
+		*/
+		
+		[Server]
+		public void ServerSpawnEnemies()
+		{
+			var enemies = SpawnUnitsCoordinator.Instance.SpawnEnemies();
+
+			foreach (var enemy in enemies)
+			{
+				if (enemy == null) continue;
+
+				NetworkServer.Spawn(enemy); // olemassa oleva rivi
+
+				// UUSI: pakota oikea alkulayout
+				var vis = enemy.GetComponentInChildren<WeaponVisibilitySync>();
+				if (vis) vis.ServerForceSet(rifleRight: true, rifleLeft: false, meleeLeft: false, grenade: false);
 			}
 		}
 

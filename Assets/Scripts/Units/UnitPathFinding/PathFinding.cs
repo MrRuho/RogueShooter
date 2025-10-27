@@ -192,6 +192,20 @@ public class PathFinding : MonoBehaviour
 
                 }
             }
+        } else
+        {
+            // Muuten etsi kaikki scenestä
+            var allLinkMbs = FindObjectsByType<PathfindingLinkMonoBehaviour>(FindObjectsSortMode.None);
+            if (allLinkMbs == null)
+            {
+                Debug.LogWarning("[PF] No PathfindingLinkMonoBehaviour found in scene");
+                return;
+            }
+            
+            foreach (var linkMb in allLinkMbs)
+            {
+                pathfindingLinkList.Add(linkMb.GetPathfindingLink());
+            }
         }
 
 

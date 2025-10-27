@@ -79,4 +79,17 @@ public class WeaponVisibilitySync : NetworkBehaviour
         foreach (var r in t.GetComponentsInChildren<Renderer>(true))
             r.enabled = visible;
     }
+
+    [Server]
+    public void ServerForceSet(bool rifleRight, bool rifleLeft, bool meleeLeft, bool grenade)
+    {
+        // Aseta server-authoritatiivinen tila (jos käytät NetVisibilityä)
+        if (rifleRightVis)   rifleRightVis.ServerSetVisible(rifleRight);
+        if (rifleLeftVis)    rifleLeftVis.ServerSetVisible(rifleLeft);
+        if (meleeLeftVis)    meleeLeftVis.ServerSetVisible(meleeLeft);
+        if (grenadeRightVis) grenadeRightVis.ServerSetVisible(grenade);
+
+        // Ja lähetä varmuuden vuoksi kaikille klienteille
+        RpcSet(rifleRight, rifleLeft, meleeLeft, grenade);
+    }
 }
