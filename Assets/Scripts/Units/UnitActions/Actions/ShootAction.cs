@@ -165,7 +165,7 @@ public class ShootAction : BaseAction
     {
         return "Shoot";
     }
- 
+    /*
     public  List<GridPosition> GetValidActionGridPositionList(GridPosition unitGridPosition)
     {
         List<GridPosition> validGridPositionList = new();
@@ -215,6 +215,78 @@ public class ShootAction : BaseAction
         }
 
         return validGridPositionList;
+    }
+*/
+/*
+    public List<GridPosition> GetValidActionGridPositionList(GridPosition unitGridPosition)
+    {
+        var lg = LevelGrid.Instance;
+        var result = new List<GridPosition>();
+        int r = weapon.maxShootRange;
+        int floor = unitGridPosition.floor;
+
+        for (int x = -r; x <= r; x++)
+            for (int z = -r; z <= r; z++)
+            {
+                // rengas / ympyräraja
+                if (SircleCalculator.Sircle(x, z) > 10 * r) continue;
+
+                var gp = new GridPosition(unitGridPosition.x + x, unitGridPosition.z + z, floor);
+                if (!lg.IsValidGridPosition(gp)) continue;
+
+                // tarvitsee oikeasti kohteen ruudussa
+                if (!lg.HasAnyUnitOnGridPosition(gp)) continue;
+
+                var target = lg.GetUnitAtGridPosition(gp);
+                if (target == null) continue;
+                if (target.IsEnemy() == unit.IsEnemy()) continue; // ei omia
+
+                // KORVAA Raycast → käytä projektin LoS:ää
+                if (!VisibilityService.HasLineOfSight(unitGridPosition, gp, occludeByUnits: true))
+                    continue;
+
+                result.Add(gp);
+            }
+
+        return result;
+    }
+    */
+
+    // ShootAction.cs (tai missä tämä on)
+    public List<GridPosition> GetValidActionGridPositionList(GridPosition unitGridPosition)
+    {
+        var result = new List<GridPosition>();
+        int r = weapon.maxShootRange;
+
+        foreach (var enemy in EnumerateEnemyCandidatesInRange(unitGridPosition, r))
+        {
+            var gp = enemy.GetGridPosition();
+
+            // Sama LoS kuin UI:ssa: TallWall-reunat + (valinnainen) ruudun koko-blokkerit + unitit välissä
+            if (!VisibilityService.HasLineOfSight(unitGridPosition, gp, occludeByUnits: true))
+                continue;
+
+            result.Add(gp);
+        }
+
+        return result;
+    }
+
+    // Kevyt ehdokassuodatin: vain vastustajat, sama floor, sisällä rangessa.
+    // Vaihda AllUnitsList → omaan manageriisi, jos sinulla on suora vihollislista (esim. UnitManager.GetEnemiesOf(unit)).
+    private IEnumerable<Unit> EnumerateEnemyCandidatesInRange(GridPosition origin, int range)
+    {
+        bool shooterIsEnemy = unit.IsEnemy(); // 'unit' = tämän actionin omistaja
+        foreach (var u in UnitManager.Instance.GetUnitList())
+        {
+            if (u == null) continue;
+            if (u.IsEnemy() == shooterIsEnemy) continue;               // ei omia
+            var gp = u.GetGridPosition();
+            if (gp.floor != origin.floor) continue;                    // sama kerros
+            int cost = SircleCalculator.Sircle(gp.x - origin.x, gp.z - origin.z);
+            if (cost > 10 * range) continue;                           // sisällä rangesta
+            yield return u;
+        }
     }
 
     public override void TakeAction(GridPosition gridPosition, Action onActionComplete)

@@ -88,7 +88,6 @@ public class SpawnUnitsCoordinator : MonoBehaviour
         
         // Hae Level-scene (tämä SpawnUnitsCoordinator on Level-scenessä)
         Scene levelScene = gameObject.scene;
-        Debug.Log($"[SpawnUnitsCoordinator] Spawning {spawnPoints.Length} units for {(isHost ? "HOST" : "CLIENT")} to scene '{levelScene.name}'");
         
         for (int i = 0; i < spawnPoints.Length; i++)
         {
@@ -108,7 +107,6 @@ public class SpawnUnitsCoordinator : MonoBehaviour
                 }
             );
             
-            Debug.Log($"[SpawnUnitsCoordinator] Spawned unit '{playerUnit.name}' at {spawnPoints[i]} in scene '{playerUnit.scene.name}'");
             spawnedPlayersUnit[i] = playerUnit;
         }
 
@@ -181,7 +179,7 @@ public class SpawnUnitsCoordinator : MonoBehaviour
 
     public Vector3[] GetEnemySpawnPositions()
     {
-        Debug.Log("[SpawnUnitsCoordinator] GetEnemySpawnPositions() called.");
+
         if (usePlaceholders)
         {
             var pos = GetSpawnPositionsFromPlaceholders(UnitSpawnPlaceholder.Side.Enemy);
@@ -199,7 +197,6 @@ public class SpawnUnitsCoordinator : MonoBehaviour
 
     public Vector3[] GetSpawnPositionsForPlayer(bool isHost)
     {
-        Debug.Log("[SpawnUnitsCoordinator] GetSpawnPositionsForPlayer() called.");
         if (usePlaceholders)
         {
             var side = isHost ? UnitSpawnPlaceholder.Side.Host : UnitSpawnPlaceholder.Side.Client;
@@ -222,7 +219,7 @@ public class SpawnUnitsCoordinator : MonoBehaviour
 
         // PLAYER (Host) – hae paikat placeholdereista (tai fallback taulukkoon)
         var playerSpawns = GetSpawnPositionsForPlayer(true);
-        Debug.Log($"[SpawnUnitsCoordinator] Offline spawn PLAYER units: {playerSpawns.Length} pcs → scene '{targetScene.name}'");
+
         for (int i = 0; i < playerSpawns.Length; i++)
         {
             var unit = SpawnRouter.SpawnLocal(
@@ -232,12 +229,12 @@ public class SpawnUnitsCoordinator : MonoBehaviour
                 source: transform,
                 sceneName: targetScene.name
             );
-            Debug.Log($"[SpawnUnitsCoordinator] Offline PLAYER unit spawned '{unit.name}' at {playerSpawns[i]} in '{unit.scene.name}'");
+
         }
 
         // ENEMY – samoin placeholdereista (tai fallback)
         var enemySpawns = GetEnemySpawnPositions();
-        Debug.Log($"[SpawnUnitsCoordinator] Offline spawn ENEMY units: {enemySpawns.Length} pcs → scene '{targetScene.name}'");
+
         for (int i = 0; i < enemySpawns.Length; i++)
         {
             var enemy = SpawnRouter.SpawnLocal(
@@ -247,7 +244,7 @@ public class SpawnUnitsCoordinator : MonoBehaviour
                 source: transform,
                 sceneName: targetScene.name
             );
-            Debug.Log($"[SpawnUnitsCoordinator] Offline ENEMY unit spawned '{enemy.name}' at {enemySpawns[i]} in '{enemy.scene.name}'");
+
         }
 
         SetEnemiesSpawned(true);
@@ -260,7 +257,6 @@ public class SpawnUnitsCoordinator : MonoBehaviour
         Scene targetScene = gameObject.scene;
 
         var spawnedEnemies = new GameObject[enemySpawns.Length];
-        Debug.Log($"[SpawnUnitsCoordinator] {(NetworkServer.active ? "Network" : "Local")} spawn ENEMY units: {enemySpawns.Length} pcs → scene '{targetScene.name}'");
 
         for (int i = 0; i < enemySpawns.Length; i++)
         {
@@ -276,7 +272,6 @@ public class SpawnUnitsCoordinator : MonoBehaviour
                     owner: null
                 );
                 spawnedEnemies[i] = go;
-                Debug.Log($"[SpawnUnitsCoordinator] Network ENEMY spawned '{go.name}' at {enemySpawns[i]} in '{go.scene.name}'");
             }
             else
             {
@@ -288,7 +283,7 @@ public class SpawnUnitsCoordinator : MonoBehaviour
                     sceneName: targetScene.name
                 );
                 spawnedEnemies[i] = go;
-                Debug.Log($"[SpawnUnitsCoordinator] Local ENEMY spawned '{go.name}' at {enemySpawns[i]} in '{go.scene.name}'");
+
             }
         }
 

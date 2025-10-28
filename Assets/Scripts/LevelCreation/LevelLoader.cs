@@ -52,8 +52,6 @@ public class LevelLoader : MonoBehaviour
                 // 4) Ohjaa sekä CurrentLevel että DefaultLevel tähän
                 CurrentLevel = req;
                 defaultLevel = req;
-
-                Debug.Log($"[LevelLoader] Editor one-shot → Current & Default = '{req}'");
             }
             else
             {

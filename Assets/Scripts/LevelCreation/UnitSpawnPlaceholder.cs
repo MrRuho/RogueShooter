@@ -27,14 +27,13 @@ public class UnitSpawnPlaceholder : MonoBehaviour
     public Vector3 GetSpawnWorldPosition()
     {
         var pos = transform.position;
-        Debug.Log($"[UnitSpawnPlaceholder] GetSpawnWorldPosition(): placeholder at {pos}");
 
         if (snapToGridCenter && LevelGrid.Instance != null)
         {
             var gp = LevelGrid.Instance.GetGridPosition(pos);
             pos = LevelGrid.Instance.GetWorldPosition(gp); // keskittää ruutuun
         }
-        Debug.Log($"[UnitSpawnPlaceholder] GetSpawnWorldPosition(): returning spawn pos {pos}");
+
         return pos;
     }
 

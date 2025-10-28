@@ -56,8 +56,6 @@ public static class OfflineSceneBoot
             }
         }
 
-        // 3) Lataa kenttä additiivisesti
-        Debug.Log($"[OfflineBoot] Loading offline level '{requested}'");
         var op = SceneManager.LoadSceneAsync(requested, LoadSceneMode.Additive);
         while (op != null && !op.isDone) yield return null;
 
@@ -85,7 +83,6 @@ public static class OfflineSceneBoot
 
         try { LevelLoader.RaiseLevelReady(map); } catch { /* ei kriittinen */ }
 
-        Debug.Log($"[OfflineBoot] Core + '{requested}' valmiina.");
     }
 
     // Minimaalinen “global coroutine host” ilman mitään GameObjectia
