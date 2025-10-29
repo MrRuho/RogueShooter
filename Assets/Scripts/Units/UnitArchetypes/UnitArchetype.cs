@@ -25,6 +25,11 @@ public class UnitArchetype : ScriptableObject
     [Header("Grenade Skill")]
     public int grenadeCapacity = 2;
     public int throwingRange = 7;
+
+    [Space(10)]
+    [Header("Vision Skill")]
+    public int visionRange = 20;
+    public bool useHeightAware = true;
     
 
     [Header("Progression (optional)")]

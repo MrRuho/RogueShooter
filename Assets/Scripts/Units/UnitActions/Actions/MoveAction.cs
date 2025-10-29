@@ -16,6 +16,8 @@ public class MoveAction : BaseAction
     GridPosition thisTurnStartingGridPosition;
     GridPosition thisTurnEndridPosition;
 
+    private GridPosition _lastVisionPos;
+
     [SerializeField] private int maxMoveDistance = 4;
 
     private int distance;
@@ -85,6 +87,20 @@ public class MoveAction : BaseAction
         float stoppingDistance = 0.2f;
         if (Vector3.Distance(transform.position, targetPosition) < stoppingDistance)
         {
+            var lg = LevelGrid.Instance;
+            if (lg != null)
+            {
+                // lasketaan ruutu world-koordinaatista, jotta ei olla riippuvaisia Unitin omasta päivityssyklistä
+                var cur = lg.GetGridPosition(unit.transform.position);
+
+                if (!cur.Equals(_lastVisionPos))
+                {
+                    unit.GetComponent<UnitVision>()?.NotifyMoved();
+                    // unit.NotifyMoved_ForVision();
+                    _lastVisionPos = cur;
+                }
+            }
+
             thisTurnEndridPosition = LevelGrid.Instance.GetGridPosition(transform.position);
             DistanceFromStartingPoint();
 
@@ -102,6 +118,9 @@ public class MoveAction : BaseAction
                     unit.SetUnderFire(true);
                     CheckAndApplyCoverBonus();
                 }
+
+                // Varmistus: viimeinen päivitys lopetusruudusta
+                unit.GetComponent<UnitVision>()?.NotifyMoved();
 
                 OnStopMoving?.Invoke(this, EventArgs.Empty);
                 ActionComplete();
@@ -152,6 +171,7 @@ public class MoveAction : BaseAction
 
     public override void TakeAction(GridPosition gridPosition, Action onActionComplete)
     {
+        _lastVisionPos = unit.GetGridPosition();
         List<GridPosition> pathGridPositionsList = PathFinding.Instance.FindPath(unit.GetGridPosition(), gridPosition, out int pathLeght, maxMoveDistance);
 
         currentPositionIndex = 0;

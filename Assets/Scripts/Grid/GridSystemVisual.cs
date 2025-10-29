@@ -1,16 +1,19 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using Mirror;
 
-/// <summary>
-/// This class is responsible for visualizing the grid system in the game.
-/// It creates a grid of visual objects that represent the grid positions.
-/// </summary>
 [DefaultExecutionOrder(-100)]
 public class GridSystemVisual : MonoBehaviour
 {
-
     public static GridSystemVisual Instance { get; private set; }
+
+    [Header("Team Vision Overlay")]
+    [SerializeField] private bool teamVisionEnabled = true;
+    [SerializeField] private GridVisualType teamVisionType = GridVisualType.Yellow;
+
+    private readonly HashSet<GridPosition> _lastActionCells = new();
+    private readonly List<GridPosition> _tmpList = new(256);
 
     [Serializable]
     public struct GridVisualTypeMaterial
@@ -18,26 +21,24 @@ public class GridSystemVisual : MonoBehaviour
         public GridVisualType gridVisualType;
         public Material material;
     }
+    
     public enum GridVisualType
     {
         white,
         Blue,
         Red,
         RedSoft,
-        Yellow
+        Yellow,
+        TeamVision
     }
 
-    /// Purpose: This prefab is used to create the visual representation of each grid position.
     [SerializeField] private Transform gridSystemVisualSinglePrefab;
     [SerializeField] private List<GridVisualTypeMaterial> gridVisualTypeMaterialList;
 
-    /// Purpose: This array holds the visual objects for each grid position.
     private GridSystemVisualSingle[,,] gridSystemVisualSingleArray;
 
     private void Awake()
     {
-
-        ///  Purpose: Ensure that there is only one instance in the scene
         if (Instance != null)
         {
             Debug.LogError("More than one GridSystemVisual in the scene!" + transform + " " + Instance);
@@ -56,8 +57,6 @@ public class GridSystemVisual : MonoBehaviour
             LevelGrid.Instance.GetFloorAmount()
             ];
 
-        /// Purpose: Create a grid of visual objects that represent the grid positions.
-        /// It instantiates a prefab at each grid position and sets the grid object for that position.
         for (int x = 0; x < LevelGrid.Instance.GetWidth(); x++)
         {
             for (int z = 0; z < LevelGrid.Instance.GetHeight(); z++)
@@ -74,15 +73,61 @@ public class GridSystemVisual : MonoBehaviour
         UnitActionSystem.Instance.OnSelectedActionChanged += UnitActionSystem_OnSelectedActionChanged;
         UnitActionSystem.Instance.OnBusyChanged += UnitActionSystem_OnBusyChanged;
         LevelGrid.Instance.onAnyUnitMoveGridPosition += LevelGrid_onAnyUnitMoveGridPosition;
+        
+        if (TeamVisionService.Instance != null)
+            TeamVisionService.Instance.OnTeamVisionChanged += HandleTeamVisionChanged;
 
         UpdateGridVisuals();
+        
+        Debug.Log($"[GridSystemVisual] Initialized. Team vision enabled: {teamVisionEnabled}, Local player team: {GetLocalPlayerTeamId()}");
     }
 
     void OnDisable()
     {
         UnitActionSystem.Instance.OnSelectedActionChanged -= UnitActionSystem_OnSelectedActionChanged;
         UnitActionSystem.Instance.OnBusyChanged -= UnitActionSystem_OnBusyChanged;
-        LevelGrid.Instance.onAnyUnitMoveGridPosition -= LevelGrid_onAnyUnitMoveGridPosition; 
+        LevelGrid.Instance.onAnyUnitMoveGridPosition -= LevelGrid_onAnyUnitMoveGridPosition;
+
+        if (TeamVisionService.Instance != null)
+            TeamVisionService.Instance.OnTeamVisionChanged -= HandleTeamVisionChanged; 
+    }
+
+    private int GetLocalPlayerTeamId()
+    {
+        GameMode mode = GameModeManager.SelectedMode;
+        
+        if (mode == GameMode.SinglePlayer || mode == GameMode.CoOp)
+        {
+            return 0;
+        }
+        
+        if (mode == GameMode.Versus)
+        {
+            if (Mirror.NetworkServer.active && !Mirror.NetworkClient.active)
+            {
+                Debug.LogWarning("[GridSystemVisual] Running on dedicated server - no local player team");
+                return 0;
+            }
+            
+            if (Mirror.NetworkClient.localPlayer != null)
+            {
+                var localPlayerUnit = Mirror.NetworkClient.localPlayer.GetComponent<Unit>();
+                if (localPlayerUnit != null)
+                {
+                    bool isHost = Mirror.NetworkServer.active;
+                    int teamId = isHost ? 0 : 1;
+                    Debug.Log($"[GridSystemVisual] Versus mode - Local player is {(isHost ? "Host" : "Client")}, Team ID: {teamId}");
+                    return teamId;
+                }
+            }
+            
+            bool fallbackIsHost = Mirror.NetworkServer.active;
+            int fallbackTeam = fallbackIsHost ? 0 : 1;
+            Debug.Log($"[GridSystemVisual] Versus mode fallback - IsHost: {fallbackIsHost}, Team ID: {fallbackTeam}");
+            return fallbackTeam;
+        }
+        
+        return 0;
     }
 
     public void HideAllGridPositions()
@@ -99,9 +144,9 @@ public class GridSystemVisual : MonoBehaviour
         }
     }
 
+    /*
     private void ShowGridPositionRange(GridPosition gridPosition, int range, GridVisualType gridVisualType)
     {
-
         List<GridPosition> gridPositionsList = new List<GridPosition>();
 
         for (int x = -range; x <= range; x++)
@@ -124,10 +169,10 @@ public class GridSystemVisual : MonoBehaviour
 
         ShowGridPositionList(gridPositionsList, gridVisualType);
     }
-
+*/
+/*
     private void ShowGridPositionRangeSquare(GridPosition gridPosition, int range, GridVisualType gridVisualType)
     {
-
         List<GridPosition> gridPositionsList = new List<GridPosition>();
 
         for (int x = -range; x <= range; x++)
@@ -147,7 +192,7 @@ public class GridSystemVisual : MonoBehaviour
 
         ShowGridPositionList(gridPositionsList, gridVisualType);
     }
-
+*/
     public void ShowGridPositionList(List<GridPosition> gridPositionList, GridVisualType gridVisualType)
     {
         foreach (GridPosition gridPosition in gridPositionList)
@@ -160,6 +205,8 @@ public class GridSystemVisual : MonoBehaviour
     private void UpdateGridVisuals()
     {
         HideAllGridPositions();
+        _lastActionCells.Clear(); // <-- tärkeä: nollaa action-ruudut jokaisessa päivityksessä
+
         Unit selectedUnit = UnitActionSystem.Instance.GetSelectedUnit();
         if (selectedUnit == null) return;
 
@@ -173,40 +220,56 @@ public class GridSystemVisual : MonoBehaviour
             case MoveAction moveAction:
                 gridVisualType = GridVisualType.white;
                 break;
-            case TurnTowardsAction turnTowardsAction:
+
+            case TurnTowardsAction _:
                 gridVisualType = GridVisualType.Blue;
                 break;
 
-            case ShootAction shootAction:
+            case ShootAction shoot:
             {
                 gridVisualType = GridSystemVisual.GridVisualType.Red;
 
                 var origin = selectedUnit.GetGridPosition();
-                int range  = shootAction.GetMaxShootDistance();
+                int range  = shoot.GetMaxShootDistance();
 
-                // UUSI: näytä vain ne ruudut, joihin on LoS ilman korkeita blokkeja tai väli-uniteja
-                var visible = VisibilityService.ComputeVisibleTiles(origin, range, occludeByUnits: true);
+                var cfg = LoSConfig.Instance;
+                var visible = RaycastVisibility.ComputeVisibleTilesRaycast(
+                    origin, range,
+                    cfg.losBlockersMask, cfg.eyeHeight, cfg.samplesPerCell, cfg.insetWU
+                );
+                visible.RemoveWhere(gp => !RaycastVisibility.HasLineOfSightRaycastHeightAware(
+                    origin, gp, cfg.losBlockersMask, cfg.eyeHeight, cfg.samplesPerCell, cfg.insetWU));
 
-                // Piirrä “pehmeä kehä” vain näkyvistä ruuduista
-                ShowGridPositionList(new List<GridPosition>(visible), GridVisualType.RedSoft);
+                // Ammunnan lisä-overlay (pehmeä punainen) lasketaan action-ruuduiksi
+                _tmpList.Clear();
+                _tmpList.AddRange(visible);
+                ShowAndMark(_tmpList, GridVisualType.RedSoft);
                 break;
             }
-            case GranadeAction granadeAction:
+
+            case GranadeAction _:
                 gridVisualType = GridVisualType.Yellow;
                 break;
-            case MeleeAction meleeAction:
+
+            case MeleeAction _:
                 gridVisualType = GridVisualType.Red;
-                ShowGridPositionRangeSquare(selectedUnit.GetGridPosition(), 1, GridVisualType.RedSoft);
+                // 1 ruudun pehmennys ympärille on myös action-overlay
+                ShowAndMark(BuildRangeSquare(selectedUnit.GetGridPosition(), 1), GridVisualType.RedSoft);
                 break;
-            case InteractAction interactAction:
+
+            case InteractAction _:
                 gridVisualType = GridVisualType.Blue;
                 break;
-
         }
 
-        ShowGridPositionList(
-            selectedAction.GetValidGridPositionList(), gridVisualType);
+        // Päälista: valitun actionin validit kohderuudut → aina action-ruutuja
+        ShowAndMark(selectedAction.GetValidGridPositionList(), gridVisualType);
 
+        // Team-vision: piirrä vain niihin ruutuihin, joissa EI ole action-overlayta
+        if (teamVisionEnabled && TeamVisionService.Instance != null)
+        {
+            DrawTeamVisionOverlayExcludingAction();
+        }
     }
 
     private void UnitActionSystem_OnSelectedActionChanged(object sender, EventArgs e)
@@ -235,5 +298,63 @@ public class GridSystemVisual : MonoBehaviour
         }
         Debug.LogError("Cloud not find GridVisualTypeMaterial for GridVisualType" + gridVisualType);
         return null;
+    }
+
+    private void HandleTeamVisionChanged(int teamId)
+    {
+        if (!teamVisionEnabled) return;
+        
+        int myTeam = GetLocalPlayerTeamId();
+        if (teamId != myTeam)
+        {
+            Debug.Log($"[GridSystemVisual] Ignoring vision update for team {teamId} (not my team {myTeam})");
+            return;
+        }
+        
+        Debug.Log($"[GridSystemVisual] Team vision changed for my team {myTeam}, updating visuals");
+        UpdateGridVisuals();
+    }
+
+    private void DrawTeamVisionOverlayExcludingAction()
+    {
+        if (TeamVisionService.Instance == null) return;
+
+        int myTeam = GetLocalPlayerTeamId();
+        var snap = TeamVisionService.Instance.GetVisibleTilesSnapshot(myTeam);
+        if (snap == null) return;
+
+        _tmpList.Clear();
+        foreach (var gp in snap)
+            if (!_lastActionCells.Contains(gp))
+                _tmpList.Add(gp);
+
+        ShowGridPositionList(_tmpList, teamVisionType);
+    }
+
+    // Näytä ja merkitse ruudut "action-ruuduiksi" jotta vision ei piirry niiden päälle
+    private void ShowAndMark(IEnumerable<GridPosition> cells, GridVisualType type)
+    {
+        var mat = GetGridVisualTypeMaterial(type);
+        foreach (var gp in cells)
+        {
+            gridSystemVisualSingleArray[gp.x, gp.z, gp.floor].Show(mat);
+            _lastActionCells.Add(gp);
+        }
+    }
+
+    // Tarvitaan esim. lähietäisyyden "pehmennykseen" (melee)
+    private List<GridPosition> BuildRangeSquare(GridPosition center, int range)
+    {
+        var list = new List<GridPosition>();
+        for (int x = -range; x <= range; x++)
+        {
+            for (int z = -range; z <= range; z++)
+            {
+                var gp = center + new GridPosition(x, z, 0);
+                if (LevelGrid.Instance.IsValidGridPosition(gp))
+                    list.Add(gp);
+            }
+        }
+        return list;
     }
 }

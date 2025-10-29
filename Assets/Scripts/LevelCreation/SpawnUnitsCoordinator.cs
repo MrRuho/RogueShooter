@@ -1,3 +1,4 @@
+
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using Mirror;
@@ -100,10 +101,20 @@ public class SpawnUnitsCoordinator : MonoBehaviour
                 sceneName: levelScene.name,
                 parent: null,
                 owner: conn,
-                beforeSpawn: (go) => 
+                beforeSpawn: (go) =>
                 {
-                    if (go.TryGetComponent<Unit>(out var u) && conn.identity != null)
-                        u.OwnerId = conn.identity.netId;
+                    if (go.TryGetComponent<Unit>(out var u))
+                    {
+                        if (conn.identity != null) u.OwnerId = conn.identity.netId;
+
+                        // 1) Vision-komponentti (mieluiten valmiiksi prefabissa):
+                        if (go.TryGetComponent<UnitVision>(out var uv))
+                        {
+                            InitUnitVision(go, teamId: (GameModeManager.SelectedMode == GameMode.Versus)
+                            ? (NetworkSync.IsOwnerHost(u.OwnerId) ? 0 : 1)
+                            : 0);
+                        }
+                    }
                 }
             );
             
@@ -230,6 +241,7 @@ public class SpawnUnitsCoordinator : MonoBehaviour
                 sceneName: targetScene.name
             );
 
+            InitUnitVision(unit, teamId: 0);
         }
 
         // ENEMY – samoin placeholdereista (tai fallback)
@@ -245,11 +257,12 @@ public class SpawnUnitsCoordinator : MonoBehaviour
                 sceneName: targetScene.name
             );
 
+            InitUnitVision(enemy, teamId: 1);
         }
 
         SetEnemiesSpawned(true);
     }
-    
+
     public GameObject[] SpawnEnemies()
     {
         // 1) Hae paikat (placeholderit jos käytössä, muuten fallback-taulukko)
@@ -272,6 +285,8 @@ public class SpawnUnitsCoordinator : MonoBehaviour
                     owner: null
                 );
                 spawnedEnemies[i] = go;
+
+                InitUnitVision(go, teamId: 1);
             }
             else
             {
@@ -284,11 +299,32 @@ public class SpawnUnitsCoordinator : MonoBehaviour
                 );
                 spawnedEnemies[i] = go;
 
+                InitUnitVision(go, teamId: 1);
+
             }
         }
 
         SetEnemiesSpawned(true);
         return spawnedEnemies;
     }
+    
+    private void InitUnitVision(GameObject go, int teamId)
+    {
+        if (NetworkServer.active && !NetworkClient.active) return;
 
+        if (go.TryGetComponent<Unit>(out var u) && go.TryGetComponent<UnitVision>(out var uv))
+        {
+            if (uv.visionSkill == null) uv.visionSkill = u.archetype;
+
+            uv.teamId = teamId;
+            
+            Debug.Log($"[SpawnUnitsCoordinator] InitUnitVision for {go.name}: Team {teamId}, Range {uv.visionSkill?.visionRange ?? 0}");
+            
+            uv.UpdateVisionNow();
+        }
+        else
+        {
+            Debug.LogWarning($"[SpawnUnitsCoordinator] {go.name} missing Unit or UnitVision component");
+        }
+    }
 }

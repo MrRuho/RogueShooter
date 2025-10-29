@@ -48,6 +48,10 @@ PrefabInstance:
       propertyPath: isEnemy
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 5891227557711432326, guid: 9eade25f7fc5b7d439428c63bd6bec87, type: 3}
+      propertyPath: ACTION_POINTS_MAX
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 6027068296431371701, guid: 9eade25f7fc5b7d439428c63bd6bec87, type: 3}
       propertyPath: ragdollPrefab
       value: 

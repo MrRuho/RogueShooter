@@ -56,5 +56,5 @@
         "temp/": true,
         "Temp/": true
     },
-    "dotnet.defaultSolution": "RogueShooter.sln"
+    "dotnet.defaultSolution": "RogueShooter.slnx"
 }

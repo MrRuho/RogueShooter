@@ -3,6 +3,8 @@ using UnityEngine;
 
 public static class VisibilityService
 {
+    // Toleranssi
+    private const float EPS = 1e-4f;
 
     // Välimuisti ruudun "onko korkea blokkeri" -tiedolle
     // Tyhjennä esim. vuoron vaihtuessa tai kun kenttä muuttuu
@@ -61,11 +63,46 @@ public static class VisibilityService
         {
             int e2 = 2 * err;
             if (e2 > -dz) { err -= dz; x0 += sx; }
-            if (e2 < dx) { err += dx; z0 += sz; }
+            if (e2 < dx)  { err += dx; z0 += sz; }
             yield return new GridPosition(x0, z0, from.floor);
         }
     }
- 
+
+#if UNITY_EDITOR
+    private static void DebugCheckEdgeSymmetry(GridPosition prev, int dx, int dz)
+    {
+        // Tarkistetaan vain diagonaaliaskeleella
+        if (dx == 0 || dz == 0) return;
+
+        var horiz = dx > 0 ? EdgeMask.E : EdgeMask.W;
+        var mid   = new GridPosition(prev.x + dx, prev.z, prev.floor);
+        var vert  = dz > 0 ? EdgeMask.N : EdgeMask.S;
+
+        // Vastareunat naapurisoluista
+        var neighborH = new GridPosition(prev.x + dx, prev.z, prev.floor);
+        var oppH      = dx > 0 ? EdgeMask.W : EdgeMask.E;
+
+        var neighborV = new GridPosition(mid.x, mid.z + dz, mid.floor);
+        var oppV      = dz > 0 ? EdgeMask.S : EdgeMask.N;
+
+        bool hA = EdgeOcclusion.HasTallWall(prev,      horiz);
+        bool hB = EdgeOcclusion.HasTallWall(neighborH, oppH);
+        bool vA = EdgeOcclusion.HasTallWall(mid,       vert);
+        bool vB = EdgeOcclusion.HasTallWall(neighborV, oppV);
+
+        if (hA != hB || vA != vB)
+        {
+            Debug.LogWarning(
+                $"[LoS] EdgeOcclusion ei näytä olevan symmetrinen diagonaaliaskeleella.\n" +
+                $"  H: ({prev.x},{prev.z},f{prev.floor}).{horiz}={hA}  vs  " +
+                $"({neighborH.x},{neighborH.z},f{neighborH.floor}).{oppH}={hB}\n" +
+                $"  V: ({mid.x},{mid.z},f{mid.floor}).{vert}={vA}  vs  " +
+                $"({neighborV.x},{neighborV.z},f{neighborV.floor}).{oppV}={vB}"
+            );
+        }
+    }
+#endif
+
     public static bool HasLineOfSight(GridPosition from, GridPosition to, bool occludeByUnits = true)
     {
         if (from.floor != to.floor) return false;
@@ -73,235 +110,83 @@ public static class VisibilityService
         var lg = LevelGrid.Instance;
         if (lg == null) return false;
 
-        // 1) Tarkista geometrisesti kaikki tall wall reunat jotka linja voisi leikata
-        if (!GeometricLineOfSightCheck(from, to))
-            return false;
+        // Early-out: LoS itseensä
+        if (from.Equals(to)) return true;
 
-        // 2) Tarkista LoSBlocker-registry (täysikokoiset esteet)
+        bool first = true;
+        GridPosition prev = default;
+
         foreach (var p in Line(from, to))
         {
-            if (p.Equals(from)) continue;
-            if (!lg.IsValidGridPosition(p)) return false;
+            if (first) { first = false; prev = p; continue; }
 
+            // 1) Kokoruutu-korkeat esteet blokkaavat "pehmeästi" kuten ennenkin
             if (LoSBlockerRegistry.TileHasTallBlocker(p))
+            {
+#if UNITY_EDITOR
+                Debug.Log($"[LoS] Blokattu FULL-TILE esteestä ruudussa ({p.x},{p.z},f{p.floor})  reitillä ({from.x},{from.z})->({to.x},{to.z})");
+#endif
                 return false;
+            }
 
-            // Välissä seisova unit estää
+            // 2) Ohuet seinät: tarkista Bresenham-askeleen ylittämä(t) reuna(t)
+            int dx = p.x - prev.x;
+            int dz = p.z - prev.z;
+
+#if UNITY_EDITOR
+            // Tarkista bake-symmetria diagonaaliaskeleella (vain editorissa)
+            DebugCheckEdgeSymmetry(prev, dx, dz);
+#endif
+
+            if (dx != 0)
+            {
+                var horiz = dx > 0 ? EdgeMask.E : EdgeMask.W;
+                if (EdgeOcclusion.HasTallWall(prev, horiz))
+                {
+#if UNITY_EDITOR
+                    Debug.Log($"[LoS] Blokattu OHUEN seinän HORIZ reuna: prev=({prev.x},{prev.z},f{prev.floor}) edge={horiz}  reitillä ({from.x},{from.z})->({to.x},{to.z})");
+#endif
+                    return false;
+                }
+
+                // Diagonaalisteppi: ylitetään myös pystyreuna "väliruudusta"
+                if (dz != 0)
+                {
+                    var mid = new GridPosition(prev.x + dx, prev.z, prev.floor);
+                    var vert = dz > 0 ? EdgeMask.N : EdgeMask.S;
+                    if (EdgeOcclusion.HasTallWall(mid, vert))
+                    {
+#if UNITY_EDITOR
+                        Debug.Log($"[LoS] Blokattu OHUEN seinän VERT reuna: mid=({mid.x},{mid.z},f{mid.floor}) edge={vert}  reitillä ({from.x},{from.z})->({to.x},{to.z})");
+#endif
+                        return false;
+                    }
+                }
+            }
+            else if (dz != 0)
+            {
+                var vert = dz > 0 ? EdgeMask.N : EdgeMask.S;
+                if (EdgeOcclusion.HasTallWall(prev, vert))
+                {
+#if UNITY_EDITOR
+                    Debug.Log($"[LoS] Blokattu OHUEN seinän VERT reuna: prev=({prev.x},{prev.z},f{prev.floor}) edge={vert}  reitillä ({from.x},{from.z})->({to.x},{to.z})");
+#endif
+                    return false;
+                }
+            }
+
+            // 3) Välissä seisovat unitit voivat edelleen blokata (valinnainen)
             if (occludeByUnits && !p.Equals(to) && lg.HasAnyUnitOnGridPosition(p))
+            {
+#if UNITY_EDITOR
+                Debug.Log($"[LoS] Blokattu UNITIN vuoksi ruudussa ({p.x},{p.z},f{p.floor})  reitillä ({from.x},{from.z})->({to.x},{to.z})");
+#endif
                 return false;
-        }
-
-        return true;
-    }
-
-    // Geometrinen tarkistus: käy läpi kaikki ruudut joiden läpi linja kulkee
-    // ja tarkista leikkaako linja niiden tall wall reunoja
-    private static bool GeometricLineOfSightCheck(GridPosition from, GridPosition to)
-    {
-        var lg = LevelGrid.Instance;
-        if (lg == null) return true;
-
-        float cell = lg.GetCellSize();
-
-        Vector3 fromWorld = lg.GetWorldPosition(from);
-        Vector3 toWorld = lg.GetWorldPosition(to);
-
-        Vector2 lineStart = new Vector2(fromWorld.x, fromWorld.z);
-        Vector2 lineEnd = new Vector2(toWorld.x, toWorld.z);
-
-        // Käy läpi kaikki ruudut AABB:n sisällä jota linja koskettaa
-        int minX = Mathf.Min(from.x, to.x);
-        int maxX = Mathf.Max(from.x, to.x);
-        int minZ = Mathf.Min(from.z, to.z);
-        int maxZ = Mathf.Max(from.z, to.z);
-
-        // Laajenna yhden ruudun verran varmuuden vuoksi
-        minX -= 1;
-        maxX += 1;
-        minZ -= 1;
-        maxZ += 1;
-
-        for (int x = minX; x <= maxX; x++)
-        {
-            for (int z = minZ; z <= maxZ; z++)
-            {
-                var gp = new GridPosition(x, z, from.floor);
-                if (!lg.IsValidGridPosition(gp)) continue;
-
-                // Tarkista kaikki 4 reunaa tästä ruudusta
-                if (EdgeOcclusion.HasTallWall(gp, EdgeMask.N))
-                {
-                    if (LineIntersectsEdge(lineStart, lineEnd, gp, EdgeMask.N, cell))
-                        return false;
-                }
-                if (EdgeOcclusion.HasTallWall(gp, EdgeMask.E))
-                {
-                    if (LineIntersectsEdge(lineStart, lineEnd, gp, EdgeMask.E, cell))
-                        return false;
-                }
-                if (EdgeOcclusion.HasTallWall(gp, EdgeMask.S))
-                {
-                    if (LineIntersectsEdge(lineStart, lineEnd, gp, EdgeMask.S, cell))
-                        return false;
-                }
-                if (EdgeOcclusion.HasTallWall(gp, EdgeMask.W))
-                {
-                    if (LineIntersectsEdge(lineStart, lineEnd, gp, EdgeMask.W, cell))
-                        return false;
-                }
             }
+
+            prev = p;
         }
 
-        return true;
-    }
-
-    private static bool IsSameOrientationContinuationAtEndpoint(GridPosition c, EdgeMask edge, int endpoint)
-    {
-        var lg = LevelGrid.Instance;
-        GridPosition nb;
-
-        switch (edge)
-        {
-            case EdgeMask.E:
-                // E-reuna jatkuu “ylös/alas” eli z-suunnassa: p1 = south end (z-1), p2 = north end (z+1)
-                nb = (endpoint == 1) ? new GridPosition(c.x, c.z - 1, c.floor)
-                                    : new GridPosition(c.x, c.z + 1, c.floor);
-                return lg.IsValidGridPosition(nb) && EdgeOcclusion.HasTallWall(nb, EdgeMask.E);
-
-            case EdgeMask.W:
-                nb = (endpoint == 1) ? new GridPosition(c.x, c.z - 1, c.floor)
-                                    : new GridPosition(c.x, c.z + 1, c.floor);
-                return lg.IsValidGridPosition(nb) && EdgeOcclusion.HasTallWall(nb, EdgeMask.W);
-
-            case EdgeMask.N:
-                // N-reuna jatkuu “oikea/vasen” eli x-suunnassa: p1 = west end (x-1), p2 = east end (x+1)
-                nb = (endpoint == 1) ? new GridPosition(c.x - 1, c.z, c.floor)
-                                    : new GridPosition(c.x + 1, c.z, c.floor);
-                return lg.IsValidGridPosition(nb) && EdgeOcclusion.HasTallWall(nb, EdgeMask.N);
-
-            case EdgeMask.S:
-                nb = (endpoint == 1) ? new GridPosition(c.x - 1, c.z, c.floor)
-                                    : new GridPosition(c.x + 1, c.z, c.floor);
-                return lg.IsValidGridPosition(nb) && EdgeOcclusion.HasTallWall(nb, EdgeMask.S);
-        }
-        return false;
-    }
-
-    // Asetukset: jos haluat sallia corner-peekin (pelkkä kulmapiste EI blokkaa), vaihda false -> true.
-    private static bool ALLOW_CORNER_PEEK = true;
-
-    private static bool LineIntersectsEdge(Vector2 lineStart, Vector2 lineEnd, GridPosition cell, EdgeMask edge, float cellSize)
-    {
-        var lg = LevelGrid.Instance;
-        Vector3 cellWorld = lg.GetWorldPosition(cell);
-        float half = cellSize * 0.5f;
-
-        Vector2 edgeP1, edgeP2;
-        // HUOM: p1/p2 on määritelty niin, että tiedämme kumpi pää on “etelä/ länsi” vs “pohjoinen/ itä”
-        switch (edge)
-        {
-            case EdgeMask.N:
-                edgeP1 = new Vector2(cellWorld.x - half, cellWorld.z + half); // west end
-                edgeP2 = new Vector2(cellWorld.x + half, cellWorld.z + half); // east end
-                break;
-            case EdgeMask.E:
-                edgeP1 = new Vector2(cellWorld.x + half, cellWorld.z - half); // south end
-                edgeP2 = new Vector2(cellWorld.x + half, cellWorld.z + half); // north end
-                break;
-            case EdgeMask.S:
-                edgeP1 = new Vector2(cellWorld.x - half, cellWorld.z - half); // west end
-                edgeP2 = new Vector2(cellWorld.x + half, cellWorld.z - half); // east end
-                break;
-            case EdgeMask.W:
-                edgeP1 = new Vector2(cellWorld.x - half, cellWorld.z - half); // south end
-                edgeP2 = new Vector2(cellWorld.x - half, cellWorld.z + half); // north end
-                break;
-            default:
-                return false;
-        }
-
-        // Otetaan talteen, osuiko osuma jompaan kumpaan päätepisteeseen
-        int endpointHit;
-        if (!LineSegmentsIntersectWithEndpoint(lineStart, lineEnd, edgeP1, edgeP2, out endpointHit))
-            return false; // ei osumaa → ei blokkaa
-
-        // Osuttiin reunan SISÄLLE → blokkaa aina
-        if (endpointHit == 0) return true;
-
-        // Osuttiin päätepisteeseen
-        // Jos corner-peek on kytketty, salli VAIN jos päätepiste EI ole “jatkuva seinä” samaan suuntaan
-        if (ALLOW_CORNER_PEEK)
-        {
-            if (IsSameOrientationContinuationAtEndpoint(cell, edge, endpointHit))
-                return true;   // seinä jatkuu tästä → BLOKKAA
-            else
-                return false;  // todellinen päätykulma → SALLI
-        }
-
-        return true;
-    }
-
-    // Toleranssi
-    private const float EPS = 1e-4f;
-
-    // Palauttaa true jos segmentit leikkaavat.
-    // endpointHit: 0 = ei päätepistettä, 1 = p3 (edgeP1), 2 = p4 (edgeP2)
-    private static bool LineSegmentsIntersectWithEndpoint(
-        Vector2 p1, Vector2 p2, Vector2 p3, Vector2 p4, out int endpointHit)
-    {
-        endpointHit = 0;
-
-        float x1 = p1.x, y1 = p1.y;
-        float x2 = p2.x, y2 = p2.y;
-        float x3 = p3.x, y3 = p3.y;
-        float x4 = p4.x, y4 = p4.y;
-
-        float denom = (x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4);
-
-        // Kolineaarinen / lähes kolineaarinen
-        if (Mathf.Abs(denom) < EPS)
-        {
-            // Onko kolineaarinen (p3 on p1->p2 -linjalla)?
-            float cross = (x3 - x1) * (y2 - y1) - (y3 - y1) * (x2 - x1);
-            if (Mathf.Abs(cross) > EPS)
-                return false; // rinnakkainen mutta eri viiva
-
-            // Limittyvätkö projektiossa? Jos kyllä, tulkitaan osumaksi (blokkaus),
-            // ja endpoint1/2:ksi voidaan merkitä 0 (sisäosuma) — ei corner-peekiä
-            bool overlap;
-            if (Mathf.Abs(x1 - x2) >= Mathf.Abs(y1 - y2))
-            {
-                float a1 = Mathf.Min(x1, x2), a2 = Mathf.Max(x1, x2);
-                float b1 = Mathf.Min(x3, x4), b2 = Mathf.Max(x3, x4);
-                overlap = (a1 <= b2 + EPS) && (b1 <= a2 + EPS);
-            }
-            else
-            {
-                float a1 = Mathf.Min(y1, y2), a2 = Mathf.Max(y1, y2);
-                float b1 = Mathf.Min(y3, y4), b2 = Mathf.Max(y3, y4);
-                overlap = (a1 <= b2 + EPS) && (b1 <= a2 + EPS);
-            }
-            if (!overlap) return false;
-            endpointHit = 0; // käsitellään “sisäosumana”
-            return true;
-        }
-
-        // Yleinen tapaus
-        float t = ((x1 - x3) * (y3 - y4) - (y1 - y3) * (x3 - x4)) / denom;
-        float u = ((x1 - x3) * (y1 - y2) - (y1 - y3) * (x1 - x2)) / denom;
-
-        bool inside = (t >= -EPS && t <= 1f + EPS && u >= -EPS && u <= 1f + EPS);
-        if (!inside) return false;
-
-        // Päätepisteosuma?
-        bool atP3 = (u <= EPS);
-        bool atP4 = (u >= 1f - EPS);
-
-        if (atP3) { endpointHit = 1; return true; }
-        if (atP4) { endpointHit = 2; return true; }
-
-        // Osuma reunan sisällä
-        endpointHit = 0;
         return true;
     }
 }

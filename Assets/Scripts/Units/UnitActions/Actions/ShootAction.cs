@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class ShootAction : BaseAction
 {
-
     public static event EventHandler<OnShootEventArgs> OnAnyShoot;
     
     public event EventHandler<OnShootEventArgs> OnShoot;
@@ -252,24 +251,23 @@ public class ShootAction : BaseAction
     }
     */
 
-    // ShootAction.cs (tai missä tämä on)
     public List<GridPosition> GetValidActionGridPositionList(GridPosition unitGridPosition)
     {
-        var result = new List<GridPosition>();
+        var res = new List<GridPosition>();
         int r = weapon.maxShootRange;
 
+        var cfg = LoSConfig.Instance;
         foreach (var enemy in EnumerateEnemyCandidatesInRange(unitGridPosition, r))
         {
             var gp = enemy.GetGridPosition();
+            if (!RaycastVisibility.HasLineOfSightRaycastHeightAware(
+                unitGridPosition, gp,
+                cfg.losBlockersMask, cfg.eyeHeight, cfg.samplesPerCell, cfg.insetWU))
+            continue;
 
-            // Sama LoS kuin UI:ssa: TallWall-reunat + (valinnainen) ruudun koko-blokkerit + unitit välissä
-            if (!VisibilityService.HasLineOfSight(unitGridPosition, gp, occludeByUnits: true))
-                continue;
-
-            result.Add(gp);
+            res.Add(gp);
         }
-
-        return result;
+        return res;
     }
 
     // Kevyt ehdokassuodatin: vain vastustajat, sama floor, sisällä rangessa.
