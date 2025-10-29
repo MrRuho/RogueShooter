@@ -1,3 +1,4 @@
+
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -48,7 +49,47 @@ public class GridSystemVisual : MonoBehaviour
 
         Instance = this;
     }
+    /*
+        private void Start()
+        {
+            // Tyhjennä vision alussa verkkopelit varten
+            if (Mirror.NetworkClient.active && TeamVisionService.Instance != null)
+            {
+                int myTeam = GetLocalPlayerTeamId();
+                TeamVisionService.Instance.ClearTeamVision(myTeam);
+            }
 
+            gridSystemVisualSingleArray = new GridSystemVisualSingle[
+                LevelGrid.Instance.GetWidth(),
+                LevelGrid.Instance.GetHeight(),
+                LevelGrid.Instance.GetFloorAmount()
+                ];
+
+            for (int x = 0; x < LevelGrid.Instance.GetWidth(); x++)
+            {
+                for (int z = 0; z < LevelGrid.Instance.GetHeight(); z++)
+                {
+                    for (int floor = 0; floor < LevelGrid.Instance.GetFloorAmount(); floor++)
+                    {
+                        GridPosition gridPosition = new(x, z, floor);
+                        Transform gridSystemVisualSingleTransform = Instantiate(gridSystemVisualSinglePrefab, LevelGrid.Instance.GetWorldPosition(gridPosition), Quaternion.identity);
+                        gridSystemVisualSingleArray[x, z, floor] = gridSystemVisualSingleTransform.GetComponent<GridSystemVisualSingle>();
+                    }
+                }
+            }
+
+            UnitActionSystem.Instance.OnSelectedActionChanged += UnitActionSystem_OnSelectedActionChanged;
+            UnitActionSystem.Instance.OnBusyChanged += UnitActionSystem_OnBusyChanged;
+            LevelGrid.Instance.onAnyUnitMoveGridPosition += LevelGrid_onAnyUnitMoveGridPosition;
+
+            if (TeamVisionService.Instance != null)
+                TeamVisionService.Instance.OnTeamVisionChanged += HandleTeamVisionChanged;
+
+            UpdateGridVisuals();
+
+            Debug.Log($"[GridSystemVisual] Initialized. Team vision enabled: {teamVisionEnabled}, Local player team: {GetLocalPlayerTeamId()}");
+        }
+    */
     private void Start()
     {
         gridSystemVisualSingleArray = new GridSystemVisualSingle[
@@ -77,11 +118,18 @@ public class GridSystemVisual : MonoBehaviour
         if (TeamVisionService.Instance != null)
             TeamVisionService.Instance.OnTeamVisionChanged += HandleTeamVisionChanged;
 
+        // Tyhjennä vision alussa verkkopelit varten - estää toisen tiimin visionit jäämästä näkyviin
+        if (Mirror.NetworkClient.active && TeamVisionService.Instance != null)
+        {
+            int myTeam = GetLocalPlayerTeamId();
+            TeamVisionService.Instance.ClearTeamVision(myTeam);
+            Debug.Log($"[GridSystemVisual] Cleared Team {myTeam} vision on network game start");
+        }
+
         UpdateGridVisuals();
         
         Debug.Log($"[GridSystemVisual] Initialized. Team vision enabled: {teamVisionEnabled}, Local player team: {GetLocalPlayerTeamId()}");
     }
-
     void OnDisable()
     {
         UnitActionSystem.Instance.OnSelectedActionChanged -= UnitActionSystem_OnSelectedActionChanged;
@@ -91,7 +139,7 @@ public class GridSystemVisual : MonoBehaviour
         if (TeamVisionService.Instance != null)
             TeamVisionService.Instance.OnTeamVisionChanged -= HandleTeamVisionChanged; 
     }
-
+    
     private int GetLocalPlayerTeamId()
     {
         GameMode mode = GameModeManager.SelectedMode;
@@ -144,55 +192,6 @@ public class GridSystemVisual : MonoBehaviour
         }
     }
 
-    /*
-    private void ShowGridPositionRange(GridPosition gridPosition, int range, GridVisualType gridVisualType)
-    {
-        List<GridPosition> gridPositionsList = new List<GridPosition>();
-
-        for (int x = -range; x <= range; x++)
-        {
-            for (int z = -range; z <= range; z++)
-            {
-                GridPosition testGridPosition = gridPosition + new GridPosition(x, z, 0);
-
-                if (!LevelGrid.Instance.IsValidGridPosition(testGridPosition))
-                {
-                    continue;
-                }
-
-                int cost = SircleCalculator.Sircle(x, z);
-                if (cost > 10 * range) continue;
-
-                gridPositionsList.Add(testGridPosition);
-            }
-        }
-
-        ShowGridPositionList(gridPositionsList, gridVisualType);
-    }
-*/
-/*
-    private void ShowGridPositionRangeSquare(GridPosition gridPosition, int range, GridVisualType gridVisualType)
-    {
-        List<GridPosition> gridPositionsList = new List<GridPosition>();
-
-        for (int x = -range; x <= range; x++)
-        {
-            for (int z = -range; z <= range; z++)
-            {
-                GridPosition testGridPosition = gridPosition + new GridPosition(x, z, 0);
-
-                if (!LevelGrid.Instance.IsValidGridPosition(testGridPosition))
-                {
-                    continue;
-                }
-
-                gridPositionsList.Add(testGridPosition);
-            }
-        }
-
-        ShowGridPositionList(gridPositionsList, gridVisualType);
-    }
-*/
     public void ShowGridPositionList(List<GridPosition> gridPositionList, GridVisualType gridVisualType)
     {
         foreach (GridPosition gridPosition in gridPositionList)

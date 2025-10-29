@@ -95,8 +95,15 @@ public class MoveAction : BaseAction
 
                 if (!cur.Equals(_lastVisionPos))
                 {
+                    /*
                     unit.GetComponent<UnitVision>()?.NotifyMoved();
                     // unit.NotifyMoved_ForVision();
+                    _lastVisionPos = cur;
+                    */
+                    
+                    var uv = unit.GetComponent<UnitVision>();
+                    if (uv != null && uv.IsInitialized)
+                        uv.NotifyMoved();
                     _lastVisionPos = cur;
                 }
             }

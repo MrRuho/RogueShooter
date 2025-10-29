@@ -156,8 +156,6 @@ public class SpawnUnitsCoordinator : MonoBehaviour
     }
 
     // Get Spawn positions from placeholders in the scene
-
-
     private Vector3[] GetSpawnPositionsFromPlaceholders(UnitSpawnPlaceholder.Side side)
     {
         var scene = gameObject.scene;
@@ -308,6 +306,7 @@ public class SpawnUnitsCoordinator : MonoBehaviour
         return spawnedEnemies;
     }
     
+    /*
     private void InitUnitVision(GameObject go, int teamId)
     {
         if (NetworkServer.active && !NetworkClient.active) return;
@@ -327,4 +326,27 @@ public class SpawnUnitsCoordinator : MonoBehaviour
             Debug.LogWarning($"[SpawnUnitsCoordinator] {go.name} missing Unit or UnitVision component");
         }
     }
+    */
+    
+    
+    private void InitUnitVision(GameObject go, int teamId)
+    {
+        // Dedi-serverillä ei tarvita paikallista visualisointia
+        if (NetworkServer.active && !NetworkClient.active) return;
+
+        if (go.TryGetComponent<Unit>(out var u) && go.TryGetComponent<UnitVision>(out var uv))
+        {
+            // anna molemmat arvot yhdellä kutsulla ja anna UV:n hoitaa siivous & eka päivitys
+            uv.InitializeVision(teamId, u.archetype);
+
+            Debug.Log($"[SpawnUnitsCoordinator] InitUnitVision for {go.name}: Team {teamId}, Range {uv.visionSkill?.visionRange ?? 0}");
+        }
+        else
+        {
+            Debug.LogWarning($"[SpawnUnitsCoordinator] {go.name} missing Unit or UnitVision component");
+        }
+    }
+    
+    
+
 }

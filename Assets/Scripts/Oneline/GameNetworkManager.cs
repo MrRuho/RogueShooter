@@ -381,7 +381,8 @@ namespace Utp
 				Debug.Log($"[NM] Spawned {units.Length} units for conn {conn.connectionId}");
 			}
 
-			// Loput koodista...
+			NetTeamVisionSync.Instance.ServerPushFullVisionTo(conn);
+			
 			var turnMgr = NetTurnManager.Instance;
 			if (turnMgr != null)
 				turnMgr.ServerUpdateRequiredCount(NetworkServer.connections.Count);
@@ -408,24 +409,6 @@ namespace Utp
 					PvPTurnCoordinator.Instance.ServerRegisterPlayer(pc);
 			}
 		}
-
-		/*
-		[Server]
-		public void ServerSpawnEnemies()
-		{
-			// Pyydä SpawnUnitsCoordinatoria luomaan viholliset
-			var enemies = SpawnUnitsCoordinator.Instance.SpawnEnemies();
-
-			// Synkronoi viholliset verkkoon Mirrorin avulla
-			foreach (var enemy in enemies)
-			{
-				if (enemy != null)
-				{
-					NetworkServer.Spawn(enemy);
-				}
-			}
-		}
-		*/
 		
 		[Server]
 		public void ServerSpawnEnemies()

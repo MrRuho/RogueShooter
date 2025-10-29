@@ -366,4 +366,24 @@ public class Unit : NetworkBehaviour
         actionPoints = 0;
         OnAnyActionPointsChanged?.Invoke(this, EventArgs.Empty);
     }
+
+    public int GetTeamId()
+    {
+        if (!NetworkServer.active && !NetworkClient.active)
+        {
+            // Offline: käytä isEnemy flagia
+            return isEnemy ? 1 : 0;
+        }
+        
+        // Online: Versus vs Co-op
+        var mode = GameModeManager.SelectedMode;
+        if (mode == GameMode.Versus)
+        {
+            return NetworkSync.IsOwnerHost(OwnerId) ? 0 : 1;
+        }
+        
+        // Co-Op / SinglePlayer: pelaajat = 0, viholliset = 1
+        return isEnemy ? 1 : 0;
+    }
+
 }
