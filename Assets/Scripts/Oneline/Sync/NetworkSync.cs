@@ -1,6 +1,5 @@
 using Mirror;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 /// <summary>
 /// NetworkSync is a static helper class that centralizes all network-related actions.
@@ -22,6 +21,25 @@ using UnityEngine.SceneManagement;
 /// </summary>
 public static class NetworkSync
 {
+    // --- Perus rooliliput (yhdessä paikassa) ---
+    public static bool IsServer           => NetworkServer.active;
+    public static bool IsClient           => NetworkClient.active;
+    public static bool IsHost             => NetworkServer.active && NetworkClient.active;
+    public static bool IsClientOnly       => !NetworkServer.active && NetworkClient.active;
+    public static bool IsDedicatedServer  => NetworkServer.active && !NetworkClient.active;
+    public static bool IsOffline => !NetworkServer.active && !NetworkClient.active;
+
+    
+    /// <summary>
+    /// Hae NetworkClient netId:llä (toimii sekä clientillä että serverillä).
+    /// Palauttaa null jos ei löydy (esim. ei vielä spawnattu tällä framella).
+    /// </summary>
+    public static NetworkIdentity FindIdentity(uint actorId)
+    {
+        if (actorId == 0) return null;
+        NetworkClient.spawned.TryGetValue(actorId, out var ni);
+        return ni;
+    }
     /// <summary>
     /// Spawns a bullet projectile in the game world.
     /// Handles both offline (local Instantiate) and online (NetworkServer.Spawn) scenarios.
@@ -286,4 +304,44 @@ public static class NetworkSync
         return false;
     }
 
+    /// <summary>Onko tämä NetworkIdentity omistettu tällä koneella?</summary>
+    public static bool IsOwnedHere(NetworkIdentity ni)
+        => ni != null && (ni.isOwned || ni.isLocalPlayer);
+
+    /// <summary>
+    /// Paikallisen pelaajan teamId (piirtäjät, HUD, yms. käyttävät tätä).
+    /// - Offline: 0
+    /// - Versus: host=0, puhdas client=1
+    /// - SP/Coop online: 0
+    /// </summary>
+    public static int GetLocalPlayerTeamId(GameMode mode)
+    {
+        if (IsOffline) return 0;
+
+        if (mode == GameMode.Versus) return IsServer ? 0 : 1;
+        return 0;
+    }
+
+    /// <summary>
+    /// Overload: päättele team tälle unitille pelkän actorId:n (netId) perusteella.
+    /// Palauttaa null jos tämä unitti EI kuulu tälle koneelle (älä alusta täällä).
+    /// </summary>
+    public static int? TryResolveLocalTeamForUnit(GameMode mode, uint actorId)
+    {
+        if (IsOffline) return 0;
+
+        var ni = FindIdentity(actorId);
+        if (ni == null) return null; // ei vielä löydy täällä → älä alusta tässä framessa
+
+        bool ownedHere = IsOwnedHere(ni);
+
+        if (mode == GameMode.Versus)
+        {
+            if (!ownedHere) return null;
+            return IsServer ? 0 : 1; // host=0, puhdas client=1
+        }
+
+        // SP/Co-Op online: alusta vain omistetut unitit paikallisesti tiimille 0
+        return ownedHere ? 0 : (int?)null;
+    }
 }

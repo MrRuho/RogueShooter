@@ -305,41 +305,18 @@ public class SpawnUnitsCoordinator : MonoBehaviour
         SetEnemiesSpawned(true);
         return spawnedEnemies;
     }
-    
-    /*
-    private void InitUnitVision(GameObject go, int teamId)
-    {
-        if (NetworkServer.active && !NetworkClient.active) return;
-
-        if (go.TryGetComponent<Unit>(out var u) && go.TryGetComponent<UnitVision>(out var uv))
-        {
-            if (uv.visionSkill == null) uv.visionSkill = u.archetype;
-
-            uv.teamId = teamId;
-            
-            Debug.Log($"[SpawnUnitsCoordinator] InitUnitVision for {go.name}: Team {teamId}, Range {uv.visionSkill?.visionRange ?? 0}");
-            
-            uv.UpdateVisionNow();
-        }
-        else
-        {
-            Debug.LogWarning($"[SpawnUnitsCoordinator] {go.name} missing Unit or UnitVision component");
-        }
-    }
-    */
-    
-    
+ 
     private void InitUnitVision(GameObject go, int teamId)
     {
         // Dedi-serverillä ei tarvita paikallista visualisointia
-        if (NetworkServer.active && !NetworkClient.active) return;
+      //  if (NetworkServer.active && !NetworkClient.active) return;
 
-        if (go.TryGetComponent<Unit>(out var u) && go.TryGetComponent<UnitVision>(out var uv))
+        if (go.TryGetComponent<Unit>(out var u) && go.TryGetComponent<UnitVision>(out var unitVision))
         {
-            // anna molemmat arvot yhdellä kutsulla ja anna UV:n hoitaa siivous & eka päivitys
-            uv.InitializeVision(teamId, u.archetype);
+            // Asetetaan oikea tiimi ja alustetaan näkyvyys
+            unitVision.InitializeVision(teamId, u.archetype);
 
-            Debug.Log($"[SpawnUnitsCoordinator] InitUnitVision for {go.name}: Team {teamId}, Range {uv.visionSkill?.visionRange ?? 0}");
+            Debug.Log($"[SpawnUnitsCoordinator] InitUnitVision for {go.name}: Team {teamId}, Range {unitVision.visionSkill?.visionRange ?? 0}");
         }
         else
         {

@@ -91,7 +91,6 @@ namespace Utp
 			LevelLoader.LevelReady -= OnLevelReady_Server;
 		}
 
-
 		[Server]
 		private void OnLevelReady_Server(Scene mapScene)
 		{
@@ -166,7 +165,9 @@ namespace Utp
 			LevelGrid.Instance?.RebuildOccupancyFromScene();
 			EdgeBaker.Instance?.BakeAllEdges();
 			NetTurnManager.Instance?.ServerResetAndBegin();
-			
+			if (NetworkVisionRpcHub.Instance != null)
+        		NetworkVisionRpcHub.Instance.RpcResetLocalVisionAndRebuild();
+
 			Debug.Log("[GameNetworkManager] OnLevelReady_Server - Complete");
 		}
 
@@ -381,7 +382,7 @@ namespace Utp
 				Debug.Log($"[NM] Spawned {units.Length} units for conn {conn.connectionId}");
 			}
 
-			NetTeamVisionSync.Instance.ServerPushFullVisionTo(conn);
+			//NetTeamVisionSync.Instance.ServerPushFullVisionTo(conn);
 			
 			var turnMgr = NetTurnManager.Instance;
 			if (turnMgr != null)

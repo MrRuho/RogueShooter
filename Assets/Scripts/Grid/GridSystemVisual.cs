@@ -49,47 +49,7 @@ public class GridSystemVisual : MonoBehaviour
 
         Instance = this;
     }
-    /*
-        private void Start()
-        {
-            // Tyhjennä vision alussa verkkopelit varten
-            if (Mirror.NetworkClient.active && TeamVisionService.Instance != null)
-            {
-                int myTeam = GetLocalPlayerTeamId();
-                TeamVisionService.Instance.ClearTeamVision(myTeam);
-            }
 
-            gridSystemVisualSingleArray = new GridSystemVisualSingle[
-                LevelGrid.Instance.GetWidth(),
-                LevelGrid.Instance.GetHeight(),
-                LevelGrid.Instance.GetFloorAmount()
-                ];
-
-            for (int x = 0; x < LevelGrid.Instance.GetWidth(); x++)
-            {
-                for (int z = 0; z < LevelGrid.Instance.GetHeight(); z++)
-                {
-                    for (int floor = 0; floor < LevelGrid.Instance.GetFloorAmount(); floor++)
-                    {
-                        GridPosition gridPosition = new(x, z, floor);
-                        Transform gridSystemVisualSingleTransform = Instantiate(gridSystemVisualSinglePrefab, LevelGrid.Instance.GetWorldPosition(gridPosition), Quaternion.identity);
-                        gridSystemVisualSingleArray[x, z, floor] = gridSystemVisualSingleTransform.GetComponent<GridSystemVisualSingle>();
-                    }
-                }
-            }
-
-            UnitActionSystem.Instance.OnSelectedActionChanged += UnitActionSystem_OnSelectedActionChanged;
-            UnitActionSystem.Instance.OnBusyChanged += UnitActionSystem_OnBusyChanged;
-            LevelGrid.Instance.onAnyUnitMoveGridPosition += LevelGrid_onAnyUnitMoveGridPosition;
-
-            if (TeamVisionService.Instance != null)
-                TeamVisionService.Instance.OnTeamVisionChanged += HandleTeamVisionChanged;
-
-            UpdateGridVisuals();
-
-            Debug.Log($"[GridSystemVisual] Initialized. Team vision enabled: {teamVisionEnabled}, Local player team: {GetLocalPlayerTeamId()}");
-        }
-    */
     private void Start()
     {
         gridSystemVisualSingleArray = new GridSystemVisualSingle[
@@ -114,7 +74,7 @@ public class GridSystemVisual : MonoBehaviour
         UnitActionSystem.Instance.OnSelectedActionChanged += UnitActionSystem_OnSelectedActionChanged;
         UnitActionSystem.Instance.OnBusyChanged += UnitActionSystem_OnBusyChanged;
         LevelGrid.Instance.onAnyUnitMoveGridPosition += LevelGrid_onAnyUnitMoveGridPosition;
-        
+
         if (TeamVisionService.Instance != null)
             TeamVisionService.Instance.OnTeamVisionChanged += HandleTeamVisionChanged;
 
@@ -123,13 +83,12 @@ public class GridSystemVisual : MonoBehaviour
         {
             int myTeam = GetLocalPlayerTeamId();
             TeamVisionService.Instance.ClearTeamVision(myTeam);
-            Debug.Log($"[GridSystemVisual] Cleared Team {myTeam} vision on network game start");
         }
 
         UpdateGridVisuals();
-        
-        Debug.Log($"[GridSystemVisual] Initialized. Team vision enabled: {teamVisionEnabled}, Local player team: {GetLocalPlayerTeamId()}");
+
     }
+    
     void OnDisable()
     {
         UnitActionSystem.Instance.OnSelectedActionChanged -= UnitActionSystem_OnSelectedActionChanged;
@@ -196,8 +155,11 @@ public class GridSystemVisual : MonoBehaviour
     {
         foreach (GridPosition gridPosition in gridPositionList)
         {
-            gridSystemVisualSingleArray[gridPosition.x, gridPosition.z, gridPosition.floor].
-            Show(GetGridVisualTypeMaterial(gridVisualType));
+            if(gridSystemVisualSingleArray[gridPosition.x, gridPosition.z, gridPosition.floor] != null)
+            {
+                gridSystemVisualSingleArray[gridPosition.x, gridPosition.z, gridPosition.floor].
+                Show(GetGridVisualTypeMaterial(gridVisualType));
+            }
         }
     }
 
@@ -310,7 +272,6 @@ public class GridSystemVisual : MonoBehaviour
             return;
         }
         
-        Debug.Log($"[GridSystemVisual] Team vision changed for my team {myTeam}, updating visuals");
         UpdateGridVisuals();
     }
 
@@ -336,7 +297,11 @@ public class GridSystemVisual : MonoBehaviour
         var mat = GetGridVisualTypeMaterial(type);
         foreach (var gp in cells)
         {
-            gridSystemVisualSingleArray[gp.x, gp.z, gp.floor].Show(mat);
+            if(gridSystemVisualSingleArray[gp.x, gp.z, gp.floor] != null)
+            {
+                gridSystemVisualSingleArray[gp.x, gp.z, gp.floor].Show(mat); 
+            }
+
             _lastActionCells.Add(gp);
         }
     }

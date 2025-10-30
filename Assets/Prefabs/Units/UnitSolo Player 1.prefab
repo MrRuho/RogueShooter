@@ -29,7 +29,6 @@ GameObject:
   - component: {fileID: 7652147739104449844}
   - component: {fileID: -1189943715922618835}
   - component: {fileID: 6111267312838352488}
-  - component: {fileID: -2573111111839341296}
   m_Layer: 7
   m_Name: UnitSolo Player 1
   m_TagString: Untagged
@@ -407,21 +406,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::UnitVision
   visionSkill: {fileID: 11400000, guid: 4550bcfa4110ca445be7e3f4b337acd8, type: 2}
   teamId: 0
---- !u!114 &-2573111111839341296
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 246340107227206225}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0b649fde3c5ebfb40b2f246a03cae25d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::NetUnitVisionInit
-  syncDirection: 0
-  syncMode: 0
-  syncInterval: 0
 --- !u!1 &1954669533539790246
 GameObject:
   m_ObjectHideFlags: 0

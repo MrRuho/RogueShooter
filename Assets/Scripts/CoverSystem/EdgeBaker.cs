@@ -440,7 +440,7 @@ public class EdgeBaker : MonoBehaviour
 
     public void BakeTallWalls()
     {
-        Debug.Log("[EdgeBaker] Baking TallWall data for LoS checks...");
+
         var lg = LevelGrid.Instance;
         if (lg == null) return;
 
@@ -533,7 +533,6 @@ public class EdgeBaker : MonoBehaviour
                 }
             }
         }
-        Debug.Log($"[EdgeBaker] BakeTallWalls complete. Found {totalEdges} tall wall edges. ObstaclesMask: {obstaclesMask.value}");
     }
 
 }
