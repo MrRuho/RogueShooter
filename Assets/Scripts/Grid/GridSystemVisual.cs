@@ -1,4 +1,3 @@
-
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -78,7 +77,6 @@ public class GridSystemVisual : MonoBehaviour
         if (TeamVisionService.Instance != null)
             TeamVisionService.Instance.OnTeamVisionChanged += HandleTeamVisionChanged;
 
-        // Tyhjennä vision alussa verkkopelit varten - estää toisen tiimin visionit jäämästä näkyviin
         if (Mirror.NetworkClient.active && TeamVisionService.Instance != null)
         {
             int myTeam = GetLocalPlayerTeamId();
@@ -86,7 +84,6 @@ public class GridSystemVisual : MonoBehaviour
         }
 
         UpdateGridVisuals();
-
     }
     
     void OnDisable()
@@ -166,7 +163,12 @@ public class GridSystemVisual : MonoBehaviour
     private void UpdateGridVisuals()
     {
         HideAllGridPositions();
-        _lastActionCells.Clear(); // <-- tärkeä: nollaa action-ruudut jokaisessa päivityksessä
+        _lastActionCells.Clear();
+
+        if (teamVisionEnabled && TeamVisionService.Instance != null)
+        {
+            DrawTeamVisionOverlay();
+        }
 
         Unit selectedUnit = UnitActionSystem.Instance.GetSelectedUnit();
         if (selectedUnit == null) return;
@@ -201,7 +203,6 @@ public class GridSystemVisual : MonoBehaviour
                 visible.RemoveWhere(gp => !RaycastVisibility.HasLineOfSightRaycastHeightAware(
                     origin, gp, cfg.losBlockersMask, cfg.eyeHeight, cfg.samplesPerCell, cfg.insetWU));
 
-                // Ammunnan lisä-overlay (pehmeä punainen) lasketaan action-ruuduiksi
                 _tmpList.Clear();
                 _tmpList.AddRange(visible);
                 ShowAndMark(_tmpList, GridVisualType.RedSoft);
@@ -214,7 +215,6 @@ public class GridSystemVisual : MonoBehaviour
 
             case MeleeAction _:
                 gridVisualType = GridVisualType.Red;
-                // 1 ruudun pehmennys ympärille on myös action-overlay
                 ShowAndMark(BuildRangeSquare(selectedUnit.GetGridPosition(), 1), GridVisualType.RedSoft);
                 break;
 
@@ -223,14 +223,7 @@ public class GridSystemVisual : MonoBehaviour
                 break;
         }
 
-        // Päälista: valitun actionin validit kohderuudut → aina action-ruutuja
         ShowAndMark(selectedAction.GetValidGridPositionList(), gridVisualType);
-
-        // Team-vision: piirrä vain niihin ruutuihin, joissa EI ole action-overlayta
-        if (teamVisionEnabled && TeamVisionService.Instance != null)
-        {
-            DrawTeamVisionOverlayExcludingAction();
-        }
     }
 
     private void UnitActionSystem_OnSelectedActionChanged(object sender, EventArgs e)
@@ -275,7 +268,7 @@ public class GridSystemVisual : MonoBehaviour
         UpdateGridVisuals();
     }
 
-    private void DrawTeamVisionOverlayExcludingAction()
+    private void DrawTeamVisionOverlay()
     {
         if (TeamVisionService.Instance == null) return;
 
@@ -291,7 +284,6 @@ public class GridSystemVisual : MonoBehaviour
         ShowGridPositionList(_tmpList, teamVisionType);
     }
 
-    // Näytä ja merkitse ruudut "action-ruuduiksi" jotta vision ei piirry niiden päälle
     private void ShowAndMark(IEnumerable<GridPosition> cells, GridVisualType type)
     {
         var mat = GetGridVisualTypeMaterial(type);
@@ -306,7 +298,6 @@ public class GridSystemVisual : MonoBehaviour
         }
     }
 
-    // Tarvitaan esim. lähietäisyyden "pehmennykseen" (melee)
     private List<GridPosition> BuildRangeSquare(GridPosition center, int range)
     {
         var list = new List<GridPosition>();

@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-//using Mirror;
 using UnityEngine;
 
 public class TurnSystem : MonoBehaviour
@@ -18,8 +17,6 @@ public class TurnSystem : MonoBehaviour
 
     private void Awake()
     {
-
-        // Ensure that there is only one instance in the scene
         if (Instance != null)
         {
             Debug.LogError(" More than one TurnSystem in the scene!" + transform + " " + Instance);
@@ -32,11 +29,9 @@ public class TurnSystem : MonoBehaviour
     private void Start()
     {
         OnTurnChanged += turnSystem_OnTurnChanged;
-        // Ensimmäinen vuoro.
         OnTurnStarted?.Invoke(CurrentTeam, TurnId);
-        // Varmista, että alkutila lähetetään kaikille UI:lle
-        PlayerLocalTurnGate.Set(isPlayerTurn); // true = Player turn alussa
-        OnTurnChanged?.Invoke(this, EventArgs.Empty); // jos haluat myös muut UI:t liikkeelle
+        PlayerLocalTurnGate.Set(isPlayerTurn);
+        OnTurnChanged?.Invoke(this, EventArgs.Empty);
     }
 
     private void OnDisable()
@@ -46,18 +41,15 @@ public class TurnSystem : MonoBehaviour
 
     private void turnSystem_OnTurnChanged(object sender, EventArgs e)
     {
-        GridSystemVisual.Instance.HideAllGridPositions();
         UnitActionSystem.Instance.ResetSelectedAction();
         UnitActionSystem.Instance.ResetSelectedUnit();
     }
 
     public void NextTurn()
     {
-        
         Debug.Log($"[TurnSystem] NextTurn(): end={CurrentTeam}, id={TurnId}");
-        if (GameModeManager.SelectedMode != GameMode.SinglePlayer && !NetMode.IsOnline) // !NetworkServer.active
+        if (GameModeManager.SelectedMode != GameMode.SinglePlayer && !NetMode.IsOnline)
         {
-
             Debug.LogWarning("Client yritti kääntää vuoroa lokaalisti, ignoroidaan.");
             return;
         }
@@ -88,7 +80,7 @@ public class TurnSystem : MonoBehaviour
     {
         if (incrementTurnNumber) turnNumber++;
         
-        if (NetMode.IsOnline && isPlayerTurn) // NetworkServer.active
+        if (NetMode.IsOnline && isPlayerTurn)
         {
             ConvertUnusedActionPointsToCoverPoints();
         }
@@ -140,37 +132,23 @@ public class TurnSystem : MonoBehaviour
 
     public bool IsUnitsTurn(Unit u) => u.Team == CurrentTeam;
 
-    /// <summary>
-    /// Offline/SP: nollaa paikallisen vuorotilan ja aloittaa alusta.
-    /// Kutsu tätä heti, kun yksiköt on spawnattu uudelleen level-reloadin jälkeen.
-    /// </summary>
-    /// <param name="resetTurnNumber">Asetetaanko turnNumber takaisin 1:een.</param>
-    /// <param name="playersPhase">Aloitetaanko Players-vaiheesta (yleensä true).</param>
     public void ResetAndBegin(bool resetTurnNumber = true, bool playersPhase = true)
     {
-        // Online-tilassa varoitetaan: online-reset hoidetaan NetTurnManagerin kautta
         if (GameModeManager.SelectedMode != GameMode.SinglePlayer && Mirror.NetworkServer.active)
         {
             Debug.LogWarning("[TurnSystem] ResetAndBegin() on offline/SP-apu. Verkossa käytä NetTurnManager.ServerResetAndBegin().");
         }
 
-        // Nollaa paikalliset laskurit/tila
         if (resetTurnNumber) turnNumber = 1;
 
-        // UI-/SP-luupin peruskentät
         CurrentTeam = playersPhase ? Team.Player : Team.Enemy;
-        TurnId = 0;                 // sisäinen vaihtolaskuri, alkaa alusta
+        TurnId = 0;
         var wasPlayerTurn = IsPlayerTurn();
 
-        // Päivitä “onko pelaajan vuoro” -portti ja kerro UI:lle
-        ForcePhase(isPlayerTurn: playersPhase, incrementTurnNumber: false); // kutsuu OnTurnChanged, käyttää nykyistä logiikkaasi
-        PlayerLocalTurnGate.Set(playersPhase);                               // HUD/input-portti heti oikein
+        ForcePhase(isPlayerTurn: playersPhase, incrementTurnNumber: false);
+        PlayerLocalTurnGate.Set(playersPhase);
 
-        // Ilmoita uuden vuoron alkamisesta niille, jotka kuuntelevat OnTurnStarted
         OnTurnStarted?.Invoke(CurrentTeam, TurnId);
-
-        // Jos haluat täydellisen synkan HUDissa, voit vielä varmistaa:
-        // SetHudFromNetwork(turnNumber, playersPhase);
     }
 
     public void BeginPlayersTurn(bool incrementTurnId)
