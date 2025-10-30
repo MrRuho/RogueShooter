@@ -31,7 +31,6 @@ public class MoveAction : BaseAction
 
     private void Start()
     {
-
         distance = 0;
         thisTurnStartingGridPosition = unit.GetGridPosition();
         thisTurnEndridPosition = unit.GetGridPosition();
@@ -94,16 +93,12 @@ public class MoveAction : BaseAction
                 var cur = lg.GetGridPosition(unit.transform.position);
 
                 if (!cur.Equals(_lastVisionPos))
-                {
-                    /*
-                    unit.GetComponent<UnitVision>()?.NotifyMoved();
-                    // unit.NotifyMoved_ForVision();
-                    _lastVisionPos = cur;
-                    */
-                    
+                {    
                     var uv = unit.GetComponent<UnitVision>();
                     if (uv != null && uv.IsInitialized)
                         uv.NotifyMoved();
+
+                    Unit.RaiseAnyUnitMoved(unit);
                     _lastVisionPos = cur;
                 }
             }
@@ -128,6 +123,7 @@ public class MoveAction : BaseAction
 
                 // Varmistus: viimeinen päivitys lopetusruudusta
                 unit.GetComponent<UnitVision>()?.NotifyMoved();
+                Unit.RaiseAnyUnitMoved(unit);
 
                 OnStopMoving?.Invoke(this, EventArgs.Empty);
                 ActionComplete();

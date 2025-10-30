@@ -41,6 +41,8 @@ public class Unit : NetworkBehaviour
     public static event EventHandler OnAnyActionPointsChanged;
     public static event EventHandler OnAnyUnitSpawned;
     public static event EventHandler OnAnyUnitDead;
+    public static event EventHandler OnAnyUnitMovedGridPosition;
+
 
     public event Action<bool> OnHiddenChangedEvent;
 
@@ -134,6 +136,9 @@ public class Unit : NetworkBehaviour
             LevelGrid.Instance.RemoveUnitAtGridPosition(gridPosition, this);
         }
     }
+
+    public static void RaiseAnyUnitMoved(Unit u)
+        => OnAnyUnitMovedGridPosition?.Invoke(u, EventArgs.Empty);
 
     public T GetAction<T>() where T : BaseAction
     {
@@ -315,8 +320,6 @@ public class Unit : NetworkBehaviour
 
     public void ApplyNetworkCover(int cur, int max) { if (Cover) Cover.ApplyNetworkCover(cur, max); }
 
-    // public void AddPersonalCover(int delta) { if (Cover) Cover.AddPersonalCover(delta); }
-
     //*********************************
 
     // ***** weapons ******
@@ -365,6 +368,25 @@ public class Unit : NetworkBehaviour
         // (valinnainen) nollaa AP:t heti vuoron päättyessä:
         actionPoints = 0;
         OnAnyActionPointsChanged?.Invoke(this, EventArgs.Empty);
+    }
+
+    public int GetTeamId()
+    {
+        if (!NetworkServer.active && !NetworkClient.active)
+        {
+            // Offline: käytä isEnemy flagia
+            return isEnemy ? 1 : 0;
+        }
+        
+        // Online: Versus vs Co-op
+        var mode = GameModeManager.SelectedMode;
+        if (mode == GameMode.Versus)
+        {
+            return NetworkSync.IsOwnerHost(OwnerId) ? 0 : 1;
+        }
+        
+        // Co-Op / SinglePlayer: pelaajat = 0, viholliset = 1
+        return isEnemy ? 1 : 0;
     }
 
 }
