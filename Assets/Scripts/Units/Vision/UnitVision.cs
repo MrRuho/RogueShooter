@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using UnityEngine;
-//using Mirror;
 
 [DisallowMultipleComponent]
 public class UnitVision : MonoBehaviour
@@ -21,19 +20,16 @@ public class UnitVision : MonoBehaviour
         _tr = transform;
         _unit = GetComponent<Unit>();
         _unitKey = GetInstanceID();
-
     }
 
     void Start()
     {
-        // Jos SpawnUnitsCoordinator ehti jo kutsua InitializeVisionia, ei tehdä mitään
         if (!_initialized)
             StartCoroutine(Co_AutoInitLocal());
     }
 
     void OnDisable()
     {
-
         if (TeamVisionService.Instance != null)
         {
             TeamVisionService.Instance.RemoveUnitVision(teamId, _unitKey);
@@ -41,46 +37,33 @@ public class UnitVision : MonoBehaviour
         _lastVisible.Clear();
     }
 
-    /// <summary>
-    /// Yritä alustaa näkyvyys paikallisesti sillä clientillä, jolle tämä unit kuuluu.
-    /// Ei tee mitään dediserverillä eikä vastustajan uniteille.
-    /// </summary>
     private System.Collections.IEnumerator Co_AutoInitLocal()
     {
-        // Odota 1 frame: varmistetaan että NetworkIdentity/isOwned & LevelGrid ovat valmiit
+        Debug.Log($"[UnitVision] Aloitetaan automaattinen initialisointi: {name}");
         yield return null;
 
         if (_initialized) yield break;
+        if (NetMode.IsDedicatedServer) yield break;
 
-        // Dedicated server: ei ole paikallista pelaajaa tai ruutua → älä tee client-puolen overlay-initialisointia
-        // Jos tämä on dedi-serveri, lopeta tähän)
-        if (NetMode.IsDedicatedServer) yield break; //NetworkServer.active && !NetworkClient.active
+        // Yritä alustaa useamman framen ajan (Mirror tarvitsee aikaa synkronoida ownership)
+        for (int attempt = 0; attempt < 30; attempt++)
+        {
 
-        int? team = ResolveLocalTeamForThisUnit();
-        if (team == null) yield break; // ei ole tämän clientin omistama unit
+            int? team = _unit.GetTeamId();
 
-        if (_unit == null) _unit = GetComponent<Unit>();
-        // Anna archetype täältä (Unitista) — InitializeVision hoitaa ensimmäisen päivityksen
-        InitializeVision(team.Value, _unit ? _unit.archetype : visionSkill);
-    }
+            if (team != null)
+            {
+                if (_unit == null) _unit = GetComponent<Unit>();
+                InitializeVision(team.Value, _unit ? _unit.archetype : visionSkill);
+                yield break;
+            }
 
-    /// <summary>
-    /// Päättele paikallinen teamId tälle unitille tällä koneella.
-    /// Palauttaa 0/1 tai null jos tämä ei ole minun unit (ei alusteta täällä).
-    /// </summary>
-    private int? ResolveLocalTeamForThisUnit()
-    {
-        if (NetMode.Offline) return 0;
-  
-        return NetworkSync.TryResolveLocalTeamForUnit(
-            GameModeManager.SelectedMode,
-            this.GetActorId()
-        );
+            yield return null;
+        }
     }
 
     public void InitializeVision(int setTeamId, UnitArchetype archetype)
     {
-     
         if (_initialized && setTeamId != _currentTeamId && TeamVisionService.Instance != null)
             TeamVisionService.Instance.RemoveUnitVision(_currentTeamId, _unitKey);
 
@@ -166,16 +149,10 @@ public class UnitVision : MonoBehaviour
 
     private bool ShouldPublishVisionLocally()
     {
-        // Offline: aina ok
         if (NetworkSync.IsOffline) return true;
-
-        // Online: vain UI:ta omaava prosessi (host/client), ei dediserver
         if (!NetworkSync.IsClient) return false;
 
-        // VERSUS/CO-OP: julkaise vain omistetut unitit tällä koneella,
-        // jotta toisen pelaajan unitit eivät koskaan "työnnä" visionia väärälle puolelle
-        var ni = NetworkSync.FindIdentity(this.GetActorId());   // ActorIdUtil → uint → NI
+        var ni = NetworkSync.FindIdentity(this.GetActorId());
         return NetworkSync.IsOwnedHere(ni);
     }
-    
 }

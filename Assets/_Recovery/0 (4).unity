@@ -262,7 +262,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 91a13e5424f77e542bc6b0743465e1ef, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::VisibilitySystem
-  pollInterval: 0
   hideEnemiesOnStart: 1
 --- !u!4 &728520760
 Transform:

@@ -47,10 +47,6 @@ public class UnitManager : MonoBehaviour
 
     private void Unit_OnAnyUnitSpawned(object sender, EventArgs e)
     {   
-        /*
-        Unit unit = sender as Unit;
-        unitList.Add(unit);
-        */
         // 1) Estä duplikaatit
         Unit unit = sender as Unit;
         if (!unitSet.Add(unit)) return;
@@ -114,13 +110,6 @@ public class UnitManager : MonoBehaviour
     {
         return friendlyUnitList;
     }
-
-    /*
-    public List<Unit> GetEnemyUnitList()
-    {
-        return enemyUnitList;
-    }
-    */
 
     public void ClearAllUnitLists()
     {

@@ -7,12 +7,14 @@ public enum GameMode { SinglePlayer, CoOp, Versus }
 
 public class GameModeManager : MonoBehaviour
 {
-    public static GameModeManager Instance { get; private set; } 
+    public static GameModeManager Instance { get; private set; }
     public static GameMode SelectedMode { get; private set; } = GameMode.SinglePlayer;
+    
     
     public static void SetSinglePlayer() => SelectedMode = GameMode.SinglePlayer;
     public static void SetCoOp() => SelectedMode = GameMode.CoOp;
     public static void SetVersus() => SelectedMode = GameMode.Versus;
+    
 
     private void Awake()
     {
@@ -36,7 +38,8 @@ public class GameModeManager : MonoBehaviour
 
      private void OnLevelReady(Scene _)
     {
-        if (!NetMode.IsOnline) return; // vain offline
+        // Estää tupla spawnauksia offline-tilassa reloadin jälkeen
+        if (!NetMode.IsOnline) return; // vain online-tilassa   
         StartCoroutine(OfflineBootstrap()); // ← käynnistä spawnaus myös reloadin jälkeen
     }
 
@@ -78,31 +81,5 @@ public class GameModeManager : MonoBehaviour
             SpawnUnitsCoordinator.Instance.SpawnSinglePlayerUnits();
             LevelGrid.Instance.RebuildOccupancyFromScene();
         }
-    }
-    
-    /*
-    void Handle_LevelReady(Scene s)
-    {
-        if (!NetMode.IsServer) return;           // vain server
-        StartCoroutine(Co_ServerSpawnUnits());
-    }
-
-    IEnumerator Co_ServerSpawnUnits()
-    {
-        // odota riippuvuudet
-        yield return new WaitUntil(() =>
-            SpawnUnitsCoordinator.Instance != null &&
-            LevelGrid.Instance != null &&
-            PathFinding.Instance != null);
-
-        // Spawnaa serveriltä nykyisen pelitilan mukaan
-        // (tee koordinaattoriin yksi sisäänajo, ettei tarvitse miettiä moodia tässä)
-        //SpawnUnitsCoordinator.Instance.ServerSpawnUnitsForCurrentMode();
-
-        // päivitä miehitys varmuudeksi
-        LevelGrid.Instance.RebuildOccupancyFromScene();
-    }
-    */
-    
+    } 
 }
-

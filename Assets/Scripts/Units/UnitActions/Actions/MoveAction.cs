@@ -35,11 +35,13 @@ public class MoveAction : BaseAction
         thisTurnStartingGridPosition = unit.GetGridPosition();
         thisTurnEndridPosition = unit.GetGridPosition();
         TurnSystem.Instance.OnTurnChanged += TurnSystem_OnTurnChanged;
+
     }
 
     void OnDisable()
     {
         TurnSystem.Instance.OnTurnChanged -= TurnSystem_OnTurnChanged;
+
     }
 
     private void TurnSystem_OnTurnChanged(object sender, EventArgs e)
@@ -98,7 +100,7 @@ public class MoveAction : BaseAction
                     if (uv != null && uv.IsInitialized)
                         uv.NotifyMoved();
 
-                    Unit.RaiseAnyUnitMoved(unit);
+                  //  Unit.RaiseAnyUnitMoved(unit);
                     _lastVisionPos = cur;
                 }
             }
@@ -123,7 +125,7 @@ public class MoveAction : BaseAction
 
                 // Varmistus: viimeinen päivitys lopetusruudusta
                 unit.GetComponent<UnitVision>()?.NotifyMoved();
-                Unit.RaiseAnyUnitMoved(unit);
+             //   Unit.RaiseAnyUnitMoved(unit);
 
                 OnStopMoving?.Invoke(this, EventArgs.Empty);
                 ActionComplete();

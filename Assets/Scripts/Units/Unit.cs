@@ -28,7 +28,6 @@ public class Unit : NetworkBehaviour
 
     [SyncVar] public uint OwnerId;
 
-
     [SyncVar] private bool underFire = false;
     public bool IsUnderFire => underFire;
 
@@ -41,9 +40,7 @@ public class Unit : NetworkBehaviour
     public static event EventHandler OnAnyActionPointsChanged;
     public static event EventHandler OnAnyUnitSpawned;
     public static event EventHandler OnAnyUnitDead;
-    public static event EventHandler OnAnyUnitMovedGridPosition;
-
-
+ 
     public event Action<bool> OnHiddenChangedEvent;
 
     [SerializeField] public bool isEnemy;
@@ -136,9 +133,6 @@ public class Unit : NetworkBehaviour
             LevelGrid.Instance.RemoveUnitAtGridPosition(gridPosition, this);
         }
     }
-
-    public static void RaiseAnyUnitMoved(Unit u)
-        => OnAnyUnitMovedGridPosition?.Invoke(u, EventArgs.Empty);
 
     public T GetAction<T>() where T : BaseAction
     {
@@ -372,7 +366,7 @@ public class Unit : NetworkBehaviour
 
     public int GetTeamId()
     {
-        if (!NetworkServer.active && !NetworkClient.active)
+        if (NetMode.Offline) // !NetworkServer.active && !NetworkClient.active
         {
             // Offline: käytä isEnemy flagia
             return isEnemy ? 1 : 0;
@@ -382,11 +376,23 @@ public class Unit : NetworkBehaviour
         var mode = GameModeManager.SelectedMode;
         if (mode == GameMode.Versus)
         {
+            // CLIENTILLA: tarkista onko tämä unitti omistettu täällä
+            if (NetworkClient.active && !NetworkServer.active)
+            {
+                var ni = GetComponent<NetworkIdentity>();
+                if (ni != null)
+                {
+                    // Jos tämä on mun unitti, palauta 1 (Client team)
+                    // Muuten palauta 0 (Host team)
+                    return ni.isOwned ? 1 : 0;
+                }
+            }
+            
+            // SERVERILLÄ/HOSTILLA: käytä OwnerId-tarkistusta
             return NetworkSync.IsOwnerHost(OwnerId) ? 0 : 1;
         }
         
         // Co-Op / SinglePlayer: pelaajat = 0, viholliset = 1
         return isEnemy ? 1 : 0;
     }
-
 }

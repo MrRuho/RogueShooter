@@ -1,4 +1,5 @@
 using Mirror;
+using Unity.Networking.Transport.Error;
 using UnityEngine;
 
 /// <summary>
@@ -320,28 +321,5 @@ public static class NetworkSync
 
         if (mode == GameMode.Versus) return IsServer ? 0 : 1;
         return 0;
-    }
-
-    /// <summary>
-    /// Overload: päättele team tälle unitille pelkän actorId:n (netId) perusteella.
-    /// Palauttaa null jos tämä unitti EI kuulu tälle koneelle (älä alusta täällä).
-    /// </summary>
-    public static int? TryResolveLocalTeamForUnit(GameMode mode, uint actorId)
-    {
-        if (IsOffline) return 0;
-
-        var ni = FindIdentity(actorId);
-        if (ni == null) return null; // ei vielä löydy täällä → älä alusta tässä framessa
-
-        bool ownedHere = IsOwnedHere(ni);
-
-        if (mode == GameMode.Versus)
-        {
-            if (!ownedHere) return null;
-            return IsServer ? 0 : 1; // host=0, puhdas client=1
-        }
-
-        // SP/Co-Op online: alusta vain omistetut unitit paikallisesti tiimille 0
-        return ownedHere ? 0 : (int?)null;
     }
 }

@@ -47,7 +47,7 @@ public class TurnSystem : MonoBehaviour
 
     public void NextTurn()
     {
-        Debug.Log($"[TurnSystem] NextTurn(): end={CurrentTeam}, id={TurnId}");
+
         if (GameModeManager.SelectedMode != GameMode.SinglePlayer && !NetMode.IsOnline)
         {
             Debug.LogWarning("Client yritti kääntää vuoroa lokaalisti, ignoroidaan.");

@@ -1,57 +1,60 @@
-
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+
 public class VisibilitySystem : MonoBehaviour
 {
-    [Tooltip("Kuinka usein polletaan varmuuden vuoksi (s) — pitää myös vihollisen omaan liikkeeseen reagoimisen ilman eventtejä.")]
     [SerializeField] private float pollInterval = 0.25f;
-
-    [Tooltip("Piilota kaikki viholliset pelin alussa ja näytä vain jos vision osuu.")]
     [SerializeField] private bool hideEnemiesOnStart = true;
 
-    private readonly HashSet<Unit> _visibleNow = new HashSet<Unit>();
-    private int _myTeam;
+    private readonly HashSet<Unit> _visibleNow = new();
+    private int _myTeam = -1;
     private bool _didInitialBaseline;
-
-    void Awake()
-    {
-        // Sama tiimimäärittely kuin muualla (host=0, client=1 Versuksessa; muuten 0).
-        _myTeam = NetworkSync.GetLocalPlayerTeamId(GameModeManager.SelectedMode);
-    }
 
     void OnEnable()
     {
         var tvs = TeamVisionService.Instance;
-        if (tvs != null)
-            tvs.OnTeamVisionChanged += HandleTeamVisionChanged;
-
+        if (tvs != null) tvs.OnTeamVisionChanged += HandleTeamVisionChanged;
         StartCoroutine(Co_Poll());
     }
 
     void OnDisable()
     {
         var tvs = TeamVisionService.Instance;
-        if (tvs != null)
-            tvs.OnTeamVisionChanged -= HandleTeamVisionChanged;
-
+        if (tvs != null) tvs.OnTeamVisionChanged -= HandleTeamVisionChanged;
         StopAllCoroutines();
         _visibleNow.Clear();
         _didInitialBaseline = false;
+        _myTeam = -1;
     }
 
-    // Reagoi vain oman tiimin näkyvyysmuutoksiin
-    private void HandleTeamVisionChanged(int teamId)
+    private int ResolveLocalTeam()
     {
-        if (teamId == _myTeam)
-            RefreshVisibleEnemies();
+        // 1) Normaalisti: käytä keskitettyä apuria
+        int id = NetworkSync.GetLocalPlayerTeamId(GameModeManager.SelectedMode);
+    
+        // 2) Jos ollaan puhdas client (ei host) JA tiimi on vielä epäselvä,
+        //    yritä päätellä se ensimmäisestä omistetusta unitista.
+        if (NetworkSync.IsClientOnly && UnitManager.Instance != null)
+        {
+            foreach (var u in UnitManager.Instance.GetUnitList())
+            {
+                if (!u) continue;
+                var ni = u.GetComponent<Mirror.NetworkIdentity>();
+                if (NetworkSync.IsOwnedHere(ni))
+                    return u.GetTeamId(); // Versus: clientille 1, Co-op: 0
+            }
+        }
+
+        return id;
     }
 
     private IEnumerator Co_Poll()
     {
-        // Odota 1 frame jotta kaikki unitit ehtivät spawnata
         yield return null;
+
+        _myTeam = ResolveLocalTeam();
 
         if (hideEnemiesOnStart && !_didInitialBaseline)
         {
@@ -59,75 +62,120 @@ public class VisibilitySystem : MonoBehaviour
             _didInitialBaseline = true;
         }
 
-        // Alustava näkyvyys (tuo näkyviin ne, jotka ovat jo visionissa)
         RefreshVisibleEnemies();
 
         var wait = new WaitForSeconds(pollInterval);
         while (true)
         {
-            RefreshVisibleEnemies(); // kevyt varmistus (react myös vihollisen omaan liikkeeseen)
+            RefreshVisibleEnemies();
             yield return wait;
         }
     }
 
+    private void HandleTeamVisionChanged(int teamId)
+    {
+        if (teamId == _myTeam) RefreshVisibleEnemies();
+    }
+
     private void RefreshVisibleEnemies()
     {
-        var tvs = TeamVisionService.Instance;
-        if (tvs == null) return;
+        // 0) Hae AJANTASAINEN tiimi jokaisella kutsulla
+        int myTeam = NetworkSync.GetLocalPlayerTeamId(GameModeManager.SelectedMode);
 
-        // Hae kaikki Unitit ilman sorttausta
-        var units = UnitManager.Instance.GetUnitList();
-
-        foreach (var u in units)
+        // 0b) Fallback: client-only + Versus → päättele tiimi omistetusta unitista,
+        //     jos myTeam vielä 0 (hostin tiimi) ja omia unitteja on jo olemassa.
+        if (NetworkSync.IsClientOnly && GameModeManager.SelectedMode == GameMode.Versus && myTeam == 0)
         {
-            if (!u) continue;
-
-            // Omat aina näkyvissä
-            if (GetTeamId(u) == _myTeam)
+            var um = UnitManager.Instance;
+            if (um != null)
             {
-                // Jos baseline piilotti vahingossa omia (esim. tiimi vaihtui ennen tätä), nosta näkyviin
-                if (!_visibleNow.Contains(u))
-                    SetLocallyVisible(u, true);
+                foreach (var unit in um.GetUnitList())
+                {
+                    if (!unit) continue;
+                    var ni = unit.GetComponent<Mirror.NetworkIdentity>();
+                    if (NetworkSync.IsOwnedHere(ni)) { myTeam = unit.GetTeamId(); break; }
+                }
+            }
+        }
 
+        // (valinnainen) pidä kenttä vain logeja varten ajantasalla
+        _myTeam = myTeam;
+
+        if (myTeam < 0) return;
+
+        var tvs = TeamVisionService.Instance;
+        if (tvs == null) { Debug.LogWarning("[VisibilitySystem] TeamVisionService is NULL!"); return; }
+
+        var unitManager = UnitManager.Instance;
+        if (unitManager == null) { Debug.LogWarning("[VisibilitySystem] UnitManager is NULL!"); return; }
+
+        var units = unitManager.GetUnitList();
+
+        int ownCount = 0, enemyCount = 0, visibleEnemyCount = 0;
+
+        foreach (var unit in units)
+        {
+            if (!unit) continue;
+
+            int unitTeam = GetTeamId(unit);
+            
+            var ni = unit.GetComponent<Mirror.NetworkIdentity>();
+            bool isOwn = NetworkSync.IsOwnedHere(ni) || (unitTeam == myTeam); // ← OMISTUS TURVAVERKKO
+
+            if (isOwn)
+            {
+                ownCount++;
+                if (!_visibleNow.Contains(unit))
+                {
+                    _visibleNow.Add(unit);
+                    SetLocallyVisible(unit, true);
+                }
                 continue;
             }
 
-            // Viholliset: näkyviin vain jos oman tiimin visionissa
-            var gp = u.GetGridPosition();
-            bool isVisible = tvs.IsVisibleToTeam(_myTeam, gp);
-
-            bool already = _visibleNow.Contains(u);
+            enemyCount++;
+            var gp = unit.GetGridPosition();
+            bool isVisible = tvs.IsVisibleToTeam(myTeam, gp); // ← käytä myTeam
+            bool already = _visibleNow.Contains(unit);
 
             if (isVisible && !already)
             {
-                _visibleNow.Add(u);
-                SetLocallyVisible(u, true);
-                Debug.Log($"[VisionDBG] Team {_myTeam} SEES enemy '{u.name}' at {gp}.");
+                _visibleNow.Add(unit);
+                SetLocallyVisible(unit, true);
+                visibleEnemyCount++;
             }
             else if (!isVisible && already)
             {
-                _visibleNow.Remove(u);
-                SetLocallyVisible(u, false);
-                // Jos haluat login myös häviämisestä:
-                // Debug.Log($"[VisionDBG] Team {_myTeam} LOST enemy '{u.name}' at {gp}.");
+                _visibleNow.Remove(unit);
+                SetLocallyVisible(unit, false);
             }
             else if (!isVisible && !already)
             {
-                // Baseline: varmista että tuoreet/respawnatut viholliset pysyvät piilossa
-                SetLocallyVisible(u, false);
+                SetLocallyVisible(unit, false);
             }
         }
+
     }
 
     private void HideAllEnemiesImmediate()
     {
         var units = Object.FindObjectsByType<Unit>(FindObjectsSortMode.None);
+        int hiddenCount = 0;
+
         foreach (var u in units)
         {
             if (!u) continue;
-            if (GetTeamId(u) == _myTeam) continue;
+
+            int unitTeam = GetTeamId(u);
+        
+            if (unitTeam == _myTeam)
+            {
+                continue;
+            }
+
             SetLocallyVisible(u, false);
             _visibleNow.Remove(u);
+            hiddenCount++;
         }
     }
 
@@ -139,6 +187,5 @@ public class VisibilitySystem : MonoBehaviour
         lv.Apply(visible);
     }
 
-    // Projektisi todellinen tiimikenttä
     private static int GetTeamId(Unit u) => u.GetTeamId();
 }
