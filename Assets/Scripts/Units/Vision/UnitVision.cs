@@ -39,7 +39,6 @@ public class UnitVision : MonoBehaviour
 
     private System.Collections.IEnumerator Co_AutoInitLocal()
     {
-        Debug.Log($"[UnitVision] Aloitetaan automaattinen initialisointi: {name}");
         yield return null;
 
         if (_initialized) yield break;
@@ -48,7 +47,6 @@ public class UnitVision : MonoBehaviour
         // Yritä alustaa useamman framen ajan (Mirror tarvitsee aikaa synkronoida ownership)
         for (int attempt = 0; attempt < 30; attempt++)
         {
-
             int? team = _unit.GetTeamId();
 
             if (team != null)

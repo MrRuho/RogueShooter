@@ -29,6 +29,20 @@ public static class OfflineGameSimulator
                     gp.Setup(targetPos);
             });
     }
+
+    public static void SpawnGrenade(GameObject grenadePrefab, Vector3 spawnPos, Vector3 targetPos, float maxRangeWU)
+    {
+        SpawnRouter.SpawnLocal(
+            grenadePrefab, spawnPos, Quaternion.identity,
+            source: null,
+            sceneName: LevelLoader.Instance.CurrentLevel,
+            parent: null,
+            beforeReturn: go =>
+            {
+                if (go.TryGetComponent<GrenadeProjectile>(out var gp))
+                    gp.Setup(targetPos, maxRangeWU); // ← tärkein muutos
+            });
+    }
     
     public static void SpawnRagdoll(GameObject prefab, Vector3 pos, Quaternion rot, uint sourceUnitNetId, Transform originalRootBone, Vector3 lastHitPosition, int overkill)
     {

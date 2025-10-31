@@ -15,7 +15,22 @@ public class GrenadeProjectile : NetworkBehaviour
     [SerializeField] private int timer = 2;
     [SerializeField] private LayerMask floorMask = ~0;
     [SerializeField] private float landingJitterRadius = 0.18f;
+
+    [Header("Config")]
+    [SerializeField] private ThrowArcConfig throwArcConfig;
+    [SerializeField] private float fallbackMaxThrowRangeWU = 12f;   // jos arvoa ei syötetä ulkoa
+    [SerializeField] private float horizontalSpeed = 10f;           // tai käytä nykyistäsi
+
+    [Header("Curve (fallback)")]
     [SerializeField] private AnimationCurve arcYAnimationCurve;
+
+    private Vector3 _startPos;
+    private Vector3 _endPos;
+    private float _apexWU;           // dynaaminen huippukorkeus
+    private float _travelT;          // 0..1
+    private float _travelDuration;   // aika maaliin
+    private float _maxRangeWU; 
+
 
     // Pieni hajonta, muutaman sadasosan verran
     [SerializeField] private float explosionJitterMin = 0.02f;
@@ -42,6 +57,8 @@ public class GrenadeProjectile : NetworkBehaviour
 
     public void Setup(Vector3 targetWorld)
     {
+        _maxRangeWU = fallbackMaxThrowRangeWU;
+        InternalSetup(targetPosition);
 
         TurnSystem.Instance.OnTurnChanged += TurnSystem_OnTurnChanged;
         var groundTarget = SnapToGround(targetWorld);
@@ -50,13 +67,41 @@ public class GrenadeProjectile : NetworkBehaviour
         RecomputeDerived(); // varmistetaan serverillä heti
         _ready = true;
 
-        if(GameModeManager.SelectedMode == GameMode.CoOp)
+        if (GameModeManager.SelectedMode == GameMode.CoOp)
         {
             timer += 1; // pidennä kranaatin aikaa COOPissa yhdellä vuorolla
-        } else
+        }
+        else
         {
             timer = 2;
         }
+    }
+
+    public void Setup(Vector3 targetPosition, float maxThrowRangeWU)
+    {
+        _maxRangeWU = maxThrowRangeWU > 0f ? maxThrowRangeWU : fallbackMaxThrowRangeWU;
+        InternalSetup(targetPosition);
+    }
+    
+    private void InternalSetup(Vector3 targetPosition)
+    {
+        _startPos = transform.position;
+        _endPos   = targetPosition;
+
+        // Etäisyys vaakatasossa
+        Vector2 s = new Vector2(_startPos.x, _startPos.z);
+        Vector2 e = new Vector2(_endPos.x,   _endPos.z);
+        float dWU = Vector2.Distance(s, e);
+
+        // Laske dynaaminen apex
+        if (throwArcConfig != null)
+            _apexWU = throwArcConfig.EvaluateApex(dWU, _maxRangeWU);
+        else
+            _apexWU = Mathf.Lerp(7f, 1.2f, Mathf.Clamp01(dWU / Mathf.Max(0.01f, _maxRangeWU)));
+
+        // Matka-aika: tasainen vaakanopeus
+        _travelDuration = Mathf.Max(0.05f, dWU / Mathf.Max(0.01f, horizontalSpeed));
+        _travelT = 0f;
     }
 
     private void TurnSystem_OnTurnChanged(object sender, EventArgs e)
@@ -107,7 +152,7 @@ public class GrenadeProjectile : NetworkBehaviour
         totalDistance = Vector3.Distance(positionXZ, targetPosition);
         if (totalDistance < MIN_DIST) totalDistance = MIN_DIST; // suoja nollaa vastaan
     }
-
+    /*
     private void Update()
     {
         if (!_ready || isExploded) return;
@@ -158,6 +203,36 @@ public class GrenadeProjectile : NetworkBehaviour
 
             // ASETUS
             transform.position = new Vector3(p.x, y, p.z);
+        }
+    }
+    */
+    private void Update()
+    {
+        if (_travelDuration <= 0f) return;
+
+        _travelT += Time.deltaTime / _travelDuration;
+        float t = Mathf.Clamp01(_travelT);
+
+        // Lerp XZ + baseline Y, lisää päälle kaarikerroin
+        Vector3 pos = Vector3.Lerp(_startPos, _endPos, t);
+
+        float baselineY = Mathf.Lerp(_startPos.y, _endPos.y, t);
+        float yArc      = (throwArcConfig ? throwArcConfig.arcYCurve : arcYAnimationCurve).Evaluate(t) * _apexWU;
+
+        pos.y = baselineY + yArc;
+
+        // Suunta eteenpäin (valinnainen)
+        Vector3 prev = transform.position;
+        transform.position = pos;
+        Vector3 dir = pos - prev;
+        if (dir.sqrMagnitude > 0.0001f)
+            transform.forward = dir.normalized;
+
+        if (t >= 1f)
+        {
+            // TODO: Explode / OnArrived: sama kuin teillä aiemmin
+            // Explode();
+            enabled = false;
         }
     }
 

@@ -241,4 +241,9 @@ public class UnitAnimator : NetworkBehaviour
     {
         weaponVis.OwnerRequestSet(rifleRight: false, rifleLeft: true, meleeLeft: false, grenade: true);
     }
+
+    public Transform GetrightHandTransform()
+    {
+        return rightHandTransform;
+    }
 }

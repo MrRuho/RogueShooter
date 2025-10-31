@@ -230,6 +230,9 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
+  arcPreview: {fileID: 0}
+  cellSizeWU: 2
+  throwPoint: {fileID: 0}
   grenadeProjectilePrefab: {fileID: 3101730896889347960, guid: ef01bfdfadc18044882f4cc7063f4be7, type: 3}
 --- !u!114 &8360174411706437545
 MonoBehaviour:
