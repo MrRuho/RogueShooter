@@ -209,12 +209,15 @@ public class UnitAnimator : NetworkBehaviour
         // Mistä kranaatti lähtee (sama logiikka kuin luodeilla)
         Vector3 origin = rightHandTransform.position;
 
+        float farWU = pendingGrenadeAction.GetMaxThrowRangeWU();
+
         // Kutsu keskitettyä synkkaa (täsmälleen kuin luodeissa)
         if (NetMode.IsOnline)
-            NetworkSync.SpawnGrenade(granadeProjectilePrefab, origin, pendingGrenadeTarget, this.GetActorId());
+
+            NetworkSync.SpawnGrenade(granadeProjectilePrefab, origin, pendingGrenadeTarget, farWU, this.GetActorId());
+
         else
         {
-            float farWU = pendingGrenadeAction.GetMaxThrowRangeWU();
             OfflineGameSimulator.SpawnGrenade(granadeProjectilePrefab, origin, pendingGrenadeTarget, farWU);
         }
 

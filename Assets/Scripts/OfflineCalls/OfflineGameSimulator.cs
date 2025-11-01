@@ -3,7 +3,7 @@ using UnityEngine;
 public static class OfflineGameSimulator
 {
     public static void SpawnBullet(GameObject bulletPrefab, Vector3 spawnPos, Vector3 targetPos)
-    {       
+    {
         SpawnRouter.SpawnLocal(
             bulletPrefab, spawnPos, Quaternion.identity,
             source: null,
@@ -12,10 +12,11 @@ public static class OfflineGameSimulator
             beforeReturn: go =>
             {
                 if (go.TryGetComponent<BulletProjectile>(out var gp))
-                gp.Setup(targetPos);          
+                    gp.Setup(targetPos);
             });
     }
 
+    /*
     public static void SpawnGrenade(GameObject grenadePrefab, Vector3 spawnPos, Vector3 targetPos)
     {
         SpawnRouter.SpawnLocal(
@@ -29,6 +30,7 @@ public static class OfflineGameSimulator
                     gp.Setup(targetPos);
             });
     }
+    */
 
     public static void SpawnGrenade(GameObject grenadePrefab, Vector3 spawnPos, Vector3 targetPos, float maxRangeWU)
     {

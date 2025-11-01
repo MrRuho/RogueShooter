@@ -89,7 +89,7 @@ public static class NetworkSync
     }
 
     // HUOM: käytä tätä myös AE:stä (UnitAnimatorista)
-    public static void SpawnGrenade(GameObject grenadePrefab, Vector3 spawnPos, Vector3 targetPos, uint actorNetId)
+    public static void SpawnGrenade(GameObject grenadePrefab, Vector3 spawnPos, Vector3 targetPos, float maxRangeWU, uint actorNetId)
     {
 
         if (NetworkServer.active) // Online: server tai host
@@ -108,7 +108,7 @@ public static class NetworkSync
                 {
                     if (go.TryGetComponent<GrenadeProjectile>(out var gp)) {
                         gp.actorUnitNetId = actorNetId;
-                        gp.Setup(targetPos);
+                        gp.Setup(targetPos, maxRangeWU);
                     }
                 });
 

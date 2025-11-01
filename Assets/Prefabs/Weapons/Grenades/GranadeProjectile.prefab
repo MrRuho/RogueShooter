@@ -51,13 +51,38 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
+  useDeterministicDeflectionOffline: 1
+  deflectionMask:
+    serializedVersion: 2
+    m_Bits: 2944
+  floorBounceDistanceRangeWU: {x: 0.1, y: 0.35}
+  minFloorBounceDistanceRangeWU: {x: 0.01, y: 0.15}
+  floorBounceRandomYawRangeDeg: {x: 0, y: 35}
+  maxBounces: 2
+  minSegmentDuration: 0.25
+  maxSegmentDuration: 0.55
+  apexBounceScale: 0.2
+  maxBounceApexWU: 0.2
+  apexEvalDistanceFloorWU: 4
+  minBounceSeparation: 0.06
+  pushOffWU: 0.02
+  floorOnlyMinNormalY: 0.7
+  floorBounceYawTowardGoalDeg: 0
+  minSpeedScaleAtApex: 0.8
+  apexSlowExponent: 4
+  bounceSpeedScale: 0.75
+  useApexSlowdown: 1
+  useDistanceScaledSpeed: 1
+  speedAtOneTile: 2
+  speedPerTile: 2.5
+  speedMinClamp: 1.5
+  speedMaxClamp: 14
+  tileSizeWU: 2
   actorUnitNetId: 0
   grenadeExplodeVFXPrefab: {fileID: 4642304544289128, guid: 3798030c2f7dd8a469e24dfa3223de79, type: 3}
   damageRadius: 3
   damage: 100
-  moveSpeed: 15
   timer: 2
-  landingJitterRadius: 0.2
   throwArcConfig: {fileID: 11400000, guid: e78a46321444076439f37ddbcf71575b, type: 2}
   ceilingMask:
     serializedVersion: 2
@@ -66,9 +91,8 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 2048
   ceilingClearance: 0.08
-  apexSamples: 24
   fallbackMaxThrowRangeWU: 12
-  horizontalSpeed: 10
+  horizontalSpeed: 2
   arcYAnimationCurve:
     serializedVersion: 2
     m_Curve:
@@ -226,8 +250,39 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 190812, guid: f45addcaa3ef18142b66c50fc6722b7c, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2658586256269143187}
   m_SourcePrefab: {fileID: 100100000, guid: f45addcaa3ef18142b66c50fc6722b7c, type: 3}
+--- !u!1 &3712377068640621716 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 190812, guid: f45addcaa3ef18142b66c50fc6722b7c, type: 3}
+  m_PrefabInstance: {fileID: 3712377068640779720}
+  m_PrefabAsset: {fileID: 0}
+--- !u!136 &2658586256269143187
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3712377068640621716}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.0333
+  m_Height: 0.19
+  m_Direction: 1
+  m_Center: {x: 0, y: 0.016, z: -0.0021595396}
 --- !u!4 &3712377068640854520 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 482352, guid: f45addcaa3ef18142b66c50fc6722b7c, type: 3}
