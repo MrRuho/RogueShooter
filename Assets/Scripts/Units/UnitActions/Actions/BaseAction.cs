@@ -141,6 +141,7 @@ public abstract class BaseAction : NetworkBehaviour
         return ct;
     }
 
+    /*
     public bool RotateTowards(Vector3 targetPosition, float rotationSpeed = 10f)
     {
         // Suuntavektori
@@ -154,7 +155,24 @@ public abstract class BaseAction : NetworkBehaviour
         float dot = Vector3.Dot(transform.forward.normalized, aimDirection);
         return dot > tolerance;
     }
+    */
     
+    public bool RotateTowards(Vector3 targetPosition, float rotSpeedDegPerSec = 720f, float epsilonDeg = 2f)
+    {
+        Vector3 to = targetPosition - transform.position;  // tai unit.GetWorldPosition()
+        to.y = 0f;
+
+        if (to.sqrMagnitude < 1e-6f) return true;
+
+        Vector3 dir = to.normalized;
+        Quaternion desired = Quaternion.LookRotation(dir, Vector3.up);
+
+        transform.rotation = Quaternion.RotateTowards(
+            transform.rotation, desired, rotSpeedDegPerSec * Time.deltaTime
+        );
+
+        return Quaternion.Angle(transform.rotation, desired) <= epsilonDeg;
+    }
 
 
 

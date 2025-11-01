@@ -20,11 +20,34 @@ public class ThrowArcConfig : ScriptableObject
     [Tooltip("0.5-1.0: pienempi → voimakkaampi ero near vs far")]
     [Range(0.25f, 2f)] public float smoothingK = 0.75f;
 
+    [Header("Etäisyysskaala")]
+    [Tooltip("Maksimi heittoetäisyys world-yksiköissä (esim. throwingRangeTiles * cellSizeWU).")]
+    public float farRangeWU = 12f;
+
+    [Header("Landing Angle Gate")]
+    [Tooltip("Minimilaskukulma (asteina) kun ruudussa on obstacle. Esim. 35–55°.")]
+    public float minLandingAngleDegForObstacles = 40f;
+
+    [Tooltip("Näytteenottokohdat kulman arvioon (lähellä laskeutumista).")]
+    [Range(0f,1f)] public float angleSampleT1 = 0.92f;
+    [Range(0f,1f)] public float angleSampleT2 = 0.98f;
+
     [Header("Preview")]
     public int baseSegments = 12;
     public int segmentsPerTile = 4;
     public int minSegments = 12;
     public int maxSegments = 40;
+
+    [Header("Projectile / Collision")]
+    [Tooltip("Kranaatin todellinen säde (WU). Käytetään sekä fyysisessä colliderissa että arc-tarkistuksessa.")]
+    public float projectileRadiusWU = 0.12f;
+
+    [Tooltip("Vähimmäissuhde ruudun kokoon, jolla kapseli 'ottaa kiinni' seinäkulmiin.")]
+    [Range(0f, 0.5f)] public float capsuleRadiusMinRelToCell = 0.20f;
+
+    // Yhtenäinen tapa hakea tarkistuksissa käytettävä kapselisäde
+    public float GetCapsuleRadius(float cellSizeWU)
+        => Mathf.Max(projectileRadiusWU, cellSizeWU * capsuleRadiusMinRelToCell);
 
     public float EvaluateApex(float distanceWU, float farRangeWU)
     {

@@ -233,7 +233,30 @@ MonoBehaviour:
   arcPreview: {fileID: 0}
   cellSizeWU: 2
   throwPoint: {fileID: 0}
+  throwArcConfig: {fileID: 11400000, guid: e78a46321444076439f37ddbcf71575b, type: 2}
+  arcBlockMask:
+    serializedVersion: 2
+    m_Bits: 2816
+  minSegments: 16
+  maxSegments: 36
+  landingObstacleMask:
+    serializedVersion: 2
+    m_Bits: 256
+  maxLandingObstacleHeight: 1.6
+  landingBoxShrink: 0.49
+  landingBoxHalfY: 0.75
+  grenadeRadius: 0.12
+  arcLift: 0.02
+  heightClearance: 0.05
   grenadeProjectilePrefab: {fileID: 3101730896889347960, guid: ef01bfdfadc18044882f4cc7063f4be7, type: 3}
+  mousePlaneMask:
+    serializedVersion: 2
+    m_Bits: 64
+  mousePlaneHalfThickness: 0.1
+  mousePlaneYOffset: 0.01
+  ceilingMask:
+    serializedVersion: 2
+    m_Bits: 4096
 --- !u!114 &8360174411706437545
 MonoBehaviour:
   m_ObjectHideFlags: 0

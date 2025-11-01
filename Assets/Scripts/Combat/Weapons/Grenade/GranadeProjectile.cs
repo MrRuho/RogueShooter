@@ -5,6 +5,7 @@ using System.Collections;
 
 public class GrenadeProjectile : NetworkBehaviour
 {
+
     [SyncVar] public uint actorUnitNetId;
     public static event EventHandler OnAnyGranadeExploded;
 
@@ -13,11 +14,14 @@ public class GrenadeProjectile : NetworkBehaviour
     [SerializeField] private int damage = 30;
     [SerializeField] private float moveSpeed = 15f;
     [SerializeField] private int timer = 2;
-    [SerializeField] private LayerMask floorMask = ~0;
     [SerializeField] private float landingJitterRadius = 0.18f;
 
     [Header("Config")]
     [SerializeField] private ThrowArcConfig throwArcConfig;
+    [SerializeField] private LayerMask ceilingMask;
+    [SerializeField] private LayerMask floorMask;
+    [SerializeField] private float ceilingClearance = 0.08f;
+    [SerializeField] private int apexSamples = 24;
     [SerializeField] private float fallbackMaxThrowRangeWU = 12f;   // jos arvoa ei syötetä ulkoa
     [SerializeField] private float horizontalSpeed = 10f;           // tai käytä nykyistäsi
 
@@ -50,6 +54,17 @@ public class GrenadeProjectile : NetworkBehaviour
 
     private bool _ready;
 
+    void Awake() 
+    {
+        var sc = GetComponent<SphereCollider>();
+        if (sc && throwArcConfig)
+            sc.radius = throwArcConfig.projectileRadiusWU;  // yksi totuus
+        
+        // jos haluat varmistaa fallback-käyrän
+        if (!throwArcConfig && arcYAnimationCurve == null)
+            arcYAnimationCurve = AnimationCurve.Linear(0,0,1,0);
+    }
+
     public override void OnStartClient()
     {
         base.OnStartClient();
@@ -58,50 +73,36 @@ public class GrenadeProjectile : NetworkBehaviour
     public void Setup(Vector3 targetWorld)
     {
         _maxRangeWU = fallbackMaxThrowRangeWU;
-        InternalSetup(targetPosition);
 
+        // 1) SNAP & aseta target ensin
+       // var groundTarget = SnapToGround(targetWorld);
+        targetPosition = targetWorld; 
+       // targetPosition = groundTarget;
+
+        // 2) Laske kaikki johdetut (sis. katon huomioivan apexin)
+        RecomputeDerived();
+
+        // 3) Entinen logiikka ennallaan
         TurnSystem.Instance.OnTurnChanged += TurnSystem_OnTurnChanged;
-        var groundTarget = SnapToGround(targetWorld);
-        // Aseta SyncVar, hook kutsutaan kaikilla (server + clientit)
-        targetPosition = groundTarget;
-        RecomputeDerived(); // varmistetaan serverillä heti
         _ready = true;
-
-        if (GameModeManager.SelectedMode == GameMode.CoOp)
-        {
-            timer += 1; // pidennä kranaatin aikaa COOPissa yhdellä vuorolla
-        }
-        else
-        {
-            timer = 2;
-        }
+        if (GameModeManager.SelectedMode == GameMode.CoOp) timer += 1; else timer = 2;
     }
 
-    public void Setup(Vector3 targetPosition, float maxThrowRangeWU)
+    public void Setup(Vector3 targetWorld, float maxThrowRangeWU)
     {
-        _maxRangeWU = maxThrowRangeWU > 0f ? maxThrowRangeWU : fallbackMaxThrowRangeWU;
-        InternalSetup(targetPosition);
-    }
-    
-    private void InternalSetup(Vector3 targetPosition)
-    {
-        _startPos = transform.position;
-        _endPos   = targetPosition;
+        _maxRangeWU = (maxThrowRangeWU > 0f) ? maxThrowRangeWU : fallbackMaxThrowRangeWU;
 
-        // Etäisyys vaakatasossa
-        Vector2 s = new Vector2(_startPos.x, _startPos.z);
-        Vector2 e = new Vector2(_endPos.x,   _endPos.z);
-        float dWU = Vector2.Distance(s, e);
+        //var groundTarget = SnapToGround(targetWorld);
+       //targetPosition = groundTarget;
+        targetPosition = targetWorld; 
 
-        // Laske dynaaminen apex
-        if (throwArcConfig != null)
-            _apexWU = throwArcConfig.EvaluateApex(dWU, _maxRangeWU);
-        else
-            _apexWU = Mathf.Lerp(7f, 1.2f, Mathf.Clamp01(dWU / Mathf.Max(0.01f, _maxRangeWU)));
+        RecomputeDerived();
 
-        // Matka-aika: tasainen vaakanopeus
-        _travelDuration = Mathf.Max(0.05f, dWU / Mathf.Max(0.01f, horizontalSpeed));
-        _travelT = 0f;
+        // ← nämä puuttuivat 4-param polusta
+        if (TurnSystem.Instance != null)
+            TurnSystem.Instance.OnTurnChanged += TurnSystem_OnTurnChanged;
+        _ready = true;
+        if (GameModeManager.SelectedMode == GameMode.CoOp) timer += 1; else timer = 2;
     }
 
     private void TurnSystem_OnTurnChanged(object sender, EventArgs e)
@@ -144,51 +145,99 @@ public class GrenadeProjectile : NetworkBehaviour
         _ready = true;
     }
 
+    /*
     private void RecomputeDerived()
     {
-        positionXZ = transform.position;
-        positionXZ.y = 0f;
+        // Päivitä alku- ja loppupisteet
+        _startPos = transform.position;
+        _endPos   = targetPosition;
 
-        totalDistance = Vector3.Distance(positionXZ, targetPosition);
-        if (totalDistance < MIN_DIST) totalDistance = MIN_DIST; // suoja nollaa vastaan
+        // Vaakasuora etäisyys (XZ)
+        Vector2 s = new Vector2(_startPos.x, _startPos.z);
+        Vector2 e = new Vector2(_endPos.x,   _endPos.z);
+        float dWU = Vector2.Distance(s, e);
+
+        // Kuinka monella samplella arvioidaan katto (sama haarukka kuin preview/validointi)
+        int samples = (throwArcConfig != null)
+            ? Mathf.Clamp(throwArcConfig.EvaluateSegments(dWU, Mathf.Max(0.01f, 2f)), 12, 40)
+            : Mathf.Clamp(12 + Mathf.RoundToInt(dWU / Mathf.Max(0.01f, 2f)) * 4, 12, 40);
+
+        // Käytä teidän max-rangea apexin arvioinnissa
+        float farWU = (_maxRangeWU > 0f)
+            ? _maxRangeWU
+            : (throwArcConfig != null ? throwArcConfig.farRangeWU : dWU);
+
+        // Kakkoskaari: clamp apex katon alle jos reitillä on katto
+        _apexWU = ArcApexSolver.ComputeCeilingClampedApex(
+            _startPos, _endPos, throwArcConfig, ceilingMask,
+            ceilingClearance, samples, farWUOverride: farWU
+        );
+
+        // Liikkeen aikaparametrit: tasainen vaakanopeus
+        _travelDuration = Mathf.Max(0.05f, dWU / Mathf.Max(0.01f, horizontalSpeed));
+        _travelT = 0f;
+
+        // Sisäinen apu jo olemassa olevaa laskeutumista varten
+        positionXZ = _startPos; positionXZ.y = 0f;
+        totalDistance = Mathf.Max(MIN_DIST, Vector3.Distance(positionXZ, _endPos));
+
+        // Varmista että komponentti on päällä
+        enabled = true;
     }
-    /*
+*/
+    private void RecomputeDerived()
+    {
+        _startPos = transform.position;
+        _endPos   = targetPosition;
+
+        Vector2 s = new(_startPos.x, _startPos.z);
+        Vector2 e = new(_endPos.x,   _endPos.z);
+        float dWU = Vector2.Distance(s, e);
+
+        int samples = (throwArcConfig != null)
+            ? Mathf.Clamp(throwArcConfig.EvaluateSegments(dWU, 2f), 12, 40)
+            : Mathf.Clamp(12 + Mathf.RoundToInt(dWU / 2f) * 4, 12, 40);
+
+        float farWU = (_maxRangeWU > 0f) ? _maxRangeWU
+                                        : (throwArcConfig != null ? throwArcConfig.farRangeWU : dWU);
+
+        _apexWU = ArcApexSolver.ComputeCeilingClampedApex(
+            _startPos, _endPos, throwArcConfig, ceilingMask,
+            ceilingClearance, samples, farWUOverride: farWU);
+        
+        _travelDuration = Mathf.Max(0.05f, dWU / Mathf.Max(0.01f, horizontalSpeed));
+        _travelT = 0f;
+
+        enabled = true;
+    }
+
     private void Update()
     {
-        if (!_ready || isExploded) return;
-        if (isLanded) return;
-        
+        if (_travelDuration <= 0f) return;
+        _travelT += Time.deltaTime / _travelDuration;
+        float t = Mathf.Clamp01(_travelT);
 
-        Vector3 moveDir = targetPosition - positionXZ;
-        if (moveDir.sqrMagnitude < 1e-6f) moveDir = Vector3.forward; // varadir, ettei normalized → NaN
-        moveDir.Normalize();
+        // Lerp XZ + baseline Y, lisää päälle kaarikerroin
+        Vector3 pos = Vector3.Lerp(_startPos, _endPos, t);
 
-        positionXZ += moveSpeed * Time.deltaTime * moveDir;
+        float baselineY = Mathf.Lerp(_startPos.y, _endPos.y, t);
+        float yArc = (throwArcConfig ? throwArcConfig.arcYCurve : arcYAnimationCurve).Evaluate(t) * _apexWU;
 
-        float distance = Vector3.Distance(positionXZ, targetPosition);
-        if (totalDistance < 1e-6f) totalDistance = 0.01f;
-        float distanceNormalized = 1f - (distance / totalDistance);
-        distanceNormalized = Mathf.Clamp01(distanceNormalized);
+        pos.y = baselineY + yArc;
 
-        float maxHeight = totalDistance / 4f;
-        float positionY = arcYAnimationCurve != null
-            ? arcYAnimationCurve.Evaluate(distanceNormalized) * maxHeight
-            : 0f;
-
-        if (float.IsNaN(positionY)) positionY = 0f;                   // viimeinen pelastus
-        transform.position = new Vector3(positionXZ.x, positionY, positionXZ.z);
-
-        float reachedTargetDistance = .2f;
-
-
-        if (!isLanded && (positionXZ - targetPosition).sqrMagnitude <= reachedTargetDistance * reachedTargetDistance)
+        // Suunta eteenpäin (valinnainen)
+        Vector3 prev = transform.position;
+        transform.position = pos;
+        Vector3 dir = pos - prev;
+        if (dir.sqrMagnitude > 0.0001f)
+            transform.forward = dir.normalized;
+        /*
+        if (t >= 1f)
         {
-            isLanded = true;
-
             // a) ruudun keskelle (x,z) + oikea kerros-Y LevelGridistä
             var gp = LevelGrid.Instance.GetGridPosition(targetPosition);
             var center = LevelGrid.Instance.GetWorldPosition(gp);         // ruudun keskipiste & floor-Y 
-            
+
             // b) satunnainen siirto ruudun sisällä (XZ)
             Vector2 j2 = UnityEngine.Random.insideUnitCircle * landingJitterRadius;
             Vector3 p = new Vector3(center.x + j2.x, center.y, center.z + j2.y);
@@ -203,36 +252,29 @@ public class GrenadeProjectile : NetworkBehaviour
 
             // ASETUS
             transform.position = new Vector3(p.x, y, p.z);
-        }
-    }
-    */
-    private void Update()
-    {
-        if (_travelDuration <= 0f) return;
-
-        _travelT += Time.deltaTime / _travelDuration;
-        float t = Mathf.Clamp01(_travelT);
-
-        // Lerp XZ + baseline Y, lisää päälle kaarikerroin
-        Vector3 pos = Vector3.Lerp(_startPos, _endPos, t);
-
-        float baselineY = Mathf.Lerp(_startPos.y, _endPos.y, t);
-        float yArc      = (throwArcConfig ? throwArcConfig.arcYCurve : arcYAnimationCurve).Evaluate(t) * _apexWU;
-
-        pos.y = baselineY + yArc;
-
-        // Suunta eteenpäin (valinnainen)
-        Vector3 prev = transform.position;
-        transform.position = pos;
-        Vector3 dir = pos - prev;
-        if (dir.sqrMagnitude > 0.0001f)
-            transform.forward = dir.normalized;
-
-        if (t >= 1f)
-        {
             // TODO: Explode / OnArrived: sama kuin teillä aiemmin
             // Explode();
             enabled = false;
+        }
+        */
+        if (t >= 1f)
+        {
+            // a) lähde suoraan _endPos:sta
+            Vector3 p = _endPos;
+
+            // b) satunnainen XZ-jitter ruudun sisään
+            Vector2 j2 = UnityEngine.Random.insideUnitCircle * landingJitterRadius;
+            p.x += j2.x; p.z += j2.y;
+
+            // c) lattia-Y haetaan raylla -> yläkerran lattia jos sen päällä ollaan
+            float y = p.y;
+            if (Physics.Raycast(p + Vector3.up * 2f, Vector3.down, out var hit, 10f, floorMask, QueryTriggerInteraction.Ignore))
+                y = hit.point.y;
+
+            if (TryGetComponent<Collider>(out var col)) y += col.bounds.extents.y;
+            transform.position = new Vector3(p.x, y, p.z);
+
+            enabled = false; // (räjähdys menee vuoro-timerillä kuten ennen)
         }
     }
 

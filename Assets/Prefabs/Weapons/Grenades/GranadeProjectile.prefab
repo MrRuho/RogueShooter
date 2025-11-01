@@ -57,11 +57,16 @@ MonoBehaviour:
   damage: 100
   moveSpeed: 15
   timer: 2
-  floorMask:
-    serializedVersion: 2
-    m_Bits: 4294967295
   landingJitterRadius: 0.2
   throwArcConfig: {fileID: 11400000, guid: e78a46321444076439f37ddbcf71575b, type: 2}
+  ceilingMask:
+    serializedVersion: 2
+    m_Bits: 4096
+  floorMask:
+    serializedVersion: 2
+    m_Bits: 2048
+  ceilingClearance: 0.08
+  apexSamples: 24
   fallbackMaxThrowRangeWU: 12
   horizontalSpeed: 10
   arcYAnimationCurve:

@@ -1603,6 +1603,13 @@ MonoBehaviour:
   origin: {fileID: 0}
   fallbackMaxThrowRangeWU: 12
   cellSizeWU: 2
+  ceilingMask:
+    serializedVersion: 2
+    m_Bits: 2048
+  clampToCeiling: 1
+  ceilingClearance: 0.08
+  minSegments: 12
+  maxSegments: 40
 --- !u!223 &1424326412066838073
 Canvas:
   m_ObjectHideFlags: 0

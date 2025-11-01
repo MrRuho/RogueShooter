@@ -174,6 +174,7 @@ public class UnitAnimator : NetworkBehaviour
     }
     private Vector3 pendingGrenadeTarget;
     private GranadeAction pendingGrenadeAction; 
+    
     private void GrenadeAction_ThrowGranade(object sender, EventArgs e)
     {
         pendingGrenadeAction = (GranadeAction)sender;
@@ -212,7 +213,10 @@ public class UnitAnimator : NetworkBehaviour
         if (NetMode.IsOnline)
             NetworkSync.SpawnGrenade(granadeProjectilePrefab, origin, pendingGrenadeTarget, this.GetActorId());
         else
-            OfflineGameSimulator.SpawnGrenade(granadeProjectilePrefab, origin, pendingGrenadeTarget);
+        {
+            float farWU = pendingGrenadeAction.GetMaxThrowRangeWU();
+            OfflineGameSimulator.SpawnGrenade(granadeProjectilePrefab, origin, pendingGrenadeTarget, farWU);
+        }
 
         // Siivous kuten ennen
         pendingGrenadeAction?.OnGrenadeBehaviourComplete();

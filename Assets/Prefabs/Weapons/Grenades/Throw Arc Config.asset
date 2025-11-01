@@ -45,10 +45,16 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  apexNearWU: 7
-  apexFarWU: 1.2
+  apexNearWU: 6
+  apexFarWU: 3
   smoothingK: 0.75
+  farRangeWU: 12
+  minLandingAngleDegForObstacles: 25
+  angleSampleT1: 0.92
+  angleSampleT2: 0.98
   baseSegments: 12
   segmentsPerTile: 4
   minSegments: 12
   maxSegments: 40
+  projectileRadiusWU: 0.12
+  capsuleRadiusMinRelToCell: 0.1
