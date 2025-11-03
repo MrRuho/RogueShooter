@@ -537,5 +537,8 @@ public class Unit : NetworkBehaviour
 
         // 5) Vapauta UI (käytä teidän olemassa olevaa metodia)
         UnitActionSystem.Instance?.UnlockInput();
+
+        // -- VAPAUTA KAMERA / INPUT AINA --
+        CameraThaw.Thaw("Unit dying (RpcFreezeClientSide)");
     }
 }

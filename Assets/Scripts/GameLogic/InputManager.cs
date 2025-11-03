@@ -39,6 +39,21 @@ public class InputManager : MonoBehaviour
         }
     }
 
+public void ForceEnablePlayerMap()
+{
+#if USE_NEW_INPUT_SYSTEM
+    if (playerInputActions == null) playerInputActions = new PlayerInputActions();
+    playerInputActions.Player.Enable();
+#endif
+}
+
+public void ForceDisablePlayerMap()
+{
+#if USE_NEW_INPUT_SYSTEM
+    playerInputActions?.Player.Disable();
+#endif
+}
+
     private void OnDestroy()
     {
         // Vapauta resurssit -> poistaa finalizer-varoituksen

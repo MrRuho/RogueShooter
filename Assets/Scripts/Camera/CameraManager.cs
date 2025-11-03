@@ -3,9 +3,22 @@ using UnityEngine;
 
 public class CameraManager : MonoBehaviour
 {
+    public static CameraManager Instance { get; private set; }
     [SerializeField] private GameObject actionCameraGameObject;
 
     [SerializeField] private float actionCameraVerticalPosition = 2.5f;
+
+     private void Awake()
+    { 
+        if (Instance != null)
+        {
+            Debug.LogError("More than one CameraManager in the scene! " + transform + " - " + Instance);
+            Destroy(gameObject);
+            return;
+        }
+        
+        Instance = this;
+    }
 
     void OnEnable()
     {
@@ -25,7 +38,7 @@ public class CameraManager : MonoBehaviour
         actionCameraGameObject.SetActive(true);
     }
 
-    private void HideActionCamera()
+    public void HideActionCamera()
     {
         actionCameraGameObject.SetActive(false);
     }

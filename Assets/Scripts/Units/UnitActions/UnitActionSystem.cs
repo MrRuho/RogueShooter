@@ -68,6 +68,8 @@ public class UnitActionSystem : MonoBehaviour
             ResetSelectedUnit();
             ResetSelectedAction();
         }
+        
+        CameraThaw.Thaw("Unit_OnAnyUnitDead - selected unit died");
     }
     
     private void Update()
