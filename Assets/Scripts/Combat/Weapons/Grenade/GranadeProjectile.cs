@@ -116,24 +116,22 @@ public class GrenadeProjectile : NetworkBehaviour
     // *********************** Deterministic END *******************************
 
     [SyncVar] public uint actorUnitNetId;
+    [SyncVar] public uint ownerPlayerNetId;
+    [SyncVar] public int ownerTeamId = -1;
+
     public static event EventHandler OnAnyGranadeExploded;
 
     [SerializeField] private Transform grenadeExplodeVFXPrefab;
     [SerializeField] private float damageRadius = 4f;
     [SerializeField] private int damage = 30;
-   // [SerializeField] private float moveSpeed = 15f;
-    [SerializeField] private int timer = 2;
-  //  [SerializeField] private float landingJitterRadius = 0.18f;
 
     [Header("Config")]
     [SerializeField] private ThrowArcConfig throwArcConfig;
     [SerializeField] private LayerMask ceilingMask;
     [SerializeField] private LayerMask floorMask;
     [SerializeField] private float ceilingClearance = 0.08f;
-  //  [SerializeField] private int apexSamples = 24;
     [SerializeField] private float fallbackMaxThrowRangeWU = 12f;   // jos arvoa ei syötetä ulkoa
     [SerializeField] private float horizontalSpeed = 10f;           // tai käytä nykyistäsi
-
 
 
     [Header("Curve (fallback)")]
@@ -146,7 +144,6 @@ public class GrenadeProjectile : NetworkBehaviour
     private float _travelDuration;   // aika maaliin
     private float _maxRangeWU; 
 
-
     // Pieni hajonta, muutaman sadasosan verran
     [SerializeField] private float explosionJitterMin = 0.02f;
     [SerializeField] private float explosionJitterMax = 0.08f;
@@ -157,15 +154,34 @@ public class GrenadeProjectile : NetworkBehaviour
 
     private bool isExploded = false;
 
+    // Synkattu räjähdyksen ajastus
+    private bool  _armed;
+    private double _explodeAt;    // server-aika jolloin räjähtää
+    private bool _damageDone;    // server: damage tehty
+
+    private GrenadeBeaconEffect beaconEffect;
+
+    [Tooltip("Jos off niin räjähtää vihollisen vuoron lopussa")]
+    [Header("Timer. How Meny actions Player can make before explosion")]
+    [SerializeField] private bool actionBasedTimer = true;
+    [SerializeField] private int timer = 2;
+    private int turnBasedTimer = 2;
+
     void Awake() 
     {
         var sc = GetComponent<SphereCollider>();
         if (sc && throwArcConfig)
             sc.radius = throwArcConfig.projectileRadiusWU;  // yksi totuus
-        
+
         // jos haluat varmistaa fallback-käyrän
         if (!throwArcConfig && arcYAnimationCurve == null)
-            arcYAnimationCurve = AnimationCurve.Linear(0,0,1,0);
+            arcYAnimationCurve = AnimationCurve.Linear(0, 0, 1, 0);
+        
+        beaconEffect = GetComponentInChildren<GrenadeBeaconEffect>();
+        if (beaconEffect != null)
+        {
+            beaconEffect.SetTurnsUntilExplosion(timer);
+        }  
     }
 
     public override void OnStartClient()
@@ -173,61 +189,128 @@ public class GrenadeProjectile : NetworkBehaviour
         base.OnStartClient();
     }
 
-    public void Setup(Vector3 targetWorld)
-    {
+    bool _subscribed;
 
-        _maxRangeWU = fallbackMaxThrowRangeWU;
-        targetPosition = targetWorld; 
-
-
-        // 2) Laske kaikki johdetut (sis. katon huomioivan apexin)
-        RecomputeDerived();
-
-        // 3) Entinen logiikka ennallaan
-        TurnSystem.Instance.OnTurnChanged += TurnSystem_OnTurnChanged;
-        if (GameModeManager.SelectedMode == GameMode.CoOp) timer += 1; else timer = 2;
-    }
-
-    public void Setup(Vector3 targetWorld, float maxThrowRangeWU)
+    public void Setup(Vector3 targetWorld, float maxThrowRangeWU = -1f)
     {
         _maxRangeWU = (maxThrowRangeWU > 0f) ? maxThrowRangeWU : fallbackMaxThrowRangeWU;
-
-        targetPosition = targetWorld; 
+        targetPosition = targetWorld;
+        _explosionScheduled = false;
+        isExploded = false;
 
         RecomputeDerived();
 
-        // ← nämä puuttuivat 4-param polusta
-        if (TurnSystem.Instance != null)
-            TurnSystem.Instance.OnTurnChanged += TurnSystem_OnTurnChanged;
-        if (GameModeManager.SelectedMode == GameMode.CoOp) timer += 1; else timer = 2;
-    }
+        // Tilaa tasan kerran, riippumatta AP/Turn -tilasta
+        if (NetMode.ServerOrOff && !_subscribed)
+        {
+            _subscribed = true;
+            if (actionBasedTimer)
+            {
+                Unit.ActionPointUsed += Unit_ActionPointsUsed;
+                TurnSystem.Instance.OnTurnChanged += TurnSystem_OnTurnChanged;
+            }
+            else
+            {
+                TurnSystem.Instance.OnTurnChanged += TurnSystem_OnTurnChanged;
+            }
+        }
 
-    private void TurnSystem_OnTurnChanged(object sender, EventArgs e)
+        if (!actionBasedTimer && GameModeManager.SelectedMode == GameMode.CoOp)
+        {
+            timer *= 2;
+        } 
+        
+        if (actionBasedTimer && GameModeManager.SelectedMode == GameMode.CoOp)
+        {
+            turnBasedTimer += 1;
+        }
+    }
+    
+    private void Unit_ActionPointsUsed(object sender, EventArgs e)
     {
 
-        timer -= 1;
-        if (timer <= 0 && !_explosionScheduled && !isExploded)
+        if (ownerTeamId == -1)
         {
-            _explosionScheduled = true;
-            StartCoroutine(ExplodeAfterJitter());
+            Debug.LogWarning("No owner");
+            return;
+        }
+        if (_explosionScheduled || isExploded || ownerTeamId == TeamsID.CurrentTurnTeamId())
+        {
+            return;
+        }
+
+        timer -= 1;
+
+        if (beaconEffect != null)
+        {
+            beaconEffect.OnTurnAdvanced();
+        }
+
+        if (timer > 0) return;
+
+        beaconEffect.TriggerFinalCountdown();
+        _explosionScheduled = true;
+
+        if (NetworkServer.active && !NetworkClient.active)
+        {
+            // DEDISERVER
+            ServerArmExplosion();
+        }
+        else if (NetworkServer.active && NetworkClient.active)
+        {
+            // HOST (server + local client samassa prosessissa)
+            ServerArmExplosion();
+        }
+        else if (!NetworkClient.active)
+        {
+            // OFFLINE
+            StartCoroutine(LocalExplodeAfterJitter());
+        }
+        else
+        {
+            // Puhdas client: ei tee mitään (server arm-aa ja lähettää RPC:n)
         }
     }
 
-    private IEnumerator ExplodeAfterJitter()
+    // --- TIMER → SCHEDULING ---
+    private void TurnSystem_OnTurnChanged(object sender, EventArgs e)
     {
-        // Deterministinen "satunnaisuus": sama viive serverillä ja clienteillä tälle kranaatille
-        uint id = GetComponent<NetworkIdentity>() ? GetComponent<NetworkIdentity>().netId : 0u;
-        float t = Mathf.Abs(Mathf.Sin(id * 12.9898f + targetPosition.x * 78.233f + targetPosition.z * 37.719f));
-        float delay = Mathf.Lerp(explosionJitterMin, explosionJitterMax, t);
+        if (_explosionScheduled || isExploded) return;
 
-        yield return new WaitForSeconds(delay);
+        turnBasedTimer -= 1;
+        if (turnBasedTimer  > 0) return;
 
-        Exlosion();
+        _explosionScheduled = true;
+
+        if (NetworkServer.active && !NetworkClient.active)
+        {
+            // DEDISERVER
+            ServerArmExplosion();
+        }
+        else if (NetworkServer.active && NetworkClient.active)
+        {
+            // HOST (server + local client samassa prosessissa)
+            ServerArmExplosion();
+        }
+        else if (!NetworkClient.active) 
+        {
+            // OFFLINE
+            StartCoroutine(LocalExplodeAfterJitter());
+        }
+        else
+        {
+            // Puhdas client: ei tee mitään (server arm-aa ja lähettää RPC:n)
+        }
     }
 
     private void OnDestroy()
     {
-        TurnSystem.Instance.OnTurnChanged -= TurnSystem_OnTurnChanged;
+        if (!_subscribed) return;
+        if (actionBasedTimer)
+            Unit.ActionPointUsed -= Unit_ActionPointsUsed;
+        else
+            TurnSystem.Instance.OnTurnChanged -= TurnSystem_OnTurnChanged;
+        _subscribed = false;
     }
 
     void OnTargetChanged(Vector3 _old, Vector3 _new)
@@ -310,8 +393,8 @@ public class GrenadeProjectile : NetworkBehaviour
         float baselineY = Mathf.Lerp(_startPos.y, _endPos.y, t);
         pos.y = baselineY + useCurve.Evaluate(t) * _apexWU;
 
-        // kimpo (offline)
-        if (!NetMode.IsOnline && useDeterministicDeflectionOffline) {
+        // kimpo
+        if (useDeterministicDeflectionOffline) {
             if (TryDeterministicDeflectOffline(prev, pos)) return;
         }
 
@@ -373,7 +456,7 @@ public class GrenadeProjectile : NetworkBehaviour
         vRef.Normalize();
 
         // Käännä hieman kohti alkuperäistä maalia (aste-rajalla)
-        Vector3 toGoal = (_endPos - hit.point); toGoal.y = 0f;
+        Vector3 toGoal = _endPos - hit.point; toGoal.y = 0f;
         if (toGoal.sqrMagnitude > 1e-6f)
         {
             toGoal.Normalize();
@@ -447,7 +530,7 @@ public class GrenadeProjectile : NetworkBehaviour
         return true;
     }
 
-
+    // Saattaa olla ihan hyödyllinen joskus tulevaisuudessa.
     private void ComputeArcPeakOut(out float apexWorldY, out float tPeak)
     {
         var curve = (throwArcConfig && throwArcConfig.arcYCurve != null)
@@ -484,70 +567,103 @@ public class GrenadeProjectile : NetworkBehaviour
         return Mathf.Clamp(v, speedMinClamp, speedMaxClamp);
     }
 
-    private void Exlosion()
+    // --- OFFLINE LOCAL EXPLOSION ---
+    private IEnumerator LocalExplodeAfterJitter()
     {
-        isExploded = true;
-        if (NetMode.ServerOrOff) // Server or offline. NetworkServer.active || !NetworkClient.isConnected
-        {
-            Collider[] colliderArray = Physics.OverlapSphere(targetPosition, damageRadius);
+        float delay = UnityEngine.Random.Range(explosionJitterMin, explosionJitterMax);
+        yield return new WaitForSeconds(delay);
+        LocalExplode();
+    }
 
-            foreach (Collider collider in colliderArray)
-            {
-                if (collider.TryGetComponent<Unit>(out Unit targetUnit))
-                {
-                    NetworkSync.ApplyDamageToUnit(targetUnit, damage, targetPosition, this.GetActorId());
-                }
-                if (collider.TryGetComponent<DestructibleObject>(out DestructibleObject targetObject))
-                {
-                    NetworkSync.ApplyDamageToObject(targetObject, damage, targetPosition, this.GetActorId());
-                }
-            }
+    private void LocalExplode()
+    {
+        if (isExploded) return;
+        isExploded = true;
+
+        // DAMAGE paikallisesti
+        Collider[] hits = Physics.OverlapSphere(targetPosition, damageRadius);
+        foreach (var c in hits)
+        {
+            if (c.TryGetComponent<Unit>(out var u))
+                NetworkSync.ApplyDamageToUnit(u, damage, targetPosition, this.GetActorId());
+            if (c.TryGetComponent<DestructibleObject>(out var d))
+                NetworkSync.ApplyDamageToObject(d, damage, targetPosition, this.GetActorId());
         }
 
-        // Screen Shake
+        // VFX paikallisesti
         OnAnyGranadeExploded?.Invoke(this, EventArgs.Empty);
-
         SpawnRouter.SpawnLocal(
             grenadeExplodeVFXPrefab.gameObject,
             targetPosition + Vector3.up * 1f,
             Quaternion.identity,
-            source: transform   // <- scene päätellään lähteestä
-            );
+            source: transform
+        );
 
-        if (!NetMode.IsServer) // NetworkServer.active
+        Destroy(gameObject);
+    }
+
+    [Server]
+    private void ServerArmExplosion()
+    {
+        // Jitter päälle (server päättää)
+        float jitter = UnityEngine.Random.Range(explosionJitterMin, explosionJitterMax);
+        _explodeAt = NetworkTime.time + jitter;
+
+        // Kerro kaikille clienteille (hostin local client mukaan lukien)
+        RpcArmExplosion(gameObject.scene.name, targetPosition, _explodeAt);
+
+        // Server odottaa samaan serveriaikaan ja tekee vahingot
+        StartCoroutine(ServerExplodeAt(_explodeAt));
+    }
+
+    [ClientRpc]
+    private void RpcArmExplosion(string sceneName, Vector3 pos, double explodeAtServerTime)
+    {
+        if (_armed) return; // varmistus
+        _armed = true;
+        _explodeAt = explodeAtServerTime;
+
+        // Ajasta paikallinen VFX täsmälleen samaan aikaan serverin kellossa
+        StartCoroutine(SpawnVFXAt(sceneName, pos, explodeAtServerTime));
+    }
+
+    [Server]
+    private IEnumerator ServerExplodeAt(double explodeAtServerTime)
+    {
+        // Odota tarkkaan serverkellon mukaan
+        float wait = Mathf.Max(0f, (float)(explodeAtServerTime - NetworkTime.time));
+        if (wait > 0f) yield return new WaitForSeconds(wait);
+
+        if (_damageDone) yield break;
+        _damageDone = true;
+        if (isExploded) yield break;
+        isExploded = true;
+
+        // DAMAGE vain serverillä (autoritäärinen peli-impact)
+        Collider[] hits = Physics.OverlapSphere(targetPosition, damageRadius);
+        foreach (var c in hits)
         {
-            Destroy(gameObject);
-            return;
+            if (c.TryGetComponent<Unit>(out var u))
+                NetworkSync.ApplyDamageToUnit(u, damage, targetPosition, this.GetActorId());
+            if (c.TryGetComponent<DestructibleObject>(out var d))
+                NetworkSync.ApplyDamageToObject(d, damage, targetPosition, this.GetActorId());
         }
 
-        // Online: Hide Granade before destroy it, so that client have time to create own explode VFX from orginal Granade pose.
+        // Piilota itse kranaatti kaikilta
         SetSoftHiddenLocal(true);
         RpcSetSoftHidden(true);
 
-        // Kerro asiakkaille missä scenessä VFX pitää luoda
-        RpcExplodeVFX(gameObject.scene.name, targetPosition);
-
+        // Server voi nyt siivota objektin pienen viiveen jälkeen
         StartCoroutine(DestroyAfter(0.30f));
     }
-     
-    private IEnumerator DestroyAfter(float seconds)
-    {
-        yield return new WaitForSeconds(seconds);
-        NetworkServer.Destroy(gameObject);
-    }
 
-    [ClientRpc]
-    private void RpcSetSoftHidden(bool hidden)
+    private IEnumerator SpawnVFXAt(string sceneName, Vector3 pos, double explodeAtServerTime)
     {
-        SetSoftHiddenLocal(hidden);
-    }
+        float wait = Mathf.Max(0f, (float)(explodeAtServerTime - NetworkTime.time));
+        if (wait > 0f) yield return new WaitForSeconds(wait);
 
-    [ClientRpc]
-    private void RpcExplodeVFX(string sceneName, Vector3 pos)
-    {
+        // Vain visuaali — ei peli-impactia clienteillä
         OnAnyGranadeExploded?.Invoke(this, EventArgs.Empty);
-
-        // Luodaan VFX oikeaan Level-sceeneen clientillä
         SpawnRouter.SpawnLocal(
             grenadeExplodeVFXPrefab.gameObject,
             pos + Vector3.up * 1f,
@@ -555,6 +671,22 @@ public class GrenadeProjectile : NetworkBehaviour
             source: null,
             sceneName: sceneName
         );
+    }
+ 
+    private IEnumerator DestroyAfter(float seconds)
+    {
+        yield return new WaitForSeconds(seconds);
+
+        if (NetworkServer.active)    // online-server
+            NetworkServer.Destroy(gameObject);
+        else                         // offline
+            Destroy(gameObject);
+    }
+
+    [ClientRpc]
+    private void RpcSetSoftHidden(bool hidden)
+    {
+        SetSoftHiddenLocal(hidden);
     }
 
     private void SetSoftHiddenLocal(bool hidden)

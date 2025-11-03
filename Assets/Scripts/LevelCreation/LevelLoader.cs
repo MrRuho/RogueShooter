@@ -95,13 +95,10 @@ public class LevelLoader : MonoBehaviour
     {
         string coreName = CoreSceneName ?? "Core";
 
-        Debug.Log($"[LevelLoader] ===== OFFLINE RELOAD START: '{levelName}' =====");
-
         // 0) Lista ennen (debug)
         for (int i = 0; i < SceneManager.sceneCount; i++)
         {
             var s = SceneManager.GetSceneAt(i);
-            Debug.Log($"[LevelLoader] BEFORE: {i} → '{s.name}' (loaded={s.isLoaded})");
         }
 
         // 1) Pura kaikki ei-Core -scenet
@@ -110,7 +107,6 @@ public class LevelLoader : MonoBehaviour
             var s = SceneManager.GetSceneAt(i);
             if (!s.isLoaded || s.name == coreName) continue;
 
-            Debug.Log($"[LevelLoader] Unloading scene '{s.name}'");
             var op = SceneManager.UnloadSceneAsync(s);
             if (op != null) while (!op.isDone) yield return null;
 
@@ -122,7 +118,6 @@ public class LevelLoader : MonoBehaviour
         var core = SceneManager.GetSceneByName(coreName);
         if (!core.IsValid() || !core.isLoaded)
         {
-            Debug.Log($"[LevelLoader] Loading Core scene");
             var loadCore = SceneManager.LoadSceneAsync(coreName, LoadSceneMode.Additive);
             while (!loadCore.isDone) yield return null;
             core = SceneManager.GetSceneByName(coreName);
@@ -134,7 +129,6 @@ public class LevelLoader : MonoBehaviour
         yield return null;
 
         // 3) Lataa uusi taso additiivisesti
-        Debug.Log($"[LevelLoader] Loading new level '{levelName}'");
         var op2 = SceneManager.LoadSceneAsync(levelName, LoadSceneMode.Additive);
         while (!op2.isDone) yield return null;
 
@@ -163,12 +157,12 @@ public class LevelLoader : MonoBehaviour
 
         try { RaiseLevelReady(map); } catch { }
 
-        // Debug-listaus
-        Debug.Log($"[LevelLoader] ===== OFFLINE RELOAD DONE: '{levelName}' =====");
+
+
         for (int i = 0; i < SceneManager.sceneCount; i++)
         {
             var s = SceneManager.GetSceneAt(i);
-            Debug.Log($"[LevelLoader] AFTER: {i} → '{s.name}' (loaded={s.isLoaded})");
+            MousePlaneMap.Instance.Rebuild();
         }
     }
 }

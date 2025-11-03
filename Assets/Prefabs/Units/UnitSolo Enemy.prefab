@@ -60,6 +60,10 @@ PrefabInstance:
       propertyPath: syncDirection
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6881522347894280322, guid: 9eade25f7fc5b7d439428c63bd6bec87, type: 3}
+      propertyPath: mousePlaneMask.m_Bits
+      value: 64
+      objectReference: {fileID: 0}
     - target: {fileID: 7668381059966303012, guid: 9eade25f7fc5b7d439428c63bd6bec87, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0

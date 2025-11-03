@@ -21,8 +21,6 @@ public class EndgameAnnouncer : NetworkBehaviour
 
         int friendly = um.GetFriendlyUnitList().Count; // hostin puoli
         int enemy = um.GetEnemyUnitList().Count;    // ei-hostin puoli
-        
-        Debug.Log($"EndgameAnnouncer: Units remaining - Friendly: {friendly}, Enemy: {enemy}");
 
         bool end = (enemy <= 0) || (friendly <= 0);
         if (!end) return;

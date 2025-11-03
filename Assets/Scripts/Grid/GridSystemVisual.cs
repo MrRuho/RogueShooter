@@ -8,6 +8,9 @@ public class GridSystemVisual : MonoBehaviour
 {
     public static GridSystemVisual Instance { get; private set; }
 
+    [Header("Mouse-plane filter")]
+    [SerializeField] private bool filterToMousePlanes = true;
+
     [Header("Team Vision Overlay")]
     [SerializeField] private bool teamVisionEnabled = true;
     [SerializeField] private GridVisualType teamVisionType = GridVisualType.Yellow;
@@ -21,7 +24,7 @@ public class GridSystemVisual : MonoBehaviour
         public GridVisualType gridVisualType;
         public Material material;
     }
-    
+
     public enum GridVisualType
     {
         white,
@@ -45,7 +48,6 @@ public class GridSystemVisual : MonoBehaviour
             Destroy(gameObject);
             return;
         }
-
         Instance = this;
     }
 
@@ -55,19 +57,15 @@ public class GridSystemVisual : MonoBehaviour
             LevelGrid.Instance.GetWidth(),
             LevelGrid.Instance.GetHeight(),
             LevelGrid.Instance.GetFloorAmount()
-            ];
+        ];
 
         for (int x = 0; x < LevelGrid.Instance.GetWidth(); x++)
+        for (int z = 0; z < LevelGrid.Instance.GetHeight(); z++)
+        for (int floor = 0; floor < LevelGrid.Instance.GetFloorAmount(); floor++)
         {
-            for (int z = 0; z < LevelGrid.Instance.GetHeight(); z++)
-            {
-                for (int floor = 0; floor < LevelGrid.Instance.GetFloorAmount(); floor++)
-                {
-                    GridPosition gridPosition = new(x, z, floor);
-                    Transform gridSystemVisualSingleTransform = Instantiate(gridSystemVisualSinglePrefab, LevelGrid.Instance.GetWorldPosition(gridPosition), Quaternion.identity);
-                    gridSystemVisualSingleArray[x, z, floor] = gridSystemVisualSingleTransform.GetComponent<GridSystemVisualSingle>();
-                }
-            }
+            GridPosition gridPosition = new(x, z, floor);
+            Transform t = Instantiate(gridSystemVisualSinglePrefab, LevelGrid.Instance.GetWorldPosition(gridPosition), Quaternion.identity);
+            gridSystemVisualSingleArray[x, z, floor] = t.GetComponent<GridSystemVisualSingle>();
         }
 
         UnitActionSystem.Instance.OnSelectedActionChanged += UnitActionSystem_OnSelectedActionChanged;
@@ -77,7 +75,7 @@ public class GridSystemVisual : MonoBehaviour
         if (TeamVisionService.Instance != null)
             TeamVisionService.Instance.OnTeamVisionChanged += HandleTeamVisionChanged;
 
-        if (Mirror.NetworkClient.active && TeamVisionService.Instance != null)
+        if (NetworkClient.active && TeamVisionService.Instance != null)
         {
             int myTeam = GetLocalPlayerTeamId();
             TeamVisionService.Instance.ClearTeamVision(myTeam);
@@ -85,90 +83,80 @@ public class GridSystemVisual : MonoBehaviour
 
         UpdateGridVisuals();
     }
-    
-    void OnDisable()
+
+    private void OnDisable()
     {
         UnitActionSystem.Instance.OnSelectedActionChanged -= UnitActionSystem_OnSelectedActionChanged;
         UnitActionSystem.Instance.OnBusyChanged -= UnitActionSystem_OnBusyChanged;
         LevelGrid.Instance.onAnyUnitMoveGridPosition -= LevelGrid_onAnyUnitMoveGridPosition;
 
         if (TeamVisionService.Instance != null)
-            TeamVisionService.Instance.OnTeamVisionChanged -= HandleTeamVisionChanged; 
+            TeamVisionService.Instance.OnTeamVisionChanged -= HandleTeamVisionChanged;
     }
-    
-    private int GetLocalPlayerTeamId()
+
+    private bool HasMousePlaneAt(in GridPosition gp)
+        => !filterToMousePlanes || (MousePlaneMap.Instance && MousePlaneMap.Instance.Has(gp));
+
+    public int GetLocalPlayerTeamId()
     {
         GameMode mode = GameModeManager.SelectedMode;
-        
+
         if (mode == GameMode.SinglePlayer || mode == GameMode.CoOp)
-        {
             return 0;
-        }
-        
+
         if (mode == GameMode.Versus)
         {
-            if (Mirror.NetworkServer.active && !Mirror.NetworkClient.active)
+            if (NetworkServer.active && !NetworkClient.active)
             {
                 Debug.LogWarning("[GridSystemVisual] Running on dedicated server - no local player team");
                 return 0;
             }
-            
-            if (Mirror.NetworkClient.localPlayer != null)
+
+            if (NetworkClient.localPlayer != null)
             {
-                var localPlayerUnit = Mirror.NetworkClient.localPlayer.GetComponent<Unit>();
+                var localPlayerUnit = NetworkClient.localPlayer.GetComponent<Unit>();
                 if (localPlayerUnit != null)
                 {
-                    bool isHost = Mirror.NetworkServer.active;
+                    bool isHost = NetworkServer.active;
                     int teamId = isHost ? 0 : 1;
-                    Debug.Log($"[GridSystemVisual] Versus mode - Local player is {(isHost ? "Host" : "Client")}, Team ID: {teamId}");
                     return teamId;
                 }
             }
-            
-            bool fallbackIsHost = Mirror.NetworkServer.active;
+
+            bool fallbackIsHost = NetworkServer.active;
             int fallbackTeam = fallbackIsHost ? 0 : 1;
-            Debug.Log($"[GridSystemVisual] Versus mode fallback - IsHost: {fallbackIsHost}, Team ID: {fallbackTeam}");
             return fallbackTeam;
         }
-        
+
         return 0;
     }
 
     public void HideAllGridPositions()
     {
         for (int x = 0; x < LevelGrid.Instance.GetWidth(); x++)
-        {
-            for (int z = 0; z < LevelGrid.Instance.GetHeight(); z++)
-            {
-                for (int floor = 0; floor < LevelGrid.Instance.GetFloorAmount(); floor++)
-                {
-                    gridSystemVisualSingleArray[x, z, floor].Hide();
-                }
-            }
-        }
+        for (int z = 0; z < LevelGrid.Instance.GetHeight(); z++)
+        for (int floor = 0; floor < LevelGrid.Instance.GetFloorAmount(); floor++)
+            gridSystemVisualSingleArray[x, z, floor].Hide();
     }
 
     public void ShowGridPositionList(List<GridPosition> gridPositionList, GridVisualType gridVisualType)
     {
-        foreach (GridPosition gridPosition in gridPositionList)
+        var mat = GetGridVisualTypeMaterial(gridVisualType);
+        foreach (var gp in gridPositionList)
         {
-            if(gridSystemVisualSingleArray[gridPosition.x, gridPosition.z, gridPosition.floor] != null)
-            {
-                gridSystemVisualSingleArray[gridPosition.x, gridPosition.z, gridPosition.floor].
-                Show(GetGridVisualTypeMaterial(gridVisualType));
-            }
+            if (filterToMousePlanes && !HasMousePlaneAt(gp)) continue;
+            var cell = gridSystemVisualSingleArray[gp.x, gp.z, gp.floor];
+            if (cell != null) cell.Show(mat);
         }
     }
 
-    private void UpdateGridVisuals()
+    public void UpdateGridVisuals()
     {
         HideAllGridPositions();
         _lastActionCells.Clear();
 
         if (teamVisionEnabled && TeamVisionService.Instance != null)
-        {
             DrawTeamVisionOverlay();
-        }
 
         Unit selectedUnit = UnitActionSystem.Instance.GetSelectedUnit();
         if (selectedUnit == null) return;
@@ -180,17 +168,17 @@ public class GridSystemVisual : MonoBehaviour
         switch (selectedAction)
         {
             default:
-            case MoveAction moveAction:
+            case MoveAction:
                 gridVisualType = GridVisualType.white;
                 break;
 
-            case TurnTowardsAction _:
+            case TurnTowardsAction:
                 gridVisualType = GridVisualType.Blue;
                 break;
 
             case ShootAction shoot:
             {
-                gridVisualType = GridSystemVisual.GridVisualType.Red;
+                gridVisualType = GridVisualType.Red;
 
                 var origin = selectedUnit.GetGridPosition();
                 int range  = shoot.GetMaxShootDistance();
@@ -209,16 +197,16 @@ public class GridSystemVisual : MonoBehaviour
                 break;
             }
 
-            case GranadeAction _:
+            case GranadeAction:
                 gridVisualType = GridVisualType.Yellow;
                 break;
 
-            case MeleeAction _:
+            case MeleeAction:
                 gridVisualType = GridVisualType.Red;
                 ShowAndMark(BuildRangeSquare(selectedUnit.GetGridPosition(), 1), GridVisualType.RedSoft);
                 break;
 
-            case InteractAction _:
+            case InteractAction:
                 gridVisualType = GridVisualType.Blue;
                 break;
         }
@@ -227,44 +215,34 @@ public class GridSystemVisual : MonoBehaviour
     }
 
     private void UnitActionSystem_OnSelectedActionChanged(object sender, EventArgs e)
-    {
-        UpdateGridVisuals();
-    }
+        => UpdateGridVisuals();
 
     private void LevelGrid_onAnyUnitMoveGridPosition(object sender, EventArgs e)
-    {
-        UpdateGridVisuals();
-    }
+        => UpdateGridVisuals();
 
     private void UnitActionSystem_OnBusyChanged(object sender, bool e)
-    {
-        UpdateGridVisuals();
-    }
+        => UpdateGridVisuals();
 
     private Material GetGridVisualTypeMaterial(GridVisualType gridVisualType)
     {
-        foreach (GridVisualTypeMaterial gridVisualTypeMaterial in gridVisualTypeMaterialList)
-        {
-            if (gridVisualTypeMaterial.gridVisualType == gridVisualType)
-            {
-                return gridVisualTypeMaterial.material;
-            }
-        }
-        Debug.LogError("Cloud not find GridVisualTypeMaterial for GridVisualType" + gridVisualType);
+        foreach (GridVisualTypeMaterial m in gridVisualTypeMaterialList)
+            if (m.gridVisualType == gridVisualType)
+                return m.material;
+
+        Debug.LogError("Could not find GridVisualTypeMaterial for GridVisualType " + gridVisualType);
         return null;
     }
 
     private void HandleTeamVisionChanged(int teamId)
     {
         if (!teamVisionEnabled) return;
-        
+
         int myTeam = GetLocalPlayerTeamId();
         if (teamId != myTeam)
         {
-            Debug.Log($"[GridSystemVisual] Ignoring vision update for team {teamId} (not my team {myTeam})");
             return;
         }
-        
+
         UpdateGridVisuals();
     }
 
@@ -278,7 +256,7 @@ public class GridSystemVisual : MonoBehaviour
 
         _tmpList.Clear();
         foreach (var gp in snap)
-            if (!_lastActionCells.Contains(gp))
+            if (!_lastActionCells.Contains(gp) && (!filterToMousePlanes || HasMousePlaneAt(gp)))
                 _tmpList.Add(gp);
 
         ShowGridPositionList(_tmpList, teamVisionType);
@@ -289,11 +267,9 @@ public class GridSystemVisual : MonoBehaviour
         var mat = GetGridVisualTypeMaterial(type);
         foreach (var gp in cells)
         {
-            if(gridSystemVisualSingleArray[gp.x, gp.z, gp.floor] != null)
-            {
-                gridSystemVisualSingleArray[gp.x, gp.z, gp.floor].Show(mat); 
-            }
-
+            if (filterToMousePlanes && !HasMousePlaneAt(gp)) continue;
+            var cell = gridSystemVisualSingleArray[gp.x, gp.z, gp.floor];
+            if (cell != null) cell.Show(mat);
             _lastActionCells.Add(gp);
         }
     }
@@ -302,13 +278,11 @@ public class GridSystemVisual : MonoBehaviour
     {
         var list = new List<GridPosition>();
         for (int x = -range; x <= range; x++)
+        for (int z = -range; z <= range; z++)
         {
-            for (int z = -range; z <= range; z++)
-            {
-                var gp = center + new GridPosition(x, z, 0);
-                if (LevelGrid.Instance.IsValidGridPosition(gp))
-                    list.Add(gp);
-            }
+            var gp = center + new GridPosition(x, z, 0);
+            if (LevelGrid.Instance.IsValidGridPosition(gp))
+                list.Add(gp);
         }
         return list;
     }

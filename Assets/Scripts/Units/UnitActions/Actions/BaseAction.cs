@@ -15,15 +15,62 @@ public abstract class BaseAction : NetworkBehaviour
     public static event EventHandler OnAnyActionCompleted;
 
 
+
     protected Unit unit;
     protected bool isActive;
     protected Action onActionComplete;
-
+    private HealthSystem ownerHealth;
 
     protected virtual void Awake()
     {
+        if (ownerHealth == null)
+            ownerHealth = GetComponentInParent<HealthSystem>();
+
         unit = GetComponent<Unit>();
     }
+    
+    void OnEnable()
+    {
+        if (ownerHealth != null)
+            ownerHealth.OnDying += HandleUnitDying;
+    }
+
+    void OnDisable()
+    {
+        if (ownerHealth != null)
+            ownerHealth.OnDying -= HandleUnitDying;
+    }
+
+    private void HandleUnitDying(object sender, EventArgs e)
+    {
+        ForceCompleteNow();
+    }
+    
+    protected virtual void ForceCompleteNow()
+    {
+        Debug.Log("[BaseAction] ForceCompleteNow()");
+        if (!isActive) return;
+        isActive = false;
+        Debug.Log("[BaseAction] Set isActive: "+ isActive);
+        Action callback = onActionComplete;
+        Debug.Log("[BaseAction] onActionComplete: "+ onActionComplete);
+        Debug.Log("[BaseAction] Action callback: "+ callback);
+        onActionComplete = null;
+        Debug.Log("[BaseAction] onActionComplete: "+ onActionComplete);
+        StopAllCoroutines();
+        Debug.Log("[BaseAction] StopAllCorroutines");
+        
+        OnAnyActionCompleted?.Invoke(this, EventArgs.Empty);
+        
+        // Kutsu callback VAIN jos Unit EI ole kuolemassa
+        if (unit != null && !unit.IsDying() && !unit.IsDead())
+        {
+            Debug.Log("[BaseAction] callback");
+            callback?.Invoke();
+        }
+    }
+
+        
     
     // Defines the action button text for the Unit UI.
     public abstract string GetActionName();
@@ -61,10 +108,16 @@ public abstract class BaseAction : NetworkBehaviour
     // Allows the player to perform new actions.
     protected void ActionComplete()
     {
+        if (!isActive)
+        {
+            Debug.Log("[BaseAction] actioncomplete. Ei aktiivinen palataan");
+            return;
+        }
+        Debug.Log("[BaseAction] actioncomplete. pysäytetään aktiivisuus");
         isActive = false;
         onActionComplete();
-
         OnAnyActionCompleted?.Invoke(this, EventArgs.Empty);
+
     }
 
     public Unit GetUnit()
@@ -74,30 +127,30 @@ public abstract class BaseAction : NetworkBehaviour
 
     public void MakeDamage(int damage, Unit targetUnit)
     {
-        // Peruspaikat (world-space)
-        Vector3 attacerPos = unit.GetWorldPosition() + Vector3.up * 1.6f;   // silmä/rinta
+        if (targetUnit == null || targetUnit.IsDying() || targetUnit.IsDead()) return;
+        
+        Vector3 attacerPos = unit.GetWorldPosition() + Vector3.up * 1.6f;
         Vector3 targetPos = targetUnit.GetWorldPosition() + Vector3.up * 1.2f;
-        // Suunta
         Vector3 dir = targetPos - attacerPos;
-        if (dir.sqrMagnitude < 0.0001f) dir = targetUnit.transform.forward;  // fallback
+        
+        if (dir.sqrMagnitude < 0.0001f) dir = targetUnit.transform.forward;
         dir.Normalize();
 
-        // Siirrä osumakeskus hieman kohti hyökkääjää (0.5–1.0 m toimii yleensä hyvin)
         float backOffset = 0.7f;
         Vector3 hitPosition = targetPos - dir * backOffset;
 
-        // (valinnainen) pieni satunnainen sivuttaisjitter, ettei kaikki näytä identtiseltä
         Vector3 side = Vector3.Cross(dir, Vector3.up).normalized;
         hitPosition += side * UnityEngine.Random.Range(-0.1f, 0.1f);
 
         NetworkSync.ApplyDamageToUnit(targetUnit, damage, hitPosition, this.GetActorId());
     }
-    
-    
+
     public void ApplyHit(int damage, Unit targetUnit, bool melee)
     {
+        if (targetUnit == null || targetUnit.IsDying() || targetUnit.IsDead()) return;
+        
         targetUnit.SetUnderFire(true);
-        var ct  = GetCoverType(targetUnit);
+        var ct = GetCoverType(targetUnit);
 
         if (ct == CoverService.CoverType.None && !melee)
         {
@@ -118,7 +171,7 @@ public abstract class BaseAction : NetworkBehaviour
         if (melee)
         {
             after -= damage;
-        } 
+        }
 
         if (after >= 0)
         {
@@ -141,25 +194,9 @@ public abstract class BaseAction : NetworkBehaviour
         return ct;
     }
 
-    /*
-    public bool RotateTowards(Vector3 targetPosition, float rotationSpeed = 10f)
-    {
-        // Suuntavektori
-        Vector3 aimDirection = (targetPosition - unit.GetWorldPosition()).normalized;
-        aimDirection.y = 0f;
-
-        transform.forward = Vector3.Slerp(transform.forward, aimDirection, Time.deltaTime * rotationSpeed);
-
-        // Kääntyminen on suoritettu.
-        float tolerance = 0.99f;
-        float dot = Vector3.Dot(transform.forward.normalized, aimDirection);
-        return dot > tolerance;
-    }
-    */
-    
     public bool RotateTowards(Vector3 targetPosition, float rotSpeedDegPerSec = 720f, float epsilonDeg = 2f)
     {
-        Vector3 to = targetPosition - transform.position;  // tai unit.GetWorldPosition()
+        Vector3 to = targetPosition - transform.position;
         to.y = 0f;
 
         if (to.sqrMagnitude < 1e-6f) return true;

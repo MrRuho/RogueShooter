@@ -29,6 +29,8 @@ public class MoveAction : BaseAction
     private float differentFloorsTeleportTimer;
     private float differentFloorsTeleportTimerMax = .5f;
 
+    private bool _isMoving;
+
     private void Start()
     {
         distance = 0;
@@ -41,7 +43,7 @@ public class MoveAction : BaseAction
     void OnDisable()
     {
         TurnSystem.Instance.OnTurnChanged -= TurnSystem_OnTurnChanged;
-
+        
     }
 
     private void TurnSystem_OnTurnChanged(object sender, EventArgs e)
@@ -50,8 +52,32 @@ public class MoveAction : BaseAction
         distance = 0;
     }
 
+    public void ForceStopNow()
+    {
+        Debug.Log("[Move Action] Pakotetaan pysäytys");
+        StopAtCurrentPosition();
+        positionList?.Clear();
+        currentPositionIndex = 0;
+        isChangingFloors = false;
+
+        // Merkitse loppuruutu
+        thisTurnEndridPosition = unit.GetGridPosition();
+         
+        // Lopeta action
+        OnStopMoving?.Invoke(this, EventArgs.Empty);
+        ActionComplete();
+    }
+
+
     private void Update()
     {
+
+        if (unit.IsDying() || unit.IsDead())
+        {
+            ForceStopNow();
+            return;
+        }
+
         if (!isActive) return;
 
         Vector3 targetPosition = positionList[currentPositionIndex];
@@ -73,34 +99,33 @@ public class MoveAction : BaseAction
         }
         else
         {
-
             Vector3 moveDirection = (targetPosition - transform.position).normalized;
 
-            // Rotate towards the target position
             float rotationSpeed = 10f;
             transform.forward = Vector3.Slerp(transform.forward, moveDirection, Time.deltaTime * rotationSpeed);
 
-            // Move towards the target position
             float moveSpeed = 6f;
             transform.position += moveSpeed * Time.deltaTime * moveDirection;
         }
-          
+
         float stoppingDistance = 0.2f;
         if (Vector3.Distance(transform.position, targetPosition) < stoppingDistance)
         {
             var lg = LevelGrid.Instance;
             if (lg != null)
             {
-                // lasketaan ruutu world-koordinaatista, jotta ei olla riippuvaisia Unitin omasta päivityssyklistä
                 var cur = lg.GetGridPosition(unit.transform.position);
 
                 if (!cur.Equals(_lastVisionPos))
-                {    
-                    var uv = unit.GetComponent<UnitVision>();
-                    if (uv != null && uv.IsInitialized)
-                        uv.NotifyMoved();
+                {
+                    // Päivitä vision vain jos Unit ei ole kuolemassa
+                    if (unit != null && !unit.IsDying() && !unit.IsDead())
+                    {
+                        var uv = unit.GetComponent<UnitVision>();
+                        if (uv != null && uv.IsInitialized)
+                            uv.NotifyMoved();
+                    }
 
-                  //  Unit.RaiseAnyUnitMoved(unit);
                     _lastVisionPos = cur;
                 }
             }
@@ -111,26 +136,26 @@ public class MoveAction : BaseAction
             currentPositionIndex++;
             if (currentPositionIndex >= positionList.Count)
             {
-
-                if (thisTurnStartingGridPosition != thisTurnEndridPosition)
+                // Tarkista vielä kerran ennen network-kutsuja
+                if (unit != null && !unit.IsDying() && !unit.IsDead())
                 {
-                    unit.SetUnderFire(false);
-                    CheckAndApplyCoverBonus();
-                }
-                else
-                {
-                    unit.SetUnderFire(true);
-                    CheckAndApplyCoverBonus();
-                }
+                    if (thisTurnStartingGridPosition != thisTurnEndridPosition)
+                    {
+                        unit.SetUnderFire(false);
+                        CheckAndApplyCoverBonus();
+                    }
+                    else
+                    {
+                        unit.SetUnderFire(true);
+                        CheckAndApplyCoverBonus();
+                    }
 
-                // Varmistus: viimeinen päivitys lopetusruudusta
-                unit.GetComponent<UnitVision>()?.NotifyMoved();
-             //   Unit.RaiseAnyUnitMoved(unit);
+                    unit.GetComponent<UnitVision>()?.NotifyMoved();
+                }
 
                 OnStopMoving?.Invoke(this, EventArgs.Empty);
                 ActionComplete();
             }
-
             else
             {
                 targetPosition = positionList[currentPositionIndex];
@@ -139,7 +164,6 @@ public class MoveAction : BaseAction
 
                 if (targetGridPosition.floor != unitGridPosition.floor)
                 {
-                    //Different floors
                     isChangingFloors = true;
                     differentFloorsTeleportTimer = differentFloorsTeleportTimerMax;
                 }
@@ -147,32 +171,69 @@ public class MoveAction : BaseAction
         }
     }
 
+    public void StopAtCurrentPosition()
+    {
+        Debug.Log("Pysähdytään nykyiseen ruutuun");
+        // if (!isActive) return;
+
+        GridPosition currentPos = unit.GetGridPosition();
+
+        Debug.Log("Nykyinen sijainti:" + currentPos);
+        
+        // Laske uusi polku nykyisestä ruudusta samaan ruutuun (= tyhjä polku)
+        List<GridPosition> pathGridPositionsList = PathFinding.Instance.FindPath(
+            currentPos, 
+            currentPos, 
+            out int pathLength, 
+            maxMoveDistance
+        );
+        
+        // Päivitä position lista
+        currentPositionIndex = 0;
+        positionList = new List<Vector3>();
+        
+        foreach (GridPosition pathGridPosition in pathGridPositionsList)
+        {
+            positionList.Add(LevelGrid.Instance.GetWorldPosition(pathGridPosition));
+        }
+        
+        // Pysäytä välittömästi
+        if (positionList == null || positionList.Count <= 1)
+        {
+            // Ei polkua tai vain nykyinen ruutu -> lopeta liike
+            thisTurnEndridPosition = currentPos;
+            OnStopMoving?.Invoke(this, EventArgs.Empty);
+            ActionComplete();
+        }
+    }
+    
+
     private void CheckAndApplyCoverBonus()
     {
-        // Offline
+        if (unit == null || unit.IsDying() || unit.IsDead()) return;
+        
         if (!NetworkServer.active && !NetworkClient.active)
         {
             unit.SetCoverBonus();
             return;
         }
 
-        // Server suorittaa suoraan
         if (NetworkServer.active)
         {
             unit.SetCoverBonus();
             return;
         }
 
-        // Client lähettää Command Serverille
         if (NetworkClient.active && NetworkSyncAgent.Local != null)
         {
             var ni = unit.GetComponent<NetworkIdentity>();
-            if (ni != null)
+            if (ni != null && ni.netId != 0)
             {
                 NetworkSyncAgent.Local.CmdApplyCoverBonus(ni.netId);
             }
         }
     }
+
 
     public override void TakeAction(GridPosition gridPosition, Action onActionComplete)
     {
@@ -210,16 +271,14 @@ public class MoveAction : BaseAction
     public override List<GridPosition> GetValidGridPositionList()
     {
         var valid = new List<GridPosition>();
-        var candidates = new HashSet<GridPosition>(); // estää duplikaatit
+        var candidates = new HashSet<GridPosition>();
 
         GridPosition unitPos = unit.GetGridPosition();
         int startFloor = unitPos.floor;
 
-        // Jos maxMoveDistance on RUUTUJA, kustannusbudjetti on *10 per ruutu*
         const int COST_PER_TILE = 10;
         int moveBudgetCost = maxMoveDistance * COST_PER_TILE;
 
-        // --- 1) Nykyisen kerroksen ruudut (perus-offsetit) ---
         for (int dx = -maxMoveDistance; dx <= maxMoveDistance; dx++)
         {
             for (int dz = -maxMoveDistance; dz <= maxMoveDistance; dz++)
@@ -229,13 +288,11 @@ public class MoveAction : BaseAction
             }
         }
 
-        // --- 2) Linkkien kautta saavutettavat kerrokset (hybridi) ---
         var links = PathFinding.Instance.GetPathfindingLinks();
         if (links != null && links.Count > 0)
         {
             foreach (var link in links)
             {
-                // A -> B
                 if (link.gridPositionA.floor == startFloor)
                 {
                     int lbToA = PathFinding.Instance.CalculateDistance(unitPos, link.gridPositionA);
@@ -259,7 +316,6 @@ public class MoveAction : BaseAction
                     }
                 }
 
-                // B -> A
                 if (link.gridPositionB.floor == startFloor)
                 {
                     int lbToB = PathFinding.Instance.CalculateDistance(unitPos, link.gridPositionB);
@@ -285,21 +341,17 @@ public class MoveAction : BaseAction
             }
         }
 
-        // --- 3) Suodata & tee vain yksi A* per kandidaatti (välimuistilla) ---
         foreach (var test in candidates)
         {
-            // Perusvalidoinnit
             if (!LevelGrid.Instance.IsValidGridPosition(test)) continue;
             if (test == unitPos) continue;
             if (LevelGrid.Instance.HasAnyUnitOnGridPosition(test)) continue;
             if (!PathFinding.Instance.IsWalkableGridPosition(test)) continue;
 
-            // Heuristiikkakarsinta (Manhattan*10): jos edes optimistinen kustannus > budjetti, skip
             int lowerBound = PathFinding.Instance.CalculateDistance(unitPos, test);
             if (lowerBound > moveBudgetCost) continue;
 
-            // *** VAIN YKSI A* per ruutu (mutta nyt cachetettuna saman framen sisällä) ***
-            if (!TryGetPathCostCached(unitPos, test, out int pathCost)) continue; // ei polkua
+            if (!TryGetPathCostCached(unitPos, test, out int pathCost)) continue;
             if (pathCost > moveBudgetCost) continue;
 
             valid.Add(test);
@@ -313,7 +365,6 @@ public class MoveAction : BaseAction
         return "Move";
     }
 
-    // --- Per-frame pathfinding cache ---
     private struct PathQuery : IEquatable<PathQuery> {
         public GridPosition start;
         public GridPosition end;
@@ -325,16 +376,13 @@ public class MoveAction : BaseAction
     private struct PathCacheEntry {
         public bool exists;
         public int cost;
-        // Jos joskus haluat itse polun, voit lisätä: public List<GridPosition> path;
     }
 
-    // Yhteinen cache tälle actionille (voisi olla myös static jos haluat jakaa yli instanssien)
     private Dictionary<PathQuery, PathCacheEntry> _pathCache = new Dictionary<PathQuery, PathCacheEntry>(256);
     private int _cacheFrame = -1;
 
     private bool TryGetPathCostCached(GridPosition start, GridPosition end, out int cost)
     {
-        // Nollaa cache kerran per frame
         int frame = Time.frameCount;
         if (_cacheFrame != frame) {
             _pathCache.Clear();
@@ -347,7 +395,6 @@ public class MoveAction : BaseAction
             return entry.exists;
         }
 
-        // Ei ollut välimuistissa -> laske kerran
         var path = PathFinding.Instance.FindPath(start, end, out int pathCost, maxMoveDistance);
         bool exists = path != null;
         _pathCache[key] = new PathCacheEntry { exists = exists, cost = pathCost };

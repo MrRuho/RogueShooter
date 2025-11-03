@@ -41,8 +41,35 @@ public class UnitActionSystem : MonoBehaviour
 
     private void Start()
     {
-
+        Unit.OnAnyUnitDead += Unit_OnAnyUnitDead;
     }
+
+    private void OnDestroy()
+    {
+        Unit.OnAnyUnitDead -= Unit_OnAnyUnitDead;
+    }
+
+    private void Unit_OnAnyUnitDying(object sender, EventArgs e)
+    {
+        if (isBusy) ClearBusy();
+    }
+
+    private void Unit_OnAnyUnitDead(object sender, EventArgs e)
+    {
+
+        var dead = sender as Unit;
+
+        // Vapauta UI AINA
+        if (isBusy) ClearBusy();
+
+        // Jos kuollut oli valittuna, nollaa valinnat
+        if (dead == selectedUnit)
+        {
+            ResetSelectedUnit();
+            ResetSelectedAction();
+        }
+    }
+    
     private void Update()
     {
 //        Debug.Log(LevelGrid.Instance.GetGridPosition(MouseWorld.GetMouseWorldPosition()));
@@ -204,5 +231,5 @@ public class UnitActionSystem : MonoBehaviour
     
     // Lock/Unlock input methods for PlayerController when playing online
     public void LockInput() { if (!isBusy) SetBusy(); }
-    public void UnlockInput() { if (isBusy)  ClearBusy(); }
+    public void UnlockInput() { if (isBusy) ClearBusy(); }
 }

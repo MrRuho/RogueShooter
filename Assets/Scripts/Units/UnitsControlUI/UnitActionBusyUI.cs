@@ -23,10 +23,12 @@ public class UnitActionBusyUI : MonoBehaviour
 
     private void Show()
     {
+        Debug.Log("[UnitActionBusyUI] gameObject.SetActive(true);" );
         gameObject.SetActive(true);
     }
     private void Hide()
     {
+        Debug.Log("[UnitActionBusyUI] gameObject.SetActive(false);" );
         gameObject.SetActive(false);
     }
     /// <summary>
@@ -36,10 +38,12 @@ public class UnitActionBusyUI : MonoBehaviour
     {
         if (isBusy)
         {
+            Debug.Log("[UnitActionBusyUI] isBusy" +isBusy );
             Show();
         }
         else
         {
+            Debug.Log("[UnitActionBusyUI] isBusy" +isBusy );
             Hide();
         } 
     }

@@ -9,7 +9,6 @@ public static class ClientPreJoinCleaner
 {
     public static IEnumerator PrepareForOnlineJoin()
     {
-        Debug.Log("[ClientPreJoinCleaner] Pura ei Core Scenet");
         // 1) Pura kaikki ei-Core -scenet pois
         string core = LevelLoader.Instance ? LevelLoader.Instance.CoreSceneName : "Core";
         for (int i = SceneManager.sceneCount - 1; i >= 0; i--)
@@ -32,7 +31,6 @@ public static class ClientPreJoinCleaner
 
     static void DestroyServerProvidedLeftoversInCore(string core)
     {
-        Debug.Log("[ClientPreJoinCleaner] Siivotaan kaikki offline jäänteet");
         var coreScene = SceneManager.GetSceneByName(core);
         if (!coreScene.IsValid()) return;
 

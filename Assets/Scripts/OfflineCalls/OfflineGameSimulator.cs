@@ -42,7 +42,8 @@ public static class OfflineGameSimulator
             beforeReturn: go =>
             {
                 if (go.TryGetComponent<GrenadeProjectile>(out var gp))
-                    gp.Setup(targetPos, maxRangeWU); // ← tärkein muutos
+                    gp.ownerTeamId = 0;
+                    gp.Setup(targetPos, maxRangeWU); // ← tärkein muutos        
             });
     }
     

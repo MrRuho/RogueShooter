@@ -6,7 +6,7 @@ public class PvPTurnCoordinator : NetworkBehaviour
 {
     public static PvPTurnCoordinator Instance { get; private set; }
 
-    [SyncVar] private uint currentOwnerNetId; // kumman pelaajan vuoro on
+    [SyncVar] public uint currentOwnerNetId; // kumman pelaajan vuoro on
 
     void Awake()
     {
@@ -97,7 +97,7 @@ public class PvPTurnCoordinator : NetworkBehaviour
             TurnSystem.Instance.ResetTurnId();                // siisti lähtö (0)
             TurnSystem.Instance.ResetAndBegin(false, true);   // älä koske turnNumberiin; aloita Players-vaiheesta
         }
-        
+
         var players = GetAllPlayers().ToList();
         var host = players.FirstOrDefault(p => p.connectionToClient != null && p.connectionToClient.connectionId == 0);
         if (host == null) return;
@@ -110,4 +110,5 @@ public class PvPTurnCoordinator : NetworkBehaviour
 
         RpcTurnChanged(GetTurnNumber(), currentOwnerNetId);
     }
+
 }

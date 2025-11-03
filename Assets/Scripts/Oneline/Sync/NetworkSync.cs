@@ -106,8 +106,13 @@ public static class NetworkSync
                 owner: null,
                 beforeSpawn: go =>
                 {
+
+                    var unit = src ? src.GetComponent<Unit>() : null;
+                    int teamId = unit ? unit.GetTeamID() : -1;
+
                     if (go.TryGetComponent<GrenadeProjectile>(out var gp)) {
                         gp.actorUnitNetId = actorNetId;
+                        gp.ownerTeamId = teamId;
                         gp.Setup(targetPos, maxRangeWU);
                     }
                 });
@@ -117,8 +122,7 @@ public static class NetworkSync
         }
 
         if (NetworkClient.active && NetworkSyncAgent.Local != null) // Online: client
-        {   
-             
+        {      
             NetworkSyncAgent.Local.CmdSpawnGrenade(actorNetId, targetPos);         
         }
     }
@@ -129,25 +133,27 @@ public static class NetworkSync
     /// - Client: send a Command via NetworkSyncAgent to run on server.
     /// - Offline: call locally.
     /// </summary>
-    public static void ApplyDamageToUnit(Unit target, int amount, Vector3 hitPosition, uint actorNetId)
+    public static void ApplyDamageToUnit(Unit unit, int amount, Vector3 hitPosition, uint actorNetId)
     {
-        if (target == null) return;
+
+        if (unit == null) return;
 
         if (NetworkServer.active) // Online: server or host
         {
-            var healthSystem = target.GetComponent<HealthSystem>();
+            var healthSystem = unit.GetComponent<HealthSystem>();
             if (healthSystem == null) return;
 
             healthSystem.Damage(amount, hitPosition);
-            UpdateHealthBarUI(healthSystem, target);
+            UpdateHealthBarUI(healthSystem, unit);
             return;
         }
 
         if (NetworkClient.active) // Online: client
         {
-            var ni = target.GetComponent<NetworkIdentity>();
+            var ni = unit.GetComponent<NetworkIdentity>();
             if (ni && NetworkSyncAgent.Local != null)
             {
+                if (unit == null || unit.IsDying() || unit.IsDead()) return;
                 NetworkSyncAgent.Local.CmdApplyDamage(actorNetId, ni.netId, amount, hitPosition);
                 return;
             }
@@ -155,7 +161,7 @@ public static class NetworkSync
 
         // Offline fallback
         Debug.Log("ApplyDamageToUnit.");
-        target.GetComponent<HealthSystem>().Damage(amount, hitPosition);
+        unit.GetComponent<HealthSystem>().Damage(amount, hitPosition);
         
     }
 
@@ -183,48 +189,47 @@ public static class NetworkSync
         target.Damage(amount, hitPosition);
     }
 
-    private static void UpdateHealthBarUI(HealthSystem healthSystem, Unit target)
+    private static void UpdateHealthBarUI(HealthSystem healthSystem, Unit unit)
     {
-        if (target == null || healthSystem == null) return;
+
+        if (unit == null || healthSystem == null) return;
         // → ilmoita kaikille clienteille, jotta UnitWorldUI saa eventin
         if (NetworkSyncAgent.Local == null)
         {
             // haetaan mikä tahansa agentti serveriltä (voi olla erillinen manageri)
             var agent = Object.FindFirstObjectByType<NetworkSyncAgent>();
             if (agent != null)
-                agent.ServerBroadcastHp(target, healthSystem.GetHealth(), healthSystem.GetHealthMax());
+                agent.ServerBroadcastHp(unit, healthSystem.GetHealth(), healthSystem.GetHealthMax());
             return;
         }
 
         if (NetworkClient.active && NetworkSyncAgent.Local != null)
         {
-            var ni = target.GetComponent<NetworkIdentity>();
+            if (unit == null || unit.IsDying() || unit.IsDead()) return;
+            var ni = unit.GetComponent<NetworkIdentity>();
             if (ni != null)
                 NetworkSyncAgent.Local.CmdRequestHpRefresh(ni.netId);
         }
     }
-    
-    public static void UpdateCoverUI(Unit target)
-    {
-        if (target == null) return;
 
-        // SERVER: broadcastaa suoraan
+    public static void UpdateCoverUI(Unit unit)
+    {
+        if (unit == null || unit.IsDying() || unit.IsDead()) return;
+
         if (NetworkServer.active)
         {
             var agent = UnityEngine.Object.FindFirstObjectByType<NetworkSyncAgent>();
             if (agent != null)
-                agent.ServerBroadcastCover(target, target.GetPersonalCover(), target.GetPersonalCoverMax());
+                agent.ServerBroadcastCover(unit, unit.GetPersonalCover(), unit.GetPersonalCoverMax());
             return;
         }
 
-        // CLIENT: pyydä serveriä tekemään virallinen päivitys
         if (NetworkClient.active && NetworkSyncAgent.Local != null)
         {
-            var ni = target.GetComponent<NetworkIdentity>();
+            var ni = unit.GetComponent<NetworkIdentity>();
             if (ni != null)
                 NetworkSyncAgent.Local.CmdRequestCoverRefresh(ni.netId);
         }
-          
     }
 
     /// <summary>
@@ -233,9 +238,10 @@ public static class NetworkSync
     /// When is Enemy turn only Enemy Units Action points are visible.
     /// Solo and Versus mode handle this localy becouse there is no need syncronisation.
     /// </summary>
+    
     public static void BroadcastActionPoints(Unit unit, int apValue)
     {
-        if (unit == null) return;
+        if (unit == null || unit.IsDying() || unit.IsDead()) return;
 
         if (NetworkServer.active)
         {
@@ -245,7 +251,6 @@ public static class NetworkSync
             return;
         }
 
-        // CLIENT-haara: lähetä peilauspyyntö serverille
         if (NetworkClient.active && NetworkSyncAgent.Local != null)
         {
             var ni = unit.GetComponent<NetworkIdentity>();
@@ -322,4 +327,5 @@ public static class NetworkSync
         if (mode == GameMode.Versus) return IsServer ? 0 : 1;
         return 0;
     }
+    
 }

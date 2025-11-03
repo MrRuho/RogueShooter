@@ -1,3 +1,4 @@
+
 using System;
 using Mirror;
 using UnityEngine;
@@ -61,6 +62,9 @@ public class CoverSkill : NetworkBehaviour
 
     public void SetPersonalCover(int value)
     {
+        // KRIITTINEN: Älä lähetä komentoja kuolleelle Unitille
+        if (unit != null && (unit.IsDying() || unit.IsDead())) return;
+        
         if (!NetworkServer.active && !NetworkClient.active)
         {
             ApplyCoverLocal(value);
@@ -74,7 +78,7 @@ public class CoverSkill : NetworkBehaviour
         }
 
         var ni = GetComponent<NetworkIdentity>();
-        if (NetworkClient.active && NetworkSyncAgent.Local != null && ni != null)
+        if (NetworkClient.active && NetworkSyncAgent.Local != null && ni != null && ni.netId != 0)
         {
             NetworkSyncAgent.Local.CmdSetUnitCover(ni.netId, value);
         }
@@ -168,10 +172,14 @@ public class CoverSkill : NetworkBehaviour
 
     public void RegenCoverOnMove(int distance)
     {
+        // KRIITTINEN: Älä lähetä komentoja kuolleelle Unitille
+        if (unit != null && (unit.IsDying() || unit.IsDead())) return;
+        
         if (NetworkClient.active && !NetworkServer.active)
         {
             var ni = GetComponent<NetworkIdentity>();
-            NetworkSyncAgent.Local?.CmdRegenCoverOnMove(ni.netId, distance);
+            if (ni != null && ni.netId != 0)
+                NetworkSyncAgent.Local?.CmdRegenCoverOnMove(ni.netId, distance);
             return;
         }
 
@@ -233,16 +241,20 @@ public class CoverSkill : NetworkBehaviour
 
     public void ResetCurrentCoverBonus()
     {
+        // KRIITTINEN: Älä lähetä komentoja kuolleelle Unitille
+        if (unit != null && (unit.IsDying() || unit.IsDead())) return;
+        
         if (NetworkClient.active && !NetworkServer.active)
         {
             var ni = GetComponent<NetworkIdentity>();
-            NetworkSyncAgent.Local?.CmdResetCurrentCoverBonus(ni.netId);
+            if (ni != null && ni.netId != 0)
+                NetworkSyncAgent.Local?.CmdResetCurrentCoverBonus(ni.netId);
             return;
         }
 
         ServerResetCurrentCoverBonus();
     }
- 
+
     //[Server]
     public void ServerResetCurrentCoverBonus()
     {

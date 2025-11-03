@@ -3,13 +3,14 @@ using UnityEngine;
 
 public class HealthSystem : MonoBehaviour
 {
-    public event EventHandler OnDead;
     public event EventHandler OnDamaged;
+    public event EventHandler OnDying;
+    public event EventHandler OnDead;
 
     [SerializeField] private int health = 100;
     private int healthMax;
 
-    // To prevent multiple death events
+    private bool isDying;
     private bool isDead;
     private Vector3 lastHitPosition;
     public Vector3 LastHitPosition => lastHitPosition;
@@ -20,34 +21,50 @@ public class HealthSystem : MonoBehaviour
     void Awake()
     {
         healthMax = health;
+        isDying = false;
         isDead = false;
     }
 
     public void Damage(int damageAmount, Vector3 hitPosition)
     {
-        if (isDead) return;
+        if (isDying || isDead) return;
 
         health -= damageAmount;
+        OnDamaged?.Invoke(this, EventArgs.Empty);
+        
         if (health <= 0)
-        {   
+        {
+            lastHitPosition = hitPosition;
             overkill = Math.Abs(health) + 1;
             health = 0;
-
-            if (!isDead)
-            {
-                lastHitPosition = hitPosition;
-                isDead = true;
-                Die();
-            }
+            BeginDying();
         }
-
-        OnDamaged?.Invoke(this, EventArgs.Empty);
     }
 
-    private void Die()
+    private void BeginDying()
     {
+        if (isDying) return;
+        isDying = true;
+        UnitActionSystem.Instance.UnlockInput();
+        OnDying?.Invoke(this, EventArgs.Empty);
+        StartCoroutine(FinalizeDeathNextFrame());
+    }
+
+    private System.Collections.IEnumerator FinalizeDeathNextFrame()
+    {
+        yield return null;
+        FinalizeDeath();
+    }
+
+    public void FinalizeDeath()
+    {
+        if (isDead) return;
+        isDead = true;
         OnDead?.Invoke(this, EventArgs.Empty);
     }
+
+    public bool IsDying() => isDying;
+    public bool IsDead() => isDead;
 
     public float GetHealthNormalized()
     {
@@ -64,11 +81,12 @@ public class HealthSystem : MonoBehaviour
         return healthMax;
     }
 
-
     public void ApplyNetworkHealth(int current, int max)
     {
+        if (isDying || isDead) return;
+        
         healthMax = Mathf.Max(1, max);
-        health    = Mathf.Clamp(current, 0, healthMax);
+        health = Mathf.Clamp(current, 0, healthMax);
         OnDamaged?.Invoke(this, EventArgs.Empty);
     }
 }

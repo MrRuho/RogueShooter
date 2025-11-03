@@ -1,3 +1,4 @@
+using System;
 using Mirror;
 using UnityEngine;
 
@@ -9,20 +10,49 @@ public class WeaponVisibilitySync : NetworkBehaviour
     [SerializeField] private Transform meleeLeftHandTransform;
     [SerializeField] private Transform grenadeRightHandTransform;
 
-   
-    private NetVisibility rifleRightVis, rifleLeftVis ,meleeLeftVis, grenadeRightVis;
+
+    private NetVisibility rifleRightVis, rifleLeftVis, meleeLeftVis, grenadeRightVis;
+    
+    private HealthSystem hs;
+    private bool frozen;
 
     void Awake()
     {
         if (rifleRightHandTransform) rifleRightVis = rifleRightHandTransform.GetComponent<NetVisibility>();
-        if (rifleLeftHandTransform) rifleLeftVis= rifleLeftHandTransform.GetComponent<NetVisibility>();
+        if (rifleLeftHandTransform) rifleLeftVis = rifleLeftHandTransform.GetComponent<NetVisibility>();
         if (meleeLeftHandTransform) meleeLeftVis = meleeLeftHandTransform.GetComponent<NetVisibility>();
         if (grenadeRightHandTransform) grenadeRightVis = grenadeRightHandTransform.GetComponent<NetVisibility>();
+        TryGetComponent(out hs);    
     }
+    
+    void OnEnable()
+    {
+        if (hs != null)
+        {
+            hs.OnDying += OnDying;
+            hs.OnDead  += OnDead;
+        }
+    }
+    void OnDisable()
+    {
+        if (hs != null)
+        {
+            hs.OnDying -= OnDying;
+            hs.OnDead -= OnDead;
+        }
+    }
+    
+    private void OnDying(object s, EventArgs e) => frozen = true;
+    private void OnDead (object s, EventArgs e) => frozen = true;
 
     // --- OWNER kutsuu tätä (esim. AE:ssä) ---
     public void OwnerRequestSet(bool rifleRight,bool rifleLeft, bool meleeLeft, bool grenade)
     {
+
+        // ÄLÄ lähetä verkkoon jos kuolemassa/kuollut → juuri tämä poistaa varoitusspämmin
+        if (frozen || (hs && (hs.IsDying() || hs.IsDead())))
+            return;
+
         // Offline: suoraan paikalliset
         if (!NetworkClient.active && !NetworkServer.active)
         {
@@ -41,6 +71,7 @@ public class WeaponVisibilitySync : NetworkBehaviour
     [Command(requiresAuthority = true)]
     private void CmdSet(bool rifleRight, bool rifleLeft ,bool meleeLeft, bool grenade)
     {
+        if (frozen) return; // varmistetaan myös server-puolella
         // Serverissä voi halutessa käyttää server-authoritatiivista NetVisibilityä:
         // jos käytössä, aseta serverillä -> SyncVar/RPC hoitaa muille
         if (rifleRightVis)   rifleRightVis.ServerSetVisible(rifleRight);

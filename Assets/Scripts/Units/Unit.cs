@@ -38,6 +38,7 @@ public class Unit : NetworkBehaviour
 
     //Events
     public static event EventHandler OnAnyActionPointsChanged;
+    public static event EventHandler ActionPointUsed;
     public static event EventHandler OnAnyUnitSpawned;
     public static event EventHandler OnAnyUnitDead;
  
@@ -60,6 +61,8 @@ public class Unit : NetworkBehaviour
     private Animator anim;
 
     private int grenadePCS;
+
+    private bool _deathHandled;
 
 
     private void Awake()
@@ -99,6 +102,8 @@ public class Unit : NetworkBehaviour
     private void OnEnable()
     {
         if (Cover != null) Cover.OnCoverPoolChanged += ForwardCoverChanged;
+        var hs = GetComponent<HealthSystem>();
+        if (hs != null) hs.OnDying += HandleDying_ServerFirst;
     }
 
     private void OnDisable()
@@ -107,6 +112,9 @@ public class Unit : NetworkBehaviour
         TurnSystem.Instance.OnTurnEnded -= OnTurnEnded_HandleTurnEnded;
 
         if (Cover != null) Cover.OnCoverPoolChanged -= ForwardCoverChanged;
+
+        var hs = GetComponent<HealthSystem>();
+        if (hs != null) hs.OnDying -= HandleDying_ServerFirst;
     }
 
     private void ForwardCoverChanged(int cur, int max) => OnCoverPoolChanged?.Invoke(cur, max);
@@ -180,11 +188,26 @@ public class Unit : NetworkBehaviour
         return false;
     }
 
+
+    [Server]
+    public static void RaiseActionPointUsed(Unit unit)
+    {
+        ActionPointUsed?.Invoke(unit, EventArgs.Empty);
+    }
+    
     private void SpendActionPoints(int amount)
     {
         actionPoints -= amount;
 
+        // Nosta eventti vain authoritative-puolella:
+        if (NetMode.ServerOrOff)
+        {
+            ActionPointUsed?.Invoke(this, EventArgs.Empty);
+            OnAnyActionPointsChanged?.Invoke(this, EventArgs.Empty);
+        }
+
         OnAnyActionPointsChanged?.Invoke(this, EventArgs.Empty);
+
         NetworkSync.BroadcastActionPoints(this, actionPoints);
     }
 
@@ -200,6 +223,7 @@ public class Unit : NetworkBehaviour
     {
         if (actionPoints == ap) return;
         actionPoints = ap;
+        ActionPointUsed?.Invoke(this, EventArgs.Empty);
         OnAnyActionPointsChanged?.Invoke(this, EventArgs.Empty);
     }
 
@@ -208,8 +232,19 @@ public class Unit : NetworkBehaviour
         return isEnemy;
     }
 
+    public bool IsDying()
+    {
+        return healthSystem != null && healthSystem.IsDying();
+    }
+
+    public bool IsDead()
+    {
+        return healthSystem != null && healthSystem.IsDead();
+    }
+
     private void HealthSystem_OnDead(object sender, System.EventArgs e)
     {
+
         OnAnyUnitDead?.Invoke(this, EventArgs.Empty);
         if (!NetworkServer.active)
         {
@@ -221,7 +256,7 @@ public class Unit : NetworkBehaviour
         // Piilota jotta client ehtii kopioida omaan ragdolliin tiedot
         isHidden = true;
         SetSoftHiddenLocal(true);
-        StartCoroutine(DestroyAfter(0.30f));
+        StartCoroutine(DestroyAfter(1.30f));
     }
 
     private IEnumerator DestroyAfter(float seconds)
@@ -260,6 +295,8 @@ public class Unit : NetworkBehaviour
 
     public void SetUnderFire(bool value)
     {
+        if (IsDying() || IsDead()) return;
+
         if (!NetworkServer.active && !NetworkClient.active)
         {
             Debug.Log("Set underfire:" + value);
@@ -276,6 +313,11 @@ public class Unit : NetworkBehaviour
         var ni = GetComponent<NetworkIdentity>();
         if (NetworkClient.active && NetworkSyncAgent.Local != null && ni != null)
         {
+            if (this == null || IsDying() || IsDead())
+            {
+                return;
+            }
+            
             NetworkSyncAgent.Local.CmdSetUnderFire(ni.netId, value);
         }
     }
@@ -283,6 +325,8 @@ public class Unit : NetworkBehaviour
     [Server]
     public void SetUnderFireServer(bool value)
     {
+        if (IsDying() || IsDead()) return;
+        
         underFire = value;
         var agent = FindFirstObjectByType<NetworkSyncAgent>();
         if (agent != null)
@@ -302,9 +346,20 @@ public class Unit : NetworkBehaviour
 
     public bool HasMoved() => Cover ? Cover.HasMoved() : false;
 
-    public void SetPersonalCover(int v) { if (Cover) Cover.SetPersonalCover(v); }
-    //public void SetCoverBonus() { if (Cover) Cover.SetCoverBonus(); }
-    public void SetCoverBonus() { if (Cover) Cover.ServerApplyCoverBonus(); }
+    // public void SetPersonalCover(int v) { if (Cover) Cover.SetPersonalCover(v); }
+    public void SetPersonalCover(int v)
+    {
+        if (IsDying() || IsDead()) return;
+        if (Cover) Cover.SetPersonalCover(v);
+    }
+
+    //public void SetCoverBonus() { if (Cover) Cover.ServerApplyCoverBonus(); }
+    public void SetCoverBonus() 
+    { 
+        if (IsDying() || IsDead()) return;
+        if (Cover) Cover.ServerApplyCoverBonus(); 
+    }
+
 
     public int GetCurrentCoverBonus() => Cover ? Cover.GetCurrentCoverBonus() : 0;
     public void ResetCurrentCoverBonus() { if (Cover) Cover.ResetCurrentCoverBonus(); }
@@ -364,14 +419,14 @@ public class Unit : NetworkBehaviour
         OnAnyActionPointsChanged?.Invoke(this, EventArgs.Empty);
     }
 
-    public int GetTeamId()
+    public int GetTeamID()
     {
         if (NetMode.Offline) // !NetworkServer.active && !NetworkClient.active
         {
             // Offline: käytä isEnemy flagia
             return isEnemy ? 1 : 0;
         }
-        
+
         // Online: Versus vs Co-op
         var mode = GameModeManager.SelectedMode;
         if (mode == GameMode.Versus)
@@ -387,12 +442,100 @@ public class Unit : NetworkBehaviour
                     return ni.isOwned ? 1 : 0;
                 }
             }
-            
+
             // SERVERILLÄ/HOSTILLA: käytä OwnerId-tarkistusta
             return NetworkSync.IsOwnerHost(OwnerId) ? 0 : 1;
         }
-        
+
         // Co-Op / SinglePlayer: pelaajat = 0, viholliset = 1
         return isEnemy ? 1 : 0;
+    }
+
+    private void FreezeBeforeDespawn()
+    {
+        // 1) Estä AE/NetworkAnimator-lähetykset varmasti
+        if (TryGetComponent<UnitAnimator>(out var ua))
+        {
+            var na = ua.GetComponent<NetworkAnimator>();
+            if (na != null)
+            {
+                na.enabled = false;
+            }
+        }
+
+        // 2) Estä aseiden näkyvyys-Commandit (hae lapsista)
+        var vis = GetComponentInChildren<WeaponVisibilitySync>(true); // true jos haluat löytää myös inaktiivit
+        if (vis != null)
+        {
+            vis.enabled = false;
+        } 
+
+        // 3) Estä myöhästyneet action-päivitykset
+        foreach (var ba in GetComponents<BaseAction>())
+        {
+            ba.enabled = false;
+        }
+
+        var lv = GetComponent<LocalVisibility>();
+        if (lv == null) lv = gameObject.AddComponent<LocalVisibility>();
+        lv.Apply(false);  // disabloi kaikki renderöijät ja canvasit hierarkiasta
+
+        // Piilota maailman-UI heti
+        var worldUi = GetComponentInChildren<UnitWorldUI>(true);
+        if (worldUi != null) worldUi.SetVisible(false);
+
+        // --- UUTTA: viimeinen varmistus että input/UI vapautuu ---
+        UnitActionSystem.Instance?.UnlockInput();
+
+    }
+
+    // <<< Kuolemaketjun alku (server) >>>
+    [Server]
+    private void HandleDying_ServerFirst(object sender, System.EventArgs e)
+    {
+        if (!isServer) return; 
+        if (_deathHandled) return;
+        _deathHandled = true;
+
+        // a) Peilaa jäädytys clientille heti:
+        RpcFreezeClientSide();
+
+        // b) Katkaise serverin liike deterministisesti + snap (tyhjentää clientin interp-puskurit)
+        DeathStopper.TryHalt(this);
+
+        // c) Sammuta serverillä (nykyinen teidän metodi)
+        FreezeBeforeDespawn();
+    }
+
+    [ClientRpc]
+    void RpcFreezeClientSide()
+    {
+        // 1) Katkaise clientin actionit
+        foreach (var ba in GetComponents<BaseAction>()) ba.enabled = false;
+
+        // 2) Sammuta animaatio- ja ase-synkat
+        var ua = GetComponent<UnitAnimator>();
+        if (ua)
+        {
+            var na = ua.GetComponent<NetworkAnimator>();
+            if (na) na.enabled = false;
+        }
+        var anim = GetComponentInChildren<Animator>(true);
+        if (anim) anim.enabled = false;
+
+        var vis = GetComponentInChildren<WeaponVisibilitySync>(true);
+        if (vis) vis.enabled = false;
+
+        // 3) Piilota KAIKKI renderöijät+canvasit → myös valintarengas
+        var lv = GetComponent<LocalVisibility>();
+        if (lv == null) lv = gameObject.AddComponent<LocalVisibility>();
+        lv.Apply(false);
+
+        // 4) Piilota world-space UI varmuudeksi
+        var worldUI = GetComponentInChildren<UnitWorldUI>(true);
+        if (worldUI) worldUI.SetVisible(false);
+
+        // 5) Vapauta UI (käytä teidän olemassa olevaa metodia)
+        UnitActionSystem.Instance?.UnlockInput();
     }
 }

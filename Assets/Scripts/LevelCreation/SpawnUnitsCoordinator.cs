@@ -315,8 +315,6 @@ public class SpawnUnitsCoordinator : MonoBehaviour
         {
             // Asetetaan oikea tiimi ja alustetaan näkyvyys
             unitVision.InitializeVision(teamId, u.archetype);
-
-            Debug.Log($"[SpawnUnitsCoordinator] InitUnitVision for {go.name}: Team {teamId}, Range {unitVision.visionSkill?.visionRange ?? 0}");
         }
         else
         {

@@ -68,11 +68,11 @@ public class TurnSystem : MonoBehaviour
         }
         else if (GameModeManager.SelectedMode == GameMode.CoOp)
         {
-            Debug.Log("Co-Op mode: Proceeding to the next turn.");
+
         }
         else if (GameModeManager.SelectedMode == GameMode.Versus)
         {
-            Debug.Log("Versus mode: Proceeding to the next turn.");
+
         }
     }
  
@@ -165,5 +165,5 @@ public class TurnSystem : MonoBehaviour
         CurrentTeam = Team.Enemy;
         OnTurnStarted?.Invoke(CurrentTeam, TurnId);
         ForcePhase(isPlayerTurn: false, incrementTurnNumber: false);
-    }
+    }   
 }

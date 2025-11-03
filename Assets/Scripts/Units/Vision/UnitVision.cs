@@ -14,12 +14,20 @@ public class UnitVision : MonoBehaviour
     private int _unitKey;
     private bool _initialized = false;
     private int _currentTeamId = 0;
+    private HealthSystem _healthSystem;
 
     void Awake()
     {
         _tr = transform;
         _unit = GetComponent<Unit>();
+        _healthSystem = GetComponent<HealthSystem>();
         _unitKey = GetInstanceID();
+    }
+
+    void OnEnable()
+    {
+        if (_healthSystem != null)
+            _healthSystem.OnDying += HandleUnitDying;
     }
 
     void Start()
@@ -30,7 +38,20 @@ public class UnitVision : MonoBehaviour
 
     void OnDisable()
     {
-        if (TeamVisionService.Instance != null)
+        if (_healthSystem != null)
+            _healthSystem.OnDying -= HandleUnitDying;
+        
+        CleanupVision();
+    }
+
+    private void HandleUnitDying(object sender, System.EventArgs e)
+    {
+        CleanupVision();
+    }
+
+    private void CleanupVision()
+    {
+        if (TeamVisionService.Instance != null && _initialized)
         {
             TeamVisionService.Instance.RemoveUnitVision(teamId, _unitKey);
         }
@@ -44,10 +65,9 @@ public class UnitVision : MonoBehaviour
         if (_initialized) yield break;
         if (NetMode.IsDedicatedServer) yield break;
 
-        // Yritä alustaa useamman framen ajan (Mirror tarvitsee aikaa synkronoida ownership)
         for (int attempt = 0; attempt < 30; attempt++)
         {
-            int? team = _unit.GetTeamId();
+            int? team = _unit.GetTeamID();
 
             if (team != null)
             {
@@ -89,6 +109,13 @@ public class UnitVision : MonoBehaviour
 
     public void UpdateVisionNow()
     {
+        // KRIITTINEN: Älä päivitä visionia jos Unit on kuolemassa tai kuollut
+        if (_unit != null && (_unit.IsDying() || _unit.IsDead()))
+            return;
+        
+        if (_healthSystem != null && (_healthSystem.IsDying() || _healthSystem.IsDead()))
+            return;
+
         if (!ShouldPublishVisionLocally())
             return;
 

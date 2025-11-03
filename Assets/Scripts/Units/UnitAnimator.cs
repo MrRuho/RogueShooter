@@ -30,6 +30,9 @@ public class UnitAnimator : NetworkBehaviour
 
     private bool useNetwork;
 
+  
+    private HealthSystem hs;
+
     private void Awake()
     {
         if (!animator) animator = GetComponent<Animator>();
@@ -43,6 +46,7 @@ public class UnitAnimator : NetworkBehaviour
         TryGetComponent(out _shoot);
         TryGetComponent(out _grenade);
         TryGetComponent(out _melee);
+        TryGetComponent(out hs);  
     }
 
     private void OnEnable()
@@ -77,6 +81,9 @@ public class UnitAnimator : NetworkBehaviour
             _melee.OnMeleeActionStarted += MeleeAction_OnMeleeActionStarted;
             _melee.OnMeleeActionCompleted += MeleeAction_OnMeleeActionCompleted;
         }
+
+        if (hs != null)
+            hs.OnDying += OnDying_StopSending;
     }
     
     private void OnDisable()
@@ -97,29 +104,41 @@ public class UnitAnimator : NetworkBehaviour
         }
         if (_melee)
         {
-            _melee.OnMeleeActionStarted   -= MeleeAction_OnMeleeActionStarted;
+            _melee.OnMeleeActionStarted -= MeleeAction_OnMeleeActionStarted;
             _melee.OnMeleeActionCompleted -= MeleeAction_OnMeleeActionCompleted;
         }
+
+        if (hs != null)
+            hs.OnDying -= OnDying_StopSending;
     }
 
     private void Start()
     {
         EquipRifle();
     }
-    
+
     // Valitsee automaattisesti oikean verkko/offline animaation.
     public void SetTrigger(string name)
     {
         if (useNetwork) netAnim.SetTrigger(name);
-        else            animator.SetTrigger(name);
+        else animator.SetTrigger(name);
+    }
+    
+    private void OnDying_StopSending(object s, EventArgs e)
+    {
+        // katkaise kaikki myöhemmät AE-lähetykset
+        pendingGrenadeAction = null;
+        useNetwork = false; // ei NetworkAnimator-triggeröintiä enää tästä eteenpäin
     }
 
     private void MoveAction_OnStartMoving(object sender, EventArgs e)
     {
+        if (hs && (hs.IsDying() || hs.IsDead())) return;
         animator.SetBool("IsRunning", true);
     }
     private void MoveAction_OnStopMoving(object sender, EventArgs e)
     {
+        if (hs && (hs.IsDying() || hs.IsDead())) return;
         animator.SetBool("IsRunning", false);
     }
 
@@ -128,6 +147,7 @@ public class UnitAnimator : NetworkBehaviour
 
     private void ShootAction_OnShoot(object sender, ShootAction.OnShootEventArgs e)
     {
+        if (hs && (hs.IsDying() || hs.IsDead())) return;
         SetTrigger("Shoot");
 
         Vector3 target = e.targetUnit.GetWorldPosition();
@@ -148,6 +168,7 @@ public class UnitAnimator : NetworkBehaviour
 
     private void MeleeAction_OnMeleeActionStarted(object sender, EventArgs e)
     {
+        if (hs && (hs.IsDying() || hs.IsDead())) return;
         EquipMelee();
         SetTrigger("Melee");
 
@@ -165,11 +186,13 @@ public class UnitAnimator : NetworkBehaviour
     }
     private void MeleeAction_OnMeleeActionCompleted(object sender, EventArgs e)
     {
+        if (hs && (hs.IsDying() || hs.IsDead())) return;
         EquipRifle();
     }
 
     private void GranadeActionStart()
     {
+        if (hs && (hs.IsDying() || hs.IsDead())) return;
         weaponVis.OwnerRequestSet(rifleRight: false, rifleLeft: true, meleeLeft: false, grenade: false);
     }
     private Vector3 pendingGrenadeTarget;
@@ -177,8 +200,10 @@ public class UnitAnimator : NetworkBehaviour
     
     private void GrenadeAction_ThrowGranade(object sender, EventArgs e)
     {
+        if (hs && (hs.IsDying() || hs.IsDead())) return;
         pendingGrenadeAction = (GranadeAction)sender;
         pendingGrenadeTarget = pendingGrenadeAction.TargetWorld;
+
         GranadeActionStart();
         SetTrigger("ThrowGrenade");
    
@@ -188,6 +213,7 @@ public class UnitAnimator : NetworkBehaviour
     // Event marks is set in animation. UnitAnimations -> Throw Grenade Stand
     public void AE_PickGrenadeStand()
     {
+        if (hs && (hs.IsDying() || hs.IsDead())) return;
         EguipGranade();
     }
 
@@ -196,6 +222,7 @@ public class UnitAnimator : NetworkBehaviour
 
     public void AE_ThrowGrenadeStandRelease()
     {
+        if (hs && (hs.IsDying() || hs.IsDead())) return;
         // --- GUARD: jos pending on jo käytetty, älä tee mitään (estää tuplan samalta koneelta)
         if (pendingGrenadeAction == null) return;
 
@@ -228,6 +255,7 @@ public class UnitAnimator : NetworkBehaviour
     
     public void AE_OnGrenadeThrowStandFinished()
     {
+        if (hs && (hs.IsDying() || hs.IsDead())) return;
         EquipRifle();
     }
     //--------------- END Grenade Animation events END ---------------
@@ -238,14 +266,17 @@ public class UnitAnimator : NetworkBehaviour
      
     private void EquipRifle()
     {
+        if (hs && (hs.IsDying() || hs.IsDead())) return;
         weaponVis.OwnerRequestSet(rifleRight: true, rifleLeft: false, meleeLeft: false, grenade: false);
     }
     private void EquipMelee()
     {
+        if (hs && (hs.IsDying() || hs.IsDead())) return;
         weaponVis.OwnerRequestSet(rifleRight: true, rifleLeft: false, meleeLeft: true, grenade: false);
     }
     private void EguipGranade()
     {
+        if (hs && (hs.IsDying() || hs.IsDead())) return;
         weaponVis.OwnerRequestSet(rifleRight: false, rifleLeft: true, meleeLeft: false, grenade: true);
     }
 

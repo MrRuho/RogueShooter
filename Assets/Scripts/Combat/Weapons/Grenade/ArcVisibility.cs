@@ -23,22 +23,7 @@ public static class ArcVisibility
         )
 
     {
-        /*
-        if (segments < 2) segments = 2;
-
-        // Sama apex/curve kuin projektiililla
-        Vector2 s = new Vector2(start.x, start.z);
-        Vector2 e = new Vector2(end.x,   end.z);
-        float dWU = Vector2.Distance(s, e);
-
-        float apexWU = (cfg != null)
-            ? cfg.EvaluateApex(dWU, cfg.farRangeWU)
-            : Mathf.Lerp(7f, 1.2f, Mathf.Clamp01(dWU / 12f));
-
-        var curve = (cfg != null && cfg.arcYCurve != null)
-            ? cfg.arcYCurve
-            : (fallbackCurve ?? AnimationCurve.Linear(0,0,1,0));
-        */
+   
         if (segments < 2) segments = 2;
 
     // Apex: käytä overridea, muutoin nominaali

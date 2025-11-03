@@ -78,6 +78,7 @@ public static class OfflineSceneBoot
         if (LevelGrid.Instance != null)
             LevelGrid.Instance.RebuildOccupancyFromScene();
 
+        MousePlaneMap.Instance.Rebuild();
         // 6) Palauta Core aktiiviseksi (UI yms.) ja ilmoita, että level on valmis
         if (core.IsValid()) SceneManager.SetActiveScene(core);
 

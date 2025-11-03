@@ -83,6 +83,7 @@ public class UnitManager : MonoBehaviour
 
     private void Unit_OnAnyUnitDead(object sender, EventArgs e)
     {
+
         Unit unit = sender as Unit;
         unitSet.Remove(unit);
 

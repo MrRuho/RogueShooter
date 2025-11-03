@@ -45,7 +45,6 @@ public class NetLevelLoader : NetworkBehaviour
         var sceneName = catalog.Get(idx).sceneName;
         _currentLevel = sceneName;
         currentIndex = idx;
-        Debug.Log($"[NetLevelLoader] (SERVER) OnStartServer → loading index {idx}");
         StartCo(Co_LoadLevel(idx));
     }
 
@@ -62,12 +61,9 @@ public class NetLevelLoader : NetworkBehaviour
 
         if (_clientPreparedLevel == newValue)
         {
-            Debug.Log($"[NetLevelLoader] (CLIENT) OnLevelChanged ignored - already prepared '{newValue}'");
             _clientPreparedLevel = null;
             return;
         }
-
-        Debug.Log($"[NetLevelLoader] (CLIENT) OnLevelChanged triggered → '{newValue}'");
         StartCoroutine(Co_LoadLevel_Client(newValue));
     }
 
@@ -92,14 +88,10 @@ public class NetLevelLoader : NetworkBehaviour
         _reloadTick++;
         _clientReadyAcks.Clear();
 
-        Debug.Log($"[NetLevelLoader] (SERVER) ===== RELOAD ALL START → '{levelName}', tick={_reloadTick} =====");
-
         _currentLevel = $"__RELOAD_TICK__{_reloadTick}";
         RpcClientPrepareReload(coreName, levelName, _reloadTick);
 
         int expectedClients = ExpectedClientCount();
-        Debug.Log($"[NetLevelLoader] (SERVER) Waiting for {expectedClients} clients to be ready...");
-
         float timeout = 15f;
         float elapsed = 0f;
 
@@ -153,11 +145,10 @@ public class NetLevelLoader : NetworkBehaviour
         SceneManager.SetActiveScene(newScene);
         yield return null;
 
-        // ⭐ TÄRKEÄT LISÄYKSET (kuten string-polussa)
-        Debug.Log($"[NetLevelLoader] (SERVER) Spawning scene NetworkObjects (catalog path)");
         NetworkServer.SpawnObjects();       // pakollinen additiivisen scenen scene-objekteille
         yield return null;
         EdgeBaker.Instance?.BakeAllEdges();
+        MousePlaneMap.Instance.Rebuild();
 
         // 3) Päivitä indeksi vasta onnistumisen jälkeen (jo teillä)
         currentIndex = index;
@@ -171,7 +162,6 @@ public class NetLevelLoader : NetworkBehaviour
         // 5) Ilmoita että servupuoli on valmis → käynnistää OnLevelReady_Server-ketjun
         LevelLoader.SetServerLevelReady(true);
         LevelLoader.RaiseLevelReady(newScene);   // 🔔 tämä käynnistää GameNetworkManagerin spawnit
-        Debug.Log($"[NetLevelLoader] (SERVER) ===== LEVEL LOAD COMPLETE (catalog): '{sceneName}' =====");
 
         // 6) (valinn.) UI-siivo RPC: kuten teillä jo on
         RpcOnLevelLoaded(sceneName, currentIndex);
@@ -188,16 +178,13 @@ public class NetLevelLoader : NetworkBehaviour
     [Client]
     private IEnumerator Co_ClientPrepareAndAck(string coreName, string levelName, int tick)
     {
-        Debug.Log($"[NetLevelLoader] (CLIENT) ===== PREPARE RELOAD START → '{levelName}', tick={tick} =====");
 
-        int n = DebrisUtil.DestroyAllDebrisExceptCore(coreName);
-        if (n > 0) Debug.Log($"[NetLevelLoader] (CLIENT) Cleared {n} debris objects");
+        DebrisUtil.DestroyAllDebrisExceptCore(coreName);
 
         yield return Co_LoadLevel_Client_Internal(levelName);
 
         _clientPreparedLevel = levelName;
 
-        Debug.Log($"[NetLevelLoader] (CLIENT) Scene ready, sending ACK for tick {tick}");
         CmdAckSceneReady(tick);
     }
 
@@ -205,8 +192,6 @@ public class NetLevelLoader : NetworkBehaviour
     void CmdAckSceneReady(int tick, NetworkConnectionToClient sender = null)
     {
         if (tick != _reloadTick || sender == null) return;
-
-        Debug.Log($"[NetLevelLoader] (SERVER) Received ACK from conn {sender.connectionId} for tick {tick}");
         _clientReadyAcks.Add(sender.connectionId);
     }
 
@@ -231,7 +216,6 @@ public class NetLevelLoader : NetworkBehaviour
     {
         if (_clientIsLoading)
         {
-            Debug.Log($"[NetLevelLoader] (CLIENT) Already loading, skipping duplicate");
             yield break;
         }
 
@@ -252,12 +236,9 @@ public class NetLevelLoader : NetworkBehaviour
     {
         string coreName = LevelLoader.Instance?.CoreSceneName ?? "Core";
 
-        Debug.Log($"[NetLevelLoader] (CLIENT) Start reload → '{levelName}'");
-
         var core = SceneManager.GetSceneByName(coreName);
         if (!core.IsValid() || !core.isLoaded)
         {
-            Debug.Log($"[NetLevelLoader] (CLIENT) Loading Core scene");
             var loadCore = SceneManager.LoadSceneAsync(coreName, LoadSceneMode.Additive);
             while (!loadCore.isDone) yield return null;
             core = SceneManager.GetSceneByName(coreName);
@@ -269,12 +250,10 @@ public class NetLevelLoader : NetworkBehaviour
             var s = SceneManager.GetSceneAt(i);
             if (!s.isLoaded || s.name == coreName) continue;
 
-            Debug.Log($"[NetLevelLoader] (CLIENT) Unloading scene '{s.name}'");
             yield return SceneManager.UnloadSceneAsync(s);
             i = -1;
         }
 
-        Debug.Log($"[NetLevelLoader] (CLIENT) Loading level '{levelName}'");
         var op2 = SceneManager.LoadSceneAsync(levelName, LoadSceneMode.Additive);
         while (!op2.isDone) yield return null;
 
@@ -289,14 +268,11 @@ public class NetLevelLoader : NetworkBehaviour
         yield return null;
         SceneManager.SetActiveScene(core);
         LevelLoader.RaiseLevelReady(map);
-
-        Debug.Log($"[NetLevelLoader] (CLIENT) Reload complete → '{levelName}'");
     }
 
     private void StartCo(IEnumerator r)
     {
         if (isActiveAndEnabled) StartCoroutine(r);
-        //else GlobalCoroutineHost.StartRoutine(r);
     }
 
     [Server]
@@ -312,8 +288,7 @@ public class NetLevelLoader : NetworkBehaviour
         }
         
         string sceneName = entry.sceneName;
-        Debug.Log($"[NetLevelLoader] ServerReloadCurrentLevel → reloading '{sceneName}' (index {currentIndex})");
-        
+  
         StopAllCoroutines();
         StartCo(Co_ReloadLevel_All(sceneName));
     }

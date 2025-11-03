@@ -88,6 +88,7 @@ public class UnitActionButtonUI : MonoBehaviour
 
     private void RefreshCorner()
     {
+        Debug.Log("[UnitActionButtonUI] RefreshCorner");
         // Näytä kulmalaskuri vain kranaatti-napissa
         bool isGrenade = baseAction is GranadeAction;
         if (!isGrenade)
@@ -97,7 +98,10 @@ public class UnitActionButtonUI : MonoBehaviour
         }
 
         var unit = UnitActionSystem.Instance ? UnitActionSystem.Instance.GetSelectedUnit() : null;
+        Debug.Log("[UnitActionButtonUI] Unit:" + unit);
         int pcs = unit ? unit.GetGrenadePCS() : 0;   // Unitilla on GetGrenadePCS()
+        Debug.Log("[UnitActionButtonUI] pcs:" + pcs);
+
         if (cornerText) cornerText.text = pcs.ToString();
         if (cornerRoot) cornerRoot.gameObject.SetActive(true);
     }

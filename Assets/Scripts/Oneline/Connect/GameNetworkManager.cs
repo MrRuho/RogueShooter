@@ -96,27 +96,19 @@ namespace Utp
 		{
 			if (!NetworkServer.active) return;
 
-			Debug.Log("[GameNetworkManager] OnLevelReady_Server - Processing level ready");
-
 			// 1) Ensilataus: pending-jonon finalisointi
 			foreach (var c in _pendingConns)
 				if (c != null) ServerFinalizeAddPlayer(c);
 			_pendingConns.Clear();
-
-			// 2) RELOAD: spawn kaikille aktiivisille conneille
-			Debug.Log($"[GameNetworkManager] Active connections: {NetworkServer.connections.Count}");
-			
+		
 			foreach (var kv in NetworkServer.connections)
 			{
 				var conn = kv.Value;
 				if (conn == null) continue;
 
-				Debug.Log($"[GameNetworkManager] Processing conn {conn.connectionId}, identity: {(conn.identity != null ? conn.identity.name : "NULL")}");
-
 				// Jos identity on null, luo se uudelleen
 				if (conn.identity == null)
 				{
-					Debug.Log($"[GameNetworkManager] Creating new PlayerController for conn {conn.connectionId}");
 					if (playerPrefab != null)
 					{
 						base.OnServerAddPlayer(conn);
@@ -131,23 +123,17 @@ namespace Utp
 				// Tarkista onko uniteja
 				uint ownerId = conn.identity != null ? conn.identity.netId : 0u;
 				bool hasUnits = ownerId != 0 && HasOwnedUnit(ownerId);
-				
-				Debug.Log($"[GameNetworkManager] Conn {conn.connectionId} - ownerId: {ownerId}, hasUnits: {hasUnits}");
 
 				if (!hasUnits)
 				{
 					bool isHost = conn == NetworkServer.localConnection;
-					Debug.Log($"[GameNetworkManager] Spawning units for {(isHost ? "HOST" : "CLIENT")} (conn {conn.connectionId})");
-					
+	
 					var units = SpawnUnitsCoordinator.Instance?.SpawnPlayersForNetwork(conn, isHost);
-					if (units != null)
-					{
-						Debug.Log($"[GameNetworkManager] Successfully spawned {units.Length} units for conn {conn.connectionId}");
-					}
-					else
+					if (units == null)
 					{
 						Debug.LogWarning($"[GameNetworkManager] Failed to spawn units for conn {conn.connectionId}");
 					}
+
 				}
 			}
 
@@ -156,7 +142,6 @@ namespace Utp
 			{
 				if (!SpawnUnitsCoordinator.Instance.AreEnemiesSpawned())
 				{
-					Debug.Log("[GameNetworkManager] Spawning enemies for Co-op mode");
 					ServerSpawnEnemies();
 				}
 			}
@@ -164,11 +149,10 @@ namespace Utp
 			// 4) Käynnistä uusi matsi
 			LevelGrid.Instance?.RebuildOccupancyFromScene();
 			EdgeBaker.Instance?.BakeAllEdges();
+			MousePlaneMap.Instance.Rebuild();
 			NetTurnManager.Instance?.ServerResetAndBegin();
 			if (NetworkVisionRpcHub.Instance != null)
         		NetworkVisionRpcHub.Instance.RpcResetLocalVisionAndRebuild();
-
-			Debug.Log("[GameNetworkManager] OnLevelReady_Server - Complete");
 		}
 
 
@@ -293,7 +277,6 @@ namespace Utp
 			// Pyydä pelaaja jos ei vielä ole
 			if (NetworkClient.connection != null && NetworkClient.connection.identity == null)
 			{
-				Debug.Log("[NM] OnClientSceneChanged requesting player via AddPlayer()");
 				NetworkClient.AddPlayer();
 			}
 		}
@@ -301,9 +284,7 @@ namespace Utp
 		public override void OnClientConnect()
 		{
 			base.OnClientConnect();
-			
-			Debug.Log($"[NM] OnClientConnect - NetworkClient.ready: {NetworkClient.ready}");
-			
+					
 			// Varmista että client on ready
 			if (!NetworkClient.ready)
 			{
@@ -313,7 +294,6 @@ namespace Utp
 			// Pyydä pelaaja heti
 			if (NetworkClient.connection != null && NetworkClient.connection.identity == null)
 			{
-				Debug.Log("[NM] Client requesting player via AddPlayer()");
 				NetworkClient.AddPlayer();
 			}
 		}
@@ -333,18 +313,11 @@ namespace Utp
 		/// </summary>
 		public override void OnServerAddPlayer(NetworkConnectionToClient conn)
 		{
-			Debug.Log($"[NM] ===== OnServerAddPlayer called for conn {conn.connectionId} =====");
-			Debug.Log($"[NM] LevelLoader.IsServerLevelReady = {LevelLoader.IsServerLevelReady}");
-			Debug.Log($"[NM] NetworkServer.active = {NetworkServer.active}");
-
 			if (!LevelLoader.IsServerLevelReady)
 			{
 				_pendingConns.Add(conn);
-				Debug.Log($"[NM] ⏸️ Queued player join (conn {conn.connectionId}) until LevelReady. Pending count: {_pendingConns.Count}");
 				return;
 			}
-
-			Debug.Log($"[NM] ✅ Level ready, calling ServerFinalizeAddPlayer for conn {conn.connectionId}");
 			ServerFinalizeAddPlayer(conn);
 		}
 
@@ -352,8 +325,6 @@ namespace Utp
 		[Server]
 		private void ServerFinalizeAddPlayer(NetworkConnectionToClient conn)
 		{
-			Debug.Log($"[NM] ServerFinalizeAddPlayer for conn {conn.connectionId}");
-
 			if (conn.identity == null)
 			{
 				if (playerPrefab == null)
@@ -373,17 +344,9 @@ namespace Utp
 				return;
 			}
 
-			// Spawna yksiköt JOKAISELLE pelaajalle (host JA client)
-			Debug.Log($"[NM] Spawning units for {(isHost ? "HOST" : "CLIENT")} conn {conn.connectionId}");
-			var units = spawner.SpawnPlayersForNetwork(conn, isHost);
+			spawner.SpawnPlayersForNetwork(conn, isHost);
 
-			if (units != null && units.Length > 0)
-			{
-				Debug.Log($"[NM] Spawned {units.Length} units for conn {conn.connectionId}");
-			}
 
-			//NetTeamVisionSync.Instance.ServerPushFullVisionTo(conn);
-			
 			var turnMgr = NetTurnManager.Instance;
 			if (turnMgr != null)
 				turnMgr.ServerUpdateRequiredCount(NetworkServer.connections.Count);

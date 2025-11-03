@@ -36,7 +36,6 @@ public class MapContentSpawner : MonoBehaviour // ⟵ EI NetworkBehaviour
 
         // Server bake
         EdgeBaker.Instance.BakeAllEdges();
-
     }
 }
 

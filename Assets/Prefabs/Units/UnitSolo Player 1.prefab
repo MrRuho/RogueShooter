@@ -29,6 +29,7 @@ GameObject:
   - component: {fileID: 7652147739104449844}
   - component: {fileID: -1189943715922618835}
   - component: {fileID: 6111267312838352488}
+  - component: {fileID: -6283908097960678696}
   m_Layer: 7
   m_Name: UnitSolo Player 1
   m_TagString: Untagged
@@ -159,7 +160,7 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0
   Team: 0
-  ACTION_POINTS_MAX: 100
+  ACTION_POINTS_MAX: 2
   OwnerId: 0
   archetype: {fileID: 11400000, guid: 4550bcfa4110ca445be7e3f4b337acd8, type: 2}
   currentWeapon: {fileID: 11400000, guid: 0a7d4b5dde914294784bbe40de853782, type: 2}
@@ -432,6 +433,27 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::UnitVision
   visionSkill: {fileID: 11400000, guid: 4550bcfa4110ca445be7e3f4b337acd8, type: 2}
   teamId: 0
+--- !u!114 &-6283908097960678696
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 246340107227206225}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d3f82d7256d9bbf4da2bad7d6ae267ab, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DeathStopper
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  moveAction: {fileID: 8879463045434806438}
+  netTransformBehaviour: {fileID: 6370680287184739643}
+  netAnimatorBehaviour: {fileID: 1008889384909675835}
+  animator: {fileID: 0}
+  rb: {fileID: 0}
+  toggleNetworkTransformOnSnap: 1
 --- !u!1 &1954669533539790246
 GameObject:
   m_ObjectHideFlags: 0

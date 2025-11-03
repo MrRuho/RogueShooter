@@ -42,7 +42,7 @@ public class GranadeAction : BaseAction
     public Vector3 TargetWorld { get; private set; }
 
     private GridPosition? _lastHover;
-    private bool _wasActive;  // reunan tunnistus
+   // private bool _wasActive;  // reunan tunnistus
     private bool _wasSelected;
 
     protected override void Awake()
@@ -63,15 +63,19 @@ public class GranadeAction : BaseAction
             arcPreview.SetCellSize(cellSizeWU);
         }
     }
+    void OnEnable()  => GrenadeProjectile.OnAnyGranadeExploded += OnGrenadeEnded;
+
+    
 
     private void OnDisable()
     {
+        GrenadeProjectile.OnAnyGranadeExploded -= OnGrenadeEnded;
         if(arcPreview != null)
         {
             arcPreview.Hide();
         }
         _lastHover = null; 
-        _wasActive = false;
+     //   _wasActive = false;
     }
 
     private void Update()
@@ -132,11 +136,16 @@ public class GranadeAction : BaseAction
 
     public override string GetActionName() => "Granade";
 
+    private void OnGrenadeEnded(object sender, EventArgs e)
+    {
+        GetValidGridPositionList();            // teillä jo oleva metodi
+        GridSystemVisual.Instance?.UpdateGridVisuals();
+    }
+
     public override EnemyAIAction GetEnemyAIAction(GridPosition gridPosition)
         => new EnemyAIAction { gridPosition = gridPosition, actionValue = 0 };
 
 
- 
     public override List<GridPosition> GetValidGridPositionList()
     {
         unit ??= GetComponent<Unit>();
@@ -209,12 +218,12 @@ public class GranadeAction : BaseAction
                     cellSizeWU: cellSizeWU,
                     fullTilePerc: 0.8f,
                     tallWallY: 0.6f,
-                    apexOverrideWU: apexClamped         // ← TÄRKEIN RIVI
+                    apexOverrideWU: apexClamped 
                 );
                     if (!clear) continue;
                 
                 
-                string key = $"{test.x},{test.z},{test.floor}"; // kerros mukaan!
+                string key = $"{test.x},{test.z},{test.floor}";
                 if (!topmostByXZ.ContainsKey(key))
                     topmostByXZ[key] = test;
                 
@@ -257,14 +266,8 @@ public class GranadeAction : BaseAction
         foreach (var c in cols)
         {
             if (!c) continue;
-            // var prof = c.GetComponentInParent<ThrowProfile>();
-            // if (prof && prof.blocksLanding) return false;
-
             float topRel = c.bounds.max.y - floorY;
             if (topRel > maxTopRel) maxTopRel = topRel;
-
-            // if (prof && prof.overthrowableUpTo >= 0f && topRel <= prof.overthrowableUpTo)
-            //   hasAllowingOverride = true;
         }
 
         // Perussääntö korkeudelle

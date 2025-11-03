@@ -43,7 +43,7 @@ public class VisibilitySystem : MonoBehaviour
                 if (!u) continue;
                 var ni = u.GetComponent<Mirror.NetworkIdentity>();
                 if (NetworkSync.IsOwnedHere(ni))
-                    return u.GetTeamId(); // Versus: clientille 1, Co-op: 0
+                    return u.GetTeamID(); // Versus: clientille 1, Co-op: 0
             }
         }
 
@@ -93,7 +93,7 @@ public class VisibilitySystem : MonoBehaviour
                 {
                     if (!unit) continue;
                     var ni = unit.GetComponent<Mirror.NetworkIdentity>();
-                    if (NetworkSync.IsOwnedHere(ni)) { myTeam = unit.GetTeamId(); break; }
+                    if (NetworkSync.IsOwnedHere(ni)) { myTeam = unit.GetTeamID(); break; }
                 }
             }
         }
@@ -187,5 +187,5 @@ public class VisibilitySystem : MonoBehaviour
         lv.Apply(visible);
     }
 
-    private static int GetTeamId(Unit u) => u.GetTeamId();
+    private static int GetTeamId(Unit u) => u.GetTeamID();
 }

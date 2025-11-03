@@ -87,9 +87,13 @@ public class NetworkSyncAgent : NetworkBehaviour
             owner: connectionToClient,
             beforeSpawn: go =>
             {
+                var unit = actorNi.GetComponent<Unit>();
+                int teamId = unit ? unit.GetTeamID() : -1;
+
                 if (go.TryGetComponent<GrenadeProjectile>(out var gp))
                 {
                     gp.actorUnitNetId = actorNetId;
+                    gp.ownerTeamId    = teamId;
                     gp.Setup(target);
                 }
             });
@@ -120,6 +124,7 @@ public class NetworkSyncAgent : NetworkBehaviour
     [Command(requiresAuthority = true)]
     public void CmdApplyDamage(uint actorNetId, uint targetNetId, int amount, Vector3 hitPosition)
     {
+        
         if (!NetworkServer.spawned.TryGetValue(targetNetId, out var targetNi) || targetNi == null) return;
         if (!RightOwner(actorNetId)) return;
 
@@ -238,6 +243,7 @@ public class NetworkSyncAgent : NetworkBehaviour
     [Command(requiresAuthority = false)]
     public void CmdSetUnderFire(uint unitNetId, bool value)
     {
+        
         if (!NetworkServer.spawned.TryGetValue(unitNetId, out var id) || id == null) return;
         var unit = id.GetComponent<Unit>();
         if (!unit) return;
@@ -319,5 +325,5 @@ public class NetworkSyncAgent : NetworkBehaviour
         var cs = ni.GetComponent<CoverSkill>(); // tai GetComponentInChildren<CoverSkill>()
         if (cs != null) cs.ServerApplyCoverBonus();
     }
-    
+
 }

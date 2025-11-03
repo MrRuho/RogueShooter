@@ -45,6 +45,8 @@ public class ServerBootstrap : NetworkBehaviour
         LevelGrid.Instance.RebuildOccupancyFromScene();
         // 4b) Varmista että edge/cover-data on synkassa occupancy/geometryn kanssa
         EdgeBaker.Instance.BakeAllEdges();
+        // Piilota kaikki käyttämättömät gridit joissa ei ole mouseplane
+        MousePlaneMap.Instance.Rebuild();
 
         // 5) Pakota aloitus Players turniin ja turnNumber = 1
         NetTurnManager.Instance.turnNumber = 1;
