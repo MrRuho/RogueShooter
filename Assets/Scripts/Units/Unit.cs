@@ -11,7 +11,7 @@ using UnityEngine;
 public enum Team { Player, Enemy }
 [RequireComponent(typeof(HealthSystem))]
 [RequireComponent(typeof(MoveAction))]
-[RequireComponent(typeof(TurnTowardsAction))]
+[RequireComponent(typeof(OverwatchAction))]
 [RequireComponent(typeof(CoverSkill))]
 public class Unit : NetworkBehaviour
 {
@@ -299,7 +299,6 @@ public class Unit : NetworkBehaviour
 
         if (!NetworkServer.active && !NetworkClient.active)
         {
-            Debug.Log("Set underfire:" + value);
             underFire = value;
             return;
         }

@@ -124,4 +124,16 @@ public class GrenadeBeaconEffect : MonoBehaviour
 
     public bool IsArmed => isArmed;
     public int TurnsRemaining => currentTurnsRemaining;
+
+    public void SetRemainingDirect(int remaining)
+    {
+        currentTurnsRemaining = Mathf.Max(remaining, 0);
+        UpdatePulseParameters();
+    }
+
+    // Soita yksi beep (RPC:tä varten)
+    public void PlayBeepOnce()
+    {
+        PlayBeep();
+    }
 }

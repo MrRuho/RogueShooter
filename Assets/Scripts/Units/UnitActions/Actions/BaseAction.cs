@@ -14,8 +14,6 @@ public abstract class BaseAction : NetworkBehaviour
     public static event EventHandler OnAnyActionStarted;
     public static event EventHandler OnAnyActionCompleted;
 
-
-
     protected Unit unit;
     protected bool isActive;
     protected Action onActionComplete;
@@ -31,24 +29,31 @@ public abstract class BaseAction : NetworkBehaviour
     
     void OnEnable()
     {
+        /*
         if (ownerHealth != null)
             ownerHealth.OnDying += HandleUnitDying;
+        */
     }
 
     void OnDisable()
     {
+        /*
         if (ownerHealth != null)
             ownerHealth.OnDying -= HandleUnitDying;
+        */
     }
 
+    /*
     private void HandleUnitDying(object sender, EventArgs e)
     {
         ForceCompleteNow();
     }
-    
+    */
+    // DODO Testaa toimiiko tämä AI.n jumiutumisessa.
+    /*
     protected virtual void ForceCompleteNow()
     {
-        Debug.Log("[BaseAction] ForceCompleteNow()");
+        
         if (!isActive) return;
         isActive = false;
         Debug.Log("[BaseAction] Set isActive: "+ isActive);
@@ -69,7 +74,7 @@ public abstract class BaseAction : NetworkBehaviour
             callback?.Invoke();
         }
     }
-
+    */
         
     
     // Defines the action button text for the Unit UI.
@@ -98,6 +103,7 @@ public abstract class BaseAction : NetworkBehaviour
     // Prevents the player from performing multiple actions at the same time.
     protected void ActionStart(Action onActionComplete)
     {
+        CanselAllIntents();
         isActive = true;
         this.onActionComplete = onActionComplete;
 
@@ -110,14 +116,17 @@ public abstract class BaseAction : NetworkBehaviour
     {
         if (!isActive)
         {
-            Debug.Log("[BaseAction] actioncomplete. Ei aktiivinen palataan");
             return;
         }
-        Debug.Log("[BaseAction] actioncomplete. pysäytetään aktiivisuus");
         isActive = false;
         onActionComplete();
         OnAnyActionCompleted?.Invoke(this, EventArgs.Empty);
-
+    }
+    
+    // Perutaan kaikki Unitin aikomukset jos Unit tekee jotakin muuta.
+    private void CanselAllIntents()
+    {
+        unit.GetComponent<OverwatchAction>().CancelOverwatchIntent();
     }
 
     public Unit GetUnit()

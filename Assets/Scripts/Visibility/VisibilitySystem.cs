@@ -38,7 +38,7 @@ public class VisibilitySystem : MonoBehaviour
         //    yritä päätellä se ensimmäisestä omistetusta unitista.
         if (NetworkSync.IsClientOnly && UnitManager.Instance != null)
         {
-            foreach (var u in UnitManager.Instance.GetUnitList())
+            foreach (var u in UnitManager.Instance.GetAllUnitList())
             {
                 if (!u) continue;
                 var ni = u.GetComponent<Mirror.NetworkIdentity>();
@@ -89,7 +89,7 @@ public class VisibilitySystem : MonoBehaviour
             var um = UnitManager.Instance;
             if (um != null)
             {
-                foreach (var unit in um.GetUnitList())
+                foreach (var unit in um.GetAllUnitList())
                 {
                     if (!unit) continue;
                     var ni = unit.GetComponent<Mirror.NetworkIdentity>();
@@ -109,7 +109,7 @@ public class VisibilitySystem : MonoBehaviour
         var unitManager = UnitManager.Instance;
         if (unitManager == null) { Debug.LogWarning("[VisibilitySystem] UnitManager is NULL!"); return; }
 
-        var units = unitManager.GetUnitList();
+        var units = unitManager.GetAllUnitList();
 
         int ownCount = 0, enemyCount = 0, visibleEnemyCount = 0;
 

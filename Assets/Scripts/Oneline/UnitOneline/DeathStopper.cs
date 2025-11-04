@@ -73,8 +73,6 @@ public class DeathStopper : NetworkBehaviour
     private void RpcTeleportSnap(Vector3 pos, Quaternion rot)
     {
 
-        Debug.Log("[DeathStopper] RpcTeleportSnap"); // näet varmasti, että ajetaan clientilla
-
         try
         {
             // a) Katkaise hetkeksi (mahd.) NetworkTransform (tyhjentää interpolaation)

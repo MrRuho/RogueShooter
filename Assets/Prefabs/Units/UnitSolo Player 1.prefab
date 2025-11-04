@@ -30,6 +30,7 @@ GameObject:
   - component: {fileID: -1189943715922618835}
   - component: {fileID: 6111267312838352488}
   - component: {fileID: -6283908097960678696}
+  - component: {fileID: -920256843831161143}
   m_Layer: 7
   m_Name: UnitSolo Player 1
   m_TagString: Untagged
@@ -160,7 +161,7 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0
   Team: 0
-  ACTION_POINTS_MAX: 2
+  ACTION_POINTS_MAX: 3
   OwnerId: 0
   archetype: {fileID: 11400000, guid: 4550bcfa4110ca445be7e3f4b337acd8, type: 2}
   currentWeapon: {fileID: 11400000, guid: 0a7d4b5dde914294784bbe40de853782, type: 2}
@@ -180,7 +181,7 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  maxMoveDistance: 6
+  maxMoveDistance: 4
 --- !u!114 &5013696404858178189
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -273,6 +274,7 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
+  Overwatch: 0
 --- !u!114 &8973082523940534421
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -454,6 +456,18 @@ MonoBehaviour:
   animator: {fileID: 0}
   rb: {fileID: 0}
   toggleNetworkTransformOnSnap: 1
+--- !u!114 &-920256843831161143
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 246340107227206225}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bd1e2ad4651b6764fa568df3cc7861b1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UnitStatusController
 --- !u!1 &1954669533539790246
 GameObject:
   m_ObjectHideFlags: 0

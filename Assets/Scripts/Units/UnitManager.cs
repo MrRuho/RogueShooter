@@ -11,7 +11,7 @@ using UnityEngine;
 public class UnitManager : MonoBehaviour
 {
     public static UnitManager Instance { get; private set; }
-    private List<Unit> unitList;
+    private List<Unit> allUnitsList;
     private List<Unit> friendlyUnitList;
     private List<Unit> enemyUnitList;
 
@@ -27,7 +27,7 @@ public class UnitManager : MonoBehaviour
         }
         Instance = this;
 
-        unitList = new List<Unit>();
+        allUnitsList = new List<Unit>();
         friendlyUnitList = new List<Unit>();
         enemyUnitList = new List<Unit>();
     }
@@ -50,7 +50,7 @@ public class UnitManager : MonoBehaviour
         // 1) Estä duplikaatit
         Unit unit = sender as Unit;
         if (!unitSet.Add(unit)) return;
-        if (!unitList.Contains(unit)) unitList.Add(unit);
+        if (!allUnitsList.Contains(unit)) allUnitsList.Add(unit);
 
         if (GameModeManager.SelectedMode == GameMode.SinglePlayer || GameModeManager.SelectedMode == GameMode.CoOp)
         {
@@ -88,7 +88,7 @@ public class UnitManager : MonoBehaviour
         unitSet.Remove(unit);
 
         // Poista kaikki esiintymät JA siivoa nullit samalla
-        unitList.RemoveAll(u => u == null || u == unit);
+        allUnitsList.RemoveAll(u => u == null || u == unit);
         friendlyUnitList.RemoveAll(u => u == null || u == unit);
         enemyUnitList.RemoveAll(u => u == null || u == unit);
 
@@ -102,9 +102,9 @@ public class UnitManager : MonoBehaviour
         return enemyUnitList;
     }
 
-    public List<Unit> GetUnitList()
+    public List<Unit> GetAllUnitList()
     {
-        return unitList;
+        return allUnitsList;
     }
 
     public List<Unit> GetFriendlyUnitList()
@@ -114,7 +114,7 @@ public class UnitManager : MonoBehaviour
 
     public void ClearAllUnitLists()
     {
-        unitList.Clear();
+        allUnitsList.Clear();
         friendlyUnitList.Clear();
         enemyUnitList.Clear();
     }

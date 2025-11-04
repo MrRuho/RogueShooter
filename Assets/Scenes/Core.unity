@@ -421,6 +421,50 @@ MonoBehaviour:
   defaultLevel: Level 0
   catalog: {fileID: 11400000, guid: 693a375c89ab7d0498025c205a0695f9, type: 2}
   currentIndex: 0
+--- !u!1 &1546010156
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1546010159}
+  - component: {fileID: 1546010158}
+  m_Layer: 0
+  m_Name: UnitStatusCoordinator
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1546010158
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1546010156}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 62172a4ef6e79c84ebbf23bba9cecace, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::StatusCoordinator
+--- !u!4 &1546010159
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1546010156}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1845346065
 GameObject:
   m_ObjectHideFlags: 0
@@ -1651,7 +1695,6 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   origin: {fileID: 0}
-  fallbackMaxThrowRangeWU: 12
   cellSizeWU: 2
   ceilingMask:
     serializedVersion: 2
@@ -3458,6 +3501,7 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
+  currentOwnerNetId: 0
 --- !u!114 &3903358829880863795
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5782,14 +5826,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   filterToMousePlanes: 1
-  mousePlaneMask:
-    serializedVersion: 2
-    m_Bits: 64
-  cellSizeWU: 2
-  halfThicknessWU: 0.3
-  yOffsetWU: 0.02
   teamVisionEnabled: 1
   teamVisionType: 1
+  invertTeamVision: 1
+  fogType: 5
   gridSystemVisualSinglePrefab: {fileID: 2051811012602640046, guid: 0019b866c74dcea4e8e56fc4dcbbfb0a, type: 3}
   gridVisualTypeMaterialList:
   - gridVisualType: 0
@@ -5802,6 +5842,8 @@ MonoBehaviour:
     material: {fileID: 2100000, guid: 231e805f080870641ad923501e52e644, type: 2}
   - gridVisualType: 4
     material: {fileID: 2100000, guid: 231e805f080870641ad923501e52e644, type: 2}
+  - gridVisualType: 5
+    material: {fileID: 2100000, guid: 9961b2ddb3922c04eabefc9184a62d27, type: 2}
 --- !u!4 &6423213150028019924
 Transform:
   m_ObjectHideFlags: 0
@@ -8623,3 +8665,4 @@ SceneRoots:
   - {fileID: 2133435792}
   - {fileID: 7872759205991272089}
   - {fileID: 1845346067}
+  - {fileID: 1546010159}

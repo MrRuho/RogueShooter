@@ -167,7 +167,7 @@ public class GrenadeProjectile : NetworkBehaviour
     [SerializeField] private int timer = 2;
     private int turnBasedTimer = 2;
 
-    void Awake() 
+    void Awake()
     {
         var sc = GetComponent<SphereCollider>();
         if (sc && throwArcConfig)
@@ -176,13 +176,14 @@ public class GrenadeProjectile : NetworkBehaviour
         // jos haluat varmistaa fallback-käyrän
         if (!throwArcConfig && arcYAnimationCurve == null)
             arcYAnimationCurve = AnimationCurve.Linear(0, 0, 1, 0);
-        
+
         beaconEffect = GetComponentInChildren<GrenadeBeaconEffect>();
         if (beaconEffect != null)
         {
             beaconEffect.SetTurnsUntilExplosion(timer);
-        }  
+        }
     }
+    
 
     public override void OnStartClient()
     {
@@ -241,34 +242,29 @@ public class GrenadeProjectile : NetworkBehaviour
 
         timer -= 1;
 
-        if (beaconEffect != null)
+        // VISUAALI: server käskee, clientit tekevät
+        if (NetworkServer.active) 
         {
-            beaconEffect.OnTurnAdvanced();
+            RpcBeaconTick();  
+        } else if (!NetworkClient.active) 
+        {
+            // offline
+            beaconEffect?.OnTurnAdvanced();
         }
 
         if (timer > 0) return;
 
-        beaconEffect.TriggerFinalCountdown();
         _explosionScheduled = true;
 
-        if (NetworkServer.active && !NetworkClient.active)
+        if (NetworkServer.active) 
         {
-            // DEDISERVER
+            RpcBeaconArmNow();                  // <<< TEE TÄMÄ
             ServerArmExplosion();
-        }
-        else if (NetworkServer.active && NetworkClient.active)
+
+        } else if (!NetworkClient.active) 
         {
-            // HOST (server + local client samassa prosessissa)
-            ServerArmExplosion();
-        }
-        else if (!NetworkClient.active)
-        {
-            // OFFLINE
+            beaconEffect?.TriggerFinalCountdown();
             StartCoroutine(LocalExplodeAfterJitter());
-        }
-        else
-        {
-            // Puhdas client: ei tee mitään (server arm-aa ja lähettää RPC:n)
         }
     }
 
@@ -278,28 +274,29 @@ public class GrenadeProjectile : NetworkBehaviour
         if (_explosionScheduled || isExploded) return;
 
         turnBasedTimer -= 1;
+
+        // VISUAALI
+        if (NetworkServer.active)
+        {
+            RpcBeaconTick();                    // <<< TEE TÄMÄ
+        }
+        else if (!NetworkClient.active)
+        {
+            beaconEffect?.OnTurnAdvanced();
+        }
+        
         if (turnBasedTimer  > 0) return;
 
         _explosionScheduled = true;
 
-        if (NetworkServer.active && !NetworkClient.active)
+        if (NetworkServer.active) 
         {
-            // DEDISERVER
+            RpcBeaconArmNow();                  // <<< TEE TÄMÄ
             ServerArmExplosion();
-        }
-        else if (NetworkServer.active && NetworkClient.active)
+        } else if (!NetworkClient.active) 
         {
-            // HOST (server + local client samassa prosessissa)
-            ServerArmExplosion();
-        }
-        else if (!NetworkClient.active) 
-        {
-            // OFFLINE
+            beaconEffect?.TriggerFinalCountdown();
             StartCoroutine(LocalExplodeAfterJitter());
-        }
-        else
-        {
-            // Puhdas client: ei tee mitään (server arm-aa ja lähettää RPC:n)
         }
     }
 
@@ -403,14 +400,37 @@ public class GrenadeProjectile : NetworkBehaviour
         transform.position = pos;
         if (dir.sqrMagnitude > 0.0001f) transform.forward = dir.normalized;
 
-        // maali
-        if (t >= 1f) {
+        if (t >= 1f)
+        {
             Vector3 p = _endPos;
             float y = p.y;
-            if (Physics.Raycast(p + Vector3.up * 2f, Vector3.down, out var hit, 10f, floorMask, QueryTriggerInteraction.Ignore))
-                y = hit.point.y;
-            if (TryGetComponent<Collider>(out var col)) y += col.bounds.extents.y;
-            transform.position = new Vector3(p.x, y, p.z);
+
+            // Etsi KORKEIN osumapinta lattia+este -kerroksista
+            // (älä ignooraa triggereitä, jos esteet ovat trigger-collidereita)
+            var origin = p + Vector3.up * 3f;
+            var hits = Physics.RaycastAll(origin, Vector3.down, 12f, floorMask, QueryTriggerInteraction.Collide);
+
+            float highest = float.NegativeInfinity;
+            for (int i = 0; i < hits.Length; i++) {
+                // jos haluat varmistaa, ettei “seisota itseään”, ohita oma collider
+                if (TryGetComponent<Collider>(out var selfCol) && hits[i].collider == selfCol) 
+                    continue;
+                if (hits[i].point.y > highest) highest = hits[i].point.y;
+            }
+            if (highest > float.NegativeInfinity) y = highest;
+
+            // Nosta kranaatti pintaan: oma puoli-korkeus + pieni epsilon, ettei klippaa
+            float half = 0f;
+            if (TryGetComponent<Collider>(out var col)) half = col.bounds.extents.y;
+            y += half + 0.005f;
+
+            // Aseta lopullinen laskeutumispaikka
+            var landed = new Vector3(p.x, y, p.z);
+            transform.position = landed;
+
+            // Jos räjähdys/efekti käyttää _endPos:ia, pidä ne synkassa:
+            _endPos = landed;
+
             enabled = false;
         }
     }
@@ -600,6 +620,20 @@ public class GrenadeProjectile : NetworkBehaviour
         );
 
         Destroy(gameObject);
+    }
+
+    [ClientRpc]
+    private void RpcBeaconTick()
+    {
+        if (!beaconEffect) beaconEffect = GetComponentInChildren<GrenadeBeaconEffect>(true);
+        beaconEffect?.OnTurnAdvanced();
+    }
+
+    [ClientRpc]
+    private void RpcBeaconArmNow()
+    {
+        if (!beaconEffect) beaconEffect = GetComponentInChildren<GrenadeBeaconEffect>(true);
+        beaconEffect?.TriggerFinalCountdown();
     }
 
     [Server]

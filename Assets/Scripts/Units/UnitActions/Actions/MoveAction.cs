@@ -52,23 +52,6 @@ public class MoveAction : BaseAction
         distance = 0;
     }
 
-    public void ForceStopNow()
-    {
-        Debug.Log("[Move Action] Pakotetaan pysäytys");
-        StopAtCurrentPosition();
-        positionList?.Clear();
-        currentPositionIndex = 0;
-        isChangingFloors = false;
-
-        // Merkitse loppuruutu
-        thisTurnEndridPosition = unit.GetGridPosition();
-         
-        // Lopeta action
-        OnStopMoving?.Invoke(this, EventArgs.Empty);
-        ActionComplete();
-    }
-
-
     private void Update()
     {
 
@@ -171,15 +154,26 @@ public class MoveAction : BaseAction
         }
     }
 
+    public void ForceStopNow()
+    {
+        StopAtCurrentPosition();
+        positionList?.Clear();
+        currentPositionIndex = 0;
+        isChangingFloors = false;
+
+        // Merkitse loppuruutu
+        thisTurnEndridPosition = unit.GetGridPosition();
+         
+        // Lopeta action
+        OnStopMoving?.Invoke(this, EventArgs.Empty);
+        ActionComplete();
+    }
+
     public void StopAtCurrentPosition()
     {
-        Debug.Log("Pysähdytään nykyiseen ruutuun");
-        // if (!isActive) return;
 
         GridPosition currentPos = unit.GetGridPosition();
-
-        Debug.Log("Nykyinen sijainti:" + currentPos);
-        
+    
         // Laske uusi polku nykyisestä ruudusta samaan ruutuun (= tyhjä polku)
         List<GridPosition> pathGridPositionsList = PathFinding.Instance.FindPath(
             currentPos, 

@@ -15,6 +15,9 @@ public class GridSystemVisual : MonoBehaviour
     [SerializeField] private bool teamVisionEnabled = true;
     [SerializeField] private GridVisualType teamVisionType = GridVisualType.Yellow;
 
+    [SerializeField] private bool invertTeamVision = true;
+    [SerializeField] private GridVisualType fogType = GridVisualType.TeamVision; // laita tähän harmaa materiaali
+
     private readonly HashSet<GridPosition> _lastActionCells = new();
     private readonly List<GridPosition> _tmpList = new(256);
 
@@ -155,8 +158,17 @@ public class GridSystemVisual : MonoBehaviour
         HideAllGridPositions();
         _lastActionCells.Clear();
 
-        if (teamVisionEnabled && TeamVisionService.Instance != null)
-            DrawTeamVisionOverlay();
+        if (teamVisionEnabled && TeamVisionService.Instance != null) 
+        {
+            if (invertTeamVision)
+            {
+                 DrawTeamVisionOverlayInverted();
+            }
+            else
+            {
+                DrawTeamVisionOverlay(); // nykyinen
+            }
+        }
 
         Unit selectedUnit = UnitActionSystem.Instance.GetSelectedUnit();
         if (selectedUnit == null) return;
@@ -172,7 +184,7 @@ public class GridSystemVisual : MonoBehaviour
                 gridVisualType = GridVisualType.white;
                 break;
 
-            case TurnTowardsAction:
+            case OverwatchAction:
                 gridVisualType = GridVisualType.Blue;
                 break;
 
@@ -260,6 +272,41 @@ public class GridSystemVisual : MonoBehaviour
                 _tmpList.Add(gp);
 
         ShowGridPositionList(_tmpList, teamVisionType);
+    }
+
+    private void DrawTeamVisionOverlayInverted() 
+    {
+        if (TeamVisionService.Instance == null) return;
+
+        int myTeam = GetLocalPlayerTeamId();
+        var snap = TeamVisionService.Instance.GetVisibleTilesSnapshot(myTeam);
+        if (snap == null) return;
+
+        // O(1) tarkistukset
+        var visible = new HashSet<GridPosition>(snap);
+
+        var mat = GetGridVisualTypeMaterial(fogType);
+        int W = LevelGrid.Instance.GetWidth();
+        int H = LevelGrid.Instance.GetHeight();
+        int F = LevelGrid.Instance.GetFloorAmount();
+
+        for (int x = 0; x < W; x++)
+        for (int z = 0; z < H; z++)
+        for (int f = 0; f < F; f++) {
+            var gp = new GridPosition(x, z, f);
+
+            // Sama suodatus kuin muuallakin (MousePlaneMap), ettei harmaa leviä “väärään kerrokseen”
+            if (filterToMousePlanes && !(MousePlaneMap.Instance && MousePlaneMap.Instance.Has(gp))) continue;
+
+            // Älä peitä tuoreita action-ruutuja
+            if (_lastActionCells.Contains(gp)) continue;
+
+            // Näkyvät → jätetään puhtaiksi; näkymättömät → harmaa
+            if (!visible.Contains(gp)) {
+                var cell = gridSystemVisualSingleArray[x, z, f];
+                if (cell != null) cell.Show(mat);
+            }
+        }
     }
 
     private void ShowAndMark(IEnumerable<GridPosition> cells, GridVisualType type)

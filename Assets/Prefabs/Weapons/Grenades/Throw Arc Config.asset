@@ -56,5 +56,5 @@ MonoBehaviour:
   segmentsPerTile: 4
   minSegments: 12
   maxSegments: 40
-  projectileRadiusWU: 0.12
+  projectileRadiusWU: 0.03
   capsuleRadiusMinRelToCell: 0.1

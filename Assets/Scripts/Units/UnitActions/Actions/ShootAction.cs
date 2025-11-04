@@ -189,7 +189,7 @@ public class ShootAction : BaseAction
     private IEnumerable<Unit> EnumerateEnemyCandidatesInRange(GridPosition origin, int range)
     {
         bool shooterIsEnemy = unit.IsEnemy(); // 'unit' = tämän actionin omistaja
-        foreach (var u in UnitManager.Instance.GetUnitList())
+        foreach (var u in UnitManager.Instance.GetAllUnitList())
         {
             if (u == null) continue;
             if (u.IsEnemy() == shooterIsEnemy) continue;               // ei omia

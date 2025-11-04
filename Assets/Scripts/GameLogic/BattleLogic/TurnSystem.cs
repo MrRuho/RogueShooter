@@ -28,7 +28,11 @@ public class TurnSystem : MonoBehaviour
 
     private void Start()
     {
+        OnTurnStarted += turnSystem_OnTurnStarted;
+        OnTurnEnded += turnSystem_OnTurnEnded;
+
         OnTurnChanged += turnSystem_OnTurnChanged;
+
         OnTurnStarted?.Invoke(CurrentTeam, TurnId);
         PlayerLocalTurnGate.Set(isPlayerTurn);
         OnTurnChanged?.Invoke(this, EventArgs.Empty);
@@ -37,12 +41,48 @@ public class TurnSystem : MonoBehaviour
     private void OnDisable()
     {
         OnTurnChanged -= turnSystem_OnTurnChanged;
+        OnTurnStarted -= turnSystem_OnTurnStarted;
+        OnTurnEnded -= turnSystem_OnTurnEnded;
     }
 
     private void turnSystem_OnTurnChanged(object sender, EventArgs e)
     {
         UnitActionSystem.Instance.ResetSelectedAction();
         UnitActionSystem.Instance.ResetSelectedUnit();
+    }
+
+
+    private void turnSystem_OnTurnStarted(Team startTurnTeam, int turnId)
+    {
+
+        if (NetMode.IsRemoteClient) return; //NetworkClient.active && !NetworkServer.active
+        List<Unit> units = new();
+
+        //Muodostetaan lista niistä uniteista jotka lopettavat vuoron.
+        foreach (Unit unit in UnitManager.Instance.GetAllUnitList())
+        {
+            if (unit.Team != startTurnTeam) continue;
+            units.Add(unit);
+        }
+        
+        StatusCoordinator.Instance.UnitTurnStartStatus(units);
+
+    }
+
+    private void turnSystem_OnTurnEnded(Team endTurnTeam, int turnId)
+    {
+
+        if (NetMode.IsRemoteClient) return; // NetworkClient.active && !NetworkServer.active
+        List<Unit> units = new();
+
+        //Muodostetaan lista niistä uniteista jotka lopettavat vuoron.
+        foreach (Unit unit in UnitManager.Instance.GetAllUnitList())
+        {
+            if (unit.Team != endTurnTeam) continue;
+            units.Add(unit);
+        }
+
+        StatusCoordinator.Instance.UnitTurnEndStatus(units);    
     }
 
     public void NextTurn()
@@ -130,7 +170,7 @@ public class TurnSystem : MonoBehaviour
         return isPlayerTurn;
     }
 
-    public bool IsUnitsTurn(Unit u) => u.Team == CurrentTeam;
+    public bool IsUnitsTurn(Unit unit) => unit.Team == CurrentTeam;
 
     public void ResetAndBegin(bool resetTurnNumber = true, bool playersPhase = true)
     {

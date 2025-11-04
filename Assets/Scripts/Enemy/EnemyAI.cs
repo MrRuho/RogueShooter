@@ -160,9 +160,17 @@ public class EnemyAI : MonoBehaviour
         // Choosing the best action, based on them action value.
         foreach (BaseAction baseAction in enemyUnit.GetBaseActionsArray())
         {
+            //NOTE! Just for testing. AI not do this for now.
+            if(baseAction.GetActionName() == "Overwatch")
+            {
+                Debug.Log("[Enemy AI] I am too dumd to do Overwatch action!");
+                // Enemy AI Cant handle this action right now.
+                continue;
+            }
+
             if (!enemyUnit.CanSpendActionPointsToTakeAction(baseAction))
             {
-                // Enemy cannot afford this action.
+                // Enemy cannot afford this action
                 continue;
             }
 

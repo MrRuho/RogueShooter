@@ -1,30 +1,25 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-
-
-
 /// <summary>
-///     This class is responsible for spinning a unit around its Y-axis.
+///  Jos pelaaja on jättänyt Unitin Overwatch = true, ja päättää vuoronsa, niin Unit siirtyy Overwach tilaan
+///  ja ampuu kaikkia näkemiään liikkuvia kohteita.
 /// </summary>
-/// remarks>
-///     Change to turn towards the direction the mouse is pointing
-/// </remarks>
-
-public class TurnTowardsAction : BaseAction
+public class OverwatchAction : BaseAction
 {
     private enum State
     {
-        StartTurning,
-        EndTurning,
+        BeginOverwatchIntent,
+        OverwatchIntentReady,
     }
-     private State state;
+
+    private State state;
     public Vector3 TargetWorld { get; private set; }
 
     private float stateTimer;
-    GridPosition gridPosition;
+
+    public bool Overwatch = false;
 
     private void Update()
     {
@@ -35,13 +30,13 @@ public class TurnTowardsAction : BaseAction
         stateTimer -= Time.deltaTime;
         switch (state)
         {
-            case State.StartTurning:
+            case State.BeginOverwatchIntent:
                 if (RotateTowards(TargetWorld))
                 {
                     stateTimer = 0; 
                 }
                 break;
-            case State.EndTurning:
+            case State.OverwatchIntentReady:
                 break;
         }
 
@@ -49,29 +44,29 @@ public class TurnTowardsAction : BaseAction
         {
             NextState();
         }
-
     }
 
     private void NextState()
     {
         switch (state)
         {
-            case State.StartTurning:
-                state = State.EndTurning;
+            case State.BeginOverwatchIntent:
+                state = State.OverwatchIntentReady;
                 float afterTurnStateTime = 0.5f;
                 stateTimer = afterTurnStateTime;
-
                 break;
-            case State.EndTurning:
+
+            case State.OverwatchIntentReady:
                 ActionComplete();
+                Overwatch = true;
                 break;
         }
     }
+
     public override void TakeAction(GridPosition gridPosition, Action onActionComplete)
     {
-        TargetWorld = LevelGrid.Instance.GetWorldPosition(gridPosition);
-        this.gridPosition = gridPosition;        
-        state = State.StartTurning;
+        TargetWorld = LevelGrid.Instance.GetWorldPosition(gridPosition);  
+        state = State.BeginOverwatchIntent;
         float beforeTurnStateTime = 0.7f;
         stateTimer = beforeTurnStateTime;
         ActionStart(onActionComplete);
@@ -79,7 +74,7 @@ public class TurnTowardsAction : BaseAction
   
     public override string GetActionName()
     {
-        return "Turn";
+        return "Overwatch";
     }
 
     public override List<GridPosition> GetValidGridPositionList()
@@ -103,22 +98,35 @@ public class TurnTowardsAction : BaseAction
 
     public override int GetActionPointsCost()
     {
-        return 100;
+        return 0;
+    }
+
+    // Lopullinen tila tarkistetaan kun pelaaja päättää vuoronsa.
+    public bool IsOverwatch()
+    {
+        return Overwatch;
+    }
+
+    // Tila peruuntuu heti jos pelaaja, liikkuu, ampuu yms. 
+    public void CancelOverwatchIntent()
+    {
+        Overwatch = false;
     }
 
     /// <summary>
     /// ENEMY AI: 
-    /// Currently this action has no value. Just testing!
+    /// NOTE! Currently this action has no value. Just testing!
     /// </summary>
-  
+    /// DODO AI käyttäytymis idea. Jos AI ei pysty tuottamaan helposti vahinkoa pelaajaan se pyrkii luomaan. 
+    /// 1. Mahdollisimman kattava vaara alue. (AI ei tiedä missä pelaajan Unitit on)
+    /// 2. Keskitetty vaaraalue. Jos AI tietää pelaajan Unittien mahdollisen tulosuunnan ( Viimeksi nähty paikka + simulaatio siitä mihin pelaaja
+    /// Yrittää siirtää omia unittejaan) 
     public override EnemyAIAction GetEnemyAIAction(GridPosition gridPosition)
     {
         return new EnemyAIAction
         {
             gridPosition = gridPosition,
             actionValue = 0,
-
         };
-    }
-    
+    } 
 }
