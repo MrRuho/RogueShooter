@@ -94,22 +94,22 @@ public class MoveAction : BaseAction
         float stoppingDistance = 0.2f;
         if (Vector3.Distance(transform.position, targetPosition) < stoppingDistance)
         {
-            var lg = LevelGrid.Instance;
-            if (lg != null)
+            var levelGrid = LevelGrid.Instance;
+            if (levelGrid != null)
             {
-                var cur = lg.GetGridPosition(unit.transform.position);
+                var currentLevelGrid = levelGrid.GetGridPosition(unit.transform.position);
 
-                if (!cur.Equals(_lastVisionPos))
+                if (!currentLevelGrid.Equals(_lastVisionPos))
                 {
                     // Päivitä vision vain jos Unit ei ole kuolemassa
                     if (unit != null && !unit.IsDying() && !unit.IsDead())
                     {
-                        var uv = unit.GetComponent<UnitVision>();
-                        if (uv != null && uv.IsInitialized)
-                            uv.NotifyMoved();
+                        var unitVision = unit.GetComponent<UnitVision>();
+                        if (unitVision != null && unitVision.IsInitialized)
+                            unitVision.NotifyMoved();
                     }
-
-                    _lastVisionPos = cur;
+                    StatusCoordinator.Instance.CheckOverwatchStep(unit, currentLevelGrid);
+                    _lastVisionPos = currentLevelGrid;
                 }
             }
 
@@ -133,7 +133,7 @@ public class MoveAction : BaseAction
                         CheckAndApplyCoverBonus();
                     }
 
-                    unit.GetComponent<UnitVision>()?.NotifyMoved();
+                    unit.GetComponent<UnitVision>().NotifyMoved();
                 }
 
                 OnStopMoving?.Invoke(this, EventArgs.Empty);

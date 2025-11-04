@@ -5,6 +5,8 @@ public class StatusCoordinator : MonoBehaviour
 {
     public static StatusCoordinator Instance { get; private set; }
 
+    private readonly Dictionary<int, HashSet<Unit>> overwatchByTeam = new();
+
     private void Awake()
     {
         if (Instance != null)
@@ -50,6 +52,9 @@ public class StatusCoordinator : MonoBehaviour
 
                 status.AddOrUpdate(UnitStatusType.Overwatch, setup);
                 Debug.Log($"[Overwatch] ARMED at end turn: {unit.name}");
+
+                //Aseta tiimilistaan.
+                AddWatcher(unit);
             }
         }
     }
@@ -68,6 +73,58 @@ public class StatusCoordinator : MonoBehaviour
                 // Perutaan myös Actionin tila.
                 var action = unit.GetComponent<OverwatchAction>();
                 action.CancelOverwatchIntent();
+                RemoveWatcher(unit);
+            }
+        }
+    }
+
+    // Lisää unit tiimin watchlistaan
+    public void AddWatcher(Unit unit)
+    {
+        int teamId = unit.GetTeamID();
+
+        if (!overwatchByTeam.TryGetValue(teamId, out var set))
+        {
+            set = new HashSet<Unit>();
+            overwatchByTeam[teamId] = set;
+        }
+
+        set.Add(unit); // HashSet estää duplikaatit
+    }
+
+    // Poista unit tiimin watchlistasta
+    public void RemoveWatcher(Unit unit)
+    {
+        int teamId = unit.GetTeamID();
+
+        if (overwatchByTeam.TryGetValue(teamId, out var set))
+        {
+            set.Remove(unit);
+            if (set.Count == 0) overwatchByTeam.Remove(teamId); // siisti tyhjät
+        }
+    }
+
+    public IEnumerable<Unit> GetWatchers(int teamId)
+    {
+        return overwatchByTeam.TryGetValue(teamId, out var set) ? set : System.Array.Empty<Unit>();
+    }
+
+    public void CheckOverwatchStep(Unit mover, GridPosition newGridPos)
+    {
+        int enemyTeamId = (mover.GetTeamID() == 0) ? 1 : 0;
+
+        foreach (var watcher in GetWatchers(enemyTeamId))
+        {
+            if (!watcher || watcher.IsDead() || watcher.IsDying()) continue;
+
+            if (watcher.TryGetComponent<UnitVision>(out var vision) && vision.IsInitialized)
+            {
+                var visible = vision.GetUnitVisionGrids();
+                if (visible != null && visible.Contains(newGridPos))
+                {
+                    Debug.Log($"[OW] {watcher.name} NÄKEE {mover.name} @ {newGridPos}");
+                    // (myöhemmin tähän kartio/LoS/AP-reaktio)
+                }
             }
         }
     }

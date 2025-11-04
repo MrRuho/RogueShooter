@@ -10,7 +10,7 @@ public class UnitVision : MonoBehaviour
 
     private Unit _unit;
     private Transform _tr;
-    private HashSet<GridPosition> _lastVisible = new();
+    private HashSet<GridPosition> _lastVisibleTiles = new();
     private int _unitKey;
     private bool _initialized = false;
     private int _currentTeamId = 0;
@@ -55,7 +55,7 @@ public class UnitVision : MonoBehaviour
         {
             TeamVisionService.Instance.RemoveUnitVision(teamId, _unitKey);
         }
-        _lastVisible.Clear();
+        _lastVisibleTiles.Clear();
     }
 
     private System.Collections.IEnumerator Co_AutoInitLocal()
@@ -131,18 +131,18 @@ public class UnitVision : MonoBehaviour
             return;
         }
 
-        var lg = LevelGrid.Instance;
-        var cfg = LoSConfig.Instance;
-        var tvs = TeamVisionService.Instance;
+        var levelGrid = LevelGrid.Instance;
+        var loSConfig = LoSConfig.Instance;
+        var teamVision = TeamVisionService.Instance;
 
-        if (lg == null || cfg == null || tvs == null)
+        if (levelGrid == null || loSConfig == null || teamVision == null)
         {
-            Debug.LogWarning($"[UnitVision UPDATE SKIP] {name} - missing services: LG={lg != null}, CFG={cfg != null}, TVS={tvs != null}");
+            Debug.LogWarning($"[UnitVision UPDATE SKIP] {name} - missing services: LG={levelGrid != null}, CFG={loSConfig != null}, TVS={teamVision != null}");
             return;
         }
 
         var wp = _tr != null ? _tr.position : transform.position;
-        var origin = lg.GetGridPosition(wp);
+        var origin = levelGrid.GetGridPosition(wp);
 
         if (_unit != null)
         {
@@ -155,7 +155,7 @@ public class UnitVision : MonoBehaviour
         {
             vis = RaycastVisibility.ComputeVisibleTilesRaycastHeightAware(
                 origin, visionSkill.visionRange,
-                cfg.losBlockersMask, cfg.eyeHeight, cfg.samplesPerCell, cfg.insetWU,
+                loSConfig.losBlockersMask, loSConfig.eyeHeight, loSConfig.samplesPerCell, loSConfig.insetWU,
                 ignoreRoot: _tr
             );
         }
@@ -163,13 +163,14 @@ public class UnitVision : MonoBehaviour
         {
             vis = RaycastVisibility.ComputeVisibleTilesRaycast(
                 origin, visionSkill.visionRange,
-                cfg.losBlockersMask, cfg.eyeHeight, cfg.samplesPerCell, cfg.insetWU
+                loSConfig.losBlockersMask, loSConfig.eyeHeight, loSConfig.samplesPerCell, loSConfig.insetWU
             );
         }
 
-        _lastVisible = vis ?? _lastVisible;
+        _lastVisibleTiles = vis ?? _lastVisibleTiles;
 
-        tvs.ReplaceUnitVision(teamId, _unitKey, _lastVisible);
+
+        teamVision.ReplaceUnitVision(teamId, _unitKey, _lastVisibleTiles);    
     }
 
     private bool ShouldPublishVisionLocally()
@@ -179,5 +180,10 @@ public class UnitVision : MonoBehaviour
 
         var ni = NetworkSync.FindIdentity(this.GetActorId());
         return NetworkSync.IsOwnedHere(ni);
+    }
+
+    public HashSet<GridPosition> GetUnitVisionGrids()
+    {
+        return _lastVisibleTiles;
     }
 }
