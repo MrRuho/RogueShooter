@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -122,8 +123,30 @@ public class StatusCoordinator : MonoBehaviour
                 var visible = vision.GetUnitVisionGrids();
                 if (visible != null && visible.Contains(newGridPos))
                 {
-                    Debug.Log($"[OW] {watcher.name} NÄKEE {mover.name} @ {newGridPos}");
                     // (myöhemmin tähän kartio/LoS/AP-reaktio)
+                   // int actionPoinst = watcher.GetActionPoints();
+
+
+                    if (watcher.TryGetComponent<ShootAction>(out var shoot))
+                    {
+                        if (watcher.TrySpendActionPointsToTakeAction(shoot))
+                        {
+                            shoot.TakeAction(
+                            newGridPos,
+                            () =>
+                            {
+                                Debug.Log($"[OW] {watcher.name} laukaus valmis → {mover.name}");
+                            }
+                        );
+                            int actionPoinst = watcher.GetActionPoints();
+                            Debug.Log("Actionponts:" + actionPoinst);
+                        }
+                       
+
+                        // Yksi reaktio per moverin askel:
+                        break;
+                    }
+
                 }
             }
         }

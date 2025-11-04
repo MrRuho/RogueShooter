@@ -138,6 +138,7 @@ public class TurnSystem : MonoBehaviour
 
     private void ConvertUnusedActionPointsToCoverPoints()
     {
+        /*
         Debug.Log("Konvertoidaan käyttämättömät pisteet coveriksi");
         List<Unit> ownUnits = UnitManager.Instance.GetFriendlyUnitList();
             for (int i = 0; i < ownUnits.Count; i++)
@@ -148,6 +149,7 @@ public class TurnSystem : MonoBehaviour
                 int per = u.GetCoverRegenPerUnusedAP();
                 u.RegenCoverBy(ap * per);
             }
+        */
     }
 
     public int GetTurnNumber()

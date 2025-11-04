@@ -414,7 +414,7 @@ public class Unit : NetworkBehaviour
         int per = GetCoverRegenPerUnusedAP();           // palauttaa >0 vain jos ei underFire
         if (ap > 0 && per > 0) Cover.RegenCoverBy(ap * per);  // coverSkill hoitaa clampit jne.
         // (valinnainen) nollaa AP:t heti vuoron päättyessä:
-        actionPoints = 0;
+       // actionPoints = 0;
         OnAnyActionPointsChanged?.Invoke(this, EventArgs.Empty);
     }
 
