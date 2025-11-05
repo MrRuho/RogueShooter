@@ -159,10 +159,7 @@ public static class NetworkSync
             }
         }
 
-        // Offline fallback
-        Debug.Log("ApplyDamageToUnit.");
-        unit.GetComponent<HealthSystem>().Damage(amount, hitPosition);
-        
+        unit.GetComponent<HealthSystem>().Damage(amount, hitPosition);        
     }
 
     public static void ApplyDamageToObject(DestructibleObject target, int amount, Vector3 hitPosition, uint actorNetId)

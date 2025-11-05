@@ -29,28 +29,28 @@ public abstract class BaseAction : NetworkBehaviour
     
     void OnEnable()
     {
-        /*
+        
         if (ownerHealth != null)
             ownerHealth.OnDying += HandleUnitDying;
-        */
+        
     }
 
     void OnDisable()
     {
-        /*
+        
         if (ownerHealth != null)
             ownerHealth.OnDying -= HandleUnitDying;
-        */
+        
     }
 
-    /*
+    
     private void HandleUnitDying(object sender, EventArgs e)
     {
         ForceCompleteNow();
     }
-    */
+    
     // DODO Testaa toimiiko tämä AI.n jumiutumisessa.
-    /*
+    
     protected virtual void ForceCompleteNow()
     {
         
@@ -74,7 +74,7 @@ public abstract class BaseAction : NetworkBehaviour
             callback?.Invoke();
         }
     }
-    */
+    
         
     
     // Defines the action button text for the Unit UI.
@@ -154,7 +154,7 @@ public abstract class BaseAction : NetworkBehaviour
         NetworkSync.ApplyDamageToUnit(targetUnit, damage, hitPosition, this.GetActorId());
     }
 
-    public void ApplyHit(int damage, Unit targetUnit, bool melee)
+    public void ApplyHit(int damage, bool bypassCover, bool coverOnly, Unit targetUnit, bool melee = false)
     {
         if (targetUnit == null || targetUnit.IsDying() || targetUnit.IsDead()) return;
         
@@ -186,12 +186,20 @@ public abstract class BaseAction : NetworkBehaviour
         {
             targetUnit.SetPersonalCover(after);
             NetworkSync.UpdateCoverUI(targetUnit);
+
+            // Vaikka suojaa jäisi niin kriittinen osuma tekee vahinkoa silti.
+            if(bypassCover) MakeDamage(damage, targetUnit); 
         }
         else
         {
             targetUnit.SetPersonalCover(0);
             NetworkSync.UpdateCoverUI(targetUnit);
-            MakeDamage(damage - before, targetUnit);
+
+            // Ainoastaan oikeat osumat voivat tehdä vahinkoa.
+            if (!coverOnly) MakeDamage(damage - before, targetUnit);
+
+            // Kriittinen osuma osuu kokonaisuudessaan.
+            if(bypassCover) MakeDamage(damage, targetUnit); 
         }
     }
 

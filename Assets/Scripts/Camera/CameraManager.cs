@@ -8,6 +8,8 @@ public class CameraManager : MonoBehaviour
 
     [SerializeField] private float actionCameraVerticalPosition = 2.5f;
 
+    [SerializeField] private bool actionCameraOn = true;
+
      private void Awake()
     { 
         if (Instance != null)
@@ -64,7 +66,12 @@ public class CameraManager : MonoBehaviour
 
                 actionCameraGameObject.transform.position = actionCameraPosition;
                 actionCameraGameObject.transform.LookAt(targetUnit.GetWorldPosition() + cameraCharacterHeight);
-                ShowActionCamera();
+
+                if (actionCameraOn)
+                {
+                    ShowActionCamera();
+                }
+                
                 break;
         }
     }

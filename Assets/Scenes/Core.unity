@@ -2428,6 +2428,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cinemachineRecoilImpulseSource: {fileID: 6993078597025791056}
   cinemachineExplosiveImpulseSource: {fileID: 8977920393099414762}
+  recoilCooldown: 0.1
 --- !u!222 &2694818350572872813
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -6872,6 +6873,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   actionCameraGameObject: {fileID: 7094981539617663449}
   actionCameraVerticalPosition: 2.5
+  actionCameraOn: 0
 --- !u!114 &7240615888071120357
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -112,43 +112,38 @@ public class StatusCoordinator : MonoBehaviour
 
     public void CheckOverwatchStep(Unit mover, GridPosition newGridPos)
     {
+        if (mover == null || mover.IsDead() || mover.IsDying()) return;
+        
         int enemyTeamId = (mover.GetTeamID() == 0) ? 1 : 0;
 
         foreach (var watcher in GetWatchers(enemyTeamId))
         {
-            if (!watcher || watcher.IsDead() || watcher.IsDying()) continue;
+            if (watcher == null || watcher.IsDead() || watcher.IsDying()) continue;
 
-            if (watcher.TryGetComponent<UnitVision>(out var vision) && vision.IsInitialized)
-            {
-                var visible = vision.GetUnitVisionGrids();
-                if (visible != null && visible.Contains(newGridPos))
+            if (!watcher.TryGetComponent<UnitVision>(out var vision) || !vision.IsInitialized) continue;
+
+            var visible = vision.GetUnitVisionGrids();
+            if (visible == null || !visible.Contains(newGridPos)) continue;
+
+            if (!watcher.TryGetComponent<ShootAction>(out var shoot)) continue;
+
+            if (!watcher.TrySpendActionPointsToTakeAction(shoot)) continue;
+
+            string moverName = mover != null ? mover.name : "Unknown";
+            string watcherName = watcher != null ? watcher.name : "Unknown";
+
+            shoot.TakeAction(
+                newGridPos,
+                () =>
                 {
-                    // (myöhemmin tähän kartio/LoS/AP-reaktio)
-                   // int actionPoinst = watcher.GetActionPoints();
-
-
-                    if (watcher.TryGetComponent<ShootAction>(out var shoot))
+                    if (watcher != null && mover != null)
                     {
-                        if (watcher.TrySpendActionPointsToTakeAction(shoot))
-                        {
-                            shoot.TakeAction(
-                            newGridPos,
-                            () =>
-                            {
-                                Debug.Log($"[OW] {watcher.name} laukaus valmis → {mover.name}");
-                            }
-                        );
-                            int actionPoinst = watcher.GetActionPoints();
-                            Debug.Log("Actionponts:" + actionPoinst);
-                        }
-                       
-
-                        // Yksi reaktio per moverin askel:
-                        break;
+                        Debug.Log($"[OW] {watcherName} laukaus valmis → {moverName}");
                     }
-
                 }
-            }
+            );
+
+            break;
         }
     }
 }

@@ -1,7 +1,7 @@
 using UnityEngine;
 
 public enum RangeBand { Melee, Close, Medium, Long, Extreme }
-public enum ShotTier  { CritMiss, Miss, Graze, Hit, Crit }
+public enum ShotTier  { CritMiss, Close, Graze, Hit, Crit }
 
 
 [System.Serializable]
@@ -10,15 +10,11 @@ public struct RangeBandTuning
     [Header("Stage 1: Base chance to HIT (before skill/cover)")]
     [Range(0, 100)] public int baseHitChance;
 
-    [Header("Stage 2a: On HIT distribution (Close/Graze/Hit/Crit)")]
+    [Header("Stage 2: On HIT distribution (Close/Graze/Hit/Crit)")]
     [Range(0, 100)] public int onHit_Close;
     [Range(0, 100)] public int onHit_Graze;
     [Range(0, 100)] public int onHit_Hit;
     [Range(0, 100)] public int onHit_Crit;
-
-    [Header("Stage 2b: On MISS distribution (Miss/CritMiss)")]
-    [Range(0, 100)] public int onMiss_Miss;
-    [Range(0, 100)] public int onMiss_CritMiss;
 }
 
 
@@ -34,8 +30,8 @@ public class WeaponDefinition : ScriptableObject
     [Header("Base damage")]
     public int baseDamage = 10;
     public int critBonusDamage = 8;
-    public float grazeFactor = 0.4f;   // 40% damagesta
-    public float missChipFactor = 0.2f; // 20% damagesta (vain coveriin)
+    public float grazeFactor = 0.4f;
+    public float missChipFactor = 0.2f;
     
     [Header("Legacy per-weapon ranges (used if no global CombatRanges found)")]
     public float closeMax = 4f;
@@ -54,15 +50,27 @@ public class WeaponDefinition : ScriptableObject
     {
         switch (b)
         {
-            case RangeBand.Melee:  return melee;
-            case RangeBand.Close:  return close;
+            case RangeBand.Melee: return melee;
+            case RangeBand.Close: return close;
             case RangeBand.Medium: return medium;
-            case RangeBand.Long:   return @long;
-            default:               return extreme;
+            case RangeBand.Long: return @long;
+            default: return extreme;
         }
     }
+    
+    [Header("Burst Fire Settings")]
+    [Tooltip("Minimum shots per burst (e.g., 3 for assault rifles)")]
+    public int burstMin = 3;
+    [Tooltip("Maximum shots per burst (e.g., 4 for assault rifles)")]
+    public int burstMax = 4;
+    [Tooltip("Time between shots in a burst (seconds)")]
+    public float burstShotDelay = 0.1f;
 
-    // (TAKAISIN-YHTEENSOPIVA): jos haluat käyttää vanhaa baselinea joskus, jätä nämä.
+    public int GetRandomBurstCount()
+    {
+        return Random.Range(burstMin, burstMax + 1);
+    }
+
     [Header("Legacy baselines (ignored if useAdvancedAccuracy==true)")]
     public int meleeAcc   = 95;
     public int closeAcc   = 80;
@@ -76,4 +84,5 @@ public class WeaponDefinition : ScriptableObject
     public int critStartMedium  = 80;
     public int critStartLong    = 70;
     public int critStartExtreme = 60;
+
 }

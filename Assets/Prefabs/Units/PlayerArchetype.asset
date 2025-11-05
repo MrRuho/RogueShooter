@@ -15,13 +15,15 @@ MonoBehaviour:
   personalCoverMax: 100
   coverRegenOnMove: 10
   coverRegenPerUnusedAP: 10
-  lowCoverPenalty: 10
-  highCoverPenalty: 20
+  lowCoverPenalty: 0
+  highCoverPenalty: 0
   basicShootinSkill: 69
   shootingSkillLevel: 0
   accuracyBonusPerSkillLevel: 3
   grenadeCapacity: 2
   throwingRange: 7
+  visionRange: 20
+  useHeightAware: 1
   coverMaxByLevel:
     serializedVersion: 2
     m_Curve:

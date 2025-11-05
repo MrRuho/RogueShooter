@@ -1,7 +1,6 @@
 using Unity.Cinemachine;
 using UnityEngine;
 
-
 public class ScreenShake : MonoBehaviour
 {
     public static ScreenShake Instance { get; private set; }
@@ -12,10 +11,15 @@ public class ScreenShake : MonoBehaviour
     [SerializeField]
     private CinemachineImpulseSource cinemachineExplosiveImpulseSource;
 
+    [Header("Recoil Shake Settings")]
+    [Tooltip("Minimum time between recoil shakes to prevent stacking")]
+    [SerializeField]
+    private float recoilCooldown = 0.1f;
+
+    private float lastRecoilTime = -999f;
+
     private void Awake()
     {
-
-        // Ensure that there is only one instance in the scene
         if (Instance != null)
         {
             Debug.LogError("ScreenShake: More than one ScreenShake in the scene!" + transform + " " + Instance);
@@ -32,8 +36,13 @@ public class ScreenShake : MonoBehaviour
     }
 
     public void RecoilCameraShake(float ShakeStrength)
-    { 
+    {
+        if (Time.time - lastRecoilTime < recoilCooldown)
+        {
+            return;
+        }
+
+        lastRecoilTime = Time.time;
         cinemachineRecoilImpulseSource.GenerateImpulse(ShakeStrength);
     }
 }
-

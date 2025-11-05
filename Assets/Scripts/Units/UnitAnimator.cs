@@ -21,6 +21,22 @@ public class UnitAnimator : NetworkBehaviour
     [SerializeField] private Transform shootPointTransform;
     [SerializeField] private Transform rightHandTransform;
 
+    [Header("Visual Effects")]
+    [SerializeField] private GameObject muzzleFlashPrefab;
+    [SerializeField] private float muzzleFlashDuration = 0.1f;
+
+    [Header("Audio")]
+    [SerializeField] private AudioSource weaponAudioSource;
+    [SerializeField] private AudioClip[] rifleShootVariations;
+    [SerializeField] private AudioClip rifleShootWithTail;
+    
+    [Header("Audio Settings")]
+    [SerializeField] private float pitchVariation = 0.1f;
+    [SerializeField] private float volumeVariation = 0.15f;
+    [SerializeField] private float baseVolume = 1f;
+    [SerializeField] private float maxHearingDistance = 50f;
+    [SerializeField] private AnimationCurve volumeRolloff = AnimationCurve.Linear(0, 1, 1, 0);
+
     private static bool IsNetworkActive() => NetworkClient.active || NetworkServer.active;
 
     private MoveAction _move;
@@ -33,6 +49,9 @@ public class UnitAnimator : NetworkBehaviour
   
     private HealthSystem hs;
 
+    private int currentShotInBurst = 0;
+    private int totalShotsInBurst = 0;
+
     private void Awake()
     {
         if (!animator) animator = GetComponent<Animator>();
@@ -40,18 +59,33 @@ public class UnitAnimator : NetworkBehaviour
 
         useNetwork = NetMode.IsOnline
              && netAnim != null
-             && (isServer || isOwned);   // NetworkBehaviourin omat propertyt
+             && (isServer || isOwned);
         
         TryGetComponent(out _move);
         TryGetComponent(out _shoot);
         TryGetComponent(out _grenade);
         TryGetComponent(out _melee);
-        TryGetComponent(out hs);  
+        TryGetComponent(out hs);
+        
+        SetupAudioSource();
+    }
+
+    private void SetupAudioSource()
+    {
+        if (weaponAudioSource == null) return;
+        
+        weaponAudioSource.spatialBlend = 1f;
+        weaponAudioSource.rolloffMode = AudioRolloffMode.Custom;
+        weaponAudioSource.maxDistance = maxHearingDistance;
+        weaponAudioSource.minDistance = 1f;
+        weaponAudioSource.dopplerLevel = 0f;
+        weaponAudioSource.spread = 0f;
+        
+        weaponAudioSource.SetCustomCurve(AudioSourceCurveType.CustomRolloff, volumeRolloff);
     }
 
     private void OnEnable()
     {
-        // Varmuus: poista ensin, tilaa sitten -> estää tuplat vaikka OnEnable ajettaisiin useasti
         if (_move)
         {
             _move.OnStartMoving -= MoveAction_OnStartMoving;
@@ -117,7 +151,6 @@ public class UnitAnimator : NetworkBehaviour
         EquipRifle();
     }
 
-    // Valitsee automaattisesti oikean verkko/offline animaation.
     public void SetTrigger(string name)
     {
         if (useNetwork) netAnim.SetTrigger(name);
@@ -126,9 +159,8 @@ public class UnitAnimator : NetworkBehaviour
     
     private void OnDying_StopSending(object s, EventArgs e)
     {
-        // katkaise kaikki myöhemmät AE-lähetykset
         pendingGrenadeAction = null;
-        useNetwork = false; // ei NetworkAnimator-triggeröintiä enää tästä eteenpäin
+        useNetwork = false;
     }
 
     private void MoveAction_OnStartMoving(object sender, EventArgs e)
@@ -145,10 +177,62 @@ public class UnitAnimator : NetworkBehaviour
     public Transform ShootPoint => shootPointTransform;
     public GameObject BulletPrefab => bulletProjectilePrefab;
 
+    public void NotifyBurstStart(int burstSize)
+    {
+        currentShotInBurst = 0;
+        totalShotsInBurst = burstSize;
+    }
+
+    public void PlayRifleShootEffects()
+    {
+        if (hs && (hs.IsDying() || hs.IsDead())) return;
+        if (weaponAudioSource == null) return;
+
+        currentShotInBurst++;
+        bool isLastShot = currentShotInBurst >= totalShotsInBurst;
+
+        // MUZZLE FLASH EFEKTI
+        if (muzzleFlashPrefab != null && shootPointTransform != null)
+        {
+            GameObject flash = Instantiate(muzzleFlashPrefab, shootPointTransform.position, shootPointTransform.rotation);
+            Destroy(flash, muzzleFlashDuration);
+        }
+
+        AudioClip clipToPlay = null;
+
+        if (isLastShot && rifleShootWithTail != null)
+        {
+            clipToPlay = rifleShootWithTail;
+        }
+        else if (rifleShootVariations != null && rifleShootVariations.Length > 0)
+        {
+            clipToPlay = rifleShootVariations[UnityEngine.Random.Range(0, rifleShootVariations.Length)];
+        }
+
+        if (clipToPlay != null)
+        {
+            float pitch = 1f + UnityEngine.Random.Range(-pitchVariation, pitchVariation);
+            float volume = baseVolume + UnityEngine.Random.Range(-volumeVariation, volumeVariation);
+            
+            weaponAudioSource.pitch = pitch;
+            weaponAudioSource.PlayOneShot(clipToPlay, volume);
+            
+            weaponAudioSource.pitch = 1f;
+        }
+    }
+
+    
     private void ShootAction_OnShoot(object sender, ShootAction.OnShootEventArgs e)
     {
         if (hs && (hs.IsDying() || hs.IsDead())) return;
+        
+        if (e.targetUnit == null)
+        {
+            return;
+        }
+
         SetTrigger("Shoot");
+        PlayRifleShootEffects();
 
         Vector3 target = e.targetUnit.GetWorldPosition();
         float unitShoulderHeight = 2.5f;
@@ -171,19 +255,8 @@ public class UnitAnimator : NetworkBehaviour
         if (hs && (hs.IsDying() || hs.IsDead())) return;
         EquipMelee();
         SetTrigger("Melee");
-
-        /*
-        if (!IsNetworkActive())
-        {
-            animator.SetTrigger("Melee");
-        }
-        else
-        {
-            netAnim.SetTrigger("Melee");
-        }
-        */
-        
     }
+    
     private void MeleeAction_OnMeleeActionCompleted(object sender, EventArgs e)
     {
         if (hs && (hs.IsDying() || hs.IsDead())) return;
@@ -195,6 +268,7 @@ public class UnitAnimator : NetworkBehaviour
         if (hs && (hs.IsDying() || hs.IsDead())) return;
         weaponVis.OwnerRequestSet(rifleRight: false, rifleLeft: true, meleeLeft: false, grenade: false);
     }
+    
     private Vector3 pendingGrenadeTarget;
     private GranadeAction pendingGrenadeAction; 
     
@@ -209,8 +283,6 @@ public class UnitAnimator : NetworkBehaviour
    
     }
 
-    // --------- START Grenade Animation events START -----------------------
-    // Event marks is set in animation. UnitAnimations -> Throw Grenade Stand
     public void AE_PickGrenadeStand()
     {
         if (hs && (hs.IsDying() || hs.IsDead())) return;
@@ -223,22 +295,18 @@ public class UnitAnimator : NetworkBehaviour
     public void AE_ThrowGrenadeStandRelease()
     {
         if (hs && (hs.IsDying() || hs.IsDead())) return;
-        // --- GUARD: jos pending on jo käytetty, älä tee mitään (estää tuplan samalta koneelta)
         if (pendingGrenadeAction == null) return;
 
-        // --- GATE: onlinessa vain omistaja-client saa jatkaa (server ja ei-ownerit return)
         if (NetworkClient.active || NetworkServer.active)
         {
             var ni = GetComponentInParent<NetworkIdentity>();
             if (!(isClient && ni && ni.isOwned)) return;
         }
 
-        // Mistä kranaatti lähtee (sama logiikka kuin luodeilla)
         Vector3 origin = rightHandTransform.position;
 
         float farWU = pendingGrenadeAction.GetMaxThrowRangeWU();
 
-        // Kutsu keskitettyä synkkaa (täsmälleen kuin luodeissa)
         if (NetMode.IsOnline)
 
             NetworkSync.SpawnGrenade(granadeProjectilePrefab, origin, pendingGrenadeTarget, farWU, this.GetActorId());
@@ -248,7 +316,6 @@ public class UnitAnimator : NetworkBehaviour
             OfflineGameSimulator.SpawnGrenade(granadeProjectilePrefab, origin, pendingGrenadeTarget, farWU);
         }
 
-        // Siivous kuten ennen
         pendingGrenadeAction?.OnGrenadeBehaviourComplete();
         pendingGrenadeAction = null;
     }
@@ -258,7 +325,7 @@ public class UnitAnimator : NetworkBehaviour
         if (hs && (hs.IsDying() || hs.IsDead())) return;
         EquipRifle();
     }
-    //--------------- END Grenade Animation events END ---------------
+
     private void GrenadeAction_ThrowReady(object sender, EventArgs e)
     {
        weaponVis.OwnerRequestSet(rifleRight: false, rifleLeft: true, meleeLeft: false, grenade: false);

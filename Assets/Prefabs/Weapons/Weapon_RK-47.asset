@@ -15,53 +15,46 @@ MonoBehaviour:
   maxShootRange: 20
   NoCoverDamageBonus: 30
   baseDamage: 50
-  critBonusDamage: 20
-  grazeFactor: 0.6
-  missChipFactor: 0.3
+  critBonusDamage: 10
+  grazeFactor: 0.4
+  missChipFactor: 0.2
   closeMax: 5
   mediumMax: 12
   longMax: 25
   useAdvancedAccuracy: 1
   melee:
-    baseHitChance: 20
-    onHit_Close: 25
-    onHit_Graze: 25
-    onHit_Hit: 50
-    onHit_Crit: 10
-    onMiss_Miss: 50
-    onMiss_CritMiss: 50
+    baseHitChance: 12
+    onHit_Close: 100
+    onHit_Graze: 100
+    onHit_Hit: 100
+    onHit_Crit: 16
   close:
-    baseHitChance: 70
-    onHit_Close: 25
-    onHit_Graze: 25
-    onHit_Hit: 50
-    onHit_Crit: 10
-    onMiss_Miss: 80
-    onMiss_CritMiss: 20
+    baseHitChance: 34
+    onHit_Close: 68
+    onHit_Graze: 34
+    onHit_Hit: 28
+    onHit_Crit: 3
   medium:
-    baseHitChance: 80
-    onHit_Close: 25
-    onHit_Graze: 25
-    onHit_Hit: 50
-    onHit_Crit: 10
-    onMiss_Miss: 80
-    onMiss_CritMiss: 20
+    baseHitChance: 54
+    onHit_Close: 68
+    onHit_Graze: 34
+    onHit_Hit: 28
+    onHit_Crit: 3
   long:
-    baseHitChance: 60
-    onHit_Close: 25
-    onHit_Graze: 25
-    onHit_Hit: 50
-    onHit_Crit: 10
-    onMiss_Miss: 80
-    onMiss_CritMiss: 20
+    baseHitChance: 42
+    onHit_Close: 68
+    onHit_Graze: 34
+    onHit_Hit: 28
+    onHit_Crit: 3
   extreme:
     baseHitChance: 0
-    onHit_Close: 25
-    onHit_Graze: 25
-    onHit_Hit: 50
-    onHit_Crit: 10
-    onMiss_Miss: 20
-    onMiss_CritMiss: 80
+    onHit_Close: 100
+    onHit_Graze: 100
+    onHit_Hit: 100
+    onHit_Crit: 16
+  burstMin: 3
+  burstMax: 3
+  burstShotDelay: 0.15
   meleeAcc: 30
   closeAcc: 90
   mediumAcc: 90

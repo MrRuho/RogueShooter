@@ -56,7 +56,7 @@ public class MeleeAction : BaseAction
                 state = State.MeleeActionAfterHit;
                 float afterHitStateTime = 1f;
                 stateTimer = afterHitStateTime;
-                ApplyHit(damage, targetUnit, true);
+                ApplyHit(damage, false, false, targetUnit, true);
                 OnAnyMeleeActionHit?.Invoke(this, EventArgs.Empty);
                 break;
             case State.MeleeActionAfterHit:

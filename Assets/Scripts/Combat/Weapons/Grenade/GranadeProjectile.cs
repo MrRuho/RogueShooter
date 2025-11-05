@@ -1,3 +1,4 @@
+
 using System;
 using UnityEngine;
 using Mirror;
@@ -107,6 +108,12 @@ public class GrenadeProjectile : NetworkBehaviour
 
     [Tooltip("Ruutukoko WU:na. Jos WU == ruutu, pidä 1.")]
     [SerializeField] private float tileSizeWU = 1f;
+
+    [Header("Audio")]
+    [SerializeField] private AudioClip[] explosionSounds;
+    [SerializeField] private float explosionVolume = 1f;
+    [SerializeField] private float explosionMaxHearingDistance = 80f;
+    [SerializeField] private AnimationCurve explosionVolumeRolloff = AnimationCurve.Linear(0, 1, 1, 0.2f);
 
     // sisäinen tila
     private int _bounces;
@@ -595,6 +602,7 @@ public class GrenadeProjectile : NetworkBehaviour
         LocalExplode();
     }
 
+    /*
     private void LocalExplode()
     {
         if (isExploded) return;
@@ -621,6 +629,105 @@ public class GrenadeProjectile : NetworkBehaviour
 
         Destroy(gameObject);
     }
+    */
+
+    private void LocalExplode()
+    {
+        if (isExploded) return;
+        isExploded = true;
+
+        // DAMAGE paikallisesti
+        Collider[] hits = Physics.OverlapSphere(targetPosition, damageRadius);
+        foreach (var c in hits)
+        {
+            if (c.TryGetComponent<Unit>(out var u))
+                NetworkSync.ApplyDamageToUnit(u, damage, targetPosition, this.GetActorId());
+            if (c.TryGetComponent<DestructibleObject>(out var d))
+                NetworkSync.ApplyDamageToObject(d, damage, targetPosition, this.GetActorId());
+        }
+
+        // AUDIO
+        PlayExplosionSound(targetPosition);
+
+        // VFX paikallisesti
+        OnAnyGranadeExploded?.Invoke(this, EventArgs.Empty);
+        SpawnRouter.SpawnLocal(
+            grenadeExplodeVFXPrefab.gameObject,
+            targetPosition + Vector3.up * 1f,
+            Quaternion.identity,
+            source: transform
+        );
+
+        Destroy(gameObject);
+    }
+
+    /*
+        private IEnumerator SpawnVFXAt(string sceneName, Vector3 pos, double explodeAtServerTime)
+        {
+            float wait = Mathf.Max(0f, (float)(explodeAtServerTime - NetworkTime.time));
+            if (wait > 0f) yield return new WaitForSeconds(wait);
+
+            // AUDIO
+            PlayExplosionSound(pos);
+
+            // Vain visuaali — ei peli-impactia clienteillä
+            OnAnyGranadeExploded?.Invoke(this, EventArgs.Empty);
+            SpawnRouter.SpawnLocal(
+                grenadeExplodeVFXPrefab.gameObject,
+                pos + Vector3.up * 1f,
+                Quaternion.identity,
+                source: null,
+                sceneName: sceneName
+            );
+        }
+
+    */
+
+    private IEnumerator SpawnVFXAt(string sceneName, Vector3 pos, double explodeAtServerTime)
+    {
+        float wait = Mathf.Max(0f, (float)(explodeAtServerTime - NetworkTime.time));
+        if (wait > 0f) yield return new WaitForSeconds(wait);
+
+        // AUDIO
+        PlayExplosionSound(pos);
+
+        // Vain visuaali — ei peli-impactia clienteillä
+        OnAnyGranadeExploded?.Invoke(this, EventArgs.Empty);
+        SpawnRouter.SpawnLocal(
+            grenadeExplodeVFXPrefab.gameObject,
+            pos + Vector3.up * 1f,
+            Quaternion.identity,
+            source: null,
+            sceneName: sceneName
+        );
+    }
+    
+    private void PlayExplosionSound(Vector3 position)
+    {
+        if (explosionSounds == null || explosionSounds.Length == 0) return;
+
+        AudioClip clip = explosionSounds[UnityEngine.Random.Range(0, explosionSounds.Length)];
+        if (clip == null) return;
+
+        GameObject audioGO = new GameObject("ExplosionAudio_Temp");
+        audioGO.transform.position = position;
+
+        AudioSource source = audioGO.AddComponent<AudioSource>();
+        source.clip = clip;
+        source.volume = explosionVolume;
+        source.spatialBlend = 1f;
+        source.rolloffMode = AudioRolloffMode.Custom;
+        source.maxDistance = explosionMaxHearingDistance;
+        source.minDistance = 5f;
+        source.dopplerLevel = 0f;
+        source.SetCustomCurve(AudioSourceCurveType.CustomRolloff, explosionVolumeRolloff);
+
+        source.Play();
+
+        Destroy(audioGO, clip.length + 0.1f);
+    }
+
+
 
     [ClientRpc]
     private void RpcBeaconTick()
@@ -691,22 +798,7 @@ public class GrenadeProjectile : NetworkBehaviour
         StartCoroutine(DestroyAfter(0.30f));
     }
 
-    private IEnumerator SpawnVFXAt(string sceneName, Vector3 pos, double explodeAtServerTime)
-    {
-        float wait = Mathf.Max(0f, (float)(explodeAtServerTime - NetworkTime.time));
-        if (wait > 0f) yield return new WaitForSeconds(wait);
 
-        // Vain visuaali — ei peli-impactia clienteillä
-        OnAnyGranadeExploded?.Invoke(this, EventArgs.Empty);
-        SpawnRouter.SpawnLocal(
-            grenadeExplodeVFXPrefab.gameObject,
-            pos + Vector3.up * 1f,
-            Quaternion.identity,
-            source: null,
-            sceneName: sceneName
-        );
-    }
- 
     private IEnumerator DestroyAfter(float seconds)
     {
         yield return new WaitForSeconds(seconds);
@@ -730,4 +822,5 @@ public class GrenadeProjectile : NetworkBehaviour
             r.enabled = !hidden;
         }
     }
+
 }

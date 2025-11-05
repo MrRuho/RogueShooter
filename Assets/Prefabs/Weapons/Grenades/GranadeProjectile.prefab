@@ -231,6 +231,37 @@ MonoBehaviour:
   speedMinClamp: 1.5
   speedMaxClamp: 14
   tileSizeWU: 2
+  explosionSounds:
+  - {fileID: 8300000, guid: 9fc29fd506eee9a4e87062863137fe39, type: 3}
+  - {fileID: 8300000, guid: 2ef8d3cd22f87754d8df21a0d7f0e44e, type: 3}
+  - {fileID: 8300000, guid: ba84c7f43cf587344a32723c6b00e33e, type: 3}
+  - {fileID: 8300000, guid: e53c50cdd14c0004f8f381d4a956ab7b, type: 3}
+  explosionVolume: 1
+  explosionMaxHearingDistance: 80
+  explosionVolumeRolloff:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: -0.8
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 0.2
+      inSlope: -0.8
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
   actorUnitNetId: 0
   ownerPlayerNetId: 0
   ownerTeamId: -1

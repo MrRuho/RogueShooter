@@ -4,7 +4,7 @@ public static class CoverService
     public enum CoverType { None, Low, High }
 
     public static float GetCoverMitigationBase(CoverType t)
-        => t == CoverType.High ? .6f : (t == CoverType.Low ? .7f : 0);
+        => t == CoverType.High ? .4f : (t == CoverType.Low ? .6f : 0);
 
     public static float GetCoverMitigationPoints(CoverType t)
     {
