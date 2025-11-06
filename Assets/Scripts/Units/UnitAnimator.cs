@@ -1,6 +1,7 @@
 using UnityEngine;
 using System;
 using Mirror;
+using System.Collections;
 
 [RequireComponent(typeof(MoveAction))]
 public class UnitAnimator : NetworkBehaviour
@@ -27,8 +28,9 @@ public class UnitAnimator : NetworkBehaviour
 
     [Header("Audio")]
     [SerializeField] private AudioSource weaponAudioSource;
+    [SerializeField] private AudioSource tailAudioSource; // ← LISÄÄ TÄMÄ
     [SerializeField] private AudioClip[] rifleShootVariations;
-    [SerializeField] private AudioClip rifleShootWithTail;
+    [SerializeField] private AudioClip rifleShootTail; // ← Muuta nimi selkeämmäksi
     
     [Header("Audio Settings")]
     [SerializeField] private float pitchVariation = 0.1f;
@@ -55,21 +57,22 @@ public class UnitAnimator : NetworkBehaviour
     private void Awake()
     {
         if (!animator) animator = GetComponent<Animator>();
-        if (!netAnim)  netAnim  = GetComponent<NetworkAnimator>();
+        if (!netAnim) netAnim = GetComponent<NetworkAnimator>();
 
         useNetwork = NetMode.IsOnline
              && netAnim != null
              && (isServer || isOwned);
-        
+
         TryGetComponent(out _move);
         TryGetComponent(out _shoot);
         TryGetComponent(out _grenade);
         TryGetComponent(out _melee);
         TryGetComponent(out hs);
-        
+
         SetupAudioSource();
     }
 
+    /*
     private void SetupAudioSource()
     {
         if (weaponAudioSource == null) return;
@@ -82,6 +85,31 @@ public class UnitAnimator : NetworkBehaviour
         weaponAudioSource.spread = 0f;
         
         weaponAudioSource.SetCustomCurve(AudioSourceCurveType.CustomRolloff, volumeRolloff);
+    }
+    */
+    private void SetupAudioSource()
+    {
+        if (weaponAudioSource == null) return;
+        
+        weaponAudioSource.spatialBlend = 1f;
+        weaponAudioSource.rolloffMode = AudioRolloffMode.Custom;
+        weaponAudioSource.maxDistance = maxHearingDistance;
+        weaponAudioSource.minDistance = 1f;
+        weaponAudioSource.dopplerLevel = 0f;
+        weaponAudioSource.spread = 0f;
+        weaponAudioSource.SetCustomCurve(AudioSourceCurveType.CustomRolloff, volumeRolloff);
+        
+        // Aseta tail AudioSource samoilla asetuksilla
+        if (tailAudioSource != null)
+        {
+            tailAudioSource.spatialBlend = 1f;
+            tailAudioSource.rolloffMode = AudioRolloffMode.Custom;
+            tailAudioSource.maxDistance = maxHearingDistance;
+            tailAudioSource.minDistance = 1f;
+            tailAudioSource.dopplerLevel = 0f;
+            tailAudioSource.spread = 0f;
+            tailAudioSource.SetCustomCurve(AudioSourceCurveType.CustomRolloff, volumeRolloff);
+        }
     }
 
     private void OnEnable()
@@ -183,49 +211,89 @@ public class UnitAnimator : NetworkBehaviour
         totalShotsInBurst = burstSize;
     }
 
+    /*
+        public void PlayRifleShootEffects()
+        {
+            if (hs && (hs.IsDying() || hs.IsDead())) return;
+            if (weaponAudioSource == null) return;
+
+            currentShotInBurst++;
+            bool isLastShot = currentShotInBurst >= totalShotsInBurst;
+
+            // MUZZLE FLASH EFEKTI
+            if (muzzleFlashPrefab != null && shootPointTransform != null)
+            {
+                GameObject flash = Instantiate(muzzleFlashPrefab, shootPointTransform.position, shootPointTransform.rotation);
+                Destroy(flash, muzzleFlashDuration);
+            }
+
+            AudioClip clipToPlay = null;
+
+            if (isLastShot && rifleShootWithTail != null)
+            {
+                clipToPlay = rifleShootWithTail;
+            }
+            else if (rifleShootVariations != null && rifleShootVariations.Length > 0)
+            {
+                clipToPlay = rifleShootVariations[UnityEngine.Random.Range(0, rifleShootVariations.Length)];
+            }
+
+            if (clipToPlay != null)
+            {
+                float pitch = 1f + UnityEngine.Random.Range(-pitchVariation, pitchVariation);
+                float volume = baseVolume + UnityEngine.Random.Range(-volumeVariation, volumeVariation);
+
+                weaponAudioSource.pitch = pitch;
+                weaponAudioSource.PlayOneShot(clipToPlay, volume);
+
+                weaponAudioSource.pitch = 1f;
+            }
+        }
+    */
+
     public void PlayRifleShootEffects()
     {
         if (hs && (hs.IsDying() || hs.IsDead())) return;
         if (weaponAudioSource == null) return;
 
         currentShotInBurst++;
-        bool isLastShot = currentShotInBurst >= totalShotsInBurst;
 
-        // MUZZLE FLASH EFEKTI
+        // MUZZLE FLASH
         if (muzzleFlashPrefab != null && shootPointTransform != null)
         {
             GameObject flash = Instantiate(muzzleFlashPrefab, shootPointTransform.position, shootPointTransform.rotation);
             Destroy(flash, muzzleFlashDuration);
         }
 
-        AudioClip clipToPlay = null;
-
-        if (isLastShot && rifleShootWithTail != null)
+        // LAUKAISUÄÄNI
+        if (rifleShootVariations != null && rifleShootVariations.Length > 0)
         {
-            clipToPlay = rifleShootWithTail;
-        }
-        else if (rifleShootVariations != null && rifleShootVariations.Length > 0)
-        {
-            clipToPlay = rifleShootVariations[UnityEngine.Random.Range(0, rifleShootVariations.Length)];
-        }
-
-        if (clipToPlay != null)
-        {
+            AudioClip shotClip = rifleShootVariations[UnityEngine.Random.Range(0, rifleShootVariations.Length)];
+            
             float pitch = 1f + UnityEngine.Random.Range(-pitchVariation, pitchVariation);
             float volume = baseVolume + UnityEngine.Random.Range(-volumeVariation, volumeVariation);
-            
+
             weaponAudioSource.pitch = pitch;
-            weaponAudioSource.PlayOneShot(clipToPlay, volume);
-            
+            weaponAudioSource.PlayOneShot(shotClip, volume);
             weaponAudioSource.pitch = 1f;
+        }
+
+        // TAIL-ÄÄNI (erillisellä AudioSourcella, soitetaan samanaikaisesti tai pienellä viiveellä)
+        if (tailAudioSource != null && rifleShootTail != null)
+        {
+            float tailPitch = 1f + UnityEngine.Random.Range(-pitchVariation * 0.3f, pitchVariation * 0.3f);
+            float tailVolume = baseVolume * 0.7f + UnityEngine.Random.Range(-volumeVariation * 0.5f, volumeVariation * 0.5f);
+            
+            tailAudioSource.pitch = tailPitch;
+            tailAudioSource.PlayOneShot(rifleShootTail, tailVolume);
+            tailAudioSource.pitch = 1f;
         }
     }
 
-    
     private void ShootAction_OnShoot(object sender, ShootAction.OnShootEventArgs e)
     {
         if (hs && (hs.IsDying() || hs.IsDead())) return;
-        
+
         if (e.targetUnit == null)
         {
             return;
@@ -234,21 +302,25 @@ public class UnitAnimator : NetworkBehaviour
         SetTrigger("Shoot");
         PlayRifleShootEffects();
 
-        Vector3 target = e.targetUnit.GetWorldPosition();
-        float unitShoulderHeight = 2.5f;
-        target.y += unitShoulderHeight;
+        Vector3 target = BulletTargetCalculator.CalculateBulletTarget(
+            e.targetUnit,
+            e.shotTier,
+            e.shootingUnit
+        );
+
+        // Määritä pitikö osua Unittiin
+        bool shouldHitUnit = e.shotTier != ShotTier.CritMiss && e.shotTier != ShotTier.Close;
 
         if (NetMode.IsOnline)
         {
-
-            NetworkSync.SpawnBullet(bulletProjectilePrefab, shootPointTransform.position, target, this.GetActorId());
-
+            NetworkSync.SpawnBullet(bulletProjectilePrefab, shootPointTransform.position, target, shouldHitUnit, this.GetActorId());
         }
         else
         {
-            OfflineGameSimulator.SpawnBullet(bulletProjectilePrefab, shootPointTransform.position, target);
+            OfflineGameSimulator.SpawnBullet(bulletProjectilePrefab, shootPointTransform.position, target, shouldHitUnit);
         }
     }
+
 
     private void MeleeAction_OnMeleeActionStarted(object sender, EventArgs e)
     {

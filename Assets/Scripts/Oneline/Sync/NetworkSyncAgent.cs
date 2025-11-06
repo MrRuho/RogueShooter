@@ -33,7 +33,8 @@ public class NetworkSyncAgent : NetworkBehaviour
     /// </summary>
     /// <param name="spawnPos">World position where the bullet starts (usually weapon muzzle).</param>
     /// <param name="clientSuggestedTarget">World position the bullet is travelling towards.</param>
-
+    
+    /*
     [Command(requiresAuthority = true)]
     public void CmdSpawnBullet(uint actorNetId, Vector3 clientSuggestedTarget)
     {
@@ -63,6 +64,38 @@ public class NetworkSyncAgent : NetworkBehaviour
                 }
             });
     }
+    */
+    
+    [Command(requiresAuthority = true)]
+    public void CmdSpawnBullet(uint actorNetId, Vector3 clientSuggestedTarget, bool shouldHitUnits)
+    {
+        if (!NetworkServer.active) return;
+        if (bulletPrefab == null) { Debug.LogWarning("[NetSyncAgent] bulletPrefab missing"); return; }
+        if (actorNetId == 0 || !RightOwner(actorNetId)) return;
+
+        if (!NetworkServer.spawned.TryGetValue(actorNetId, out var actorNi) || actorNi == null) return;
+
+        var ua = actorNi.GetComponent<UnitAnimator>();
+        Vector3 origin = (ua && ua.ShootPoint) ? ua.ShootPoint.position : actorNi.transform.position;
+        Vector3 target = clientSuggestedTarget;
+
+        SpawnRouter.SpawnNetworkServer(
+            bulletPrefab, origin, Quaternion.identity,
+            source: actorNi.transform,
+            sceneName: null,
+            parent: null,
+            owner: connectionToClient,
+            beforeSpawn: go =>
+            {
+                if (go.TryGetComponent<BulletProjectile>(out var bp))
+                {
+                    bp.actorUnitNetId = actorNetId;
+                    bp.Setup(target, shouldHitUnits);
+                }
+            });
+    }
+
+
 
     [Command(requiresAuthority = true)]
     public void CmdSpawnGrenade(uint actorNetId, Vector3 clientSuggestedTarget)

@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 3097119756488607016}
   - component: {fileID: 304312524000843521}
   - component: {fileID: 2370998551675184731}
-  m_Layer: 10
+  m_Layer: 0
   m_Name: SM_Bld_ConcreteFrame_Pillar_Short_03.005
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -153,7 +153,7 @@ GameObject:
   - component: {fileID: 3724252257080652369}
   - component: {fileID: 3162328012643787073}
   - component: {fileID: 6876188359369791152}
-  m_Layer: 10
+  m_Layer: 0
   m_Name: SM_Bld_ConcreteFrame_Pillar_Short_03.004
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -293,7 +293,7 @@ GameObject:
   - component: {fileID: 6267084575248127672}
   - component: {fileID: 5732153757280355138}
   - component: {fileID: 7894318126939212120}
-  m_Layer: 10
+  m_Layer: 0
   m_Name: SM_Bld_ConcreteFrame_Pillar_Short_03.010
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -433,7 +433,7 @@ GameObject:
   - component: {fileID: 3297092827760020120}
   - component: {fileID: 8078410485351659851}
   - component: {fileID: 2135384344291500023}
-  m_Layer: 10
+  m_Layer: 0
   m_Name: SM_Bld_ConcreteFrame_Pillar_Short_03.014
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -573,7 +573,7 @@ GameObject:
   - component: {fileID: 6164925947198661596}
   - component: {fileID: 5768496800891188156}
   - component: {fileID: 6485998934140763479}
-  m_Layer: 10
+  m_Layer: 0
   m_Name: SM_Bld_ConcreteFrame_Pillar_Short_03.015
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -713,7 +713,7 @@ GameObject:
   - component: {fileID: 3067996999545283663}
   - component: {fileID: 1528171931495241694}
   - component: {fileID: 1202055138761103343}
-  m_Layer: 10
+  m_Layer: 0
   m_Name: SM_Bld_ConcreteFrame_Pillar_Short_03.009
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -853,7 +853,7 @@ GameObject:
   - component: {fileID: 4859916456087320646}
   - component: {fileID: 5809214506334102440}
   - component: {fileID: 5625332552282044491}
-  m_Layer: 10
+  m_Layer: 0
   m_Name: SM_Bld_ConcreteFrame_Pillar_Short_03.008
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -993,7 +993,7 @@ GameObject:
   - component: {fileID: 3623059626503917690}
   - component: {fileID: 2633206897840587647}
   - component: {fileID: 1810638434153444066}
-  m_Layer: 10
+  m_Layer: 0
   m_Name: SM_Bld_ConcreteFrame_Pillar_Short_03.001
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1129,7 +1129,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1942924400130936996}
-  m_Layer: 10
+  m_Layer: 0
   m_Name: SM_Bld_ConcreteFrame_Pilar_Short_03_Destroyed_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1184,7 +1184,7 @@ GameObject:
   - component: {fileID: 2578839734463997521}
   - component: {fileID: 2563154756793923518}
   - component: {fileID: 9146040482018357939}
-  m_Layer: 10
+  m_Layer: 0
   m_Name: SM_Bld_ConcreteFrame_Pillar_Short_03_cell.002
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1325,7 +1325,7 @@ GameObject:
   - component: {fileID: 8644101821227356769}
   - component: {fileID: 6214657663683504225}
   - component: {fileID: 3105353703311887311}
-  m_Layer: 10
+  m_Layer: 0
   m_Name: SM_Bld_ConcreteFrame_Pillar_Short_03.012
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1465,7 +1465,7 @@ GameObject:
   - component: {fileID: 4392488782323147908}
   - component: {fileID: 228168563152984150}
   - component: {fileID: 2156335922135514933}
-  m_Layer: 10
+  m_Layer: 0
   m_Name: SM_Bld_ConcreteFrame_Pillar_Short_03.016
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1605,7 +1605,7 @@ GameObject:
   - component: {fileID: 5592433560171662684}
   - component: {fileID: 7520628077565651776}
   - component: {fileID: 6182590029450488063}
-  m_Layer: 10
+  m_Layer: 0
   m_Name: SM_Bld_ConcreteFrame_Pillar_Short_03.006
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1745,7 +1745,7 @@ GameObject:
   - component: {fileID: 257404115700063025}
   - component: {fileID: 3583767650694728902}
   - component: {fileID: 3234798947157908768}
-  m_Layer: 10
+  m_Layer: 0
   m_Name: SM_Bld_ConcreteFrame_Pillar_Short_03.013
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1885,7 +1885,7 @@ GameObject:
   - component: {fileID: 4548348232785447325}
   - component: {fileID: 7554426152346160556}
   - component: {fileID: 5773598975664693998}
-  m_Layer: 10
+  m_Layer: 0
   m_Name: SM_Bld_ConcreteFrame_Pillar_Short_03.011
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2025,7 +2025,7 @@ GameObject:
   - component: {fileID: 5988701939447947735}
   - component: {fileID: 6132912635966760896}
   - component: {fileID: 7075067892739229396}
-  m_Layer: 10
+  m_Layer: 0
   m_Name: SM_Bld_ConcreteFrame_Pillar_Short_03_cell
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2166,7 +2166,7 @@ GameObject:
   - component: {fileID: 821756065587352137}
   - component: {fileID: 6251061869455666816}
   - component: {fileID: 2857948871934037516}
-  m_Layer: 10
+  m_Layer: 0
   m_Name: SM_Bld_ConcreteFrame_Pillar_Short_03_cell.001
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2307,7 +2307,7 @@ GameObject:
   - component: {fileID: 6682322755995547767}
   - component: {fileID: 8735385835770725132}
   - component: {fileID: 1995424373660577346}
-  m_Layer: 10
+  m_Layer: 0
   m_Name: SM_Bld_ConcreteFrame_Pillar_Short_03.002
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2447,7 +2447,7 @@ GameObject:
   - component: {fileID: 8350573898129831673}
   - component: {fileID: 1785669498408633732}
   - component: {fileID: 4360674420240722170}
-  m_Layer: 10
+  m_Layer: 0
   m_Name: SM_Bld_ConcreteFrame_Pillar_Short_03_cell.003
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2588,7 +2588,7 @@ GameObject:
   - component: {fileID: 1436061398540844185}
   - component: {fileID: 3945217761659494048}
   - component: {fileID: 1903916273778609835}
-  m_Layer: 10
+  m_Layer: 0
   m_Name: SM_Bld_ConcreteFrame_Pillar_Short_03.007
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2728,7 +2728,7 @@ GameObject:
   - component: {fileID: 670151408301622595}
   - component: {fileID: 5286562757312391422}
   - component: {fileID: 6088191021841237173}
-  m_Layer: 10
+  m_Layer: 0
   m_Name: SM_Bld_ConcreteFrame_Pillar_Short_03.003
   m_TagString: Untagged
   m_Icon: {fileID: 0}

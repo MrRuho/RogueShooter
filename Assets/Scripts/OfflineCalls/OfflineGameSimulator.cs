@@ -2,7 +2,7 @@ using UnityEngine;
 
 public static class OfflineGameSimulator
 {
-    public static void SpawnBullet(GameObject bulletPrefab, Vector3 spawnPos, Vector3 targetPos)
+    public static void SpawnBullet(GameObject bulletPrefab, Vector3 spawnPos, Vector3 targetPos, bool shouldHitUnits)
     {
         SpawnRouter.SpawnLocal(
             bulletPrefab, spawnPos, Quaternion.identity,
@@ -12,25 +12,9 @@ public static class OfflineGameSimulator
             beforeReturn: go =>
             {
                 if (go.TryGetComponent<BulletProjectile>(out var gp))
-                    gp.Setup(targetPos);
+                    gp.Setup(targetPos, shouldHitUnits);
             });
     }
-
-    /*
-    public static void SpawnGrenade(GameObject grenadePrefab, Vector3 spawnPos, Vector3 targetPos)
-    {
-        SpawnRouter.SpawnLocal(
-            grenadePrefab, spawnPos, Quaternion.identity,
-            source: null,
-            sceneName: LevelLoader.Instance.CurrentLevel,
-            parent: null,
-            beforeReturn: go =>
-            {
-                if (go.TryGetComponent<GrenadeProjectile>(out var gp))
-                    gp.Setup(targetPos);
-            });
-    }
-    */
 
     public static void SpawnGrenade(GameObject grenadePrefab, Vector3 spawnPos, Vector3 targetPos, float maxRangeWU)
     {
@@ -43,17 +27,15 @@ public static class OfflineGameSimulator
             {
                 if (go.TryGetComponent<GrenadeProjectile>(out var gp))
                     gp.ownerTeamId = 0;
-                    gp.Setup(targetPos, maxRangeWU); // ← tärkein muutos        
+                    gp.Setup(targetPos, maxRangeWU);
             });
     }
     
     public static void SpawnRagdoll(GameObject prefab, Vector3 pos, Quaternion rot, uint sourceUnitNetId, Transform originalRootBone, Vector3 lastHitPosition, int overkill)
     {
-
-        // OFFLINE: paikallinen spawn, ohjaa samaan sceneen kuin originalRootBone
         SpawnRouter.SpawnLocal(
             prefab, pos, rot,
-            source: originalRootBone, // → sama scene kuin ruumiilla/luurangolla (level)
+            source: originalRootBone,
             sceneName: null,
             parent: null,
             beforeReturn: go =>
@@ -65,6 +47,5 @@ public static class OfflineGameSimulator
                     unitRagdoll.Setup(originalRootBone);
                 }
             });
-            
     }
 }

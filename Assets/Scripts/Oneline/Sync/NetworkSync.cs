@@ -30,7 +30,7 @@ public static class NetworkSync
     public static bool IsDedicatedServer  => NetworkServer.active && !NetworkClient.active;
     public static bool IsOffline => !NetworkServer.active && !NetworkClient.active;
 
-    
+
     /// <summary>
     /// Hae NetworkClient netId:llä (toimii sekä clientillä että serverillä).
     /// Palauttaa null jos ei löydy (esim. ei vielä spawnattu tällä framella).
@@ -55,6 +55,7 @@ public static class NetworkSync
     /// <param name="bulletPrefab">The bullet prefab to spawn (must have NetworkIdentity if used online).</param>
     /// <param name="spawnPos">The starting position of the bullet (usually weapon muzzle).</param>
     /// <param name="targetPos">The target world position the bullet should travel towards.</param>
+    /*
     public static void SpawnBullet(GameObject bulletPrefab, Vector3 spawnPos, Vector3 targetPos, uint actorNetId)
     {
         if (NetworkServer.active) // Online: server or host
@@ -87,6 +88,39 @@ public static class NetworkSync
             NetworkSyncAgent.Local.CmdSpawnBullet(actorNetId, targetPos);
         } 
     }
+    */
+    public static void SpawnBullet(GameObject bulletPrefab, Vector3 spawnPos, Vector3 targetPos, bool shouldHitUnits, uint actorNetId)
+    {
+        if (NetworkServer.active) // Online: server or host
+        {
+            Transform src = null;
+            if (NetworkServer.spawned.TryGetValue(actorNetId, out var srcNI) && srcNI != null)
+                src = srcNI.transform;
+
+            SpawnRouter.SpawnNetworkServer(
+                bulletPrefab, spawnPos, Quaternion.identity,
+                source: src,
+                sceneName: null,
+                parent: null,
+                owner: null,
+                beforeSpawn: go =>
+                {
+                    if (go.TryGetComponent<BulletProjectile>(out var gp))
+                    {
+                        gp.actorUnitNetId = actorNetId;
+                        gp.Setup(targetPos, shouldHitUnits);
+                    }
+                });
+
+            return;
+        }
+
+        if (NetworkClient.active && NetworkSyncAgent.Local != null) // Online: client
+        {
+            NetworkSyncAgent.Local.CmdSpawnBullet(actorNetId, targetPos, shouldHitUnits);
+        } 
+    }
+
 
     // HUOM: käytä tätä myös AE:stä (UnitAnimatorista)
     public static void SpawnGrenade(GameObject grenadePrefab, Vector3 spawnPos, Vector3 targetPos, float maxRangeWU, uint actorNetId)

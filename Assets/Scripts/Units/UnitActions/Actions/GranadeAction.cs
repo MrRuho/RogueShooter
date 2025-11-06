@@ -334,6 +334,11 @@ public class GranadeAction : BaseAction
         StartCoroutine(TurnAndThrow(0.5f, TargetWorld));
     }
 
+    public override int GetActionPointsCost()
+    {
+        return 2;
+    }
+
     private IEnumerator TurnAndThrow(float delay, Vector3 targetWorld)
     {
         float waitAfterAligned = 0.1f;

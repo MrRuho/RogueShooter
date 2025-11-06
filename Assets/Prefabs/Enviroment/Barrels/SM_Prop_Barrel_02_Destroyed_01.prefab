@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 412196556853829629}
   - component: {fileID: 4569123156829719363}
   - component: {fileID: 2987218813644941880}
-  m_Layer: 10
+  m_Layer: 0
   m_Name: SM_Prop_Barrel_02_cell
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -154,7 +154,7 @@ GameObject:
   - component: {fileID: 3273998173741527571}
   - component: {fileID: 1238862443034969296}
   - component: {fileID: 3826449051938551459}
-  m_Layer: 10
+  m_Layer: 0
   m_Name: SM_Prop_Barrel_02_cell.001
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -294,7 +294,7 @@ GameObject:
   - component: {fileID: 5175380541684277972}
   - component: {fileID: 3424576463774318978}
   - component: {fileID: 51489628094384976}
-  m_Layer: 10
+  m_Layer: 0
   m_Name: SM_Prop_Barrel_02_cell.003
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -434,7 +434,7 @@ GameObject:
   - component: {fileID: 1707323273324356429}
   - component: {fileID: 8932757271830256007}
   - component: {fileID: 2866551824665713945}
-  m_Layer: 10
+  m_Layer: 0
   m_Name: SM_Prop_Barrel_02_cell.002
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -575,7 +575,7 @@ GameObject:
   - component: {fileID: 6045924552024752911}
   - component: {fileID: 7385852628738837096}
   - component: {fileID: 1542412337399117437}
-  m_Layer: 10
+  m_Layer: 0
   m_Name: SM_Prop_Barrel_02.001
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -711,7 +711,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8578271065490219061}
-  m_Layer: 10
+  m_Layer: 0
   m_Name: SM_Prop_Barrel_02_Destroyed_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}

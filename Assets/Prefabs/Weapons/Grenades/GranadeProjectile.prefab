@@ -165,6 +165,7 @@ GameObject:
   - component: {fileID: 5695312915198751386}
   - component: {fileID: 8641355737707481325}
   - component: {fileID: -5832321910042178392}
+  - component: {fileID: 3331423518669773530}
   m_Layer: 0
   m_Name: GranadeProjectile
   m_TagString: Untagged
@@ -232,10 +233,10 @@ MonoBehaviour:
   speedMaxClamp: 14
   tileSizeWU: 2
   explosionSounds:
-  - {fileID: 8300000, guid: 9fc29fd506eee9a4e87062863137fe39, type: 3}
-  - {fileID: 8300000, guid: 2ef8d3cd22f87754d8df21a0d7f0e44e, type: 3}
-  - {fileID: 8300000, guid: ba84c7f43cf587344a32723c6b00e33e, type: 3}
-  - {fileID: 8300000, guid: e53c50cdd14c0004f8f381d4a956ab7b, type: 3}
+  - {fileID: 8300000, guid: bda79490fb9557a4ba41ec6400a0a8e4, type: 3}
+  - {fileID: 8300000, guid: a18ba5982dd786e4299ea89aaa07baf9, type: 3}
+  - {fileID: 8300000, guid: d4e674b69147d4d439cce28eb2804a4d, type: 3}
+  - {fileID: 8300000, guid: 7047c4c6c82e09a46bcec6c095cb4ed0, type: 3}
   explosionVolume: 1
   explosionMaxHearingDistance: 80
   explosionVolumeRolloff:
@@ -382,6 +383,103 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0
   targetSceneName: 
+--- !u!82 &3331423518669773530
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7374537704562805240}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 0}
+  m_Resource: {fileID: 0}
+  m_PlayOnAwake: 0
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 50
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0.18333334
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!1001 &3712377068640779720
 PrefabInstance:
   m_ObjectHideFlags: 0

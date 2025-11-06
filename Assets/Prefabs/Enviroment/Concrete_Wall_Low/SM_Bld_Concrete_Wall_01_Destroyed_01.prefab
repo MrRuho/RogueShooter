@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 5667580958510806497}
   - component: {fileID: 631977038328067118}
   - component: {fileID: 7415183284932595248}
-  m_Layer: 10
+  m_Layer: 0
   m_Name: SM_Bld_Concrete_Wall_01_cell.016
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -154,7 +154,7 @@ GameObject:
   - component: {fileID: 3405062046308608369}
   - component: {fileID: 168232364237631819}
   - component: {fileID: 6923001379314269114}
-  m_Layer: 10
+  m_Layer: 0
   m_Name: SM_Bld_Concrete_Wall_01_cell.019
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -291,7 +291,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3241892805886996811}
-  m_Layer: 10
+  m_Layer: 0
   m_Name: SM_Bld_Concrete_Wall_01_Destroyed_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -346,7 +346,7 @@ GameObject:
   - component: {fileID: 2832636047841612390}
   - component: {fileID: 8816953976232405689}
   - component: {fileID: 7575178307885633039}
-  m_Layer: 10
+  m_Layer: 0
   m_Name: SM_Bld_Concrete_Wall_01_cell
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -487,7 +487,7 @@ GameObject:
   - component: {fileID: 7981841890188203705}
   - component: {fileID: 4075175125610489866}
   - component: {fileID: 4822830851722269112}
-  m_Layer: 10
+  m_Layer: 0
   m_Name: SM_Bld_Concrete_Wall_01_cell.011
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -628,7 +628,7 @@ GameObject:
   - component: {fileID: 4303716700130420135}
   - component: {fileID: 1046129924250716008}
   - component: {fileID: 347091633211048034}
-  m_Layer: 10
+  m_Layer: 0
   m_Name: SM_Bld_Concrete_Wall_01_cell.005
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -769,7 +769,7 @@ GameObject:
   - component: {fileID: 5435742110857319124}
   - component: {fileID: 2430897383814995706}
   - component: {fileID: 1145874439037013483}
-  m_Layer: 10
+  m_Layer: 0
   m_Name: SM_Bld_Concrete_Wall_01_cell.009
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -910,7 +910,7 @@ GameObject:
   - component: {fileID: 9039368974586539850}
   - component: {fileID: 3885945493838728176}
   - component: {fileID: 195557714620944411}
-  m_Layer: 10
+  m_Layer: 0
   m_Name: SM_Bld_Concrete_Wall_01_cell.002
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1051,7 +1051,7 @@ GameObject:
   - component: {fileID: 1372107125436275821}
   - component: {fileID: 5773514266494272659}
   - component: {fileID: 8644491623834734483}
-  m_Layer: 10
+  m_Layer: 0
   m_Name: SM_Bld_Concrete_Wall_01_cell.015
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1192,7 +1192,7 @@ GameObject:
   - component: {fileID: 5893013972657106575}
   - component: {fileID: 5209498379424302762}
   - component: {fileID: 1066362134503962662}
-  m_Layer: 10
+  m_Layer: 0
   m_Name: SM_Bld_Concrete_Wall_01_cell.006
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1333,7 +1333,7 @@ GameObject:
   - component: {fileID: 5920493684434993122}
   - component: {fileID: 1649618715984484963}
   - component: {fileID: 2147274933218516714}
-  m_Layer: 10
+  m_Layer: 0
   m_Name: SM_Bld_Concrete_Wall_01_cell.012
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1474,7 +1474,7 @@ GameObject:
   - component: {fileID: 5445213793918878406}
   - component: {fileID: 2948671178409916455}
   - component: {fileID: 2652871350453703667}
-  m_Layer: 10
+  m_Layer: 0
   m_Name: SM_Bld_Concrete_Wall_01_cell.003
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1615,7 +1615,7 @@ GameObject:
   - component: {fileID: 8402288702618808943}
   - component: {fileID: 7020326926898518247}
   - component: {fileID: 2964498410499414991}
-  m_Layer: 10
+  m_Layer: 0
   m_Name: SM_Bld_Concrete_Wall_01_cell.007
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1756,7 +1756,7 @@ GameObject:
   - component: {fileID: 266137956813354374}
   - component: {fileID: 3938654400486231317}
   - component: {fileID: 5067470943659058295}
-  m_Layer: 10
+  m_Layer: 0
   m_Name: SM_Bld_Concrete_Wall_01_cell.017
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1897,7 +1897,7 @@ GameObject:
   - component: {fileID: 1557130560779940225}
   - component: {fileID: 2936655274213932198}
   - component: {fileID: 227091327319819018}
-  m_Layer: 10
+  m_Layer: 0
   m_Name: SM_Bld_Concrete_Wall_01_cell.001
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2038,7 +2038,7 @@ GameObject:
   - component: {fileID: 8088430510351253053}
   - component: {fileID: 4363417901221245724}
   - component: {fileID: 4183091945586920932}
-  m_Layer: 10
+  m_Layer: 0
   m_Name: SM_Bld_Concrete_Wall_01_cell.004
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2179,7 +2179,7 @@ GameObject:
   - component: {fileID: 5970212528358380197}
   - component: {fileID: 1607777308032108315}
   - component: {fileID: 4955414142967435742}
-  m_Layer: 10
+  m_Layer: 0
   m_Name: SM_Bld_Concrete_Wall_01_cell.010
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2320,7 +2320,7 @@ GameObject:
   - component: {fileID: 704984264482068557}
   - component: {fileID: 4232325337275287325}
   - component: {fileID: 9102349582603827803}
-  m_Layer: 10
+  m_Layer: 0
   m_Name: SM_Bld_Concrete_Wall_01_cell.013
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2461,7 +2461,7 @@ GameObject:
   - component: {fileID: 3507615312062896746}
   - component: {fileID: 1900924679483858780}
   - component: {fileID: 7670694849264682291}
-  m_Layer: 10
+  m_Layer: 0
   m_Name: SM_Bld_Concrete_Wall_01_cell.008
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2602,7 +2602,7 @@ GameObject:
   - component: {fileID: 4902096593325984859}
   - component: {fileID: 1385080680916374471}
   - component: {fileID: 2632633937774741489}
-  m_Layer: 10
+  m_Layer: 0
   m_Name: SM_Bld_Concrete_Wall_01_cell.018
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2743,7 +2743,7 @@ GameObject:
   - component: {fileID: 2800206640988135298}
   - component: {fileID: 6665488956652719957}
   - component: {fileID: 7821497050479900949}
-  m_Layer: 10
+  m_Layer: 0
   m_Name: SM_Bld_Concrete_Wall_01_cell.014
   m_TagString: Untagged
   m_Icon: {fileID: 0}

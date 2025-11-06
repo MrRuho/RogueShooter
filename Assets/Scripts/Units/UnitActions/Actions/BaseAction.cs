@@ -196,7 +196,7 @@ public abstract class BaseAction : NetworkBehaviour
             NetworkSync.UpdateCoverUI(targetUnit);
 
             // Ainoastaan oikeat osumat voivat tehdä vahinkoa.
-            if (!coverOnly) MakeDamage(damage - before, targetUnit);
+            if (!coverOnly && !bypassCover) MakeDamage(damage - before, targetUnit);
 
             // Kriittinen osuma osuu kokonaisuudessaan.
             if(bypassCover) MakeDamage(damage, targetUnit); 

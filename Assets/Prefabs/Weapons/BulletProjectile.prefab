@@ -52,7 +52,12 @@ MonoBehaviour:
   syncInterval: 0
   actorUnitNetId: 0
   trailRenderer: {fileID: 5442639809319685186}
-  bulletHitVfxPrefab: {fileID: 3887590015569303107, guid: 97e5eca1246813a41a0884cd819b587b, type: 3}
+  unitHitVfxPrefab: {fileID: 499110, guid: 51c2da477d26bee4caf3c3ac82363696, type: 3}
+  environmentHitVfxPrefab: {fileID: 3887590015569303107, guid: 97e5eca1246813a41a0884cd819b587b, type: 3}
+  moveSpeed: 200
+  bulletRadius: 0.001
+  maxLifetime: 5
+  maxTravelDistance: 100
 --- !u!114 &6271034069317388405
 MonoBehaviour:
   m_ObjectHideFlags: 0

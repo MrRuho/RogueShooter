@@ -27,25 +27,25 @@ MonoBehaviour:
     onHit_Close: 100
     onHit_Graze: 100
     onHit_Hit: 100
-    onHit_Crit: 16
+    onHit_Crit: 100
   close:
-    baseHitChance: 34
-    onHit_Close: 68
-    onHit_Graze: 34
-    onHit_Hit: 28
-    onHit_Crit: 3
+    baseHitChance: 42
+    onHit_Close: 52
+    onHit_Graze: 76
+    onHit_Hit: 100
+    onHit_Crit: 10
   medium:
-    baseHitChance: 54
-    onHit_Close: 68
-    onHit_Graze: 34
-    onHit_Hit: 28
-    onHit_Crit: 3
+    baseHitChance: 42
+    onHit_Close: 100
+    onHit_Graze: 100
+    onHit_Hit: 100
+    onHit_Crit: 7
   long:
     baseHitChance: 42
-    onHit_Close: 68
-    onHit_Graze: 34
-    onHit_Hit: 28
-    onHit_Crit: 3
+    onHit_Close: 100
+    onHit_Graze: 66
+    onHit_Hit: 44
+    onHit_Crit: 5
   extreme:
     baseHitChance: 0
     onHit_Close: 100
@@ -54,7 +54,7 @@ MonoBehaviour:
     onHit_Crit: 16
   burstMin: 3
   burstMax: 3
-  burstShotDelay: 0.15
+  burstShotDelay: 0.1
   meleeAcc: 30
   closeAcc: 90
   mediumAcc: 90
