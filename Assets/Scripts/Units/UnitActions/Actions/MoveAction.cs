@@ -101,14 +101,29 @@ public class MoveAction : BaseAction
 
                 if (!currentLevelGrid.Equals(_lastVisionPos))
                 {
-                    // Päivitä vision vain jos Unit ei ole kuolemassa
                     if (unit != null && !unit.IsDying() && !unit.IsDead())
                     {
                         var unitVision = unit.GetComponent<UnitVision>();
                         if (unitVision != null && unitVision.IsInitialized)
                             unitVision.NotifyMoved();
                     }
-                    StatusCoordinator.Instance.CheckOverwatchStep(unit, currentLevelGrid);
+
+                    // UUSI: Ilmoita serverille grid-muutoksesta
+                    if (NetworkServer.active || NetworkSync.IsOffline)
+                    {
+                        // Server: tarkista overwatch suoraan
+                        StatusCoordinator.Instance.CheckOverwatchStep(unit, currentLevelGrid);
+                    }
+                    else if (NetworkClient.active && NetworkSyncAgent.Local != null)
+                    {
+                        // Client: pyydä serveriä tarkistamaan overwatch
+                        var ni = unit.GetComponent<NetworkIdentity>();
+                        if (ni != null)
+                        {
+                            NetworkSyncAgent.Local.CmdCheckOverwatchStep(ni.netId, currentLevelGrid.x, currentLevelGrid.z, currentLevelGrid.floor);
+                        }
+                    }
+                    
                     _lastVisionPos = currentLevelGrid;
                 }
             }
@@ -416,4 +431,7 @@ public class MoveAction : BaseAction
             actionValue = targetCountAtGridPosition * 10,
         };
     }
+
+    /// Serveri toiminnot
+    
 }

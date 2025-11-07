@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using Mirror;
 using UnityEngine;
 /// <summary>
@@ -33,39 +34,7 @@ public class NetworkSyncAgent : NetworkBehaviour
     /// </summary>
     /// <param name="spawnPos">World position where the bullet starts (usually weapon muzzle).</param>
     /// <param name="clientSuggestedTarget">World position the bullet is travelling towards.</param>
-    
-    /*
-    [Command(requiresAuthority = true)]
-    public void CmdSpawnBullet(uint actorNetId, Vector3 clientSuggestedTarget)
-    {
-        if (!NetworkServer.active) return;
-        if (bulletPrefab == null) { Debug.LogWarning("[NetSyncAgent] bulletPrefab missing"); return; }
-        if (actorNetId == 0 || !RightOwner(actorNetId)) return;
 
-        if (!NetworkServer.spawned.TryGetValue(actorNetId, out var actorNi) || actorNi == null) return;
-
-        var ua = actorNi.GetComponent<UnitAnimator>();
-        Vector3 origin = (ua && ua.ShootPoint) ? ua.ShootPoint.position : actorNi.transform.position;
-        Vector3 target = clientSuggestedTarget;
-
-        // tärkeää: käytä SpawnRouteria ja anna source = actor
-        SpawnRouter.SpawnNetworkServer(
-            bulletPrefab, origin, Quaternion.identity,
-            source: actorNi.transform,
-            sceneName: null,
-            parent: null,
-            owner: connectionToClient,         // omistajuus halutessa
-            beforeSpawn: go =>
-            {
-                if (go.TryGetComponent<BulletProjectile>(out var bp))
-                {
-                    bp.actorUnitNetId = actorNetId;
-                    bp.Setup(target);
-                }
-            });
-    }
-    */
-    
     [Command(requiresAuthority = true)]
     public void CmdSpawnBullet(uint actorNetId, Vector3 clientSuggestedTarget, bool shouldHitUnits)
     {
@@ -94,8 +63,6 @@ public class NetworkSyncAgent : NetworkBehaviour
                 }
             });
     }
-
-
 
     [Command(requiresAuthority = true)]
     public void CmdSpawnGrenade(uint actorNetId, Vector3 clientSuggestedTarget)
@@ -126,7 +93,7 @@ public class NetworkSyncAgent : NetworkBehaviour
                 if (go.TryGetComponent<GrenadeProjectile>(out var gp))
                 {
                     gp.actorUnitNetId = actorNetId;
-                    gp.ownerTeamId    = teamId;
+                    gp.ownerTeamId = teamId;
                     gp.Setup(target);
                 }
             });
@@ -157,7 +124,7 @@ public class NetworkSyncAgent : NetworkBehaviour
     [Command(requiresAuthority = true)]
     public void CmdApplyDamage(uint actorNetId, uint targetNetId, int amount, Vector3 hitPosition)
     {
-        
+
         if (!NetworkServer.spawned.TryGetValue(targetNetId, out var targetNi) || targetNi == null) return;
         if (!RightOwner(actorNetId)) return;
 
@@ -276,7 +243,7 @@ public class NetworkSyncAgent : NetworkBehaviour
     [Command(requiresAuthority = false)]
     public void CmdSetUnderFire(uint unitNetId, bool value)
     {
-        
+
         if (!NetworkServer.spawned.TryGetValue(unitNetId, out var id) || id == null) return;
         var unit = id.GetComponent<Unit>();
         if (!unit) return;
@@ -357,6 +324,159 @@ public class NetworkSyncAgent : NetworkBehaviour
         if (!NetworkServer.spawned.TryGetValue(unitNetId, out NetworkIdentity ni)) return;
         var cs = ni.GetComponent<CoverSkill>(); // tai GetComponentInChildren<CoverSkill>()
         if (cs != null) cs.ServerApplyCoverBonus();
+    }
+
+    [Server]
+    public void ServerBroadcastOverwatchShot(uint watcherNetId, int targetX, int targetZ, int targetFloor)
+    {
+        Debug.Log($"[OW-Server] Broadcasting overwatch shot: watcher={watcherNetId}, target=({targetX},{targetZ},{targetFloor})");
+        RpcExecuteOverwatchShot(watcherNetId, targetX, targetZ, targetFloor);
+    }
+
+    [ClientRpc]
+    void RpcExecuteOverwatchShot(uint watcherNetId, int targetX, int targetZ, int targetFloor)
+    {
+        Debug.Log($"[OW-Client] Received RPC for overwatch shot: watcher={watcherNetId}, target=({targetX},{targetZ},{targetFloor})");
+
+        if (!NetworkClient.spawned.TryGetValue(watcherNetId, out var watcherNi) || watcherNi == null)
+        {
+            Debug.LogWarning($"[OW-Client] Watcher netId {watcherNetId} not found in spawned objects!");
+            return;
+        }
+
+        var watcher = watcherNi.GetComponent<Unit>();
+        if (watcher == null)
+        {
+            Debug.LogWarning($"[OW-Client] Watcher has no Unit component!");
+            return;
+        }
+
+        if (watcher.IsDead() || watcher.IsDying())
+        {
+            Debug.LogWarning($"[OW-Client] Watcher {watcher.name} is dead or dying!");
+            return;
+        }
+
+        var shoot = watcher.GetComponent<ShootAction>();
+        if (shoot == null)
+        {
+            Debug.LogWarning($"[OW-Client] Watcher {watcher.name} has no ShootAction!");
+            return;
+        }
+
+        GridPosition targetGridPos = new GridPosition(targetX, targetZ, targetFloor);
+
+        Debug.Log($"[OW-Client] Executing overwatch shot from {watcher.name} to {targetGridPos}");
+        shoot.TakeAction(targetGridPos, () => { });
+    }
+
+    [Command(requiresAuthority = false)]
+    public void CmdCheckOverwatchStep(uint unitNetId, int gridX, int gridZ, int gridFloor)
+    {
+        if (!NetworkServer.active) return;
+
+        if (!NetworkServer.spawned.TryGetValue(unitNetId, out var unitNi) || unitNi == null) return;
+
+        var unit = unitNi.GetComponent<Unit>();
+        if (unit == null || unit.IsDead() || unit.IsDying()) return;
+
+        GridPosition gridPos = new GridPosition(gridX, gridZ, gridFloor);
+        StatusCoordinator.Instance.CheckOverwatchStep(unit, gridPos);
+    }
+
+    [Command(requiresAuthority = false)]
+    public void CmdSetOverwatch(uint unitNetId, bool value)
+    {
+        if (!NetworkServer.active) return;
+
+        if (!NetworkServer.spawned.TryGetValue(unitNetId, out var unitNi) || unitNi == null) return;
+
+        var unit = unitNi.GetComponent<Unit>();
+        if (unit == null) return;
+
+        var overwatchAction = unit.GetComponent<OverwatchAction>();
+        if (overwatchAction != null)
+        {
+            overwatchAction.Overwatch = value;
+            Debug.Log($"[OW-NetworkSyncAgent] Set overwatch for {unit.name} to {value}");
+        }
+    }
+
+    [ClientRpc]
+    public void RpcRebuildTeamVision(uint[] unitNetIds, bool endPhase)
+    {
+        foreach (var id in unitNetIds)
+        {
+            if (!Mirror.NetworkClient.spawned.TryGetValue(id, out var ni) || ni == null) continue;
+
+            var unit = ni.GetComponent<Unit>();
+            if (!unit) continue;
+
+            var vision = unit.GetComponent<UnitVision>();
+            if (vision == null || !vision.IsInitialized) continue;
+
+            // 360° cache aina ensin
+            vision.UpdateVisionNow();
+
+            Vector3 facing = unit.transform.forward;
+            int actionpoints = unit.GetActionPoints();
+            float angle = endPhase ? vision.GetDynamicConeAngle(actionpoints, 80f) : 360f;
+
+            if (endPhase && unit.TryGetComponent<OverwatchAction>(out var ow) && ow.IsOverwatch())
+            {
+                var dir = ow.TargetWorld - unit.transform.position; dir.y = 0f;
+                if (dir.sqrMagnitude > 1e-4f) facing = dir.normalized;
+                angle = 80f;
+            }
+
+            vision.ApplyAndPublishDirectionalVision(facing, angle);
+        }
+    }
+
+    [Server]
+    public void ServerPushTeamVision(int teamId, bool endPhase)
+    {
+        var ids = CollectTeamUnitIds(teamId);
+        RpcRebuildTeamVision(ids, endPhase);
+    }
+
+    [Server]
+    private static uint[] CollectTeamUnitIds(int teamId)
+    {
+        var um = UnitManager.Instance;
+        var list = um != null ? um.GetAllUnitList() : null;
+        var ids = new List<uint>();
+        if (list == null) return ids.ToArray();
+
+        foreach (var unit in list)
+        {
+            if (!unit) continue;
+
+            int t = unit.GetTeamID();
+            if (t != teamId) continue;
+            if (unit.IsDying() || unit.IsDead()) continue;
+
+            var ni = unit.GetComponent<NetworkIdentity>();
+            if (ni != null) ids.Add(ni.netId);
+        }
+        return ids.ToArray();
+    }
+
+    // NetworkSyncAgent.cs
+
+    [Command(requiresAuthority = false)]
+    public void CmdSetOverwatch(uint unitNetId, bool value, float fx, float fz)
+    {
+        if (!Mirror.NetworkServer.spawned.TryGetValue(unitNetId, out var ni) || ni == null) return;
+
+        var u  = ni.GetComponent<Unit>();
+        var ow = ni.GetComponent<OverwatchAction>();
+        if (!u || !ow) return;
+
+        // ⬇️ ÄLÄ koske ow.TargetWorld:iin (setter private) — käytä serverimetodia
+        ow.ServerApplyOverwatch(value, new Vector2(fx, fz));
+
+        Debug.Log($"[OW-NetworkSyncAgent] Set overwatch for {u.name} to {value} (facing=({fx:F2},{fz:F2}))");
     }
 
 }

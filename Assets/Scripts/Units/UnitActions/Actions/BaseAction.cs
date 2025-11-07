@@ -255,7 +255,7 @@ public abstract class BaseAction : NetworkBehaviour
             NetworkSync.UpdateCoverUI(targetUnit);
 
             // Vaikka suojaa jäisi niin kriittinen osuma tekee vahinkoa silti.
-            if(bypassCover) MakeDamage(damage, targetUnit); 
+            if(bypassCover) MakeDamage(damage/3, targetUnit); 
         }
         else
         {

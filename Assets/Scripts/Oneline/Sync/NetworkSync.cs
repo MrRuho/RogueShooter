@@ -55,40 +55,6 @@ public static class NetworkSync
     /// <param name="bulletPrefab">The bullet prefab to spawn (must have NetworkIdentity if used online).</param>
     /// <param name="spawnPos">The starting position of the bullet (usually weapon muzzle).</param>
     /// <param name="targetPos">The target world position the bullet should travel towards.</param>
-    /*
-    public static void SpawnBullet(GameObject bulletPrefab, Vector3 spawnPos, Vector3 targetPos, uint actorNetId)
-    {
-        if (NetworkServer.active) // Online: server or host
-        {
-            Transform src = null;
-            if (NetworkServer.spawned.TryGetValue(actorNetId, out var srcNI) && srcNI != null)
-                src = srcNI.transform;
-
-            SpawnRouter.SpawnNetworkServer(
-                bulletPrefab, spawnPos, Quaternion.identity,
-                source: src,            // löydetty actorNetId:llä
-                sceneName: null,
-                parent: null,
-                owner: null,
-                beforeSpawn: go =>
-                {
-                    if (go.TryGetComponent<BulletProjectile>(out var gp))
-                    {
-                        gp.actorUnitNetId = actorNetId;
-                        gp.Setup(targetPos);
-                    }
-                });
-
-            return;
-
-        }
-
-        if (NetworkClient.active && NetworkSyncAgent.Local != null) // Online: client
-        {
-            NetworkSyncAgent.Local.CmdSpawnBullet(actorNetId, targetPos);
-        } 
-    }
-    */
     public static void SpawnBullet(GameObject bulletPrefab, Vector3 spawnPos, Vector3 targetPos, bool shouldHitUnits, uint actorNetId)
     {
         if (NetworkServer.active) // Online: server or host
@@ -120,7 +86,6 @@ public static class NetworkSync
             NetworkSyncAgent.Local.CmdSpawnBullet(actorNetId, targetPos, shouldHitUnits);
         } 
     }
-
 
     // HUOM: käytä tätä myös AE:stä (UnitAnimatorista)
     public static void SpawnGrenade(GameObject grenadePrefab, Vector3 spawnPos, Vector3 targetPos, float maxRangeWU, uint actorNetId)
@@ -268,8 +233,7 @@ public static class NetworkSync
     /// Like only active player AP(Action Points) are visible.
     /// When is Enemy turn only Enemy Units Action points are visible.
     /// Solo and Versus mode handle this localy becouse there is no need syncronisation.
-    /// </summary>
-    
+    /// </summary>   
     public static void BroadcastActionPoints(Unit unit, int apValue)
     {
         if (unit == null || unit.IsDying() || unit.IsDead()) return;
@@ -359,4 +323,45 @@ public static class NetworkSync
         return 0;
     }
     
+    public static void TriggerOverwatchShot(Unit watcher, Unit target, GridPosition targetGridPos)
+    {
+
+        if (watcher == null || target == null || watcher.IsDead() || watcher.IsDying())
+        {
+            return;
+        }
+ 
+        var shoot = watcher.GetComponent<ShootAction>();
+        if (shoot == null)
+        {
+            Debug.LogWarning($"[OW-NetworkSync] Watcher {watcher.name} has no ShootAction!");
+            return;
+        }
+
+        if (!NetworkServer.active && !NetworkClient.active)
+        {
+            shoot.TakeAction(targetGridPos, () => { });
+            return;
+        }
+
+        if (NetworkServer.active)
+        {   
+            shoot.TakeAction(targetGridPos, () => { });
+            
+            var agent = UnityEngine.Object.FindFirstObjectByType<NetworkSyncAgent>();
+            if (agent != null)
+            {
+                var watcherNi = watcher.GetComponent<NetworkIdentity>();
+                if (watcherNi != null)
+                {
+                    agent.ServerBroadcastOverwatchShot(watcherNi.netId, targetGridPos.x, targetGridPos.z, targetGridPos.floor);
+                }   
+            }
+
+            return;
+        }
+
+        Debug.LogWarning("[OW-NetworkSync] Client-only mode should not call TriggerOverwatchShot!");
+    }
+
 }

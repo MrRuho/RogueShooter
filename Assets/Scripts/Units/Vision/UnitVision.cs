@@ -114,22 +114,19 @@ public class UnitVision : MonoBehaviour
 
     public void UpdateVisionNow()
     {
-        // KRIITTINEN: Älä päivitä visionia jos Unit on kuolemassa tai kuollut
-        if (_unit != null && (_unit.IsDying() || _unit.IsDead()))
-            return;
-        
-        if (_healthSystem != null && (_healthSystem.IsDying() || _healthSystem.IsDead()))
-            return;
+        // 1) Ei päivitystä jos kuolemassa/kuollut
+        if (_unit != null && (_unit.IsDying() || _unit.IsDead())) return;
+        if (_healthSystem != null && (_healthSystem.IsDying() || _healthSystem.IsDead())) return;
 
-        if (!ShouldPublishVisionLocally())
-            return;
+        // 2) ÄLÄ palauta vielä – haluamme silti laskea välimuistin serverillä
+        bool publish = ShouldPublishVisionLocally();
 
+        // 3) Perusguardit
         if (!_initialized)
         {
             Debug.LogWarning($"[UnitVision UPDATE SKIP] {name} - not initialized");
             return;
         }
-
         if (visionSkill == null)
         {
             Debug.LogWarning($"[UnitVision UPDATE SKIP] {name} - no visionSkill");
@@ -138,23 +135,22 @@ public class UnitVision : MonoBehaviour
 
         var levelGrid = LevelGrid.Instance;
         var loSConfig = LoSConfig.Instance;
-        var teamVision = TeamVisionService.Instance;
-
-        if (levelGrid == null || loSConfig == null || teamVision == null)
+        if (levelGrid == null || loSConfig == null)
         {
-            Debug.LogWarning($"[UnitVision UPDATE SKIP] {name} - missing services: LG={levelGrid != null}, CFG={loSConfig != null}, TVS={teamVision != null}");
+            Debug.LogWarning($"[UnitVision UPDATE SKIP] {name} - missing services: LG={levelGrid != null}, CFG={loSConfig != null}");
             return;
         }
 
+        // 4) Origini ruutuun (korjaa kerros _unitin mukaan)
         var wp = _tr != null ? _tr.position : transform.position;
         var origin = levelGrid.GetGridPosition(wp);
-
         if (_unit != null)
         {
             var uf = _unit.GetGridPosition();
             origin = new GridPosition(origin.x, origin.z, uf.floor);
         }
 
+        // 5) Lasketaan näkyvät ruudut AINA
         HashSet<GridPosition> vis;
         if (visionSkill.useHeightAware)
         {
@@ -172,16 +168,28 @@ public class UnitVision : MonoBehaviour
             );
         }
 
-        _lastVisibleTiles = vis ?? _lastVisibleTiles;
+        // 6) Päivitä välimuisti – tätä StatusCoordinator käyttää overwatchissa
+        if (vis != null) _lastVisibleTiles = vis;
 
-
-        teamVision.ReplaceUnitVision(teamId, _unitKey, _lastVisibleTiles);    
+        // 7) Julkaise TeamVisioniin vain, jos kuuluu julkaista
+        if (publish)
+        {
+            var teamVision = TeamVisionService.Instance;
+            if (teamVision != null)
+                teamVision.ReplaceUnitVision(teamId, _unitKey, _lastVisibleTiles);
+        }
     }
+
 
     private bool ShouldPublishVisionLocally()
     {
-        if (NetworkSync.IsOffline) return true;
-        if (!NetworkSync.IsClient) return false;
+        if (NetworkSync.IsOffline) return true;        // SinglePlayer: julkaise normaalisti
+
+        if (!NetworkSync.IsClient) return false;       // Serveri ei julkaise tätä kautta
+
+        // Versus: älä anna clientin autopublishata 360° settiä TeamVisioniin – 
+        // julkaisu hoidetaan erikseen vaihe-RPC:llä (kohta 2).
+        if (GameModeManager.SelectedMode == GameMode.Versus) return false;
 
         var ni = NetworkSync.FindIdentity(this.GetActorId());
         return NetworkSync.IsOwnedHere(ni);
@@ -290,4 +298,6 @@ public class UnitVision : MonoBehaviour
         _lastVisibleTiles = new HashSet<GridPosition>(tiles);
         TeamVisionService.Instance.ReplaceUnitVision(teamId, _unitKey, _lastVisibleTiles);
     }
+
+    
 }

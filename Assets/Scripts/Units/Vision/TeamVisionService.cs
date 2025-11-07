@@ -210,4 +210,36 @@ public class TeamVisionService : MonoBehaviour
         /// <param name="gp">Grid position to query.</param>
         public bool IsVisible(GridPosition gp) => _counts.ContainsKey(gp);
     }
+
+    public void RebuildTeamVisionLocal(int teamId, bool endPhase)
+    {
+        var list = UnitManager.Instance?.GetAllUnitList();
+        if (list == null) return;
+
+        foreach (var unit in list)
+        {
+            if (!unit) continue;
+            if (unit.GetTeamID() != teamId) continue;
+            if (unit.IsDead() || unit.IsDying()) continue;
+
+            var vision = unit.GetComponent<UnitVision>();
+            if (vision == null || !vision.IsInitialized) continue;
+
+            // Aina päivitä tuore 360° cache ensin
+            vision.UpdateVisionNow();
+            int actionpoints = unit.GetActionPoints();
+            Vector3 facing = unit.transform.forward;
+            float angle = endPhase ? vision.GetDynamicConeAngle(actionpoints, 80f) : 360f;
+
+            if (endPhase && unit.TryGetComponent<OverwatchAction>(out var ow) && ow.IsOverwatch())
+            {
+                angle = vision.GetDynamicConeAngle(0, 80f);
+                var dir = ow.TargetWorld - unit.transform.position; dir.y = 0f;
+                if (dir.sqrMagnitude > 1e-4f) facing = dir.normalized;
+                angle = 80f;
+            }
+
+            vision.ApplyAndPublishDirectionalVision(facing, angle);
+        }
+    }
 }
