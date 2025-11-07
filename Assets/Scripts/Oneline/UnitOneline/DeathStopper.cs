@@ -47,6 +47,7 @@ public class DeathStopper : NetworkBehaviour
     /// SERVER ONLY. Katkaise liike, snäppää pose kaikille ja valmistele tuho.
     /// Kutsu tämä heti, kun päätät että unit kuolee (ennen komponenttien disablointia).
     /// </summary>
+/*
     [Server]
     public void HaltForDeath()
     {
@@ -67,6 +68,55 @@ public class DeathStopper : NetworkBehaviour
         var pos = transform.position;
         var rot = transform.rotation;
         RpcTeleportSnap(pos, rot);
+    }
+    */
+    
+    /// <summary>
+    /// Katkaise liike, snäppää pose kaikille ja valmistele tuho.
+    /// Toimii sekä offline- että online-tilassa.
+    /// </summary>
+    // POISTA [Server]
+
+    public void HaltForDeath()
+    {
+        // 1) Pysäytä liike deterministisesti (ennen kuin actionit disabloidaan)
+        try
+        {
+            if (moveAction)
+                moveAction.ForceStopNow(); // kutsuu ActionComplete() jne.
+        }
+        catch (System.Exception ex)
+        {
+            Debug.LogWarning($"[DeathStopper] ForceStopNow() poikkeus: {ex.Message}");
+        }
+
+        // 2) Snap: serverissä RPC; offline-lokisesti paikallinen snap
+        var pos = transform.position;
+        var rot = transform.rotation;
+
+        if (NetworkServer.active)
+        {
+            // online/server-polku
+            RpcTeleportSnap(pos, rot);   // [ClientRpc] metodi, ajetaan vain kun server aktiivinen
+        }
+        else
+        {
+            // offline-polku — EI RPC:tä
+            SnapLocal(pos, rot);
+        }
+    }
+
+    // Apumetodi offline-snappiin
+    private void SnapLocal(Vector3 pos, Quaternion rot)
+    {
+        transform.SetPositionAndRotation(pos, rot);
+
+        if (TryGetComponent<UnityEngine.AI.NavMeshAgent>(out var agent))
+        {
+            agent.ResetPath();
+            agent.Warp(pos);
+            transform.rotation = rot;
+        }
     }
 
     [ClientRpc]
@@ -117,10 +167,27 @@ public class DeathStopper : NetworkBehaviour
     {
         if (!unit)
         {
-            Debug.Log("[DeathStopper] Unit Is null!");
-            return; 
+            Debug.Log("[DeathStopper] Unit is null!");
+            return;
         }
         var ds = unit.GetComponent<DeathStopper>();
-        if (ds) ds.HaltForDeath();
+        if (ds == null) return;
+
+        // HaltForDeath itse voi sisäisesti vartioida server-jutut:
+        ds.HaltForDeath(); // EI [Server]
+    }
+
+    public static void TryHaltOfline(Unit unit)
+    {
+        if (!unit)
+        {
+            Debug.Log("[DeathStopper] Unit is null!");
+            return;
+        }
+        var ds = unit.GetComponent<DeathStopper>();
+        if (ds == null) return;
+
+        // HaltForDeath itse voi sisäisesti vartioida server-jutut:
+        ds.HaltForDeath(); // EI [Server]
     }
 }

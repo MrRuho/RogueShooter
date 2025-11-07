@@ -13,6 +13,7 @@ public class EnemyAI : MonoBehaviour
 {
     public static EnemyAI Instance { get; private set; }
 
+    private Unit actingUnit;
     private enum State
     {
         WaitingForEnemyTurn,
@@ -33,12 +34,13 @@ public class EnemyAI : MonoBehaviour
 
     private void Start()
     {
-        
+
         if (GameModeManager.SelectedMode == GameMode.SinglePlayer)
         {
             TurnSystem.Instance.OnTurnChanged += TurnSystem_OnTurnChanged;
         }
         
+        Unit.OnAnyUnitDead += HandleAnyUnitDead;
 
         if (GameNetworkManager.Instance != null &&
         GameNetworkManager.Instance.GetNetWorkClientConnected() &&
@@ -56,6 +58,8 @@ public class EnemyAI : MonoBehaviour
         {
             TurnSystem.Instance.OnTurnChanged -= TurnSystem_OnTurnChanged;
         }
+
+        Unit.OnAnyUnitDead -= HandleAnyUnitDead;
     }
 
     private void Update()
@@ -161,7 +165,7 @@ public class EnemyAI : MonoBehaviour
         foreach (BaseAction baseAction in enemyUnit.GetBaseActionsArray())
         {
             //NOTE! Just for testing. AI not do this for now.
-            if(baseAction.GetActionName() == "Overwatch")
+            if (baseAction.GetActionName() == "Overwatch")
             {
                 Debug.Log("[Enemy AI] I am too dumd to do Overwatch action!");
                 // Enemy AI Cant handle this action right now.
@@ -193,8 +197,10 @@ public class EnemyAI : MonoBehaviour
 
         // Try to take action
         if (bestEnemyAIAction != null && enemyUnit.TrySpendActionPointsToTakeAction(bestBaseAction))
-        {      
-            bestBaseAction.TakeAction(bestEnemyAIAction.gridPosition, onEnemyAIActionComplete);
+        {
+            actingUnit = enemyUnit;
+            // bestBaseAction.TakeAction(bestEnemyAIAction.gridPosition, onEnemyAIActionComplete);
+            bestBaseAction.TakeAction(bestEnemyAIAction.gridPosition, OnEnemyAIActionComplete);
             return true;
         }
         else
@@ -203,6 +209,26 @@ public class EnemyAI : MonoBehaviour
         }
     }
 
+    private void OnEnemyAIActionComplete()
+    {
+        actingUnit = null;
+        SetStateTakingTurn();              // palaa Busy -> TakingTurn
+    }
+    
+    private void HandleAnyUnitDead(object sender, EventArgs e)
+    {
+        var dead = sender as Unit;                 // sender on se Unit joka kuoli
+        if (dead == null) return;
+
+        if (state != State.Busy) return;           // reagoidaan vain jos AI odottaa actionia
+        if (actingUnit == null) return;               // ei käynnissä olevaa AI-yksikköä
+        if (dead != actingUnit) return;               // kuollut ei ollut juuri se joka toimi
+
+        actingUnit= null;
+        UnitActionSystem.Instance.SetBusy();
+        SetStateTakingTurn();                      // jatka AI-kierrosta
+    }
+ 
     /// <summary>
     /// When turn changed. Switch state to taking turn and enemy turn start. 
     /// </summary>

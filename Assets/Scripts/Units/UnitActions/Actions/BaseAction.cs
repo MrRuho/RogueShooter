@@ -17,66 +17,125 @@ public abstract class BaseAction : NetworkBehaviour
     protected Unit unit;
     protected bool isActive;
     protected Action onActionComplete;
-    private HealthSystem ownerHealth;
+
+    //private HealthSystem ownerHealth;
 
     protected virtual void Awake()
     {
+        /*
         if (ownerHealth == null)
             ownerHealth = GetComponentInParent<HealthSystem>();
+        */
 
         unit = GetComponent<Unit>();
     }
     
     void OnEnable()
-    {
-        
+    {    
+        /*
+        if (ownerHealth == null) ownerHealth = GetComponentInParent<HealthSystem>();
         if (ownerHealth != null)
+        {
             ownerHealth.OnDying += HandleUnitDying;
-        
+            // DEBUG
+            Debug.Log($"[BaseAction:{GetType().Name}] Subscribed OnDying for {unit?.name}");
+        }
+        else
+        {
+            Debug.LogWarning($"[BaseAction:{GetType().Name}] ownerHealth == null on {gameObject.name}");
+        }
+        */   
     }
 
     void OnDisable()
     {
-        
+        /*
         if (ownerHealth != null)
             ownerHealth.OnDying -= HandleUnitDying;
-        
+        */
+
     }
 
-    
+    /*
     private void HandleUnitDying(object sender, EventArgs e)
     {
         ForceCompleteNow();
     }
-    
+
     // DODO Testaa toimiiko tämä AI.n jumiutumisessa.
-    
+
     protected virtual void ForceCompleteNow()
     {
-        
+
         if (!isActive) return;
         isActive = false;
-        Debug.Log("[BaseAction] Set isActive: "+ isActive);
+        Debug.Log("[BaseAction] Set isActive: " + isActive);
         Action callback = onActionComplete;
-        Debug.Log("[BaseAction] onActionComplete: "+ onActionComplete);
-        Debug.Log("[BaseAction] Action callback: "+ callback);
+        Debug.Log("[BaseAction] onActionComplete: " + onActionComplete);
+        Debug.Log("[BaseAction] Action callback: " + callback);
         onActionComplete = null;
-        Debug.Log("[BaseAction] onActionComplete: "+ onActionComplete);
+        Debug.Log("[BaseAction] onActionComplete: " + onActionComplete);
         StopAllCoroutines();
         Debug.Log("[BaseAction] StopAllCorroutines");
+
+        OnAnyActionCompleted?.Invoke(this, EventArgs.Empty);
+    }
+    */
+    public bool IsActionActive()
+    {
+        return isActive;
+    }
+
+    public static bool AnyActionActive()
+    {
+        var allActions = FindObjectsByType<BaseAction>(FindObjectsSortMode.None);
+        foreach (var action in allActions)
+        {
+            if (action != null && action.isActive)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static void ForceCompleteAllActiveActions()
+    {
+        var allActions = FindObjectsByType<BaseAction>(FindObjectsSortMode.None);
+        int forcedCount = 0;
+        
+        foreach (var action in allActions)
+        {
+            if (action != null && action.isActive)
+            {
+                Debug.LogWarning($"[BaseAction] Pakkolopetetaan aktiivinen action: {action.GetType().Name} unitilta {action.unit?.name}");
+                action.ForceComplete();
+                forcedCount++;
+            }
+        }
+        
+        if (forcedCount > 0)
+        {
+            Debug.LogWarning($"[BaseAction] Pakkolopetettiin {forcedCount} actionia");
+        }
+    }
+
+    public void ForceComplete()
+    {
+        if (!isActive) return;
+
+        isActive = false;
+        
+        Action callback = onActionComplete;
+        onActionComplete = null;
+        
+        StopAllCoroutines();
         
         OnAnyActionCompleted?.Invoke(this, EventArgs.Empty);
         
-        // Kutsu callback VAIN jos Unit EI ole kuolemassa
-        if (unit != null && !unit.IsDying() && !unit.IsDead())
-        {
-            Debug.Log("[BaseAction] callback");
-            callback?.Invoke();
-        }
+        callback?.Invoke();
     }
-    
-        
-    
+
     // Defines the action button text for the Unit UI.
     public abstract string GetActionName();
 
@@ -103,10 +162,15 @@ public abstract class BaseAction : NetworkBehaviour
     // Prevents the player from performing multiple actions at the same time.
     protected void ActionStart(Action onActionComplete)
     {
-        CanselAllIntents();
+        // Tarkoituksia perutaan vain pelaajan vuorolla. (Tai vuoron alussa)
+        // jotkin actionit jatkuvat vuorojen yli. 
+        if(TurnSystem.Instance.IsPlayerTurn())
+        {
+            CanselAllIntents();
+        }
+
         isActive = true;
         this.onActionComplete = onActionComplete;
-
         OnAnyActionStarted?.Invoke(this, EventArgs.Empty);
     }
 
@@ -114,13 +178,16 @@ public abstract class BaseAction : NetworkBehaviour
     // Allows the player to perform new actions.
     protected void ActionComplete()
     {
-        if (!isActive)
-        {
-            return;
-        }
+        if (!isActive) { return; }
+        
         isActive = false;
         onActionComplete();
         OnAnyActionCompleted?.Invoke(this, EventArgs.Empty);
+    }
+
+    public void ResetChostActions()
+    {
+        ActionComplete();
     }
     
     // Perutaan kaikki Unitin aikomukset jos Unit tekee jotakin muuta.

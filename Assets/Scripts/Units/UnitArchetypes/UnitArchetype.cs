@@ -10,9 +10,13 @@ public class UnitArchetype : ScriptableObject
     public int personalCoverMax = 200;
     public int coverRegenOnMove = 1;
     public int coverRegenPerUnusedAP = 25;
-    public int lowCoverPenalty  = 12;      // -12% osumatodennäköisyys
-    public int highCoverPenalty = 25;      // -25%
+    public int LowCoverEnemyHitPenalty  = 12;      // -12% vihollisen osumatodennäköisyyteen
+    public int highCoverEnemyHitPenalty = 25;      // -25% vihollinen osumatodennäköisyyteen
 
+    [Space(10)]
+    [Header("Moving Skill")]
+    public int moveRange = 4;
+    public int moveEnemyHitPenalty = 5; // Kuinka paljon vähentää osumatodennäköisyyttä kun on liikkeessä. 
 
     [Space(10)]
     [Header("Shooting Skill")]

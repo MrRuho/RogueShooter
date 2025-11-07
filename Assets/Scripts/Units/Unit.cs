@@ -26,6 +26,8 @@ public class Unit : NetworkBehaviour
     [SerializeField, Min(0)] private int ACTION_POINTS_MAX = 2;
     private int actionPoints;
 
+    private int reactionPoins = 0;
+
     [SyncVar] public uint OwnerId;
 
     [SyncVar] private bool underFire = false;
@@ -194,10 +196,12 @@ public class Unit : NetworkBehaviour
     {
         ActionPointUsed?.Invoke(unit, EventArgs.Empty);
     }
-    
+
     private void SpendActionPoints(int amount)
     {
         actionPoints -= amount;
+        var team = Team;
+       // Debug.Log("[Unit] Tiimi: " + Team + "Unitilla actionpisteitä nyt: " + actionPoints);
 
         // Nosta eventti vain authoritative-puolella:
         if (NetMode.ServerOrOff)
@@ -210,10 +214,28 @@ public class Unit : NetworkBehaviour
 
         NetworkSync.BroadcastActionPoints(this, actionPoints);
     }
+    
+   
 
     public int GetActionPoints()
     {
         return actionPoints;
+    }
+
+    public int GetReactionPoints()
+    {
+      //  if (reactionPoins <= 0) { Debug.Log("[Unit] Tiimi: " + Team + "Unit ei voi ragoida. Reaktiopisteitä: " + reactionPoins); }
+        return reactionPoins;
+    }
+    
+    // Käytetään tilanteessa jossa toimitaan toisen vuorolla, kuten Overwach.
+    public void SpendReactionPoints()
+    {
+        if(reactionPoins > 0)
+        {
+//            Debug.Log("[Unit] Tiimi: " + Team + "Unit reagoi! Reaktiopisteitä: " + reactionPoins);
+            reactionPoins -= 1; 
+        }
     }
 
     /// <summary>
@@ -397,6 +419,7 @@ public class Unit : NetworkBehaviour
         _lastApStartTurnId = turnId;
 
         actionPoints = ACTION_POINTS_MAX;
+        reactionPoins = 0;
         OnAnyActionPointsChanged?.Invoke(this, EventArgs.Empty);
 
         // LISÄÄ TÄMÄ: Broadcastaa AP-muutos myös verkossa
@@ -413,8 +436,10 @@ public class Unit : NetworkBehaviour
         int ap = GetActionPoints();
         int per = GetCoverRegenPerUnusedAP();           // palauttaa >0 vain jos ei underFire
         if (ap > 0 && per > 0) Cover.RegenCoverBy(ap * per);  // coverSkill hoitaa clampit jne.
-        // (valinnainen) nollaa AP:t heti vuoron päättyessä:
-       // actionPoints = 0;
+
+
+        reactionPoins = actionPoints;
+
         OnAnyActionPointsChanged?.Invoke(this, EventArgs.Empty);
     }
 
@@ -467,7 +492,7 @@ public class Unit : NetworkBehaviour
         if (vis != null)
         {
             vis.enabled = false;
-        } 
+        }
 
         // 3) Estä myöhästyneet action-päivitykset
         foreach (var ba in GetComponents<BaseAction>())
@@ -484,11 +509,12 @@ public class Unit : NetworkBehaviour
         if (worldUi != null) worldUi.SetVisible(false);
 
         // --- UUTTA: viimeinen varmistus että input/UI vapautuu ---
-        UnitActionSystem.Instance?.UnlockInput();
+        UnitActionSystem.Instance.UnlockInput();
 
     }
 
     // <<< Kuolemaketjun alku (server) >>>
+    /*
     [Server]
     private void HandleDying_ServerFirst(object sender, System.EventArgs e)
     {
@@ -504,6 +530,27 @@ public class Unit : NetworkBehaviour
 
         // c) Sammuta serverillä (nykyinen teidän metodi)
         FreezeBeforeDespawn();
+    }
+    */
+    
+    private void HandleDying_ServerFirst(object sender, System.EventArgs e)
+    {
+        if (_deathHandled) return;
+        _deathHandled = true;
+
+        if (NetworkServer.active)
+        {
+            // online/server-polku
+            RpcFreezeClientSide();          // ajetaan vain jos server aktiivinen
+            DeathStopper.TryHalt(this);     // server-varmistus liikkeen pysäytykseen
+            FreezeBeforeDespawn();          // teidän nykyinen sulku ennen despawnia
+        }
+        else
+        {
+            // offline-polku: ei RPC:tä
+            DeathStopper.TryHaltOfline(this);
+            FreezeBeforeDespawn();
+        }
     }
 
     [ClientRpc]
@@ -535,7 +582,7 @@ public class Unit : NetworkBehaviour
         if (worldUI) worldUI.SetVisible(false);
 
         // 5) Vapauta UI (käytä teidän olemassa olevaa metodia)
-        UnitActionSystem.Instance?.UnlockInput();
+        UnitActionSystem.Instance.UnlockInput();
 
         // -- VAPAUTA KAMERA / INPUT AINA --
         CameraThaw.Thaw("Unit dying (RpcFreezeClientSide)");

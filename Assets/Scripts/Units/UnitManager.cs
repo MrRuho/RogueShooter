@@ -47,6 +47,11 @@ public class UnitManager : MonoBehaviour
 
     private void Unit_OnAnyUnitSpawned(object sender, EventArgs e)
     {   
+        
+        allUnitsList.RemoveAll(u => u == null );
+        friendlyUnitList.RemoveAll(u => u == null);
+        enemyUnitList.RemoveAll(u => u == null);
+
         // 1) Estä duplikaatit
         Unit unit = sender as Unit;
         if (!unitSet.Add(unit)) return;
@@ -92,6 +97,11 @@ public class UnitManager : MonoBehaviour
         friendlyUnitList.RemoveAll(u => u == null || u == unit);
         enemyUnitList.RemoveAll(u => u == null || u == unit);
 
+    }
+
+    public void ClearNullUnits()
+    {
+        
     }
     
     

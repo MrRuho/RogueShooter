@@ -1,6 +1,7 @@
 using System;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using static GridSystemVisual;
 
 /// <summary>
 /// This script handles the unit action system in the game.
@@ -95,10 +96,10 @@ public class UnitActionSystem : MonoBehaviour
         if (selectedUnit == null || selectedAction == null) return;
 
         if (InputManager.Instance.IsMouseButtonDownThisFrame() && selectedAction is GranadeAction)
-        {       
+        {
             if (selectedUnit.GetGrenadePCS() <= 0) return;
         }
-        
+
         GridPosition targetGridPosition;
 
         if (InputManager.Instance.IsMouseButtonDownThisFrame() && selectedAction is ShootAction)
@@ -143,7 +144,7 @@ public class UnitActionSystem : MonoBehaviour
     /// <summary>
     //      Prevents the player from performing multiple actions at the same time
     /// </summary>
-    private void SetBusy()
+    public void SetBusy()
     {
         isBusy = true;
         OnBusyChanged?.Invoke(this, isBusy);

@@ -52,6 +52,7 @@ public class TurnSystem : MonoBehaviour
     }
 
 
+    /*
     private void turnSystem_OnTurnStarted(Team startTurnTeam, int turnId)
     {
 
@@ -62,12 +63,72 @@ public class TurnSystem : MonoBehaviour
         foreach (Unit unit in UnitManager.Instance.GetAllUnitList())
         {
             if (unit.Team != startTurnTeam) continue;
-            units.Add(unit);
-        }
+            if(unit != null)
+            {
+                units.Add(unit);
+                unit.GetComponent<BaseAction>().ResetChostActions();
+                
+            } else
+            {
+                Debug.LogWarning("[TurnSystem] NUll unit in Unitmanger AllUnitList!");
+            }
         
-        StatusCoordinator.Instance.UnitTurnStartStatus(units);
+        }
 
+        StatusCoordinator.Instance.UnitTurnStartStatus(units);
     }
+    */
+    private void turnSystem_OnTurnStarted(Team startTurnTeam, int turnId)
+    {
+        if (NetMode.IsRemoteClient) return;
+
+        StartCoroutine(Co_SafeTurnStart(startTurnTeam, turnId));
+    }
+
+    private System.Collections.IEnumerator Co_SafeTurnStart(Team startTurnTeam, int turnId)
+    {
+        const int MAX_WAIT_FRAMES = 180;
+        int waitedFrames = 0;
+
+        while (BaseAction.AnyActionActive() && waitedFrames < MAX_WAIT_FRAMES)
+        {
+            waitedFrames++;
+            yield return null;
+        }
+
+        if (waitedFrames > 0)
+        {
+            Debug.Log($"[TurnSystem] Odotettiin {waitedFrames} framea että actionit päättyivät");
+        }
+
+        if (BaseAction.AnyActionActive())
+        {
+            Debug.LogWarning("[TurnSystem] Actionit ei päättyneet ajoissa, pakkolopetetaan!");
+            BaseAction.ForceCompleteAllActiveActions();
+            yield return null;
+        }
+
+        UnitActionSystem.Instance.UnlockInput();
+
+        List<Unit> units = new();
+
+        foreach (Unit unit in UnitManager.Instance.GetAllUnitList())
+        {
+            if (unit.Team != startTurnTeam) continue;
+            if (unit != null)
+            {
+                units.Add(unit);
+                unit.GetComponent<BaseAction>().ResetChostActions();
+            }
+            else
+            {
+                Debug.LogWarning("[TurnSystem] NULL unit in UnitManager AllUnitList!");
+            }
+        }
+
+        StatusCoordinator.Instance.UnitTurnStartStatus(units);
+    }
+
 
     private void turnSystem_OnTurnEnded(Team endTurnTeam, int turnId)
     {

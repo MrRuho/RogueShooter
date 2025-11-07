@@ -12,11 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6f0884581d0521f41b259ac355406fc4, type: 3}
   m_Name: PlayerArchetype
   m_EditorClassIdentifier: Assembly-CSharp::UnitArchetype
-  personalCoverMax: 100
+  personalCoverMax: 120
   coverRegenOnMove: 10
   coverRegenPerUnusedAP: 10
-  lowCoverPenalty: 0
-  highCoverPenalty: 0
+  LowCoverEnemyHitPenalty: 2
+  highCoverEnemyHitPenalty: 5
+  moveRange: 4
+  moveEnemyHitPenalty: 5
   basicShootinSkill: 69
   shootingSkillLevel: 0
   accuracyBonusPerSkillLevel: 3

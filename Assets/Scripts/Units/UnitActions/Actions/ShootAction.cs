@@ -137,7 +137,7 @@ public class ShootAction : BaseAction
         }
 
         var result = ShootingResolver.Resolve(unit, targetUnit, weapon);
-        Debug.Log($"[{unit.name}] → [{targetUnit.name}] | {result.tier} | dmg:{result.damage} | Burst: {currentBurstCount + 1}/{maxBurstCount}");
+     //   Debug.Log($"[{unit.name}] → [{targetUnit.name}] | {result.tier} | dmg:{result.damage} | Burst: {currentBurstCount + 1}/{maxBurstCount}");
 
         OnAnyShoot?.Invoke(this, new OnShootEventArgs
         {
@@ -156,47 +156,47 @@ public class ShootAction : BaseAction
         switch (result.tier)
         {
             case ShotTier.CritMiss:
-                Debug.Log("Critical miss! Bullet flies off wildly.");
+            //    Debug.Log("Critical miss! Bullet flies off wildly.");
                 return;
 
             case ShotTier.Close:
                 ApplyHit(result.damage, result.bypassCover, result.coverOnly, targetUnit);
-                Debug.Log("Close! Cover Damage only: " + result.damage);
+            //    Debug.Log("Close! Cover Damage only: " + result.damage);
                 return;
 
             case ShotTier.Graze:
                 if (GetCoverType(targetUnit) == CoverService.CoverType.None)
                 {
                     MakeDamage(result.damage + weapon.NoCoverDamageBonus, targetUnit);
-                    Debug.Log("Graze! No cover damage: " + result.damage);
+             //       Debug.Log("Graze! No cover damage: " + result.damage);
                     return;
                 }
 
                 ApplyHit(result.damage, result.bypassCover, result.coverOnly, targetUnit);
-                Debug.Log("Graze! Damage: " + result.damage);
+           //     Debug.Log("Graze! Damage: " + result.damage);
                 return;
 
             case ShotTier.Hit:
                 if (GetCoverType(targetUnit) == CoverService.CoverType.None)
                 {
                     MakeDamage(result.damage + weapon.NoCoverDamageBonus, targetUnit);
-                    Debug.Log("Hit! No Cover Damage: " + result.damage);
+               //     Debug.Log("Hit! No Cover Damage: " + result.damage);
                     return;
                 }
 
                 ApplyHit(result.damage, result.bypassCover, result.coverOnly, targetUnit);
-                Debug.Log("Hit! Damage: " + result.damage);
+              //  Debug.Log("Hit! Damage: " + result.damage);
                 return;
 
             case ShotTier.Crit:
                 if (GetCoverType(targetUnit) == CoverService.CoverType.None)
                 {
                     MakeDamage(result.damage + weapon.NoCoverDamageBonus, targetUnit);
-                    Debug.Log("Critical Hit! No Cover Damage: " + result.damage);
+                 //   Debug.Log("Critical Hit! No Cover Damage: " + result.damage);
                     return;
                 }
                 ApplyHit(result.damage, result.bypassCover, result.coverOnly, targetUnit);
-                Debug.Log("Critical Hit! Damage: " + result.damage);
+              //  Debug.Log("Critical Hit! Damage: " + result.damage);
                 return;
         }
     }

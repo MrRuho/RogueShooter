@@ -69,7 +69,7 @@ public class BulletProjectile : NetworkBehaviour
         unitsLayerMask = 1 << unitsLayer;
         environmentLayerMask = (1 << obstaclesLayer) | (1 << narrowObstaclesLayer) | (1 << defaultLayer) | (1 << floorLayer);
         
-        Debug.Log($"[BULLET SETUP] Units: {unitsLayer}, Env layers: Obstacles({obstaclesLayer}), NarrowObstacles({narrowObstaclesLayer}), Default({defaultLayer}), Floor({floorLayer})");
+//        Debug.Log($"[BULLET SETUP] Units: {unitsLayer}, Env layers: Obstacles({obstaclesLayer}), NarrowObstacles({narrowObstaclesLayer}), Default({defaultLayer}), Floor({floorLayer})");
     }
 
     private void Update()
@@ -78,7 +78,7 @@ public class BulletProjectile : NetworkBehaviour
 
         if (Time.time - spawnTime > maxLifetime)
         {
-            Debug.Log($"[BULLET] Tuhottu: maxLifetime");
+       //     Debug.Log($"[BULLET] Tuhottu: maxLifetime");
             DestroyBulletSilently();
             return;
         }
@@ -86,7 +86,7 @@ public class BulletProjectile : NetworkBehaviour
         float traveledDistance = Vector3.Distance(startPosition, transform.position);
         if (traveledDistance > maxTravelDistance)
         {
-            Debug.Log($"[BULLET] Tuhottu: maxTravelDistance");
+       //     Debug.Log($"[BULLET] Tuhottu: maxTravelDistance");
             DestroyBulletSilently();
             return;
         }
@@ -106,7 +106,7 @@ public class BulletProjectile : NetworkBehaviour
             environmentLayerMask, 
             QueryTriggerInteraction.Ignore))
         {
-            Debug.Log($"[BULLET] OSUI YMPÄRISTÖÖN: {envHit.collider.name}, Layer: {LayerMask.LayerToName(envHit.collider.gameObject.layer)}");
+        //    Debug.Log($"[BULLET] OSUI YMPÄRISTÖÖN: {envHit.collider.name}, Layer: {LayerMask.LayerToName(envHit.collider.gameObject.layer)}");
             HandleHit(envHit, false);
             return;
         }
@@ -123,7 +123,7 @@ public class BulletProjectile : NetworkBehaviour
                 unitsLayerMask, 
                 QueryTriggerInteraction.Ignore))
             {
-                Debug.Log($"[BULLET] OSUI UNITTIIN: {unitHit.collider.name}");
+          //      Debug.Log($"[BULLET] OSUI UNITTIIN: {unitHit.collider.name}");
                 HandleHit(unitHit, true);
                 return;
             }
@@ -156,15 +156,6 @@ public class BulletProjectile : NetworkBehaviour
                 rotation,
                 source: transform
             );
-        }
-
-        if (isUnit)
-        {
-            Debug.Log($"Bullet hit unit at {hitPoint}");
-        }
-        else
-        {
-            Debug.Log($"Bullet hit environment: {hit.collider.name} at {hitPoint}");
         }
 
         DestroyBullet(hitPoint);

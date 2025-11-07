@@ -180,8 +180,8 @@ public class WeaponDefinitionEditor : Editor
         if (selectedArchetype != null)
         {
             DrawCoverScenario(weapon, band, tuning, baseHitChance, skillBonus, 0, "No Cover", new Color(0.3f, 0.7f, 0.3f));
-            DrawCoverScenario(weapon, band, tuning, baseHitChance, skillBonus, selectedArchetype.lowCoverPenalty, "Low Cover", new Color(0.7f, 0.7f, 0.3f));
-            DrawCoverScenario(weapon, band, tuning, baseHitChance, skillBonus, selectedArchetype.highCoverPenalty, "High Cover", new Color(0.7f, 0.3f, 0.3f));
+            DrawCoverScenario(weapon, band, tuning, baseHitChance, skillBonus, selectedArchetype.LowCoverEnemyHitPenalty, "Low Cover", new Color(0.7f, 0.7f, 0.3f));
+            DrawCoverScenario(weapon, band, tuning, baseHitChance, skillBonus, selectedArchetype.highCoverEnemyHitPenalty, "High Cover", new Color(0.7f, 0.3f, 0.3f));
         }
         else
         {

@@ -5845,6 +5845,10 @@ MonoBehaviour:
     material: {fileID: 2100000, guid: 231e805f080870641ad923501e52e644, type: 2}
   - gridVisualType: 5
     material: {fileID: 2100000, guid: 9961b2ddb3922c04eabefc9184a62d27, type: 2}
+  - gridVisualType: 6
+    material: {fileID: 2100000, guid: 231e805f080870641ad923501e52e644, type: 2}
+  - gridVisualType: 7
+    material: {fileID: 2100000, guid: 4c9fe917da079e746b4b837c5dd01894, type: 2}
 --- !u!4 &6423213150028019924
 Transform:
   m_ObjectHideFlags: 0

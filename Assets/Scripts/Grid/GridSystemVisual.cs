@@ -21,6 +21,8 @@ public class GridSystemVisual : MonoBehaviour
     private readonly HashSet<GridPosition> _lastActionCells = new();
     private readonly List<GridPosition> _tmpList = new(256);
 
+    private bool _isReady = false;
+
     [Serializable]
     public struct GridVisualTypeMaterial
     {
@@ -35,7 +37,10 @@ public class GridSystemVisual : MonoBehaviour
         Red,
         RedSoft,
         Yellow,
-        TeamVision
+        TeamVision,
+        UnitPersonalVision,
+        UnitOverwatchVision
+
     }
 
     [SerializeField] private Transform gridSystemVisualSinglePrefab;
@@ -84,6 +89,7 @@ public class GridSystemVisual : MonoBehaviour
             TeamVisionService.Instance.ClearTeamVision(myTeam);
         }
 
+        _isReady = true;
         UpdateGridVisuals();
     }
 
@@ -136,6 +142,7 @@ public class GridSystemVisual : MonoBehaviour
 
     public void HideAllGridPositions()
     {
+        if (!_isReady || gridSystemVisualSingleArray == null) return;
         for (int x = 0; x < LevelGrid.Instance.GetWidth(); x++)
         for (int z = 0; z < LevelGrid.Instance.GetHeight(); z++)
         for (int floor = 0; floor < LevelGrid.Instance.GetFloorAmount(); floor++)
@@ -155,7 +162,10 @@ public class GridSystemVisual : MonoBehaviour
 
     public void UpdateGridVisuals()
     {
+        if (!_isReady || gridSystemVisualSingleArray == null) return;
+
         HideAllGridPositions();
+        RedrawPersistentOverwatch();
         _lastActionCells.Clear();
 
         if (teamVisionEnabled && TeamVisionService.Instance != null) 
@@ -185,7 +195,9 @@ public class GridSystemVisual : MonoBehaviour
                 break;
 
             case OverwatchAction:
-                gridVisualType = GridVisualType.Blue;
+                
+                selectedAction.GetUnit().GetComponent<UnitVision>().ShowUnitPersonalVision();
+                gridVisualType = GridVisualType.white;
                 break;
 
             case ShootAction shoot:
@@ -219,7 +231,7 @@ public class GridSystemVisual : MonoBehaviour
                 break;
 
             case InteractAction:
-                gridVisualType = GridVisualType.Blue;
+                gridVisualType = GridVisualType.Yellow;
                 break;
         }
 
@@ -274,7 +286,7 @@ public class GridSystemVisual : MonoBehaviour
         ShowGridPositionList(_tmpList, teamVisionType);
     }
 
-    private void DrawTeamVisionOverlayInverted() 
+    private void DrawTeamVisionOverlayInverted()
     {
         if (TeamVisionService.Instance == null) return;
 
@@ -291,24 +303,26 @@ public class GridSystemVisual : MonoBehaviour
         int F = LevelGrid.Instance.GetFloorAmount();
 
         for (int x = 0; x < W; x++)
-        for (int z = 0; z < H; z++)
-        for (int f = 0; f < F; f++) {
-            var gp = new GridPosition(x, z, f);
+            for (int z = 0; z < H; z++)
+                for (int f = 0; f < F; f++)
+                {
+                    var gp = new GridPosition(x, z, f);
 
-            // Sama suodatus kuin muuallakin (MousePlaneMap), ettei harmaa leviä “väärään kerrokseen”
-            if (filterToMousePlanes && !(MousePlaneMap.Instance && MousePlaneMap.Instance.Has(gp))) continue;
+                    // Sama suodatus kuin muuallakin (MousePlaneMap), ettei harmaa leviä “väärään kerrokseen”
+                    if (filterToMousePlanes && !(MousePlaneMap.Instance && MousePlaneMap.Instance.Has(gp))) continue;
 
-            // Älä peitä tuoreita action-ruutuja
-            if (_lastActionCells.Contains(gp)) continue;
+                    // Älä peitä tuoreita action-ruutuja
+                    if (_lastActionCells.Contains(gp)) continue;
 
-            // Näkyvät → jätetään puhtaiksi; näkymättömät → harmaa
-            if (!visible.Contains(gp)) {
-                var cell = gridSystemVisualSingleArray[x, z, f];
-                if (cell != null) cell.Show(mat);
-            }
-        }
+                    // Näkyvät → jätetään puhtaiksi; näkymättömät → harmaa
+                    if (!visible.Contains(gp))
+                    {
+                        var cell = gridSystemVisualSingleArray[x, z, f];
+                        if (cell != null) cell.Show(mat);
+                    }
+                }
     }
-
+    
     private void ShowAndMark(IEnumerable<GridPosition> cells, GridVisualType type)
     {
         var mat = GetGridVisualTypeMaterial(type);
@@ -325,12 +339,38 @@ public class GridSystemVisual : MonoBehaviour
     {
         var list = new List<GridPosition>();
         for (int x = -range; x <= range; x++)
-        for (int z = -range; z <= range; z++)
-        {
-            var gp = center + new GridPosition(x, z, 0);
-            if (LevelGrid.Instance.IsValidGridPosition(gp))
-                list.Add(gp);
-        }
+            for (int z = -range; z <= range; z++)
+            {
+                var gp = center + new GridPosition(x, z, 0);
+                if (LevelGrid.Instance.IsValidGridPosition(gp))
+                    list.Add(gp);
+            }
         return list;
+    }
+
+    private readonly Dictionary<Unit, List<GridPosition>> _owPersistent = new();
+
+    public void AddPersistentOverwatch(Unit u, List<GridPosition> tiles)
+    {
+        _owPersistent[u] = tiles;
+        RedrawPersistentOverwatch();
+    }
+
+    public void RemovePersistentOverwatch(Unit u)
+    {
+        _owPersistent.Remove(u);
+        RedrawPersistentOverwatch();
+    }
+
+    private void RedrawPersistentOverwatch()
+    {
+        foreach (var kv in _owPersistent)
+            ShowGridPositionList(kv.Value, GridVisualType.UnitOverwatchVision);
+    }
+
+    public void ClearAllPersistentOverwatch()
+    {
+        _owPersistent.Clear();
+        if (_isReady) UpdateGridVisuals();
     }
 }

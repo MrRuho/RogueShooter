@@ -31,7 +31,7 @@ public class HealthSystem : MonoBehaviour
 
         health -= damageAmount;
         OnDamaged?.Invoke(this, EventArgs.Empty);
-        
+
         if (health <= 0)
         {
             lastHitPosition = hitPosition;
@@ -41,11 +41,37 @@ public class HealthSystem : MonoBehaviour
         }
     }
 
+    /*
     private void BeginDying()
     {
         if (isDying) return;
         isDying = true;
         UnitActionSystem.Instance.UnlockInput();
+        OnDying?.Invoke(this, EventArgs.Empty);
+        StartCoroutine(FinalizeDeathNextFrame());
+    }
+    */
+    private void BeginDying()
+    {
+        if (isDying) return;
+        isDying = true;
+
+        var unit = GetComponent<Unit>();
+        if (unit != null)
+        {
+            var allActions = unit.GetComponents<BaseAction>();
+            foreach (var action in allActions)
+            {
+                if (action != null && action.IsActionActive())
+                {
+                    Debug.Log($"[HealthSystem] Pakkolopetetaan {action.GetType().Name} kuolevan unitin {unit.name} actionista");
+                    action.ForceComplete();
+                }
+            }
+        }
+        
+        UnitActionSystem.Instance?.UnlockInput();
+        
         OnDying?.Invoke(this, EventArgs.Empty);
         StartCoroutine(FinalizeDeathNextFrame());
     }

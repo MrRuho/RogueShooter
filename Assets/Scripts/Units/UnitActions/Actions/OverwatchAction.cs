@@ -58,6 +58,7 @@ public class OverwatchAction : BaseAction
 
             case State.OverwatchIntentReady:
                 ActionComplete();
+                FacingDir();
                 Overwatch = true;
                 break;
         }
@@ -110,8 +111,22 @@ public class OverwatchAction : BaseAction
     // Tila peruuntuu heti jos pelaaja, liikkuu, ampuu yms. 
     public void CancelOverwatchIntent()
     {
+        GridSystemVisual.Instance.RemovePersistentOverwatch(unit);
         Overwatch = false;
     }
+
+    public void FacingDir()
+    {
+        // facing: kohti TargetWorldia (XZ)
+        Vector3 dir = TargetWorld - unit.transform.position;
+        dir.y = 0f;
+        Vector3 facingWorld = (dir.sqrMagnitude > 0.0001f) ? dir.normalized : unit.transform.forward;
+
+        // maalaa pysyvä overwatch-kartio
+        unit.GetComponent<UnitVision>().ShowUnitOverWachVision(facingWorld, 80f /*esim*/);
+    }
+
+    
 
     /// <summary>
     /// ENEMY AI: 

@@ -72,21 +72,6 @@ public class UnitAnimator : NetworkBehaviour
         SetupAudioSource();
     }
 
-    /*
-    private void SetupAudioSource()
-    {
-        if (weaponAudioSource == null) return;
-        
-        weaponAudioSource.spatialBlend = 1f;
-        weaponAudioSource.rolloffMode = AudioRolloffMode.Custom;
-        weaponAudioSource.maxDistance = maxHearingDistance;
-        weaponAudioSource.minDistance = 1f;
-        weaponAudioSource.dopplerLevel = 0f;
-        weaponAudioSource.spread = 0f;
-        
-        weaponAudioSource.SetCustomCurve(AudioSourceCurveType.CustomRolloff, volumeRolloff);
-    }
-    */
     private void SetupAudioSource()
     {
         if (weaponAudioSource == null) return;
@@ -210,46 +195,6 @@ public class UnitAnimator : NetworkBehaviour
         currentShotInBurst = 0;
         totalShotsInBurst = burstSize;
     }
-
-    /*
-        public void PlayRifleShootEffects()
-        {
-            if (hs && (hs.IsDying() || hs.IsDead())) return;
-            if (weaponAudioSource == null) return;
-
-            currentShotInBurst++;
-            bool isLastShot = currentShotInBurst >= totalShotsInBurst;
-
-            // MUZZLE FLASH EFEKTI
-            if (muzzleFlashPrefab != null && shootPointTransform != null)
-            {
-                GameObject flash = Instantiate(muzzleFlashPrefab, shootPointTransform.position, shootPointTransform.rotation);
-                Destroy(flash, muzzleFlashDuration);
-            }
-
-            AudioClip clipToPlay = null;
-
-            if (isLastShot && rifleShootWithTail != null)
-            {
-                clipToPlay = rifleShootWithTail;
-            }
-            else if (rifleShootVariations != null && rifleShootVariations.Length > 0)
-            {
-                clipToPlay = rifleShootVariations[UnityEngine.Random.Range(0, rifleShootVariations.Length)];
-            }
-
-            if (clipToPlay != null)
-            {
-                float pitch = 1f + UnityEngine.Random.Range(-pitchVariation, pitchVariation);
-                float volume = baseVolume + UnityEngine.Random.Range(-volumeVariation, volumeVariation);
-
-                weaponAudioSource.pitch = pitch;
-                weaponAudioSource.PlayOneShot(clipToPlay, volume);
-
-                weaponAudioSource.pitch = 1f;
-            }
-        }
-    */
 
     public void PlayRifleShootEffects()
     {
