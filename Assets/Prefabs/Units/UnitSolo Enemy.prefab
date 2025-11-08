@@ -40,6 +40,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: UnitSolo Enemy
       objectReference: {fileID: 0}
+    - target: {fileID: 5013696404858178189, guid: 9eade25f7fc5b7d439428c63bd6bec87, type: 3}
+      propertyPath: overwatchSettings.aimTurnSpeed
+      value: 350
+      objectReference: {fileID: 0}
     - target: {fileID: 5210618861754131345, guid: 9eade25f7fc5b7d439428c63bd6bec87, type: 3}
       propertyPath: ragdollPrefab
       value: 

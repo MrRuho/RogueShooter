@@ -199,6 +199,16 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
+  normalSettings:
+    aimTurnSpeed: 300
+    minAimTime: 0.4
+    aimingStateTime: 1
+    cooloffStateTime: 0.5
+  overwatchSettings:
+    aimTurnSpeed: 350
+    minAimTime: 0.2
+    aimingStateTime: 0.3
+    cooloffStateTime: 0.3
   obstaclesLayerMask:
     serializedVersion: 2
     m_Bits: 320

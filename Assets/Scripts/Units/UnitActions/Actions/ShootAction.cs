@@ -5,15 +5,33 @@ using UnityEngine;
 public class ShootAction : BaseAction
 {
     public static event EventHandler<OnShootEventArgs> OnAnyShoot;
-    
     public event EventHandler<OnShootEventArgs> OnShoot;
+
+    [Header("Normal Shooting Settings")]
+    [SerializeField] private ShootingSettings normalSettings = new ShootingSettings
+    {
+        aimTurnSpeed = 10f,
+        minAimTime = 0.40f,
+        aimingStateTime = 1f,
+        cooloffStateTime = 0.5f
+    };
+
+    [Header("Overwatch Shooting Settings")]
+    [SerializeField] private ShootingSettings overwatchSettings = new ShootingSettings
+    {
+        aimTurnSpeed = 20f,
+        minAimTime = 0.15f,
+        aimingStateTime = 0.5f,
+        cooloffStateTime = 0.3f
+    };
+
+    private bool isOverwatchShot;
 
     public class OnShootEventArgs : EventArgs
     {
         public Unit targetUnit;
         public Unit shootingUnit;
-        public ShotTier shotTier;  // ← UUSI
-
+        public ShotTier shotTier;
     }
 
     private enum State
@@ -34,6 +52,8 @@ public class ShootAction : BaseAction
     private int currentBurstCount;
     private int maxBurstCount;
 
+    private ShootingSettings CurrentSettings => isOverwatchShot ? overwatchSettings : normalSettings;
+
     void Update()
     {
         if (!isActive) return;
@@ -44,11 +64,17 @@ public class ShootAction : BaseAction
             case State.Aiming:
                 if (targetUnit != null)
                 {
-                    if (RotateTowards(targetUnit.GetWorldPosition()))
+                    if (isOverwatchShot && !IsTargetStillValid())
                     {
-                        stateTimer = Mathf.Min(stateTimer, 0.4f);
+                        CancelShot();
+                        return;
                     }
-                 }
+
+                    if (RotateTowards(targetUnit.GetWorldPosition(), CurrentSettings.aimTurnSpeed))
+                    {
+                        stateTimer = Mathf.Min(stateTimer, CurrentSettings.minAimTime);
+                    }
+                }
                 break;
             case State.Shooting:
                 if (canShootBullet)
@@ -63,7 +89,6 @@ public class ShootAction : BaseAction
 
                     Shoot();
                     canShootBullet = false;
-
                 }
                 break;
             case State.Cooloff:
@@ -74,6 +99,41 @@ public class ShootAction : BaseAction
         {
             NextState();
         }
+    }
+
+    private bool IsTargetStillValid()
+    {
+        if (targetUnit == null || targetUnit.IsDead() || targetUnit.IsDying())
+            return false;
+
+        if (!unit.TryGetComponent<UnitVision>(out var vision) || !vision.IsInitialized)
+            return false;
+
+        var targetPos = targetUnit.GetGridPosition();
+        var personalVision = vision.GetUnitVisionGrids();
+        if (personalVision == null || !personalVision.Contains(targetPos))
+            return false;
+
+        if (unit.TryGetComponent<UnitStatusController>(out var status) &&
+            status.TryGet<OverwatchPayload>(UnitStatusType.Overwatch, out var payload))
+        {
+            Vector3 facingWorld = new Vector3(payload.facingWorld.x, 0f, payload.facingWorld.z).normalized;
+            float coneDeg = payload.coneAngleDeg;
+
+            if (!vision.IsTileInCone(facingWorld, coneDeg, targetPos))
+                return false;
+        }
+
+        return true;
+    }
+
+    private void CancelShot()
+    {
+        targetUnit = null;
+        state = State.Cooloff;
+        stateTimer = 0.1f;
+        canShootBullet = false;
+        ActionComplete();
     }
 
     private void NextState()
@@ -87,30 +147,35 @@ public class ShootAction : BaseAction
                     return;
                 }
 
+                if (isOverwatchShot && !IsTargetStillValid())
+                {
+                    CancelShot();
+                    return;
+                }
+
                 state = State.Shooting;
                 currentBurstCount = 0;
                 maxBurstCount = weapon.GetRandomBurstCount();
-                
-                // Ilmoita UnitAnimatorille burst-koko
+
                 var unitAnimator = GetComponent<UnitAnimator>();
                 if (unitAnimator != null)
                 {
                     unitAnimator.NotifyBurstStart(maxBurstCount);
                 }
-                
+
                 float shootingStateTime = 0.1f;
                 stateTimer = shootingStateTime;
                 break;
             case State.Shooting:
                 currentBurstCount++;
-                
+
                 if (targetUnit == null)
                 {
                     state = State.Cooloff;
                     stateTimer = 0.1f;
                     return;
                 }
-                
+
                 if (currentBurstCount < maxBurstCount)
                 {
                     canShootBullet = true;
@@ -119,8 +184,7 @@ public class ShootAction : BaseAction
                 else
                 {
                     state = State.Cooloff;
-                    float cooloffStateTime = 0.5f;
-                    stateTimer = cooloffStateTime;
+                    stateTimer = CurrentSettings.cooloffStateTime;
                 }
                 break;
             case State.Cooloff:
@@ -128,6 +192,8 @@ public class ShootAction : BaseAction
                 break;
         }
     }
+
+    public void MarkAsOverwatchShot(bool v) => isOverwatchShot = v;
 
     private void Shoot()
     {
@@ -137,70 +203,60 @@ public class ShootAction : BaseAction
         }
 
         var result = ShootingResolver.Resolve(unit, targetUnit, weapon);
-     //   Debug.Log($"[{unit.name}] → [{targetUnit.name}] | {result.tier} | dmg:{result.damage} | Burst: {currentBurstCount + 1}/{maxBurstCount}");
 
         OnAnyShoot?.Invoke(this, new OnShootEventArgs
         {
             targetUnit = targetUnit,
             shootingUnit = unit,
-            shotTier = result.tier  // ← UUSI
+            shotTier = result.tier
         });
 
         OnShoot?.Invoke(this, new OnShootEventArgs
         {
             targetUnit = targetUnit,
             shootingUnit = unit,
-            shotTier = result.tier  // ← UUSI
+            shotTier = result.tier
         });
 
         switch (result.tier)
         {
             case ShotTier.CritMiss:
-            //    Debug.Log("Critical miss! Bullet flies off wildly.");
                 return;
 
             case ShotTier.Close:
                 ApplyHit(result.damage, result.bypassCover, result.coverOnly, targetUnit);
-            //    Debug.Log("Close! Cover Damage only: " + result.damage);
                 return;
 
             case ShotTier.Graze:
                 if (GetCoverType(targetUnit) == CoverService.CoverType.None)
                 {
                     MakeDamage(result.damage + weapon.NoCoverDamageBonus, targetUnit);
-             //       Debug.Log("Graze! No cover damage: " + result.damage);
                     return;
                 }
 
                 ApplyHit(result.damage, result.bypassCover, result.coverOnly, targetUnit);
-           //     Debug.Log("Graze! Damage: " + result.damage);
                 return;
 
             case ShotTier.Hit:
                 if (GetCoverType(targetUnit) == CoverService.CoverType.None)
                 {
                     MakeDamage(result.damage + weapon.NoCoverDamageBonus, targetUnit);
-               //     Debug.Log("Hit! No Cover Damage: " + result.damage);
                     return;
                 }
 
                 ApplyHit(result.damage, result.bypassCover, result.coverOnly, targetUnit);
-              //  Debug.Log("Hit! Damage: " + result.damage);
                 return;
 
             case ShotTier.Crit:
                 if (GetCoverType(targetUnit) == CoverService.CoverType.None)
                 {
                     MakeDamage(result.damage + weapon.NoCoverDamageBonus, targetUnit);
-                 //   Debug.Log("Critical Hit! No Cover Damage: " + result.damage);
                     return;
                 }
                 ApplyHit(result.damage, result.bypassCover, result.coverOnly, targetUnit);
-              //  Debug.Log("Critical Hit! Damage: " + result.damage);
                 return;
         }
     }
-
 
     public override int GetActionPointsCost()
     {
@@ -211,7 +267,7 @@ public class ShootAction : BaseAction
     {
         return "Shoot";
     }
-   
+
     public List<GridPosition> GetValidActionGridPositionList(GridPosition unitGridPosition)
     {
         var res = new List<GridPosition>();
@@ -224,7 +280,7 @@ public class ShootAction : BaseAction
             if (!RaycastVisibility.HasLineOfSightRaycastHeightAware(
                 unitGridPosition, gp,
                 cfg.losBlockersMask, cfg.eyeHeight, cfg.samplesPerCell, cfg.insetWU))
-            continue;
+                continue;
 
             res.Add(gp);
         }
@@ -252,8 +308,7 @@ public class ShootAction : BaseAction
         targetUnit = LevelGrid.Instance.GetUnitAtGridPosition(gridPosition);
 
         state = State.Aiming;
-        float aimingStateTime = 1f;
-        stateTimer = aimingStateTime;
+        stateTimer = CurrentSettings.aimingStateTime;
 
         canShootBullet = true;
 

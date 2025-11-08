@@ -1,5 +1,4 @@
 using Mirror;
-using Unity.Networking.Transport.Error;
 using UnityEngine;
 
 /// <summary>
@@ -340,12 +339,14 @@ public static class NetworkSync
 
         if (!NetworkServer.active && !NetworkClient.active)
         {
+            shoot.MarkAsOverwatchShot(true);
             shoot.TakeAction(targetGridPos, () => { });
             return;
         }
 
         if (NetworkServer.active)
         {   
+            shoot.MarkAsOverwatchShot(true);
             shoot.TakeAction(targetGridPos, () => { });
             
             var agent = UnityEngine.Object.FindFirstObjectByType<NetworkSyncAgent>();

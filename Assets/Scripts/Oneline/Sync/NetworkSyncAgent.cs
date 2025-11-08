@@ -363,6 +363,7 @@ public class NetworkSyncAgent : NetworkBehaviour
         }
 
         GridPosition targetGridPos = new GridPosition(targetX, targetZ, targetFloor);
+        shoot.MarkAsOverwatchShot(true);
         shoot.TakeAction(targetGridPos, () => { });
     }
 

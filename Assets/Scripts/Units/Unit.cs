@@ -233,7 +233,6 @@ public class Unit : NetworkBehaviour
     {
         if(reactionPoins > 0)
         {
-//            Debug.Log("[Unit] Tiimi: " + Team + "Unit reagoi! Reaktiopisteitä: " + reactionPoins);
             reactionPoins -= 1; 
         }
     }
