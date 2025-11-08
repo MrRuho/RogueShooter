@@ -35,9 +35,6 @@ public class TurnSystem : MonoBehaviour
         OnTurnChanged += turnSystem_OnTurnChanged;
 
         StartCoroutine(Co_DeferredFirstTurnKick());
-       // OnTurnStarted?.Invoke(CurrentTeam, TurnId);
-       // PlayerLocalTurnGate.Set(isPlayerTurn);
-       // OnTurnChanged?.Invoke(this, EventArgs.Empty);
     }
 
     private void OnDisable()
@@ -71,54 +68,6 @@ public class TurnSystem : MonoBehaviour
         StartCoroutine(Co_SafeTurnStart(startTurnTeam, turnId));
     }
 
-    /*
-    private System.Collections.IEnumerator Co_SafeTurnStart(Team startTurnTeam, int turnId)
-    {
-        const int MAX_WAIT_FRAMES = 180;
-        int waitedFrames = 0;
-
-        while (BaseAction.AnyActionActive() && waitedFrames < MAX_WAIT_FRAMES)
-        {
-            waitedFrames++;
-            yield return null;
-        }
-
-        if (waitedFrames > 0)
-        {
-            Debug.Log($"[TurnSystem] Odotettiin {waitedFrames} framea että actionit päättyivät");
-        }
-
-        if (BaseAction.AnyActionActive())
-        {
-            Debug.LogWarning("[TurnSystem] Actionit ei päättyneet ajoissa, pakkolopetetaan!");
-            BaseAction.ForceCompleteAllActiveActions();
-            yield return null;
-        }
-
-        
-        UnitActionSystem.Instance.UnlockInput();
-
-        List<Unit> units = new();
-
-        foreach (Unit unit in UnitManager.Instance.GetAllUnitList())
-        {
-            if (unit.Team != startTurnTeam) continue;
-            if (unit != null)
-            {
-                units.Add(unit);
-                unit.GetComponent<BaseAction>().ResetChostActions();
-            }
-            else
-            {
-                Debug.LogWarning("[TurnSystem] NULL unit in UnitManager AllUnitList!");
-            }
-        }
-
-        var teamId = TeamsID.CurrentTurnTeamId();
-        NetworkSyncAgent.Local.ServerPushTeamVision(teamId, endPhase:false);
-        StatusCoordinator.Instance.UnitTurnStartStatus(units);
-    }
-*/
     private System.Collections.IEnumerator Co_SafeTurnStart(Team startTurnTeam, int turnId)
     {
         const int MAX_WAIT_FRAMES = 180;
@@ -162,7 +111,7 @@ public class TurnSystem : MonoBehaviour
         int teamId = (startTurnTeam == Team.Player) ? 0 : 1;  // yksiselitteinen mappi tähän
         if (NetworkSync.IsOffline)
         {
-            TeamVisionService.Instance.RebuildTeamVisionLocal(teamId, true);
+            TeamVisionService.Instance.RebuildTeamVisionLocal(teamId, false);
            // RebuildTeamVisionLocal(teamId, endPhase: false);
         }
         else if (Mirror.NetworkServer.active && NetworkSyncAgent.Local != null)
@@ -192,25 +141,6 @@ public class TurnSystem : MonoBehaviour
         StatusCoordinator.Instance.UnitTurnStartStatus(units);
     }
 
-    /*
-    private void turnSystem_OnTurnEnded(Team endTurnTeam, int turnId)
-    {
-
-        if (NetMode.IsRemoteClient) return; // NetworkClient.active && !NetworkServer.active
-        List<Unit> units = new();
-
-        //Muodostetaan lista niistä uniteista jotka lopettavat vuoron.
-        foreach (Unit unit in UnitManager.Instance.GetAllUnitList())
-        {
-            if (unit.Team != endTurnTeam) continue;
-            units.Add(unit);
-        }
-
-        var teamId = TeamsID.CurrentTurnTeamId();
-        NetworkSyncAgent.Local.ServerPushTeamVision(teamId, endPhase: true);
-        StatusCoordinator.Instance.UnitTurnEndStatus(units);
-    }
-*/
     public void NextTurn()
     {
 

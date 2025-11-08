@@ -180,20 +180,30 @@ public class UnitVision : MonoBehaviour
         }
     }
 
-
     private bool ShouldPublishVisionLocally()
     {
-        if (NetworkSync.IsOffline) return true;        // SinglePlayer: julkaise normaalisti
+        // SinglePlayer: aina lokaalisti
+        if (NetworkSync.IsOffline) return true;
 
-        if (!NetworkSync.IsClient) return false;       // Serveri ei julkaise tätä kautta
+        // Serveri ei julkaise tätä kautta
+        if (!NetworkSync.IsClient) return false;
 
-        // Versus: älä anna clientin autopublishata 360° settiä TeamVisioniin – 
-        // julkaisu hoidetaan erikseen vaihe-RPC:llä (kohta 2).
-        if (GameModeManager.SelectedMode == GameMode.Versus) return false;
+        // Versus: salli publish vain omalle clientille JA vain oman vuoron aikana
+        if (GameModeManager.SelectedMode == GameMode.Versus)
+        {
+            if (!PlayerLocalTurnGate.LocalPlayerTurn) return false;
 
-        var ni = NetworkSync.FindIdentity(this.GetActorId());
-        return NetworkSync.IsOwnedHere(ni);
+            var ni = NetworkSync.FindIdentity(this.GetActorId());
+            return NetworkSync.IsOwnedHere(ni); // vain omistetut unitit julkaisee
+        }
+
+        // Co-op / muut: julkaise omistetuille uniteille
+        {
+            var ni = NetworkSync.FindIdentity(this.GetActorId());
+            return NetworkSync.IsOwnedHere(ni);
+        }
     }
+
 
     public HashSet<GridPosition> GetUnitVisionGrids()
     {

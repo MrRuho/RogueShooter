@@ -29,8 +29,6 @@ public class MoveAction : BaseAction
     private float differentFloorsTeleportTimer;
     private float differentFloorsTeleportTimerMax = .5f;
 
-    private bool _isMoving;
-
     private void Start()
     {
         distance = 0;

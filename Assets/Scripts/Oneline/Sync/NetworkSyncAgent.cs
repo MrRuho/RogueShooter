@@ -329,14 +329,12 @@ public class NetworkSyncAgent : NetworkBehaviour
     [Server]
     public void ServerBroadcastOverwatchShot(uint watcherNetId, int targetX, int targetZ, int targetFloor)
     {
-        Debug.Log($"[OW-Server] Broadcasting overwatch shot: watcher={watcherNetId}, target=({targetX},{targetZ},{targetFloor})");
         RpcExecuteOverwatchShot(watcherNetId, targetX, targetZ, targetFloor);
     }
 
     [ClientRpc]
     void RpcExecuteOverwatchShot(uint watcherNetId, int targetX, int targetZ, int targetFloor)
     {
-        Debug.Log($"[OW-Client] Received RPC for overwatch shot: watcher={watcherNetId}, target=({targetX},{targetZ},{targetFloor})");
 
         if (!NetworkClient.spawned.TryGetValue(watcherNetId, out var watcherNi) || watcherNi == null)
         {
@@ -365,8 +363,6 @@ public class NetworkSyncAgent : NetworkBehaviour
         }
 
         GridPosition targetGridPos = new GridPosition(targetX, targetZ, targetFloor);
-
-        Debug.Log($"[OW-Client] Executing overwatch shot from {watcher.name} to {targetGridPos}");
         shoot.TakeAction(targetGridPos, () => { });
     }
 
@@ -382,24 +378,6 @@ public class NetworkSyncAgent : NetworkBehaviour
 
         GridPosition gridPos = new GridPosition(gridX, gridZ, gridFloor);
         StatusCoordinator.Instance.CheckOverwatchStep(unit, gridPos);
-    }
-
-    [Command(requiresAuthority = false)]
-    public void CmdSetOverwatch(uint unitNetId, bool value)
-    {
-        if (!NetworkServer.active) return;
-
-        if (!NetworkServer.spawned.TryGetValue(unitNetId, out var unitNi) || unitNi == null) return;
-
-        var unit = unitNi.GetComponent<Unit>();
-        if (unit == null) return;
-
-        var overwatchAction = unit.GetComponent<OverwatchAction>();
-        if (overwatchAction != null)
-        {
-            overwatchAction.Overwatch = value;
-            Debug.Log($"[OW-NetworkSyncAgent] Set overwatch for {unit.name} to {value}");
-        }
     }
 
     [ClientRpc]
@@ -422,11 +400,11 @@ public class NetworkSyncAgent : NetworkBehaviour
             int actionpoints = unit.GetActionPoints();
             float angle = endPhase ? vision.GetDynamicConeAngle(actionpoints, 80f) : 360f;
 
-            if (endPhase && unit.TryGetComponent<OverwatchAction>(out var ow) && ow.IsOverwatch())
+            if (endPhase && unit.TryGetComponent<UnitStatusController>(out var s) &&
+                s.TryGet<OverwatchPayload>(UnitStatusType.Overwatch, out var p))
             {
-                var dir = ow.TargetWorld - unit.transform.position; dir.y = 0f;
-                if (dir.sqrMagnitude > 1e-4f) facing = dir.normalized;
-                angle = 80f;
+                facing = new Vector3(p.facingWorld.x, 0f, p.facingWorld.z).normalized;
+                angle  = 80f;
             }
 
             vision.ApplyAndPublishDirectionalVision(facing, angle);
@@ -462,8 +440,6 @@ public class NetworkSyncAgent : NetworkBehaviour
         return ids.ToArray();
     }
 
-    // NetworkSyncAgent.cs
-
     [Command(requiresAuthority = false)]
     public void CmdSetOverwatch(uint unitNetId, bool value, float fx, float fz)
     {
@@ -475,8 +451,6 @@ public class NetworkSyncAgent : NetworkBehaviour
 
         // ⬇️ ÄLÄ koske ow.TargetWorld:iin (setter private) — käytä serverimetodia
         ow.ServerApplyOverwatch(value, new Vector2(fx, fz));
-
-        Debug.Log($"[OW-NetworkSyncAgent] Set overwatch for {u.name} to {value} (facing=({fx:F2},{fz:F2}))");
     }
 
 }

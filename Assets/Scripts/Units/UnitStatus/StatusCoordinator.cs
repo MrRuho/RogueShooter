@@ -47,37 +47,6 @@ public class StatusCoordinator : MonoBehaviour
         GridSystemVisual.Instance.ClearAllPersistentOverwatch();
     }
 
-    /*
-        public void UnitTurnEndStatus(IEnumerable<Unit> teamUnits)
-        {
-            PurgeDeadAndNullWatchers();
-
-            foreach (var u in teamUnits)
-            {
-                if (!u) continue;
-
-                var vision = u.GetComponent<UnitVision>();
-                if (vision == null || !vision.IsInitialized) continue;
-
-                int ap = u.GetActionPoints();
-                float angle = vision.GetDynamicConeAngle(ap, 80f);
-
-                if (angle >= 359.5f) { vision.UpdateVisionNow(); continue; }
-
-                Vector3 facing = u.transform.forward;
-                if (u.TryGetComponent<OverwatchAction>(out var ow) && ow.IsOverwatch())
-                {
-                    var dir = ow.TargetWorld - u.transform.position; dir.y = 0f;
-                    if (dir.sqrMagnitude > 1e-4f) facing = dir.normalized;
-                    angle = vision.GetDynamicConeAngle(0, 80f);
-                }
-
-                vision.ApplyAndPublishDirectionalVision(facing, angle);
-            }
-
-            SetOverWatch(teamUnits);
-        }
-    */
     public void UnitTurnEndStatus(IEnumerable<Unit> teamUnits)
     {
         PurgeDeadAndNullWatchers();
@@ -92,30 +61,53 @@ public class StatusCoordinator : MonoBehaviour
             int ap = u.GetActionPoints();
             float angle = vision.GetDynamicConeAngle(ap, 80f);
 
-            if (angle >= 359.5f) { vision.UpdateVisionNow(); continue; }
-
-            Vector3 facing = u.transform.forward;
-            
+            // KRIITTINEN KORJAUS: Overwatch-unitit (myös clientin) tarvitsevat TÄYDEN 360° vision 
+            // cachen serverillä, jotta henkilökohtainen LOS-tarkistus CheckOverwatchStepissä toimii!
             if (u.TryGetComponent<OverwatchAction>(out var ow) && ow.IsOverwatch())
             {
-                // ✅ Lue AINA payloadista, älä TargetWorld:sta!
+                // 1) Päivitä TÄYSI 360° vision cache (EI julkaise TeamVisioniin)
+                //    Tämä täyttää _lastVisibleTiles:n täydellä näöllä
+                vision.UpdateVisionNow();
+                
+                // 2) Lue payloadista suunta TeamVision-julkaisua varten
+                Vector3 facing = u.transform.forward;
+                float coneAngle = 80f;
+                
                 if (u.TryGetComponent<UnitStatusController>(out var status) &&
                     status.TryGet<OverwatchPayload>(UnitStatusType.Overwatch, out var payload))
                 {
                     facing = payload.facingWorld;
+                    coneAngle = payload.coneAngleDeg;
                     if (facing.sqrMagnitude < 1e-4f) facing = u.transform.forward;
                 }
                 else
                 {
-                    // Fallback jos payloadia ei ole vielä
                     var dir = ow.TargetWorld - u.transform.position; dir.y = 0f;
                     if (dir.sqrMagnitude > 1e-4f) facing = dir.normalized;
                 }
                 
-                angle = vision.GetDynamicConeAngle(0, 80f);
+                // 3) Julkaise TeamVisioniin VAIN kartio (ÄLÄ ylikirjoita _lastVisibleTiles cachea!)
+                //    GetConeVisibleTiles käyttää _lastVisibleTiles:iä pohjana ja palauttaa kartion
+                var coneTiles = vision.GetConeVisibleTiles(facing, coneAngle);
+                if (coneTiles != null && TeamVisionService.Instance != null)
+                {
+                    int teamId = u.GetTeamID();
+                    int unitKey = vision.GetInstanceID();
+                    TeamVisionService.Instance.ReplaceUnitVision(teamId, unitKey, new HashSet<GridPosition>(coneTiles));
+                }
+                
+                continue; // Älä kutsu ApplyAndPublishDirectionalVision overwatchille!
             }
 
-            vision.ApplyAndPublishDirectionalVision(facing, angle);
+            // Normaali käsittely ei-overwatch uniteille
+            if (angle >= 359.5f)
+            {
+                vision.UpdateVisionNow();
+                continue;
+            }
+
+            Vector3 facingNormal = u.transform.forward;
+            vision.ApplyAndPublishDirectionalVision(facingNormal, angle);
         }
 
         SetOverWatch(teamUnits);
@@ -188,45 +180,6 @@ public class StatusCoordinator : MonoBehaviour
         }
     }
 
-    /*
-    private void SetOverWatch(IEnumerable<Unit> teamUnits)
-    {
-
-        if (!NetworkServer.active && !NetworkSync.IsOffline)
-        {
-            Debug.LogWarning("[OW-StatusCoord] SetOverWatch called on non-server in online game - this should not happen!");
-            return;
-        }
-
-        foreach (var unit in teamUnits)
-        {
-            if (!unit) continue;
-
-            var action = unit.GetComponent<OverwatchAction>();
-            if (action != null && action.IsOverwatch())
-            {
-   
-                var status = unit.GetComponent<UnitStatusController>();
-                if (status == null)
-                {
-                    Debug.LogWarning($"[OW-StatusCoord] {unit.name} has no UnitStatusController!");
-                    continue;
-                }
-
-                var setup = new OverwatchPayload
-                {
-                    facingWorld = unit.transform.forward,
-                    coneAngleDeg = 80f,
-                    rangeTiles = 8
-                };
-
-                status.AddOrUpdate(UnitStatusType.Overwatch, setup);
-                AddWatcher(unit);
-            }
-
-        }
-    }
-    */
     private void SetOverWatch(IEnumerable<Unit> teamUnits)
     {
         if (!NetworkServer.active && !NetworkSync.IsOffline)
@@ -273,79 +226,6 @@ public class StatusCoordinator : MonoBehaviour
         return overwatchByTeam.TryGetValue(teamId, out var set) ? set : System.Array.Empty<Unit>();
     }
 
-    /*
-    public void CheckOverwatchStep(Unit mover, GridPosition newGridPos)
-    {
-  
-        int enemyTeamId = (mover.GetTeamID() == 0) ? 1 : 0;
-        var watchers = GetWatchers(enemyTeamId);
-        
-        foreach (var watcher in watchers)
-        {
-            if (!watcher || watcher.IsDead() || watcher.IsDying())
-            {
-                continue;
-            }
-
-            if (watcher.TryGetComponent<UnitVision>(out var vision) && vision.IsInitialized)
-            {
-
-                var visible = vision.GetUnitVisionGrids();
-
-                if (visible == null || visible.Count == 0)
-                {
-                    // Pakota serverillä/offlinessa kerta-laskenta ilman julkaisuja
-                    vision.UpdateVisionNow();                      // julkaisee vain publish==true; serverillä tämä vain täyttää välimuistin
-                    visible = vision.GetUnitVisionGrids();
-                }
-                                
-                if (visible == null || !visible.Contains(newGridPos))
-                {
-                    continue;
-                }
-
-                Vector3 facingWorld;
-                if (watcher.TryGetComponent<OverwatchAction>(out var ow) && ow.IsOverwatch())
-                {
-                    var dir = ow.TargetWorld - watcher.transform.position;
-                    dir.y = 0f;
-                    facingWorld = (dir.sqrMagnitude > 1e-4f) ? dir.normalized : watcher.transform.forward;
-                }
-                else
-                {
-                    facingWorld = watcher.transform.forward;
-                }
-
-                var coneTiles = vision.GetConeVisibleTiles(facingWorld, 80f);
-                if (!coneTiles.Contains(newGridPos))
-                {
-                    continue;
-                }
-
-                var target = LevelGrid.Instance.GetUnitAtGridPosition(newGridPos);
-                if (!target || target.IsDying() || target.IsDead())
-                {
-                    continue;
-                }
-
-                if (watcher.GetReactionPoints() <= 0)
-                {
-                    continue;
-                }
-
-                watcher.SpendReactionPoints();
-                NetworkSync.TriggerOverwatchShot(watcher, target, newGridPos);
-
-                if (onlyOneOverwatchAttackPerMovedTile)
-                {
-                    break;
-                }
-            }
-        }
-    }
-*/
-// StatusCoordinator.cs
-
     public void CheckOverwatchStep(Unit mover, GridPosition newGridPos)
     {
         int enemyTeamId = (mover.GetTeamID() == 0) ? 1 : 0;
@@ -357,31 +237,34 @@ public class StatusCoordinator : MonoBehaviour
 
             if (!watcher.TryGetComponent<UnitVision>(out var vision) || !vision.IsInitialized) continue;
 
-            // 1) näkyvyys tiimin unionista (varmistaa yhdenmukaisuuden UI:n kanssa)
-            var tvs = TeamVisionService.Instance;
-            if (tvs == null || !tvs.IsVisibleToTeam(watcher.GetTeamID(), newGridPos))
-                continue; // ruutu ei ole tiimille näkyvä
-
-            // 2) kartiosuodatus: ensisijaisesti status-payloadista
-            Vector3 facingWorld; float coneDeg = 80f;
+            // 2) päätä kulmasuuntima (payload > OW.TargetWorld > forward)
+            Vector3 facingWorld;
+            float coneDeg = 80f;
 
             if (watcher.TryGetComponent<UnitStatusController>(out var status) &&
                 status.TryGet<OverwatchPayload>(UnitStatusType.Overwatch, out var payload))
             {
-                facingWorld = payload.facingWorld;
-                coneDeg     = payload.coneAngleDeg;
-            }
-            else if (watcher.TryGetComponent<OverwatchAction>(out var ow) && ow.IsOverwatch())
-            {
-                var dir = ow.TargetWorld - watcher.transform.position; dir.y = 0f;
-                facingWorld = (dir.sqrMagnitude > 1e-4f) ? dir.normalized : watcher.transform.forward;
+                facingWorld = new Vector3(payload.facingWorld.x, 0f, payload.facingWorld.z).normalized;
+                coneDeg = payload.coneAngleDeg;
             }
             else
             {
+                // ÄLÄ käytä ow.TargetWorld serverissä – client asettaa sen paikallisesti
                 facingWorld = watcher.transform.forward;
             }
 
-            // 3) tarkista onko ruutu kartiossa
+            // 2b) VAHVI TSEKKI: vaadi vahdin oma LOS (henkilökohtainen näkyvyys, ei team-union)
+            var personal = vision.GetUnitVisionGrids();
+            if (personal == null || personal.Count == 0)
+            {
+                // Päivitä vahdin oma LOS-välimuisti (ei julkaise verkkoon)
+                vision.UpdateVisionNow();
+                personal = vision.GetUnitVisionGrids();
+            }
+            if (personal == null || !personal.Contains(newGridPos))
+                continue; // vahti ei itse näe kohderuutua → ei OW
+
+            // 3) kartiosuodatus (geometrinen kulmatesti)
             if (!vision.IsTileInCone(facingWorld, coneDeg, newGridPos))
                 continue;
 
@@ -395,7 +278,6 @@ public class StatusCoordinator : MonoBehaviour
             if (onlyOneOverwatchAttackPerMovedTile) break;
         }
     }
-
 
     private void OnAnyUnitDead(object sender, EventArgs e)
     {
