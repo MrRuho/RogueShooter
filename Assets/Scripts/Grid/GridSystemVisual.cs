@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using Mirror;
+using System.Collections;
 
 [DefaultExecutionOrder(-100)]
 public class GridSystemVisual : MonoBehaviour
@@ -21,6 +22,8 @@ public class GridSystemVisual : MonoBehaviour
     private readonly HashSet<GridPosition> _lastActionCells = new();
     private readonly List<GridPosition> _tmpList = new(256);
 
+    float delayTime;
+    
     private bool _isReady = false;
 
     [Serializable]
@@ -61,6 +64,7 @@ public class GridSystemVisual : MonoBehaviour
 
     private void Start()
     {
+        delayTime = StatusCoordinator.Instance.GetEnemyOverwatchVisibilityDuration();
         gridSystemVisualSingleArray = new GridSystemVisualSingle[
             LevelGrid.Instance.GetWidth(),
             LevelGrid.Instance.GetHeight(),
@@ -68,13 +72,13 @@ public class GridSystemVisual : MonoBehaviour
         ];
 
         for (int x = 0; x < LevelGrid.Instance.GetWidth(); x++)
-        for (int z = 0; z < LevelGrid.Instance.GetHeight(); z++)
-        for (int floor = 0; floor < LevelGrid.Instance.GetFloorAmount(); floor++)
-        {
-            GridPosition gridPosition = new(x, z, floor);
-            Transform t = Instantiate(gridSystemVisualSinglePrefab, LevelGrid.Instance.GetWorldPosition(gridPosition), Quaternion.identity);
-            gridSystemVisualSingleArray[x, z, floor] = t.GetComponent<GridSystemVisualSingle>();
-        }
+            for (int z = 0; z < LevelGrid.Instance.GetHeight(); z++)
+                for (int floor = 0; floor < LevelGrid.Instance.GetFloorAmount(); floor++)
+                {
+                    GridPosition gridPosition = new(x, z, floor);
+                    Transform t = Instantiate(gridSystemVisualSinglePrefab, LevelGrid.Instance.GetWorldPosition(gridPosition), Quaternion.identity);
+                    gridSystemVisualSingleArray[x, z, floor] = t.GetComponent<GridSystemVisualSingle>();
+                }
 
         UnitActionSystem.Instance.OnSelectedActionChanged += UnitActionSystem_OnSelectedActionChanged;
         UnitActionSystem.Instance.OnBusyChanged += UnitActionSystem_OnBusyChanged;
@@ -144,9 +148,9 @@ public class GridSystemVisual : MonoBehaviour
     {
         if (!_isReady || gridSystemVisualSingleArray == null) return;
         for (int x = 0; x < LevelGrid.Instance.GetWidth(); x++)
-        for (int z = 0; z < LevelGrid.Instance.GetHeight(); z++)
-        for (int floor = 0; floor < LevelGrid.Instance.GetFloorAmount(); floor++)
-            gridSystemVisualSingleArray[x, z, floor].Hide();
+            for (int z = 0; z < LevelGrid.Instance.GetHeight(); z++)
+                for (int floor = 0; floor < LevelGrid.Instance.GetFloorAmount(); floor++)
+                    gridSystemVisualSingleArray[x, z, floor].Hide();
     }
 
     public void ShowGridPositionList(List<GridPosition> gridPositionList, GridVisualType gridVisualType)
@@ -168,11 +172,11 @@ public class GridSystemVisual : MonoBehaviour
         RedrawPersistentOverwatch();
         _lastActionCells.Clear();
 
-        if (teamVisionEnabled && TeamVisionService.Instance != null) 
+        if (teamVisionEnabled && TeamVisionService.Instance != null)
         {
             if (invertTeamVision)
             {
-                 DrawTeamVisionOverlayInverted();
+                DrawTeamVisionOverlayInverted();
             }
             else
             {
@@ -195,31 +199,31 @@ public class GridSystemVisual : MonoBehaviour
                 break;
 
             case OverwatchAction:
-                
+
                 selectedAction.GetUnit().GetComponent<UnitVision>().ShowUnitPersonalVision();
                 gridVisualType = GridVisualType.white;
                 break;
 
             case ShootAction shoot:
-            {
-                gridVisualType = GridVisualType.Red;
+                {
+                    gridVisualType = GridVisualType.Red;
 
-                var origin = selectedUnit.GetGridPosition();
-                int range  = shoot.GetMaxShootDistance();
+                    var origin = selectedUnit.GetGridPosition();
+                    int range = shoot.GetMaxShootDistance();
 
-                var cfg = LoSConfig.Instance;
-                var visible = RaycastVisibility.ComputeVisibleTilesRaycast(
-                    origin, range,
-                    cfg.losBlockersMask, cfg.eyeHeight, cfg.samplesPerCell, cfg.insetWU
-                );
-                visible.RemoveWhere(gp => !RaycastVisibility.HasLineOfSightRaycastHeightAware(
-                    origin, gp, cfg.losBlockersMask, cfg.eyeHeight, cfg.samplesPerCell, cfg.insetWU));
+                    var cfg = LoSConfig.Instance;
+                    var visible = RaycastVisibility.ComputeVisibleTilesRaycast(
+                        origin, range,
+                        cfg.losBlockersMask, cfg.eyeHeight, cfg.samplesPerCell, cfg.insetWU
+                    );
+                    visible.RemoveWhere(gp => !RaycastVisibility.HasLineOfSightRaycastHeightAware(
+                        origin, gp, cfg.losBlockersMask, cfg.eyeHeight, cfg.samplesPerCell, cfg.insetWU));
 
-                _tmpList.Clear();
-                _tmpList.AddRange(visible);
-                ShowAndMark(_tmpList, GridVisualType.RedSoft);
-                break;
-            }
+                    _tmpList.Clear();
+                    _tmpList.AddRange(visible);
+                    ShowAndMark(_tmpList, GridVisualType.RedSoft);
+                    break;
+                }
 
             case GranadeAction:
                 gridVisualType = GridVisualType.Yellow;
@@ -322,7 +326,7 @@ public class GridSystemVisual : MonoBehaviour
                     }
                 }
     }
-    
+
     private void ShowAndMark(IEnumerable<GridPosition> cells, GridVisualType type)
     {
         var mat = GetGridVisualTypeMaterial(type);
@@ -350,34 +354,16 @@ public class GridSystemVisual : MonoBehaviour
 
     private readonly Dictionary<Unit, List<GridPosition>> _owPersistent = new();
 
-    public void AddPersistentOverwatch(Unit u, List<GridPosition> tiles)
-    {
-        _owPersistent[u] = tiles;
-        RedrawPersistentOverwatch();
-    }
-
-    public void RemovePersistentOverwatch(Unit u)
-    {
-        _owPersistent.Remove(u);
-        RedrawPersistentOverwatch();
-    }
-
     private void RedrawPersistentOverwatch()
     {
         foreach (var kv in _owPersistent)
             ShowGridPositionList(kv.Value, GridVisualType.UnitOverwatchVision);
     }
 
-    public void ClearAllPersistentOverwatch()
-    {
-        _owPersistent.Clear();
-        if (_isReady) UpdateGridVisuals();
-    }
-
     public void ClearTeamOverwatchVisuals(int teamId)
     {
         var keysToRemove = new List<Unit>();
-        
+
         foreach (var kv in _owPersistent)
         {
             if (kv.Key != null && kv.Key.GetTeamID() == teamId)
@@ -385,15 +371,91 @@ public class GridSystemVisual : MonoBehaviour
                 keysToRemove.Add(kv.Key);
             }
         }
-        
+
         foreach (var unit in keysToRemove)
         {
-            _owPersistent.Remove(unit);
+            // Käytä RemovePersistentOverwatch jotta ajastimet peruuntuvat
+            RemovePersistentOverwatch(unit);
+        }
+    }
+    
+  //  [Header("Enemy Overwatch Display")]
+  //  [SerializeField] private float enemyOverwatchVisibilityDuration = 3f;
+
+    private readonly Dictionary<Unit, Coroutine> _owTimers = new();
+
+    public void AddPersistentOverwatch(Unit u, List<GridPosition> tiles)
+    {
+        if (u == null) return;
+        
+        _owPersistent[u] = tiles;
+        RedrawPersistentOverwatch();
+        
+        // Jos tämä on vihollisen yksikkö (ei oma tiimi), käynnistä ajastin
+        int myTeam = GetLocalPlayerTeamId();
+        if (u.GetTeamID() != myTeam)
+        {
+            StartEnemyOverwatchTimer(u);
+        }
+    }
+
+    private void StartEnemyOverwatchTimer(Unit enemyUnit)
+    {
+        // Peruuta vanha ajastin jos on käynnissä
+        if (_owTimers.TryGetValue(enemyUnit, out var oldCoroutine))
+        {
+            if (oldCoroutine != null)
+                StopCoroutine(oldCoroutine);
         }
         
-        if (_isReady && keysToRemove.Count > 0)
+        // Käynnistä uusi ajastin
+        var coroutine = StartCoroutine(Co_HideEnemyOverwatchAfterDelay(enemyUnit));
+        _owTimers[enemyUnit] = coroutine;
+    }
+    
+    private IEnumerator Co_HideEnemyOverwatchAfterDelay(Unit enemyUnit)
+    {
+        yield return new WaitForSeconds(delayTime);
+        
+        // Piilota tämä vihollisen overwatch
+        RemovePersistentOverwatch(enemyUnit);
+        _owTimers.Remove(enemyUnit);
+
+        if (_isReady)
         {
             UpdateGridVisuals();
         }
+    }
+
+    public void RemovePersistentOverwatch(Unit u)
+    {
+        // Peruuta ajastin jos on käynnissä
+        if (_owTimers.TryGetValue(u, out var coroutine))
+        {
+            if (coroutine != null)
+                StopCoroutine(coroutine);
+            _owTimers.Remove(u);
+        }
+
+        _owPersistent.Remove(u);
+        
+        if (_isReady)
+        {
+            UpdateGridVisuals();
+        }
+    }
+
+    public void ClearAllPersistentOverwatch()
+    {
+        // Peruuta kaikki ajastimet
+        foreach (var kv in _owTimers)
+        {
+            if (kv.Value != null)
+                StopCoroutine(kv.Value);
+        }
+        _owTimers.Clear();
+        
+        _owPersistent.Clear();
+        if (_isReady) UpdateGridVisuals();
     }
 }

@@ -523,11 +523,11 @@ public class NetworkSyncAgent : NetworkBehaviour
     public void RpcClearAllOverwatchVisuals(int teamID)
     {
         if (GridSystemVisual.Instance == null) return;
-        
+
         // Tyhjennä KAIKKI overwatch-visuaalit vain jos oma vuoro alkaa
         // Vastustajan overwatchit jäävät näkyviin
-       // int myTeam = GridSystemVisual.Instance.GetLocalPlayerTeamId();
-        
+        // int myTeam = GridSystemVisual.Instance.GetLocalPlayerTeamId();
+
         // Poista vain oman tiimin overwatch-visuaalit
         GridSystemVisual.Instance.ClearTeamOverwatchVisuals(teamID);
     }

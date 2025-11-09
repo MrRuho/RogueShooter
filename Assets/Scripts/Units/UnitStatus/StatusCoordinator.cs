@@ -9,9 +9,12 @@ public class StatusCoordinator : MonoBehaviour
 {
     public static StatusCoordinator Instance { get; private set; }
 
-    [Header("Overwatch tempo")]
+    [Header("Overwatch shooting tempo")]
     [SerializeField, Range(0f, 0.25f)] private float reactionJitterMaxSeconds = 0.10f;
     [SerializeField] private float reactionCooldownSeconds = 0.5f;
+
+    [Header("Enemy Overwatch Display")]
+    [SerializeField] private float enemyOverwatchVisibilityDuration = 3f;
     
     private readonly Dictionary<Unit, float> _nextReactAt = new();
     private readonly Dictionary<int, HashSet<Unit>> overwatchByTeam = new();
@@ -49,6 +52,11 @@ public class StatusCoordinator : MonoBehaviour
         PurgeDeadAndNullWatchers();
         ClearAllWatchers();
         GridSystemVisual.Instance.ClearAllPersistentOverwatch();
+    }
+
+    public float GetEnemyOverwatchVisibilityDuration()
+    {
+        return enemyOverwatchVisibilityDuration;
     }
 
     public void UnitTurnEndStatus(IEnumerable<Unit> teamUnits)
