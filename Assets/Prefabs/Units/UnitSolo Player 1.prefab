@@ -200,13 +200,13 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0
   normalSettings:
-    aimTurnSpeed: 300
+    aimTurnSpeed: 400
     minAimTime: 0.4
     aimingStateTime: 1
     cooloffStateTime: 0.5
   overwatchSettings:
-    aimTurnSpeed: 350
-    minAimTime: 0.2
+    aimTurnSpeed: 400
+    minAimTime: 0.4
     aimingStateTime: 0.3
     cooloffStateTime: 0.3
   obstaclesLayerMask:

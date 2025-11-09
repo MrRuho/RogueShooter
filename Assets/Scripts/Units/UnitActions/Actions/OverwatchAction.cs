@@ -60,7 +60,7 @@ public class OverwatchAction : BaseAction
                 Vector3 facingWorld = (dir.sqrMagnitude > 1e-4f) ? dir.normalized : unit.transform.forward;
 
                 // Näytä pelaajalle (entinen logiikka)
-                unit.GetComponent<UnitVision>()?.ShowUnitOverWachVision(facingWorld, 80f);
+                unit.GetComponent<UnitVision>().ShowUnitOverWachVision(facingWorld, 80f);
 
                 if (NetworkSync.IsOffline || NetworkServer.active)
                 {
@@ -80,6 +80,7 @@ public class OverwatchAction : BaseAction
                 break;
         }
     }
+    
     public override void TakeAction(GridPosition gridPosition, Action onActionComplete)
     {
         TargetWorld = LevelGrid.Instance.GetWorldPosition(gridPosition);

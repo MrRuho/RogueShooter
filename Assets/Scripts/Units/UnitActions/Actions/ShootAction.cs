@@ -8,14 +8,15 @@ public class ShootAction : BaseAction
     public event EventHandler<OnShootEventArgs> OnShoot;
 
     [Header("Normal Shooting Settings")]
-    [SerializeField] private ShootingSettings normalSettings = new ShootingSettings
+    [SerializeField]
+    private ShootingSettings normalSettings = new ShootingSettings
     {
         aimTurnSpeed = 10f,
         minAimTime = 0.40f,
         aimingStateTime = 1f,
         cooloffStateTime = 0.5f
     };
-
+    
     [Header("Overwatch Shooting Settings")]
     [SerializeField] private ShootingSettings overwatchSettings = new ShootingSettings
     {
@@ -26,6 +27,7 @@ public class ShootAction : BaseAction
     };
 
     private bool isOverwatchShot;
+    private Vector3 lastOverwatchFacing;
 
     public class OnShootEventArgs : EventArgs
     {
@@ -74,6 +76,11 @@ public class ShootAction : BaseAction
                     {
                         stateTimer = Mathf.Min(stateTimer, CurrentSettings.minAimTime);
                     }
+
+                    if (isOverwatchShot)
+                    {
+                        UpdateOverwatchConeIfRotated();
+                    }
                 }
                 break;
             case State.Shooting:
@@ -98,6 +105,72 @@ public class ShootAction : BaseAction
         if (stateTimer <= 0f)
         {
             NextState();
+        }
+    }
+
+    private void UpdateOverwatchConeIfRotated()
+    {
+        Vector3 currentFacing = unit.transform.forward;
+        currentFacing.y = 0f;
+        if (currentFacing.sqrMagnitude < 1e-6f) return;
+        currentFacing.Normalize();
+
+        if (lastOverwatchFacing == Vector3.zero)
+        {
+            lastOverwatchFacing = currentFacing;
+            return;
+        }
+
+        float dot = Vector3.Dot(lastOverwatchFacing, currentFacing);
+
+        if (dot < 0.999f)
+        {
+            lastOverwatchFacing = currentFacing;
+
+            // 1) Päivitä payload
+            if (unit.TryGetComponent<UnitStatusController>(out var status))
+            {
+                if (status.TryGet<OverwatchPayload>(UnitStatusType.Overwatch, out var payload))
+                {
+                    payload.facingWorld = currentFacing;
+                    payload.coneAngleDeg = 80f;
+                    status.AddOrUpdate(UnitStatusType.Overwatch, payload);
+                }
+            }
+
+            // 2) Päivitä paikallinen overlay (vain visuaali)
+            if (unit.TryGetComponent<UnitVision>(out var vision))
+            {
+                vision.ShowUnitOverWachVision(currentFacing, 80f);
+            }
+
+            // 3) Päivitä VAIN tämän unitin vision cache ja TeamVision
+            if (NetworkSync.IsOffline)
+            {
+                if (unit.TryGetComponent<UnitVision>(out var v) && v.IsInitialized)
+                {
+                    // Päivitä VAIN tämän unitin 360° cache
+                    v.UpdateVisionNow();
+                    // Julkaise uusi kartio TeamVisioniin
+                    v.ApplyAndPublishDirectionalVision(currentFacing, 80f);
+                }
+            }
+            else if (Mirror.NetworkServer.active && NetworkSyncAgent.Local != null)
+            {
+                // Server: päivitä tämän unitin cache ja lähetä RPC
+                if (unit.TryGetComponent<UnitVision>(out var v) && v.IsInitialized)
+                {
+                    v.UpdateVisionNow();
+                    v.ApplyAndPublishDirectionalVision(currentFacing, 80f);
+                }
+                
+                // Lähetä RPC clienteille
+                var ni = unit.GetComponent<Mirror.NetworkIdentity>();
+                if (ni != null)
+                {
+                    NetworkSyncAgent.Local.RpcUpdateSingleUnitVision(ni.netId, currentFacing, 80f);
+                }
+            }
         }
     }
 
@@ -193,7 +266,14 @@ public class ShootAction : BaseAction
         }
     }
 
-    public void MarkAsOverwatchShot(bool v) => isOverwatchShot = v;
+    public void MarkAsOverwatchShot(bool v)
+    {
+        isOverwatchShot = v;
+        if (v)
+        {
+            lastOverwatchFacing = Vector3.zero;
+        }
+    }
 
     private void Shoot()
     {

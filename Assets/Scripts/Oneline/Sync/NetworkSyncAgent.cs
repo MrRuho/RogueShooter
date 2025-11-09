@@ -381,6 +381,7 @@ public class NetworkSyncAgent : NetworkBehaviour
         StatusCoordinator.Instance.CheckOverwatchStep(unit, gridPos);
     }
 
+
     [ClientRpc]
     public void RpcRebuildTeamVision(uint[] unitNetIds, bool endPhase)
     {
@@ -388,28 +389,89 @@ public class NetworkSyncAgent : NetworkBehaviour
         {
             if (!Mirror.NetworkClient.spawned.TryGetValue(id, out var ni) || ni == null) continue;
 
-            var unit = ni.GetComponent<Unit>();
-            if (!unit) continue;
+            var u = ni.GetComponent<Unit>();
+            var v = u ? u.GetComponent<UnitVision>() : null;
+            if (u == null || v == null || !v.IsInitialized) continue;
 
-            var vision = unit.GetComponent<UnitVision>();
-            if (vision == null || !vision.IsInitialized) continue;
+            // 1) aina tuore 360° cache
+            v.UpdateVisionNow();
 
-            // 360° cache aina ensin
-            vision.UpdateVisionNow();
+            Vector3 facing = u.transform.forward;
+            facing.y = 0f;
+            float angle = 360f;
 
-            Vector3 facing = unit.transform.forward;
-            int actionpoints = unit.GetActionPoints();
-            float angle = endPhase ? vision.GetDynamicConeAngle(actionpoints, 80f) : 360f;
-
-            if (endPhase && unit.TryGetComponent<UnitStatusController>(out var s) &&
-                s.TryGet<OverwatchPayload>(UnitStatusType.Overwatch, out var p))
+            // 2) ENSIN OverwatchPayload (serveriltä päivitetty)
+            if (u.TryGetComponent<UnitStatusController>(out var status) &&
+                status.TryGet<OverwatchPayload>(UnitStatusType.Overwatch, out var payload))
             {
-                facing = new Vector3(p.facingWorld.x, 0f, p.facingWorld.z).normalized;
-                angle  = 80f;
+                facing = (payload.facingWorld.sqrMagnitude > 1e-6f) ? payload.facingWorld : facing;
+                angle = payload.coneAngleDeg;            // esim. 80f
+            }
+            // 3) Muuten jos endPhase ja OW päällä -> johda suunnasta
+            else if (endPhase && u.TryGetComponent<OverwatchAction>(out var ow) && ow.IsOverwatch())
+            {
+                var dir = ow.TargetWorld - u.transform.position; dir.y = 0f;
+                if (dir.sqrMagnitude > 1e-4f) facing = dir.normalized;
+                angle = 80f;
+            }
+            // 4) Muuten fallback AP-logiikkaan
+            else
+            {
+                angle = v.GetDynamicConeAngle(u.GetActionPoints(), 80f);
             }
 
-            vision.ApplyAndPublishDirectionalVision(facing, angle);
+            // 5) julkaisu
+            v.ApplyAndPublishDirectionalVision(facing, angle);
         }
+    }
+    
+    [ClientRpc]
+    public void RpcUpdateSingleUnitVision(uint unitNetId, Vector3 facing, float coneAngle)
+    {
+        if (!Mirror.NetworkClient.spawned.TryGetValue(unitNetId, out var ni) || ni == null) return;
+
+        var u = ni.GetComponent<Unit>();
+        var v = u ? u.GetComponent<UnitVision>() : null;
+        if (u == null || v == null || !v.IsInitialized) return;
+
+        // Päivitä tämän unitin 360° cache
+        v.UpdateVisionNow();
+        // Julkaise uusi kartio
+        v.ApplyAndPublishDirectionalVision(facing, coneAngle);
+    }
+
+    [Server]
+    public void ServerPushUnitVision(uint unitNetId, float fx, float fz, float coneDeg)
+    {
+        // hostille (serverin oma näkymä) päivitys heti paikallisesti:
+        if (Mirror.NetworkServer.active)
+            RebuildUnitVisionLocal(unitNetId, fx, fz, coneDeg);
+
+        // lähetä myös clienteille
+        RpcRebuildUnitVision(unitNetId, fx, fz, coneDeg);
+    }
+
+    [ClientRpc]
+    private void RpcRebuildUnitVision(uint unitNetId, float fx, float fz, float coneDeg)
+    {
+        RebuildUnitVisionLocal(unitNetId, fx, fz, coneDeg);
+    }
+
+    // Sama koodi serverille ja clientille: EI kutsuta UpdateVisionNow()
+    // → ei mitään 360° välikuvia. Julkaistaan suoraan kartio.
+    private static void RebuildUnitVisionLocal(uint unitNetId, float fx, float fz, float coneDeg)
+    {
+        if (!Mirror.NetworkClient.spawned.TryGetValue(unitNetId, out var ni) || ni == null) return;
+        var u = ni.GetComponent<Unit>();
+        var v = ni.GetComponent<UnitVision>();
+        if (u == null || v == null || !v.IsInitialized) return;
+
+        var facing = new Vector3(fx, 0f, fz);
+        // EI kutsuta v.UpdateVisionNow() — käytetään olemassa olevaa cachea
+        v.ApplyAndPublishDirectionalVision(facing, coneDeg);
+
+        // halutessasi päivitä myös OW-overlay
+        v.ShowUnitOverWachVision(facing, coneDeg);
     }
 
     [Server]

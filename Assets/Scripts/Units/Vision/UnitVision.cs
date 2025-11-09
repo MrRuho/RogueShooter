@@ -5,6 +5,11 @@ using static GridSystemVisual;
 [DisallowMultipleComponent]
 public class UnitVision : MonoBehaviour
 {
+
+    [Header("Overwatch cone")]
+    [SerializeField, Range(0f, 2f)]
+    private float coneOriginBackshiftTiles = 1f; // 1 = yksi ruutu taaksepäin
+
     [Header("Config")]
     public UnitArchetype visionSkill;
     public int teamId = 0;
@@ -49,7 +54,6 @@ public class UnitVision : MonoBehaviour
     {
         CleanupVision();
 
-         // UUSI: poista pysyvä OW-maalaus ja watcher-lista
         GridSystemVisual.Instance.RemovePersistentOverwatch(_unit);
         StatusCoordinator.Instance.RemoveWatcher(_unit);
     }
@@ -114,14 +118,11 @@ public class UnitVision : MonoBehaviour
 
     public void UpdateVisionNow()
     {
-        // 1) Ei päivitystä jos kuolemassa/kuollut
         if (_unit != null && (_unit.IsDying() || _unit.IsDead())) return;
         if (_healthSystem != null && (_healthSystem.IsDying() || _healthSystem.IsDead())) return;
 
-        // 2) ÄLÄ palauta vielä – haluamme silti laskea välimuistin serverillä
         bool publish = ShouldPublishVisionLocally();
 
-        // 3) Perusguardit
         if (!_initialized)
         {
             Debug.LogWarning($"[UnitVision UPDATE SKIP] {name} - not initialized");
@@ -141,7 +142,6 @@ public class UnitVision : MonoBehaviour
             return;
         }
 
-        // 4) Origini ruutuun (korjaa kerros _unitin mukaan)
         var wp = _tr != null ? _tr.position : transform.position;
         var origin = levelGrid.GetGridPosition(wp);
         if (_unit != null)
@@ -150,7 +150,6 @@ public class UnitVision : MonoBehaviour
             origin = new GridPosition(origin.x, origin.z, uf.floor);
         }
 
-        // 5) Lasketaan näkyvät ruudut AINA
         HashSet<GridPosition> vis;
         if (visionSkill.useHeightAware)
         {
@@ -168,10 +167,8 @@ public class UnitVision : MonoBehaviour
             );
         }
 
-        // 6) Päivitä välimuisti – tätä StatusCoordinator käyttää overwatchissa
         if (vis != null) _lastVisibleTiles = vis;
 
-        // 7) Julkaise TeamVisioniin vain, jos kuuluu julkaista
         if (publish)
         {
             var teamVision = TeamVisionService.Instance;
@@ -182,29 +179,24 @@ public class UnitVision : MonoBehaviour
 
     private bool ShouldPublishVisionLocally()
     {
-        // SinglePlayer: aina lokaalisti
         if (NetworkSync.IsOffline) return true;
 
-        // Serveri ei julkaise tätä kautta
         if (!NetworkSync.IsClient) return false;
 
-        // Versus: salli publish vain omalle clientille JA vain oman vuoron aikana
         if (GameModeManager.SelectedMode == GameMode.Versus)
         {
             if (!PlayerLocalTurnGate.LocalPlayerTurn) return false;
 
             var ni = NetworkSync.FindIdentity(this.GetActorId());
-            return NetworkSync.IsOwnedHere(ni); // vain omistetut unitit julkaisee
+            return NetworkSync.IsOwnedHere(ni);
         }
 
-        // Co-op / muut: julkaise omistetuille uniteille
         {
             var ni = NetworkSync.FindIdentity(this.GetActorId());
             return NetworkSync.IsOwnedHere(ni);
         }
     }
-
-
+    
     public HashSet<GridPosition> GetUnitVisionGrids()
     {
         return _lastVisibleTiles;
@@ -212,12 +204,12 @@ public class UnitVision : MonoBehaviour
 
     public void ShowUnitPersonalVision()
     {
-        var tiles = GetUnitVisionGrids();                  // HashSet<GridPosition> (näkyvät ruudut)
+        var tiles = GetUnitVisionGrids();
         if (tiles == null) return;
 
         GridSystemVisual.Instance.ShowGridPositionList(
-            new List<GridPosition>(tiles),                 // tai suoraan tiles, jos metodi ottaa IEnumerable
-            GridVisualType.UnitPersonalVision              // aseta tämä kenttä/parametri oikein
+            new List<GridPosition>(tiles),
+            GridVisualType.UnitPersonalVision
         );
     }
 
@@ -226,37 +218,57 @@ public class UnitVision : MonoBehaviour
         var tiles = GetConeVisibleTiles(facingWorld, coneAngleDeg);
         if (tiles == null || tiles.Count == 0) return;
 
-        // Käytä erillistä tyyppiä, jota EI pyyhitä valinnan vaihtuessa
-         GridSystemVisual.Instance.AddPersistentOverwatch(_unit, tiles);
+        GridSystemVisual.Instance.AddPersistentOverwatch(_unit, tiles);
     }
 
-    public List<GridPosition> GetConeVisibleTiles(Vector3 facingWorld, float coneAngleDeg /*, int rangeTiles = 0*/)
+    private static float EstimateCellSizeWU(LevelGrid lg, GridPosition gp)
     {
-        // 1) Hae oma näkyvyys-cache (se sama jota nyt käytät)
-        var visible = GetUnitVisionGrids(); // HashSet<GridPosition> (=_lastVisible)
+        var a = lg.GetWorldPosition(gp);
+        var b = lg.GetWorldPosition(new GridPosition(gp.x + 1, gp.z, gp.floor));
+        float dx = Mathf.Abs(b.x - a.x);
+        if (dx > 1e-4f) return dx;
+
+        // fallback Z-suunnasta
+        var c = lg.GetWorldPosition(new GridPosition(gp.x, gp.z + 1, gp.floor));
+        return Mathf.Abs(c.z - a.z);
+    }
+
+    public List<GridPosition> GetConeVisibleTiles(Vector3 facingWorld, float coneAngleDeg)
+    {
+        var visible = GetUnitVisionGrids();
         var levelGrid = LevelGrid.Instance;
         var res = new List<GridPosition>();
         if (visible == null || visible.Count == 0 || levelGrid == null) return res;
 
-        // 2) Litteä suuntavektori (XZ)
+        // facing 2D
         Vector2 f = new Vector2(facingWorld.x, facingWorld.z);
-        if (f.sqrMagnitude < 1e-6f)
-            f = new Vector2(transform.forward.x, transform.forward.z);
+        if (f.sqrMagnitude < 1e-6f) f = new Vector2(transform.forward.x, transform.forward.z);
         f.Normalize();
 
         float cosHalf = Mathf.Cos(0.5f * coneAngleDeg * Mathf.Deg2Rad);
-        int myFloor = _unit.GetGridPosition().floor;
-        Vector3 myPos = transform.position;
 
-        // 3) Käy näkyvät ruudut läpi ja pidä vain kulmaan mahtuvat
+        var myGridPos = _unit.GetGridPosition();
+        int myFloor = myGridPos.floor;
+
+        // --- UUSI: siirrä alkuperää yhden ruudun taaksepäin facing-suunnassa ---
+        float cell = EstimateCellSizeWU(levelGrid, myGridPos);
+        Vector3 myGridCenter = levelGrid.GetWorldPosition(myGridPos);
+        Vector3 shiftedOrigin = myGridCenter - new Vector3(f.x, 0f, f.y) * (coneOriginBackshiftTiles * cell);
+
         foreach (var gp in visible)
         {
-            if (gp.floor != myFloor) continue; // pidä kerros kurissa, jos teillä on kerrokset
+            if (gp.floor != myFloor) continue;
+
+            // Oma ruutu voi edelleen olla poissa (ohitetaan se kuten ennenkin)
+            if (gp.x == myGridPos.x && gp.z == myGridPos.z) 
+                continue;
 
             Vector3 wp = levelGrid.GetWorldPosition(gp);
-            Vector2 to = new Vector2(wp.x - myPos.x, wp.z - myPos.z);
+
+            // --- UUSI: mittaa vektori siirretystä alkuperästä ---
+            Vector2 to = new Vector2(wp.x - shiftedOrigin.x, wp.z - shiftedOrigin.z);
             float len2 = to.sqrMagnitude;
-            if (len2 < 1e-6f) { res.Add(gp); continue; } // oma ruutu
+            if (len2 < 1e-6f) continue;
 
             Vector2 toN = to / Mathf.Sqrt(len2);
             float dot = Vector2.Dot(f, toN);
@@ -270,9 +282,9 @@ public class UnitVision : MonoBehaviour
     public float GetDynamicConeAngle(int apLeft, float overwatchAngleDeg = 80f)
     {
         if (apLeft >= 3) return 360f;
-        if (apLeft == 2) return 360f - overwatchAngleDeg; // “leikkautuu perästä yhden OW-kartiollisen verran”
+        if (apLeft == 2) return 360f - overwatchAngleDeg;
         if (apLeft == 1) return 180f;
-        return overwatchAngleDeg;                          // 0 AP → sama kuin OW
+        return overwatchAngleDeg;
     }
 
     public bool IsTileInCone(Vector3 facingWorld, float coneAngleDeg, GridPosition gp)
@@ -280,21 +292,30 @@ public class UnitVision : MonoBehaviour
         var levelGrid = LevelGrid.Instance;
         if (levelGrid == null || _unit == null) return false;
 
-        int myFloor = _unit.GetGridPosition().floor;
+        var myGridPos = _unit.GetGridPosition();
+        int myFloor = myGridPos.floor;
         if (gp.floor != myFloor) return false;
 
-        Vector3 myPos = transform.position;
-        Vector3 wp = levelGrid.GetWorldPosition(gp);
+        // Oma ruutu ei ole “kohderuutu” -> pidetään poissa
+        if (gp.x == myGridPos.x && gp.z == myGridPos.z)
+            return false;
 
         Vector2 f = new Vector2(facingWorld.x, facingWorld.z);
         if (f.sqrMagnitude < 1e-6f) f = new Vector2(transform.forward.x, transform.forward.z);
         f.Normalize();
 
-        Vector2 to = new Vector2(wp.x - myPos.x, wp.z - myPos.z);
-        float len2 = to.sqrMagnitude;
-        if (len2 < 1e-6f) return true;
-
         float cosHalf = Mathf.Cos(0.5f * coneAngleDeg * Mathf.Deg2Rad);
+
+        // --- UUSI: siirretty alkuperä ---
+        float cell = EstimateCellSizeWU(levelGrid, myGridPos);
+        Vector3 myGridCenter = levelGrid.GetWorldPosition(myGridPos);
+        Vector3 shiftedOrigin = myGridCenter - new Vector3(f.x, 0f, f.y) * (coneOriginBackshiftTiles * cell);
+
+        Vector3 wp = levelGrid.GetWorldPosition(gp);
+        Vector2 to = new Vector2(wp.x - shiftedOrigin.x, wp.z - shiftedOrigin.z);
+        float len2 = to.sqrMagnitude;
+        if (len2 < 1e-6f) return false;
+
         Vector2 toN = to / Mathf.Sqrt(len2);
         return Vector2.Dot(f, toN) >= cosHalf;
     }
@@ -304,10 +325,7 @@ public class UnitVision : MonoBehaviour
         var tiles = GetConeVisibleTiles(facingWorld, coneAngleDeg);
         if (tiles == null) return;
 
-        // Päivitä oma julkaistu cache ja työnnä TeamVisioniin
         _lastVisibleTiles = new HashSet<GridPosition>(tiles);
         TeamVisionService.Instance.ReplaceUnitVision(teamId, _unitKey, _lastVisibleTiles);
     }
-
-    
 }
