@@ -422,9 +422,11 @@ public class NetworkSyncAgent : NetworkBehaviour
 
             // 5) julkaisu
             v.ApplyAndPublishDirectionalVision(facing, angle);
+
+
         }
     }
-    
+
     [ClientRpc]
     public void RpcUpdateSingleUnitVision(uint unitNetId, Vector3 facing, float coneAngle)
     {
@@ -436,6 +438,8 @@ public class NetworkSyncAgent : NetworkBehaviour
 
         // Päivitä tämän unitin 360° cache
         v.UpdateVisionNow();
+        // Päivitä visuaalinen näkymä.
+        v.ShowUnitOverWachVision(facing, coneAngle);
         // Julkaise uusi kartio
         v.ApplyAndPublishDirectionalVision(facing, coneAngle);
     }
@@ -508,12 +512,23 @@ public class NetworkSyncAgent : NetworkBehaviour
     {
         if (!Mirror.NetworkServer.spawned.TryGetValue(unitNetId, out var ni) || ni == null) return;
 
-        var u  = ni.GetComponent<Unit>();
+        var u = ni.GetComponent<Unit>();
         var ow = ni.GetComponent<OverwatchAction>();
         if (!u || !ow) return;
 
-        // ⬇️ ÄLÄ koske ow.TargetWorld:iin (setter private) — käytä serverimetodia
         ow.ServerApplyOverwatch(value, new Vector2(fx, fz));
     }
 
+    [ClientRpc]
+    public void RpcClearAllOverwatchVisuals(int teamID)
+    {
+        if (GridSystemVisual.Instance == null) return;
+        
+        // Tyhjennä KAIKKI overwatch-visuaalit vain jos oma vuoro alkaa
+        // Vastustajan overwatchit jäävät näkyviin
+       // int myTeam = GridSystemVisual.Instance.GetLocalPlayerTeamId();
+        
+        // Poista vain oman tiimin overwatch-visuaalit
+        GridSystemVisual.Instance.ClearTeamOverwatchVisuals(teamID);
+    }
 }

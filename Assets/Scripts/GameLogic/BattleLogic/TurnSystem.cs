@@ -108,15 +108,15 @@ public class TurnSystem : MonoBehaviour
         // 5) Rebuild team vision (start phase): 
         //    - offline: tee lokaalisti
         //    - host/server: RPC koko tiimille
-        int teamId = (startTurnTeam == Team.Player) ? 0 : 1;  // yksiselitteinen mappi tähän
+        int teamID = (startTurnTeam == Team.Player) ? 0 : 1;  // yksiselitteinen mappi tähän
         if (NetworkSync.IsOffline)
         {
-            TeamVisionService.Instance.RebuildTeamVisionLocal(teamId, false);
+            TeamVisionService.Instance.RebuildTeamVisionLocal(teamID, false);
            // RebuildTeamVisionLocal(teamId, endPhase: false);
         }
         else if (Mirror.NetworkServer.active && NetworkSyncAgent.Local != null)
         {
-            NetworkSyncAgent.Local.ServerPushTeamVision(teamId, endPhase: false);
+            NetworkSyncAgent.Local.ServerPushTeamVision(teamID, endPhase: false);
         }
 
         // 6) Kerää vuoron aloittavat unitit
@@ -137,7 +137,13 @@ public class TurnSystem : MonoBehaviour
             }
         }
 
-        // 7) Ilmoita statusit
+        // 7) Tyhjennä overwatch-visuaalit kaikilla clienteilla
+        if (!NetworkSync.IsOffline && Mirror.NetworkServer.active && NetworkSyncAgent.Local != null)
+        {
+            NetworkSyncAgent.Local.RpcClearAllOverwatchVisuals(teamID);
+        }
+
+        // 8) Ilmoita statusit
         StatusCoordinator.Instance.UnitTurnStartStatus(units);
     }
 
@@ -171,7 +177,7 @@ public class TurnSystem : MonoBehaviour
 
         }
     }
- 
+
     private void turnSystem_OnTurnEnded(Team endTurnTeam, int turnId)
     {
         if (NetMode.IsRemoteClient) return;
@@ -181,7 +187,7 @@ public class TurnSystem : MonoBehaviour
 
         if (NetworkSync.IsOffline)
             TeamVisionService.Instance.RebuildTeamVisionLocal(teamId, true);
-           // RebuildTeamVisionLocal(teamId, endPhase: true);
+        // RebuildTeamVisionLocal(teamId, endPhase: true);
         else if (Mirror.NetworkServer.active && NetworkSyncAgent.Local != null)
             NetworkSyncAgent.Local.ServerPushTeamVision(teamId, endPhase: true);
 
@@ -202,6 +208,7 @@ public class TurnSystem : MonoBehaviour
         StatusCoordinator.Instance.UnitTurnEndStatus(units);
     }
 
+    /*
     private static void RebuildTeamVisionLocal(int teamId, bool endPhase)
     {
         var list = UnitManager.Instance?.GetAllUnitList();
@@ -233,7 +240,7 @@ public class TurnSystem : MonoBehaviour
             vision.ApplyAndPublishDirectionalVision(facing, angle);
         }
     }
-
+    */
 
     public void ForcePhase(bool isPlayerTurn, bool incrementTurnNumber)
     {

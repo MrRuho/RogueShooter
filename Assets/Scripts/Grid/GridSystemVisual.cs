@@ -373,4 +373,27 @@ public class GridSystemVisual : MonoBehaviour
         _owPersistent.Clear();
         if (_isReady) UpdateGridVisuals();
     }
+
+    public void ClearTeamOverwatchVisuals(int teamId)
+    {
+        var keysToRemove = new List<Unit>();
+        
+        foreach (var kv in _owPersistent)
+        {
+            if (kv.Key != null && kv.Key.GetTeamID() == teamId)
+            {
+                keysToRemove.Add(kv.Key);
+            }
+        }
+        
+        foreach (var unit in keysToRemove)
+        {
+            _owPersistent.Remove(unit);
+        }
+        
+        if (_isReady && keysToRemove.Count > 0)
+        {
+            UpdateGridVisuals();
+        }
+    }
 }
