@@ -62,7 +62,7 @@ public static class ShootingResolver
         return RangeBand.Extreme;
     }
 
-    public static ShotResult Resolve(Unit attacker, Unit target, WeaponDefinition w)
+    public static ShotResult Resolve(Unit attacker, Unit target, WeaponDefinition w, bool isOverwatchShot = false)
     {
         Vector3 a = attacker.GetWorldPosition();
         Vector3 t = target.GetWorldPosition();
@@ -71,8 +71,12 @@ public static class ShootingResolver
 
         int baseHit = GetBaseHitChance(band, w);
         baseHit += GetSkillBonus(attacker);
-        baseHit -= GetHitPenalty(attacker, target);
+        Debug.Log("BaseHit: " + baseHit);
 
+        float hitChanceMultiplier = GetHitPenaltyMultiplier(attacker, target, w, isOverwatchShot);
+        baseHit = Mathf.RoundToInt(baseHit * hitChanceMultiplier);
+
+        Debug.Log("Basehit - Overall Penalty = " + baseHit);
         baseHit = Mathf.Clamp(baseHit, 0, 100);
 
         int roll1 = UnityEngine.Random.Range(1, 101);
@@ -111,34 +115,42 @@ public static class ShootingResolver
         return 0;
     }
 
-    // Kohteen suojautumis ja liikkumistaito vähentää kohteeseen osumista.
-    private static int GetHitPenalty(Unit attacker, Unit target)
+    private static float GetHitPenaltyMultiplier(Unit attacker, Unit target, WeaponDefinition weapon, bool isOverwatchShot)
     {
         if (target == null || target.archetype == null)
-            return 0;
+            return 1f;
 
-        int totalPenalty = 0;
+        float totalPenaltyPercent = 0f;
         var targetArch = target.archetype;
 
         var targetGridPosition = target.GetGridPosition();
         var node = PathFinding.Instance.GetNode(targetGridPosition.x, targetGridPosition.z, targetGridPosition.floor);
-        var ct = CoverService.EvaluateCoverHalfPlane(attacker.GetGridPosition(), target.GetGridPosition(), node);
+        var coverType = CoverService.EvaluateCoverHalfPlane(attacker.GetGridPosition(), target.GetGridPosition(), node);
 
-        if (ct == CoverService.CoverType.High)
-            totalPenalty += targetArch.highCoverEnemyHitPenalty;
-        else if (ct == CoverService.CoverType.Low)
-            totalPenalty += targetArch.LowCoverEnemyHitPenalty;
+        if (coverType == CoverService.CoverType.High)
+            totalPenaltyPercent += targetArch.highCoverEnemyHitPenalty;
+        else if (coverType == CoverService.CoverType.Low)
+            totalPenaltyPercent += targetArch.LowCoverEnemyHitPenalty;
+
+        Debug.Log("CoverPenalty: " + totalPenaltyPercent);
 
         var moveAction = target.GetAction<MoveAction>();
         if (moveAction != null && moveAction.IsActionActive())
         {
-            totalPenalty += targetArch.moveEnemyHitPenalty;
+            totalPenaltyPercent += targetArch.moveEnemyHitPenalty;
+
+            var movePenalty = targetArch.moveEnemyHitPenalty;
+            Debug.Log("MovePenalty: " + movePenalty);
         }
 
-        // DoDo OverwachAction shooting penalty
-        
+        if (isOverwatchShot)
+        {
+            totalPenaltyPercent += weapon.overwatch.overwatchShootPenalty;
+            var overwachShot = weapon.overwatch.overwatchShootPenalty;
+            Debug.Log("OverwachShotPenalty : " + overwachShot);
+        }
 
-        return totalPenalty;
+        return 1f - (totalPenaltyPercent / 100f);
     }
 
     private static ShotTier RollOnHit(RangeBand b, WeaponDefinition w)

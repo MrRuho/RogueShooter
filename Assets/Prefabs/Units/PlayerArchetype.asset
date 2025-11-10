@@ -15,10 +15,10 @@ MonoBehaviour:
   personalCoverMax: 120
   coverRegenOnMove: 10
   coverRegenPerUnusedAP: 10
-  LowCoverEnemyHitPenalty: 0
-  highCoverEnemyHitPenalty: 0
+  LowCoverEnemyHitPenalty: 5
+  highCoverEnemyHitPenalty: 10
   moveRange: 4
-  moveEnemyHitPenalty: 5
+  moveEnemyHitPenalty: 10
   basicShootinSkill: 69
   shootingSkillLevel: 0
   accuracyBonusPerSkillLevel: 3

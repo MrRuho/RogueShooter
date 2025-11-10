@@ -214,7 +214,7 @@ public class ShootAction : BaseAction
     public void MarkAsOverwatchShot(bool overwatchShot)
     {
 
-        isOverwatchShot = overwatchShot; //unit.GetComponent<OverwatchAction>().IsOverwatch();
+        isOverwatchShot = overwatchShot;
         if (isOverwatchShot)
         {
             lastOverwatchFacing = Vector3.zero;
@@ -229,7 +229,9 @@ public class ShootAction : BaseAction
             return;
         }
 
-        var result = ShootingResolver.Resolve(unit, targetUnit, weapon);
+        var result = ShootingResolver.Resolve(unit, targetUnit, weapon, isOverwatchShot);
+
+      //  var result = ShootingResolver.Resolve(unit, targetUnit, weapon);
 
         OnAnyShoot?.Invoke(this, new OnShootEventArgs
         {
