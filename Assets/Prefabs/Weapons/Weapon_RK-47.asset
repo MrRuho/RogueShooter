@@ -12,6 +12,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3a2416bd990fc1e4b8516fff1b10d615, type: 3}
   m_Name: Weapon_RK-47
   m_EditorClassIdentifier: Assembly-CSharp::WeaponDefinition
+  normalShooting:
+    turnSpeed: 300
+    minAimTime: 0.4
+    aimingStateTime: 1
+    cooloffStateTime: 0.5
+  overwatch:
+    coneAngleDeg: 80
+    rangeTiles: 8
+    turnSpeed: 350
+    minAimTime: 0.3
+    aimingStateTime: 0.4
+    cooloffStateTime: 0.5
+    reactionJitterMaxSeconds: 0.15
+    reactionCooldownSeconds: 0.5
+    overwatchShootPenalty: 20
   maxShootRange: 20
   NoCoverDamageBonus: 30
   baseDamage: 50

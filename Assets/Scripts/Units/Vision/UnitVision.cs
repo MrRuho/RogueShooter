@@ -213,7 +213,7 @@ public class UnitVision : MonoBehaviour
         );
     }
 
-    public void ShowUnitOverWachVision(Vector3 facingWorld, float coneAngleDeg)
+    public void ShowUnitOverWatchVision(Vector3 facingWorld, float coneAngleDeg)
     {
         var tiles = GetConeVisibleTiles(facingWorld, coneAngleDeg);
         if (tiles == null || tiles.Count == 0) return;
@@ -279,12 +279,12 @@ public class UnitVision : MonoBehaviour
         return res;
     }
 
-    public float GetDynamicConeAngle(int apLeft, float overwatchAngleDeg = 80f)
+    public float VisionPenaltyWhenUsingAP(int apLeft, float VisionAngleDegPenalty = 80f)
     {
         if (apLeft >= 3) return 360f;
-        if (apLeft == 2) return 360f - overwatchAngleDeg;
+        if (apLeft == 2) return 360f - VisionAngleDegPenalty;
         if (apLeft == 1) return 180f;
-        return overwatchAngleDeg;
+        return VisionAngleDegPenalty;
     }
 
     public bool IsTileInCone(Vector3 facingWorld, float coneAngleDeg, GridPosition gp)

@@ -9,10 +9,6 @@ public class StatusCoordinator : MonoBehaviour
 {
     public static StatusCoordinator Instance { get; private set; }
 
-    [Header("Overwatch shooting tempo")]
-    [SerializeField, Range(0f, 0.25f)] private float reactionJitterMaxSeconds = 0.10f;
-    [SerializeField] private float reactionCooldownSeconds = 0.5f;
-
     [Header("Enemy Overwatch Display")]
     [SerializeField] private float enemyOverwatchVisibilityDuration = 3f;
     
@@ -63,40 +59,49 @@ public class StatusCoordinator : MonoBehaviour
     {
         PurgeDeadAndNullWatchers();
 
-        foreach (var u in teamUnits)
+        foreach (var unit in teamUnits)
         {
-            if (!u) continue;
+            if (!unit) continue;
 
-            var vision = u.GetComponent<UnitVision>();
+            var vision = unit.GetComponent<UnitVision>();
             if (vision == null || !vision.IsInitialized) continue;
 
-            int ap = u.GetActionPoints();
-            float angle = vision.GetDynamicConeAngle(ap, 80f);
+            int ap = unit.GetActionPoints();
+            float angle = vision.VisionPenaltyWhenUsingAP(ap);
 
-            if (u.TryGetComponent<OverwatchAction>(out var ow) && ow.IsOverwatch())
+            if (unit.TryGetComponent<OverwatchAction>(out var ow) && ow.IsOverwatch())
             {
                 vision.UpdateVisionNow();
                 
-                Vector3 facing = u.transform.forward;
-                float coneAngle = 80f;
+                var settings = ow.GetOverwatchSettings();
+                Vector3 facing = unit.transform.forward;
+                float coneAngle = settings.coneAngleDeg;
                 
-                if (u.TryGetComponent<UnitStatusController>(out var status) &&
+                if (unit.TryGetComponent<UnitStatusController>(out var status) &&
                     status.TryGet<OverwatchPayload>(UnitStatusType.Overwatch, out var payload))
                 {
                     facing = payload.facingWorld;
                     coneAngle = payload.coneAngleDeg;
-                    if (facing.sqrMagnitude < 1e-4f) facing = u.transform.forward;
+                    if (facing.sqrMagnitude < 1e-4f) facing = unit.transform.forward;
+                    
+                    if (Mathf.Abs(payload.coneAngleDeg - settings.coneAngleDeg) > 0.1f ||
+                        payload.rangeTiles != settings.rangeTiles)
+                    {
+                        payload.coneAngleDeg = settings.coneAngleDeg;
+                        payload.rangeTiles = settings.rangeTiles;
+                        status.AddOrUpdate(UnitStatusType.Overwatch, payload);
+                    }
                 }
                 else
                 {
-                    var dir = ow.TargetWorld - u.transform.position; dir.y = 0f;
+                    var dir = ow.TargetWorld - unit.transform.position; dir.y = 0f;
                     if (dir.sqrMagnitude > 1e-4f) facing = dir.normalized;
                 }
                 
                 var coneTiles = vision.GetConeVisibleTiles(facing, coneAngle);
                 if (coneTiles != null && TeamVisionService.Instance != null)
                 {
-                    int teamId = u.GetTeamID();
+                    int teamId = unit.GetTeamID();
                     int unitKey = vision.GetInstanceID();
                     TeamVisionService.Instance.ReplaceUnitVision(teamId, unitKey, new HashSet<GridPosition>(coneTiles));
                 }
@@ -110,7 +115,7 @@ public class StatusCoordinator : MonoBehaviour
                 continue;
             }
 
-            Vector3 facingNormal = u.transform.forward;
+            Vector3 facingNormal = unit.transform.forward;
             vision.ApplyAndPublishDirectionalVision(facingNormal, angle);
         }
 
@@ -122,6 +127,8 @@ public class StatusCoordinator : MonoBehaviour
         PurgeDeadAndNullWatchers();
         if (teamUnits == null) return;
 
+        ForceCleanStateForTurnStart(teamUnits);
+        
         foreach (var u in teamUnits)
         {
             if (!u) continue;
@@ -209,11 +216,12 @@ public class StatusCoordinator : MonoBehaviour
 
                 if (!status.Has(UnitStatusType.Overwatch))
                 {
+                    var settings = action.GetOverwatchSettings();
                     var setup = new OverwatchPayload
                     {
                         facingWorld = unit.transform.forward,
-                        coneAngleDeg = 80f,
-                        rangeTiles = 8
+                        coneAngleDeg = settings.coneAngleDeg,
+                        rangeTiles = settings.rangeTiles
                     };
                     status.AddOrUpdate(UnitStatusType.Overwatch, setup);
                 }
@@ -230,7 +238,10 @@ public class StatusCoordinator : MonoBehaviour
 
     private bool CanReactNow(Unit w) => !_nextReactAt.TryGetValue(w, out var t) || Time.time >= t;
 
-    private void MarkReactedNow(Unit w) { if (w) _nextReactAt[w] = Time.time + reactionCooldownSeconds; }
+    private void MarkReactedNow(Unit w, float cooldown) 
+    { 
+        if (w) _nextReactAt[w] = Time.time + cooldown; 
+    }
 
     public void CheckOverwatchStep(Unit mover, GridPosition newGridPos)
     {
@@ -244,17 +255,18 @@ public class StatusCoordinator : MonoBehaviour
             if (!watcher.TryGetComponent<UnitVision>(out var vision) || !vision.IsInitialized) continue;
 
             Vector3 facingWorld;
-            float coneDeg = 80f;
+            float coneDeg;
 
             if (watcher.TryGetComponent<UnitStatusController>(out var status) &&
                 status.TryGet<OverwatchPayload>(UnitStatusType.Overwatch, out var payload))
             {
-                facingWorld = new Vector3(payload.facingWorld.x, 0f, payload.facingWorld.z).normalized;
+                facingWorld = payload.facingWorld;
                 coneDeg = payload.coneAngleDeg;
             }
             else
             {
-                facingWorld = watcher.transform.forward;
+                facingWorld = OverwatchHelpers.NormalizeFacing(watcher.transform.forward);
+                coneDeg = 80f;
             }
 
             var personal = vision.GetUnitVisionGrids();
@@ -273,19 +285,23 @@ public class StatusCoordinator : MonoBehaviour
             {
                 continue;
             }
-            MarkReactedNow(watcher);
+
+            var owAction = watcher.GetComponent<OverwatchAction>();
+            var settings = owAction != null ? owAction.GetOverwatchSettings() : OverwatchShootingSettings.Default;
+            
+            MarkReactedNow(watcher, settings.reactionCooldownSeconds);
 
             var target = LevelGrid.Instance.GetUnitAtGridPosition(newGridPos);
 
-            StartCoroutine(Co_TriggerOverwatchWithJitter(watcher, target, newGridPos));
+            StartCoroutine(Co_TriggerOverwatchWithJitter(watcher, target, newGridPos, settings.reactionJitterMaxSeconds));
 
             if (onlyOneOverwatchAttackPerMovedTile) break;
         }
     }
     
-    private IEnumerator Co_TriggerOverwatchWithJitter(Unit watcher, Unit target, GridPosition posAtTrigger)
+    private IEnumerator Co_TriggerOverwatchWithJitter(Unit watcher, Unit target, GridPosition posAtTrigger, float jitterMax)
     {
-        float delay = UnityEngine.Random.Range(0f, reactionJitterMaxSeconds);
+        float delay = UnityEngine.Random.Range(0f, jitterMax);
         if (delay > 0f) yield return new WaitForSeconds(delay);
 
         if (!NetworkSync.IsOffline && !Mirror.NetworkServer.active) yield break;
@@ -336,5 +352,45 @@ public class StatusCoordinator : MonoBehaviour
     {
         overwatchByTeam.Clear();
         _nextReactAt.Clear();
+    }
+
+    public void ForceCleanStateForTurnStart(IEnumerable<Unit> teamUnits)
+    {
+        if (teamUnits == null) return;
+
+        // 1. Pyyhi kaikki vanhat overwatch-visualisoinnit
+        GridSystemVisual.Instance.ClearAllPersistentOverwatch();
+
+        // 2. Pyyhi kaikki vanhat grid-merkinnät
+        GridSystemVisual.Instance.HideAllGridPositions();
+
+        // 3. Pakota jokaisen yksikön vision päivitys täyteen 360°
+        foreach (var unit in teamUnits)
+        {
+            if (!unit || unit.IsDead() || unit.IsDying()) continue;
+
+            // Varmista että UnitVision on initialisoitu
+            if (unit.TryGetComponent<UnitVision>(out var vision) && vision.IsInitialized)
+            {
+                // Pakota täysi vision päivitys (360°, ei kartiota)
+                vision.UpdateVisionNow();
+                
+                // Varmista että TeamVisionService saa päivityksen
+                int teamId = unit.GetTeamID();
+                int unitKey = vision.GetInstanceID();
+                var visionTiles = vision.GetUnitVisionGrids();
+                
+                if (visionTiles != null && TeamVisionService.Instance != null)
+                {
+                    TeamVisionService.Instance.ReplaceUnitVision(teamId, unitKey, visionTiles);
+                }
+            }
+        }
+
+        // 4. Pakota grid-visualisoinnin päivitys
+        if (GridSystemVisual.Instance != null)
+        {
+            GridSystemVisual.Instance.UpdateGridVisuals();
+        }
     }
 }

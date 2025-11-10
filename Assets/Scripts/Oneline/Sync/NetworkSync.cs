@@ -355,7 +355,9 @@ public static class NetworkSync
                 var watcherNi = watcher.GetComponent<NetworkIdentity>();
                 if (watcherNi != null)
                 {
+
                     agent.ServerBroadcastOverwatchShot(watcherNi.netId, targetGridPos.x, targetGridPos.z, targetGridPos.floor);
+                   // agent.ServerFlashOverwatchCone(watcherNi.netId);
                 }   
             }
 

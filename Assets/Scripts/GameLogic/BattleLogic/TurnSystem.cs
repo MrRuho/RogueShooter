@@ -63,9 +63,15 @@ public class TurnSystem : MonoBehaviour
 
     private void turnSystem_OnTurnStarted(Team startTurnTeam, int turnId)
     {
-        if (NetMode.IsRemoteClient) return;
-
-        StartCoroutine(Co_SafeTurnStart(startTurnTeam, turnId));
+        if (NetMode.IsRemoteClient)
+    {
+        // Client: päivitä vain oman tiimin unitit
+        StartCoroutine(Co_ClientTurnStart(startTurnTeam));
+        return;
+    }
+    
+    // Host/Server/Offline: normaali logiikka
+    StartCoroutine(Co_SafeTurnStart(startTurnTeam, turnId));
     }
 
     private System.Collections.IEnumerator Co_SafeTurnStart(Team startTurnTeam, int turnId)
@@ -103,23 +109,9 @@ public class TurnSystem : MonoBehaviour
         }
 
         // 4) Avaa input
-        UnitActionSystem.Instance?.UnlockInput();
+        UnitActionSystem.Instance.UnlockInput();
 
-        // 5) Rebuild team vision (start phase): 
-        //    - offline: tee lokaalisti
-        //    - host/server: RPC koko tiimille
-        int teamID = (startTurnTeam == Team.Player) ? 0 : 1;  // yksiselitteinen mappi tähän
-        if (NetworkSync.IsOffline)
-        {
-            TeamVisionService.Instance.RebuildTeamVisionLocal(teamID, false);
-           // RebuildTeamVisionLocal(teamId, endPhase: false);
-        }
-        else if (Mirror.NetworkServer.active && NetworkSyncAgent.Local != null)
-        {
-            NetworkSyncAgent.Local.ServerPushTeamVision(teamID, endPhase: false);
-        }
-
-        // 6) Kerää vuoron aloittavat unitit
+        // 5) Kerää vuoron aloittavat unitit
         List<Unit> units = new();
         var all = UnitManager.Instance?.GetAllUnitList();
         if (all != null)
@@ -134,8 +126,17 @@ public class TurnSystem : MonoBehaviour
                 // Voi puuttua rootista — tee null-guard:
                 var ba = unit.GetComponent<BaseAction>();
                 if (ba != null) ba.ResetChostActions();
+
+                //Resetoi Overwach shootaction bool asetus.
+                unit.GetComponent<ShootAction>().ResetOverwatchShotState();
             }
         }
+
+        // 6) Rebuild team vision (start phase): 
+        //    - offline: tee lokaalisti
+        //    - host/server: RPC koko tiimille
+
+        int teamID = (startTurnTeam == Team.Player) ? 0 : 1;  // yksiselitteinen mappi tähän
 
         // 7) Tyhjennä overwatch-visuaalit kaikilla clienteilla
         if (!NetworkSync.IsOffline && Mirror.NetworkServer.active && NetworkSyncAgent.Local != null)
@@ -145,7 +146,81 @@ public class TurnSystem : MonoBehaviour
 
         // 8) Ilmoita statusit
         StatusCoordinator.Instance.UnitTurnStartStatus(units);
+
+        yield return null;
+
+        if (NetworkSync.IsOffline)
+            TeamVisionService.Instance.RebuildTeamVisionLocal(teamID, false);
+        else if (Mirror.NetworkServer.active && NetworkSyncAgent.Local != null)
+            NetworkSyncAgent.Local.ServerPushTeamVision(teamID, endPhase: false);
+
+
     }
+
+    private System.Collections.IEnumerator Co_ClientTurnStart(Team startTurnTeam)
+    {
+        // Odota että actionit päättyy
+        const int MAX_WAIT_FRAMES = 180;
+        int waitedFrames = 0;
+        
+        while (BaseAction.AnyActionActive() && waitedFrames < MAX_WAIT_FRAMES)
+        {
+            waitedFrames++;
+            yield return null;
+        }
+        
+        if (BaseAction.AnyActionActive())
+        {
+            Debug.LogWarning("[TurnSystem-Client] Actionit ei päättyneet, pakkolopetetaan!");
+            BaseAction.ForceCompleteAllActiveActions();
+            yield return null;
+        }
+        
+        // Odota singletonit
+        while ((UnitManager.Instance == null || StatusCoordinator.Instance == null) && waitedFrames < MAX_WAIT_FRAMES)
+        {
+            waitedFrames++;
+            yield return null;
+        }
+        
+        // Unlock input
+        if (UnitActionSystem.Instance != null)
+        {
+            UnitActionSystem.Instance.UnlockInput();
+        }
+        
+        // Kerää oman tiimin unitit ja päivitä niiden näkyvyys
+        List<Unit> units = new();
+        var all = UnitManager.Instance?.GetAllUnitList();
+        if (all != null)
+        {
+            foreach (Unit unit in all)
+            {
+                if (!unit) continue;
+                if (unit.Team != startTurnTeam) continue;
+                
+                units.Add(unit);
+                
+                var ba = unit.GetComponent<BaseAction>();
+                if (ba != null) ba.ResetChostActions();
+                
+                unit.GetComponent<ShootAction>().ResetOverwatchShotState();
+            }
+        }
+
+        // KRIITTINEN: Päivitä unitien näkyvyys 360°
+        if (StatusCoordinator.Instance != null)
+        {
+            StatusCoordinator.Instance.UnitTurnStartStatus(units);
+        }
+        
+        yield return null; // anna yhden framen hengähdys
+
+        int myTeam = (startTurnTeam == Team.Player) ? 0 : 1;
+        if (TeamVisionService.Instance != null)
+            TeamVisionService.Instance.RebuildTeamVisionLocal(myTeam, endPhase:false);
+    }
+
 
     public void NextTurn()
     {
@@ -208,49 +283,16 @@ public class TurnSystem : MonoBehaviour
         StatusCoordinator.Instance.UnitTurnEndStatus(units);
     }
 
-    /*
-    private static void RebuildTeamVisionLocal(int teamId, bool endPhase)
-    {
-        var list = UnitManager.Instance?.GetAllUnitList();
-        if (list == null) return;
-
-        foreach (var unit in list)
-        {
-            if (!unit) continue;
-            if (unit.GetTeamID() != teamId) continue;
-            if (unit.IsDead() || unit.IsDying()) continue;
-
-            var vision = unit.GetComponent<UnitVision>();
-            if (vision == null || !vision.IsInitialized) continue;
-
-            // Aina päivitä tuore 360° cache ensin
-            vision.UpdateVisionNow();
-            int actionpoints = unit.GetActionPoints();
-            Vector3 facing = unit.transform.forward;
-            float angle = endPhase ? vision.GetDynamicConeAngle(actionpoints, 80f) : 360f;
-
-            if (endPhase && unit.TryGetComponent<OverwatchAction>(out var ow) && ow.IsOverwatch())
-            {
-                angle = vision.GetDynamicConeAngle(0, 80f);
-                var dir = ow.TargetWorld - unit.transform.position; dir.y = 0f;
-                if (dir.sqrMagnitude > 1e-4f) facing = dir.normalized;
-                angle = 80f;
-            }
-
-            vision.ApplyAndPublishDirectionalVision(facing, angle);
-        }
-    }
-    */
-
     public void ForcePhase(bool isPlayerTurn, bool incrementTurnNumber)
     {
         if (incrementTurnNumber) turnNumber++;
         
+        /*
         if (NetMode.IsOnline && isPlayerTurn)
         {
             ConvertUnusedActionPointsToCoverPoints();
         }
-        
+        */
         this.isPlayerTurn = isPlayerTurn;
         OnTurnChanged?.Invoke(this, EventArgs.Empty);
     }

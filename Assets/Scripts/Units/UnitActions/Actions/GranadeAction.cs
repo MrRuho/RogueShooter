@@ -350,7 +350,7 @@ public class GranadeAction : BaseAction
         
         while (true)
         {
-            bool aligned = RotateTowards(targetWorld);
+            bool aligned = RotateTowards(targetWorld, 750);
             if (aligned)
             {
                 alignedTime += Time.deltaTime;

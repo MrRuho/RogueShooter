@@ -10,12 +10,17 @@ public class UnitArchetype : ScriptableObject
     public int personalCoverMax = 200;
     public int coverRegenOnMove = 1;
     public int coverRegenPerUnusedAP = 25;
-    public int LowCoverEnemyHitPenalty  = 12;      // -12% vihollisen osumatodennäköisyyteen
+
+    [Tooltip("Kuinka paljon matala suoja vähentää vihollisen todennäköisyyttä osua. Huom! Suhteellinen vähennys. Esim 2% vähentää 100% taidon 98%, ja 50% taidon 49%")]
+    public int LowCoverEnemyHitPenalty = 12;      // -12% vihollisen osumatodennäköisyyteen
+    [Tooltip("Kuinka paljon korkea suoja vähentää vihollisen todennäköisyyttä osua. Huom! Suhteellinen vähennys. Esim 2% vähentää 100% taidon 98%, ja 50% taidon 49%")]
     public int highCoverEnemyHitPenalty = 25;      // -25% vihollinen osumatodennäköisyyteen
 
     [Space(10)]
     [Header("Moving Skill")]
     public int moveRange = 4;
+
+     [Tooltip("Kuinka paljon liike vähentää vihollisen mahdollisuutta osua. Huom! Suhteellinen vähennys. Esim 2% vähentää 100% taidon 98%, ja 50% taidon 49%")]
     public int moveEnemyHitPenalty = 5; // Kuinka paljon vähentää osumatodennäköisyyttä kun on liikkeessä. 
 
     [Space(10)]

@@ -53,7 +53,13 @@ public class CameraManager : MonoBehaviour
                 Unit shooterUnit = shootAction.GetUnit();
                 Unit targetUnit = shootAction.GetTargetUnit();
 
-                Vector3 cameraCharacterHeight = Vector3.up * actionCameraVerticalPosition; //1.7f;
+                if (shooterUnit == null || targetUnit == null)
+                {
+                    Debug.LogWarning("[CameraManager] Cannot setup action camera: shooter or target is null");
+                    return;
+                }
+
+                Vector3 cameraCharacterHeight = Vector3.up * actionCameraVerticalPosition;
                 Vector3 shootDir = (targetUnit.GetWorldPosition() - shooterUnit.GetWorldPosition()).normalized;
 
                 float shoulderOffsetAmount = 0.5f;

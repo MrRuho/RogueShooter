@@ -32,7 +32,7 @@ public class MeleeAction : BaseAction
             case State.MeleeActionBeforeHit:
                 if (targetUnit != null)
                 {
-                    if (RotateTowards(targetUnit.GetWorldPosition()))
+                    if (RotateTowards(targetUnit.GetWorldPosition(), 750))
                     {
                         stateTimer = Mathf.Min(stateTimer, 0.4f);
                     }

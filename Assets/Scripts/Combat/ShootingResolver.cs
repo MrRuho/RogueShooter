@@ -111,24 +111,6 @@ public static class ShootingResolver
         return 0;
     }
 
-    /*
-    private static int GetCoverPenalty(Unit attacker, Unit target)
-    {
-        var targetGridPosition = target.GetGridPosition();
-        var node = PathFinding.Instance.GetNode(targetGridPosition.x, targetGridPosition.z, targetGridPosition.floor);
-        var ct = CoverService.EvaluateCoverHalfPlane(attacker.GetGridPosition(), target.GetGridPosition(), node);
-
-        if (attacker != null && attacker.archetype != null)
-        {
-            var archA = attacker.archetype;
-            if (ct == CoverService.CoverType.High) return archA.highCoverEnemyHitPenalty;
-            if (ct == CoverService.CoverType.Low) return archA.LowCoverEnemyHitPenalty;
-        }
-        
-        return 0;
-    }
-    */
-
     // Kohteen suojautumis ja liikkumistaito vähentää kohteeseen osumista.
     private static int GetHitPenalty(Unit attacker, Unit target)
     {
@@ -152,6 +134,9 @@ public static class ShootingResolver
         {
             totalPenalty += targetArch.moveEnemyHitPenalty;
         }
+
+        // DoDo OverwachAction shooting penalty
+        
 
         return totalPenalty;
     }

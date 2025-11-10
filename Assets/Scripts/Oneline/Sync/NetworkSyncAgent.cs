@@ -335,7 +335,6 @@ public class NetworkSyncAgent : NetworkBehaviour
     [ClientRpc]
     void RpcExecuteOverwatchShot(uint watcherNetId, int targetX, int targetZ, int targetFloor)
     {
-
         if (!NetworkClient.spawned.TryGetValue(watcherNetId, out var watcherNi) || watcherNi == null)
         {
             Debug.LogWarning($"[OW-Client] Watcher netId {watcherNetId} not found in spawned objects!");
@@ -363,6 +362,14 @@ public class NetworkSyncAgent : NetworkBehaviour
         }
 
         GridPosition targetGridPos = new GridPosition(targetX, targetZ, targetFloor);
+
+        var targetUnit = LevelGrid.Instance.GetUnitAtGridPosition(targetGridPos);
+        if (targetUnit == null)
+        {
+            Debug.LogWarning($"[OW-Client] No target unit found at {targetGridPos}! Shot cancelled.");
+            return;
+        }
+
         shoot.MarkAsOverwatchShot(true);
         shoot.TakeAction(targetGridPos, () => { });
     }
@@ -417,7 +424,8 @@ public class NetworkSyncAgent : NetworkBehaviour
             // 4) Muuten fallback AP-logiikkaan
             else
             {
-                angle = v.GetDynamicConeAngle(u.GetActionPoints(), 80f);
+                angle = endPhase ? v.VisionPenaltyWhenUsingAP(u.GetActionPoints())
+                    : 360f;
             }
 
             // 5) julkaisu
@@ -439,7 +447,7 @@ public class NetworkSyncAgent : NetworkBehaviour
         // Päivitä tämän unitin 360° cache
         v.UpdateVisionNow();
         // Päivitä visuaalinen näkymä.
-        v.ShowUnitOverWachVision(facing, coneAngle);
+        v.ShowUnitOverWatchVision(facing, coneAngle);
         // Julkaise uusi kartio
         v.ApplyAndPublishDirectionalVision(facing, coneAngle);
     }
@@ -475,7 +483,7 @@ public class NetworkSyncAgent : NetworkBehaviour
         v.ApplyAndPublishDirectionalVision(facing, coneDeg);
 
         // halutessasi päivitä myös OW-overlay
-        v.ShowUnitOverWachVision(facing, coneDeg);
+        v.ShowUnitOverWatchVision(facing, coneDeg);
     }
 
     [Server]
@@ -523,12 +531,37 @@ public class NetworkSyncAgent : NetworkBehaviour
     public void RpcClearAllOverwatchVisuals(int teamID)
     {
         if (GridSystemVisual.Instance == null) return;
-
-        // Tyhjennä KAIKKI overwatch-visuaalit vain jos oma vuoro alkaa
-        // Vastustajan overwatchit jäävät näkyviin
-        // int myTeam = GridSystemVisual.Instance.GetLocalPlayerTeamId();
-
         // Poista vain oman tiimin overwatch-visuaalit
         GridSystemVisual.Instance.ClearTeamOverwatchVisuals(teamID);
     }
+
+    [Command(requiresAuthority = false)]
+    public void CmdUpdateOverwatchCone(uint unitNetId, float fx, float fz, float coneAngle)
+    {
+        if (!Mirror.NetworkServer.spawned.TryGetValue(unitNetId, out var ni) || ni == null) return;
+
+        var u = ni.GetComponent<Unit>();
+        var v = u ? u.GetComponent<UnitVision>() : null;
+        if (u == null || v == null || !v.IsInitialized) return;
+
+        var facing = new Vector3(fx, 0f, fz);
+        facing.Normalize();
+
+        if (u.TryGetComponent<UnitStatusController>(out var status))
+        {
+            if (status.TryGet<OverwatchPayload>(UnitStatusType.Overwatch, out var payload))
+            {
+                payload.facingWorld = facing;
+                payload.coneAngleDeg = coneAngle;
+                status.AddOrUpdate(UnitStatusType.Overwatch, payload);
+            }
+        }
+
+        v.UpdateVisionNow();
+        v.ShowUnitOverWatchVision(facing, coneAngle);
+        v.ApplyAndPublishDirectionalVision(facing, coneAngle);
+
+        RpcUpdateSingleUnitVision(unitNetId, facing, coneAngle);
+    }
+
 }

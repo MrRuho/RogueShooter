@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Mirror;
 using UnityEngine;
 
 public class ShootAction : BaseAction
@@ -7,26 +8,7 @@ public class ShootAction : BaseAction
     public static event EventHandler<OnShootEventArgs> OnAnyShoot;
     public event EventHandler<OnShootEventArgs> OnShoot;
 
-    [Header("Normal Shooting Settings")]
-    [SerializeField]
-    private ShootingSettings normalSettings = new ShootingSettings
-    {
-        aimTurnSpeed = 10f,
-        minAimTime = 0.40f,
-        aimingStateTime = 1f,
-        cooloffStateTime = 0.5f
-    };
-    
-    [Header("Overwatch Shooting Settings")]
-    [SerializeField] private ShootingSettings overwatchSettings = new ShootingSettings
-    {
-        aimTurnSpeed = 20f,
-        minAimTime = 0.15f,
-        aimingStateTime = 0.5f,
-        cooloffStateTime = 0.3f
-    };
-
-    private bool isOverwatchShot;
+    [SyncVar] private bool isOverwatchShot;
     private Vector3 lastOverwatchFacing;
 
     public class OnShootEventArgs : EventArgs
@@ -54,7 +36,12 @@ public class ShootAction : BaseAction
     private int currentBurstCount;
     private int maxBurstCount;
 
-    private ShootingSettings CurrentSettings => isOverwatchShot ? overwatchSettings : normalSettings;
+    private float CurrentTurnSpeed        => isOverwatchShot ? weapon.overwatch.turnSpeed        : weapon.normalShooting.turnSpeed;
+    private float CurrentMinAimTime       => isOverwatchShot ? weapon.overwatch.minAimTime       : weapon.normalShooting.minAimTime;
+    private float CurrentAimingStateTime  => isOverwatchShot ? weapon.overwatch.aimingStateTime  : weapon.normalShooting.aimingStateTime;
+    private float CurrentCooloffStateTime => isOverwatchShot ? weapon.overwatch.cooloffStateTime : weapon.normalShooting.cooloffStateTime;
+
+    public WeaponDefinition GetWeapon() => weapon;
 
     void Update()
     {
@@ -72,9 +59,9 @@ public class ShootAction : BaseAction
                         return;
                     }
 
-                    if (RotateTowards(targetUnit.GetWorldPosition(), CurrentSettings.aimTurnSpeed))
+                    if (RotateTowards(targetUnit.GetWorldPosition(), CurrentTurnSpeed))
                     {
-                        stateTimer = Mathf.Min(stateTimer, CurrentSettings.minAimTime);
+                        stateTimer = Mathf.Min(stateTimer, CurrentMinAimTime);
                     }
 
                     if (isOverwatchShot)
@@ -86,6 +73,7 @@ public class ShootAction : BaseAction
             case State.Shooting:
                 if (canShootBullet)
                 {
+
                     if (targetUnit == null)
                     {
                         state = State.Cooloff;
@@ -126,54 +114,11 @@ public class ShootAction : BaseAction
         if (dot < 0.999f)
         {
             lastOverwatchFacing = currentFacing;
-
-            // 1) Päivitä payload
-            if (unit.TryGetComponent<UnitStatusController>(out var status))
-            {
-                if (status.TryGet<OverwatchPayload>(UnitStatusType.Overwatch, out var payload))
-                {
-                    payload.facingWorld = currentFacing;
-                    payload.coneAngleDeg = 80f;
-                    status.AddOrUpdate(UnitStatusType.Overwatch, payload);
-                }
-            }
-
-            // 2) Päivitä paikallinen overlay (vain visuaali)
-            if (unit.TryGetComponent<UnitVision>(out var vision))
-            {
-                vision.ShowUnitOverWachVision(currentFacing, 80f);
-            }
-
-            // 3) Päivitä VAIN tämän unitin vision cache ja TeamVision
-            if (NetworkSync.IsOffline)
-            {
-                if (unit.TryGetComponent<UnitVision>(out var v) && v.IsInitialized)
-                {
-                    // Päivitä VAIN tämän unitin 360° cache
-                    v.UpdateVisionNow();
-                    // Julkaise uusi kartio TeamVisioniin
-                    v.ApplyAndPublishDirectionalVision(currentFacing, 80f);
-                }
-            }
-            else if (Mirror.NetworkServer.active && NetworkSyncAgent.Local != null)
-            {
-                // Server: päivitä tämän unitin cache ja lähetä RPC
-                if (unit.TryGetComponent<UnitVision>(out var v) && v.IsInitialized)
-                {
-                    v.UpdateVisionNow();
-                    v.ApplyAndPublishDirectionalVision(currentFacing, 80f);
-                }
-                
-                // Lähetä RPC clienteille
-                var ni = unit.GetComponent<Mirror.NetworkIdentity>();
-                if (ni != null)
-                {
-                    NetworkSyncAgent.Local.RpcUpdateSingleUnitVision(ni.netId, currentFacing, 80f);
-                }
-            }
+            OverwatchVisionUpdater.UpdateVision(unit, currentFacing, weapon.overwatch.coneAngleDeg);
         }
     }
 
+    // Estää ampumasta läpi seinien jos kohde liikkuu samaan aikaan kun tätä yritetään ampua.
     private bool IsTargetStillValid()
     {
         if (targetUnit == null || targetUnit.IsDead() || targetUnit.IsDying())
@@ -190,7 +135,7 @@ public class ShootAction : BaseAction
         if (unit.TryGetComponent<UnitStatusController>(out var status) &&
             status.TryGet<OverwatchPayload>(UnitStatusType.Overwatch, out var payload))
         {
-            Vector3 facingWorld = new Vector3(payload.facingWorld.x, 0f, payload.facingWorld.z).normalized;
+            Vector3 facingWorld = payload.facingWorld;
             float coneDeg = payload.coneAngleDeg;
 
             if (!vision.IsTileInCone(facingWorld, coneDeg, targetPos))
@@ -257,7 +202,7 @@ public class ShootAction : BaseAction
                 else
                 {
                     state = State.Cooloff;
-                    stateTimer = CurrentSettings.cooloffStateTime;
+                    stateTimer = CurrentCooloffStateTime;
                 }
                 break;
             case State.Cooloff:
@@ -266,10 +211,11 @@ public class ShootAction : BaseAction
         }
     }
 
-    public void MarkAsOverwatchShot(bool v)
+    public void MarkAsOverwatchShot(bool overwatchShot)
     {
-        isOverwatchShot = v;
-        if (v)
+
+        isOverwatchShot = overwatchShot; //unit.GetComponent<OverwatchAction>().IsOverwatch();
+        if (isOverwatchShot)
         {
             lastOverwatchFacing = Vector3.zero;
         }
@@ -277,6 +223,7 @@ public class ShootAction : BaseAction
 
     private void Shoot()
     {
+        Debug.Log("IsOverwatchShot: " + isOverwatchShot);
         if (targetUnit == null)
         {
             return;
@@ -338,6 +285,11 @@ public class ShootAction : BaseAction
         }
     }
 
+    public void ResetOverwatchShotState()
+    {
+        isOverwatchShot = false;
+    }
+
     public override int GetActionPointsCost()
     {
         return 1;
@@ -388,7 +340,7 @@ public class ShootAction : BaseAction
         targetUnit = LevelGrid.Instance.GetUnitAtGridPosition(gridPosition);
 
         state = State.Aiming;
-        stateTimer = CurrentSettings.aimingStateTime;
+        stateTimer = CurrentAimingStateTime;
 
         canShootBullet = true;
 

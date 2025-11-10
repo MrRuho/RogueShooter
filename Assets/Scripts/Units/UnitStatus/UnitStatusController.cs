@@ -6,7 +6,7 @@ public enum UnitStatusType { Overwatch /*, Stunned, Wounded, Suppressed, ...*/ }
 
 public interface IStatusPayload { }
 
-// Overwatchin parametrit statuksena (vihollisen vuoro)
+// Overwatchin parametrit statuksena
 public struct OverwatchPayload : IStatusPayload {
     public Vector3 facingWorld;   // tai esim. yaw-aste
     public float coneAngleDeg;    // esim. 80

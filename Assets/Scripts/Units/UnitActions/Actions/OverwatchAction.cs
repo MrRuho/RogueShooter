@@ -15,8 +15,19 @@ public class OverwatchAction : BaseAction
     public Vector3 TargetWorld { get; private set; }
 
     private float stateTimer;
+    private WeaponDefinition weapon;
 
     [SyncVar] public bool Overwatch = false;
+
+    protected override void Awake()
+    {
+        base.Awake();
+        var shootAction = GetComponent<ShootAction>();
+        if (shootAction != null)
+        {
+            weapon = shootAction.GetWeapon();
+        }
+    }
 
     private void Update()
     {
@@ -28,7 +39,7 @@ public class OverwatchAction : BaseAction
         switch (state)
         {
             case State.BeginOverwatchIntent:
-                if (RotateTowards(TargetWorld))
+                if (RotateTowards(TargetWorld, 750))
                 {
                     stateTimer = 0;
                 }
@@ -55,25 +66,24 @@ public class OverwatchAction : BaseAction
             case State.OverwatchIntentReady:
                 ActionComplete();
 
-                // Laske suunta samaan tapaan kuin UI-visualisaatiossa
-                Vector3 dir = TargetWorld - unit.transform.position; dir.y = 0f;
+                Vector3 dir = TargetWorld - unit.transform.position; 
+                dir.y = 0f;
                 Vector3 facingWorld = (dir.sqrMagnitude > 1e-4f) ? dir.normalized : unit.transform.forward;
 
-                // Näytä pelaajalle (entinen logiikka)
-                unit.GetComponent<UnitVision>().ShowUnitOverWachVision(facingWorld, 80f);
+                var settings = GetOverwatchSettings();
+
+                unit.GetComponent<UnitVision>().ShowUnitOverWatchVision(facingWorld, settings.coneAngleDeg);
 
                 if (NetworkSync.IsOffline || NetworkServer.active)
                 {
                     Overwatch = true;
-                    // Päivitä serverin päässä myös suunta payloadiksi
-                    PushOverwatchFacingServerLocal(facingWorld);
+                    PushOverwatchFacingServerLocal(facingWorld, settings);
                 }
                 else if (NetworkClient.active && NetworkSyncAgent.Local != null)
                 {
                     var ni = unit.GetComponent<NetworkIdentity>();
                     if (ni != null)
                     {
-                        // Lähetä suunta (x,z) samalla kun asetat Overwatchin
                         NetworkSyncAgent.Local.CmdSetOverwatch(ni.netId, true, facingWorld.x, facingWorld.z);
                     }
                 }
@@ -149,7 +159,8 @@ public class OverwatchAction : BaseAction
         dir.y = 0f;
         Vector3 facingWorld = (dir.sqrMagnitude > 0.0001f) ? dir.normalized : unit.transform.forward;
 
-        unit.GetComponent<UnitVision>().ShowUnitOverWachVision(facingWorld, 80f);
+        var settings = GetOverwatchSettings();
+        unit.GetComponent<UnitVision>()?.ShowUnitOverWatchVision(facingWorld, settings.coneAngleDeg);
     }
 
     public override EnemyAIAction GetEnemyAIAction(GridPosition gridPosition)
@@ -160,8 +171,9 @@ public class OverwatchAction : BaseAction
             actionValue = 0,
         };
     }
-
-    private void PushOverwatchFacingServerLocal(Vector3 facingWorld)
+    
+    // Tämä metodi tallentaa arvot payloadiin, josta saadaan jatkossa facingworld, overwach kulma säde ja etäisyys.
+    private void PushOverwatchFacingServerLocal(Vector3 facingWorld, OverwatchShootingSettings settings)
     {
         if (NetworkServer.active || NetworkSync.IsOffline)
         {
@@ -169,9 +181,9 @@ public class OverwatchAction : BaseAction
             {
                 status.AddOrUpdate(UnitStatusType.Overwatch, new OverwatchPayload
                 {
-                    facingWorld = new Vector3(facingWorld.x, 0f, facingWorld.z),
-                    coneAngleDeg = 80f,
-                    rangeTiles = 8
+                    facingWorld = OverwatchHelpers.NormalizeFacing(facingWorld), // ← Normalisoi tallennettaessa
+                    coneAngleDeg = settings.coneAngleDeg,
+                    rangeTiles = settings.rangeTiles
                 });
             }
         }
@@ -181,12 +193,10 @@ public class OverwatchAction : BaseAction
     public void ServerApplyOverwatch(bool enabled, Vector2 facingXZ)
     {
         var dir = new Vector3(facingXZ.x, 0f, facingXZ.y);
-        if (dir.sqrMagnitude > 1e-6f) dir.Normalize();
-        else dir = transform.forward;
+        dir = OverwatchHelpers.NormalizeFacing(dir); // ← Normalisoi heti
 
-        // early-out jos ei muutosta
         bool sameState = Overwatch == enabled;
-        bool sameDir   = false;
+        bool sameDir = false;
 
         if (TryGetComponent<UnitStatusController>(out var s) &&
             s.TryGet<OverwatchPayload>(UnitStatusType.Overwatch, out var oldP))
@@ -199,8 +209,23 @@ public class OverwatchAction : BaseAction
         Overwatch = enabled;
 
         if (enabled)
-            s.AddOrUpdate(UnitStatusType.Overwatch, new OverwatchPayload{ facingWorld = dir, coneAngleDeg = 80f, rangeTiles = 8 });
+        {
+            var settings = GetOverwatchSettings();
+            s.AddOrUpdate(UnitStatusType.Overwatch, new OverwatchPayload
+            { 
+                facingWorld = dir, 
+                coneAngleDeg = settings.coneAngleDeg, 
+                rangeTiles = settings.rangeTiles 
+            });
+        }
         else
+        {
             s.Remove(UnitStatusType.Overwatch);
+        }
+    }
+
+    public OverwatchShootingSettings GetOverwatchSettings()
+    {
+        return weapon != null ? weapon.overwatch : OverwatchShootingSettings.Default;
     }
 }

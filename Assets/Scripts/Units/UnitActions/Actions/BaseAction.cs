@@ -278,6 +278,7 @@ public abstract class BaseAction : NetworkBehaviour
         return ct;
     }
 
+    
     public bool RotateTowards(Vector3 targetPosition, float rotSpeedDegPerSec = 720f, float epsilonDeg = 2f)
     {
         Vector3 to = targetPosition - transform.position;
@@ -294,8 +295,19 @@ public abstract class BaseAction : NetworkBehaviour
 
         return Quaternion.Angle(transform.rotation, desired) <= epsilonDeg;
     }
+    
+    /*
+    public bool RotateTowards(Vector3 worldTarget, float speedDegPerSec)
+    {
+        Vector3 to = worldTarget - transform.position; to.y = 0f;
+        if (to.sqrMagnitude < 1e-6f) return true;
 
-
+        Quaternion desired = Quaternion.LookRotation(to.normalized, Vector3.up);
+        float step = speedDegPerSec * Time.deltaTime;               // <-- avain
+        transform.rotation = Quaternion.RotateTowards(transform.rotation, desired, step);
+        return Quaternion.Angle(transform.rotation, desired) < 0.5f;
+    }
+*/
 
     // -------------- ENEMY AI ACTIONS -------------
 

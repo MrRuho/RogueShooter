@@ -229,14 +229,14 @@ public class TeamVisionService : MonoBehaviour
             vision.UpdateVisionNow();
             int actionpoints = unit.GetActionPoints();
             Vector3 facing = unit.transform.forward;
-            float angle = endPhase ? vision.GetDynamicConeAngle(actionpoints, 80f) : 360f;
+            float angle = endPhase ? vision.VisionPenaltyWhenUsingAP(actionpoints) : 360f;
 
             if (endPhase && unit.TryGetComponent<OverwatchAction>(out var ow) && ow.IsOverwatch())
             {
-                angle = vision.GetDynamicConeAngle(0, 80f);
+                angle = vision.VisionPenaltyWhenUsingAP(0);
                 var dir = ow.TargetWorld - unit.transform.position; dir.y = 0f;
                 if (dir.sqrMagnitude > 1e-4f) facing = dir.normalized;
-                angle = 80f;
+
             }
 
             vision.ApplyAndPublishDirectionalVision(facing, angle);
