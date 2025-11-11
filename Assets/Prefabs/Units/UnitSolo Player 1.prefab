@@ -199,16 +199,6 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  normalSettings:
-    aimTurnSpeed: 400
-    minAimTime: 0.4
-    aimingStateTime: 1
-    cooloffStateTime: 0.5
-  overwatchSettings:
-    aimTurnSpeed: 400
-    minAimTime: 0.4
-    aimingStateTime: 0.3
-    cooloffStateTime: 0.3
   obstaclesLayerMask:
     serializedVersion: 2
     m_Bits: 320
@@ -374,15 +364,16 @@ MonoBehaviour:
   weaponAudioSource: {fileID: 4362385133423733704}
   tailAudioSource: {fileID: 919411246055899538}
   rifleShootVariations:
-  - {fileID: 8300000, guid: 06159b3c7c5bbc748bbccf3e2ef47342, type: 3}
-  - {fileID: 8300000, guid: c14f19403e285d14d87898fc6c02305b, type: 3}
-  - {fileID: 8300000, guid: 69482361a4e251f46b5a29d79b552762, type: 3}
-  - {fileID: 8300000, guid: e533458cdcc42e34db35c23a52e40f49, type: 3}
+  - {fileID: 8300000, guid: 4a6d190a8e62c47e79779e108add4d5b, type: 3}
+  - {fileID: 8300000, guid: c7abbc40d6a5e4d5f82c79437a50181f, type: 3}
+  - {fileID: 8300000, guid: f1a4543e0287c40d5a18faf4248d91a8, type: 3}
+  - {fileID: 8300000, guid: 13a70724674d8439eb90a51f8ac19958, type: 3}
+  - {fileID: 8300000, guid: d1aecf8e9c4b0468fbf29a9349c91b9f, type: 3}
   rifleShootTail: {fileID: 8300000, guid: 7b30d0471684ff049905528195754e73, type: 3}
   pitchVariation: 0.15
   volumeVariation: 0.15
-  baseVolume: 0.9
-  maxHearingDistance: 100
+  baseVolume: 1.2
+  maxHearingDistance: 200
   volumeRolloff:
     serializedVersion: 2
     m_Curve:
@@ -483,6 +474,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fca890efacd5e0442ad357c0d86a71c2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UnitVision
+  coneOriginBackshiftTiles: 1
   visionSkill: {fileID: 11400000, guid: 4550bcfa4110ca445be7e3f4b337acd8, type: 2}
   teamId: 0
 --- !u!114 &-6283908097960678696
