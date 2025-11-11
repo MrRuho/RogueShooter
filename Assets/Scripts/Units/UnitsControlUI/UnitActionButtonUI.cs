@@ -89,7 +89,7 @@ public class UnitActionButtonUI : MonoBehaviour
     private void RefreshCorner()
     {
         // Näytä kulmalaskuri vain kranaatti-napissa
-        bool isGrenade = baseAction is GranadeAction;
+        bool isGrenade = baseAction is GrenadeAction;
         if (!isGrenade)
         {
             if (cornerRoot) cornerRoot.gameObject.SetActive(false);

@@ -184,6 +184,59 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &437470757
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 437470759}
+  - component: {fileID: 437470758}
+  m_Layer: 0
+  m_Name: ExplosionGismo
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &437470758
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 437470757}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 624674add51b374498e6cde0c21c98ed, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ExplosionSolverGizmos
+  draw: 1
+  yOffset: 0.05
+  drawSteps: 1
+  drawBlocks: 1
+  reachedColor: {r: 0, g: 1, b: 0, a: 0.15}
+  stopColor: {r: 1, g: 0, b: 0, a: 0.25}
+  stepLine: {r: 0, g: 0.8, b: 0, a: 1}
+  blockLine: {r: 1, g: 0.2, b: 0.2, a: 1}
+  originColor: {r: 1, g: 1, b: 0, a: 0.45}
+--- !u!4 &437470759
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 437470757}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &604854713 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1557453764427617190, guid: 40f949899514dff4eaec305697fb8209, type: 3}
@@ -338,6 +391,7 @@ GameObject:
   m_Component:
   - component: {fileID: 999377651}
   - component: {fileID: 999377650}
+  - component: {fileID: 999377652}
   m_Layer: 0
   m_Name: GameBalance
   m_TagString: Untagged
@@ -373,6 +427,27 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &999377652
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 999377649}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 624674add51b374498e6cde0c21c98ed, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ExplosionSolverGizmos
+  draw: 1
+  yOffset: 0.05
+  drawSteps: 1
+  drawBlocks: 1
+  reachedColor: {r: 0, g: 1, b: 0, a: 0.15}
+  stopColor: {r: 1, g: 0, b: 0, a: 0.25}
+  stepLine: {r: 0, g: 0.8, b: 0, a: 1}
+  blockLine: {r: 1, g: 0.2, b: 0.2, a: 1}
+  originColor: {r: 1, g: 1, b: 0, a: 0.45}
 --- !u!1 &1079314469
 GameObject:
   m_ObjectHideFlags: 0
@@ -450,8 +525,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 62172a4ef6e79c84ebbf23bba9cecace, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StatusCoordinator
-  reactionJitterMaxSeconds: 0.1
-  reactionCooldownSeconds: 0.5
+  enemyOverwatchVisibilityDuration: 3
   onlyOneOverwatchAttackPerMovedTile: 0
 --- !u!4 &1546010159
 Transform:
@@ -8675,3 +8749,4 @@ SceneRoots:
   - {fileID: 7872759205991272089}
   - {fileID: 1845346067}
   - {fileID: 1546010159}
+  - {fileID: 437470759}

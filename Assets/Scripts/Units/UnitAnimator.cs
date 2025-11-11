@@ -43,7 +43,7 @@ public class UnitAnimator : NetworkBehaviour
 
     private MoveAction _move;
     private ShootAction _shoot;
-    private GranadeAction _grenade;
+    private GrenadeAction _grenade;
     private MeleeAction _melee;
 
     private bool useNetwork;
@@ -287,12 +287,12 @@ public class UnitAnimator : NetworkBehaviour
     }
     
     private Vector3 pendingGrenadeTarget;
-    private GranadeAction pendingGrenadeAction; 
+    private GrenadeAction pendingGrenadeAction; 
     
     private void GrenadeAction_ThrowGranade(object sender, EventArgs e)
     {
         if (hs && (hs.IsDying() || hs.IsDead())) return;
-        pendingGrenadeAction = (GranadeAction)sender;
+        pendingGrenadeAction = (GrenadeAction)sender;
         pendingGrenadeTarget = pendingGrenadeAction.TargetWorld;
 
         GranadeActionStart();

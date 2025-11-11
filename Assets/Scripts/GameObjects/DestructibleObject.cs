@@ -2,9 +2,14 @@ using Unity.Mathematics;
 using UnityEngine;
 using Mirror;
 using System.Collections;
+using System.Collections.Generic;
 
 public class DestructibleObject : NetworkBehaviour
 {
+
+    [SerializeField] Collider sourceCollider;  // jos null, käytä Renderer.bounds
+    private readonly List<GridPosition> _occupied = new();
+    private bool _registered;
 
     private GridPosition gridPosition;
     [SerializeField] private GameObject objectDestroyPrefab;
@@ -34,7 +39,12 @@ public class DestructibleObject : NetworkBehaviour
         }
 
         if (blocksCell) TryMarkBlocked();
+        ReindexAll();
     }
+
+    void OnEnable()  { ReindexAll(); }
+    void OnDisable() { UnregisterAll(); }
+    void OnDestroy() { UnregisterAll(); }
 
     /// <summary>
     /// Marks the grid position as blocked if not already set.
@@ -188,7 +198,6 @@ public class DestructibleObject : NetworkBehaviour
     [ClientRpc]
     private void RpcOnDestroyed(GridPosition pos)
     {
-
         var lg = LevelGrid.Instance;
         var pf = PathFinding.Instance;
         var eb = EdgeBaker.Instance;
@@ -203,7 +212,6 @@ public class DestructibleObject : NetworkBehaviour
     // Varmistus myös tilanteeseen, jossa RPC hukkuu tai tulee myöhässä
     public override void OnStopClient() 
     {
-
         var lg = LevelGrid.Instance;
         var pf = PathFinding.Instance;
         var eb = EdgeBaker.Instance;
@@ -232,4 +240,42 @@ public class DestructibleObject : NetworkBehaviour
             c.enabled = !hidden;
     }
 
+    // Kutsu tätä jos objektin koko/paikka muuttuu runtime:ssa
+    public void ReindexAll()
+    {
+        var lg = LevelGrid.Instance;
+        if (lg == null) return;
+
+        // Poista vanhat
+        if (_registered) UnregisterAll();
+
+        // AABB → ruudut
+        Bounds b = sourceCollider ? sourceCollider.bounds
+                                  : (GetComponentInChildren<Renderer>()?.bounds ?? new Bounds(transform.position, Vector3.zero));
+
+        int floor = lg.GetGridPosition(transform.position).floor;
+
+        var tmp = new List<GridPosition>(32);
+        lg.GetOverlappingTiles(b, floor, tmp);
+
+        // Lisää kaikki ruudut
+        for (int i = 0; i < tmp.Count; i++)
+        {
+            _occupied.Add(tmp[i]);
+            lg.AddDestructibleAtGridPosition(this, tmp[i]);
+        }
+        _registered = true;
+    }
+
+    private void UnregisterAll()
+    {
+        var lg = LevelGrid.Instance;
+        if (lg == null) { _occupied.Clear(); _registered = false; return; }
+
+        for (int i = 0; i < _occupied.Count; i++)
+            lg.RemoveDestructibleAtGridPosition(this, _occupied[i]);
+
+        _occupied.Clear();
+        _registered = false;
+    }
 }

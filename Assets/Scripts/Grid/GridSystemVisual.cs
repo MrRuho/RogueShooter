@@ -225,7 +225,7 @@ public class GridSystemVisual : MonoBehaviour
                     break;
                 }
 
-            case GranadeAction:
+            case GrenadeAction:
                 gridVisualType = GridVisualType.Yellow;
                 break;
 

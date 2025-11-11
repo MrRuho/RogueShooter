@@ -95,7 +95,7 @@ public class UnitActionSystem : MonoBehaviour
     {
         if (selectedUnit == null || selectedAction == null) return;
 
-        if (InputManager.Instance.IsMouseButtonDownThisFrame() && selectedAction is GranadeAction)
+        if (InputManager.Instance.IsMouseButtonDownThisFrame() && selectedAction is GrenadeAction)
         {
             if (selectedUnit.GetGrenadePCS() <= 0) return;
         }

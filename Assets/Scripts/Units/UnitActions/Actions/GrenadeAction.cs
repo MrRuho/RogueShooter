@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GranadeAction : BaseAction
+public class GrenadeAction : BaseAction
 {
     [Header("Preview")]
     [SerializeField] private GrenadeArcPreview arcPreview; // LineRenderer + GrenadeArcPreview
@@ -42,8 +42,13 @@ public class GranadeAction : BaseAction
     public Vector3 TargetWorld { get; private set; }
 
     private GridPosition? _lastHover;
-   // private bool _wasActive;  // reunan tunnistus
+    // private bool _wasActive;  // reunan tunnistus
     private bool _wasSelected;
+    
+    [SerializeField] private float throwRangeWU = 12f;          // max heittoetäisyys (WU)
+    [SerializeField] private LayerMask mouseMask;               // esim. "MousePlane" | "Ground"
+    [SerializeField] private bool clampOutsideRange = false;    // jos true, kaari clampataan rajalle
+    private bool _lastInRange;
 
     protected override void Awake()
     {
@@ -65,17 +70,17 @@ public class GranadeAction : BaseAction
     }
     void OnEnable()  => GrenadeProjectile.OnAnyGranadeExploded += OnGrenadeEnded;
 
-    
+
 
     private void OnDisable()
     {
         GrenadeProjectile.OnAnyGranadeExploded -= OnGrenadeEnded;
-        if(arcPreview != null)
+        if (arcPreview != null)
         {
             arcPreview.Hide();
         }
-        _lastHover = null; 
-     //   _wasActive = false;
+        _lastHover = null;
+        //   _wasActive = false;
     }
 
     private void Update()
@@ -110,7 +115,7 @@ public class GranadeAction : BaseAction
         }
         else if (!isSelected && _wasSelected)
         {
-            arcPreview?.Hide();
+            arcPreview.Hide();
             _lastHover = null;
         }
         _wasSelected = isSelected;
@@ -118,9 +123,27 @@ public class GranadeAction : BaseAction
         if (!isSelected) return;
 
         // 2) Päivitä viiva vain, kun hover-ruutu vaihtuu ja ruutu on validi
-        GridPosition gp = LevelGrid.Instance.GetGridPosition(MouseWorld.GetMouseWorldPosition());
-        if (!LevelGrid.Instance.IsValidGridPosition(gp))
-        {
+        // A) Ota hiiren piste vain näkyvistä mouseplane-objekteista
+        Vector3 hitW = MouseWorld.GetPositionOnlyHitVisible();
+        if (hitW == Vector3.zero) {            // ei osumaa → piilota
+            arcPreview?.Hide();
+            _lastHover = null;
+            return;
+        }
+
+        var lg = LevelGrid.Instance;
+        GridPosition gp = lg.GetGridPosition(hitW);
+
+        // B) Perusvalidius
+        if (!lg.IsValidGridPosition(gp)) {
+            arcPreview?.Hide();
+            _lastHover = null;
+            return;
+        }
+
+        // C) Action-kohtainen validius
+        var valid = GetValidGridPositionList();
+        if (valid == null || !valid.Contains(gp)) {
             arcPreview?.Hide();
             _lastHover = null;
             return;
@@ -130,16 +153,17 @@ public class GranadeAction : BaseAction
         _lastHover = gp;
 
         // 3) Piirrä kaari
-        Vector3 targetW = LevelGrid.Instance.GetWorldPosition(gp);
+        Vector3 targetW = lg.GetWorldPosition(gp);
         arcPreview?.ShowArcTo(targetW);
     }
+
 
     public override string GetActionName() => "Granade";
 
     private void OnGrenadeEnded(object sender, EventArgs e)
     {
         GetValidGridPositionList();            // teillä jo oleva metodi
-        GridSystemVisual.Instance?.UpdateGridVisuals();
+        GridSystemVisual.Instance.UpdateGridVisuals();
     }
 
     public override EnemyAIAction GetEnemyAIAction(GridPosition gridPosition)

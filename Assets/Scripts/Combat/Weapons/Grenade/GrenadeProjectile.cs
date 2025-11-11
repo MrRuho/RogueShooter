@@ -3,6 +3,7 @@ using System;
 using UnityEngine;
 using Mirror;
 using System.Collections;
+using System.Collections.Generic;
 
 public class GrenadeProjectile : NetworkBehaviour
 {
@@ -580,7 +581,7 @@ public class GrenadeProjectile : NetworkBehaviour
         apexWorldY = baselineY + maxV * _apexWU;
         tPeak = bestT;
     }
-    
+
     private float ComputeDistanceScaledSpeed(float dWU)
     {
         // Muunna ruuduiksi (1 ruutu minimi, ettei 0-alue hyydytä)
@@ -602,49 +603,55 @@ public class GrenadeProjectile : NetworkBehaviour
         LocalExplode();
     }
 
-    /*
-    private void LocalExplode()
+    void ExplodeAt(GridPosition center, float damageRadiusWU)
     {
-        if (isExploded) return;
-        isExploded = true;
+        int rTiles = Mathf.CeilToInt(damageRadiusWU / LevelGrid.Instance.GetCellSize());
+        var tiles   = ExplosionSolver.ComputeReach(center, rTiles);
+ 
 
-        // DAMAGE paikallisesti
-        Collider[] hits = Physics.OverlapSphere(targetPosition, damageRadius);
-        foreach (var c in hits)
+        // 1) Kerää kohteet reach-ruuduista (vältä duplikaatit)
+        var targets = new HashSet<Unit>();
+        foreach (var gp in tiles)
         {
-            if (c.TryGetComponent<Unit>(out var u))
-                NetworkSync.ApplyDamageToUnit(u, damage, targetPosition, this.GetActorId());
-            if (c.TryGetComponent<DestructibleObject>(out var d))
-                NetworkSync.ApplyDamageToObject(d, damage, targetPosition, this.GetActorId());
+            var list = LevelGrid.Instance.GetUnitListAtGridPosition(gp);
+            if (list == null || list.Count == 0) continue;
+            for (int i = 0; i < list.Count; i++)
+            {
+                var u = list[i];
+                if (u) targets.Add(u);
+            }
+        }
+        var objects = new HashSet<DestructibleObject>();
+        foreach (var gp in tiles)
+        {
+            var list = LevelGrid.Instance.GetDestructibleListAtGridPosition(gp);
+            if (list == null || list.Count == 0) continue;
+            for (int i = 0; i < list.Count; i++)
+            {
+                var @object = list[i];
+                if (@object) objects.Add(@object);
+            }
         }
 
-        // VFX paikallisesti
-        OnAnyGranadeExploded?.Invoke(this, EventArgs.Empty);
-        SpawnRouter.SpawnLocal(
-            grenadeExplodeVFXPrefab.gameObject,
-            targetPosition + Vector3.up * 1f,
-            Quaternion.identity,
-            source: transform
-        );
 
-        Destroy(gameObject);
+        // 2) Sovella damage vasta nyt (lista ei muutu kesken keruun)
+        foreach (var u in targets)
+        {
+            NetworkSync.ApplyDamageToUnit(u, damage, targetPosition, this.GetActorId());
+        }
+        foreach (var o in objects)
+        {
+            NetworkSync.ApplyDamageToObject(o, damage, targetPosition, this.GetActorId());
+        }
     }
-    */
 
     private void LocalExplode()
     {
         if (isExploded) return;
         isExploded = true;
 
-        // DAMAGE paikallisesti
-        Collider[] hits = Physics.OverlapSphere(targetPosition, damageRadius);
-        foreach (var c in hits)
-        {
-            if (c.TryGetComponent<Unit>(out var u))
-                NetworkSync.ApplyDamageToUnit(u, damage, targetPosition, this.GetActorId());
-            if (c.TryGetComponent<DestructibleObject>(out var d))
-                NetworkSync.ApplyDamageToObject(d, damage, targetPosition, this.GetActorId());
-        }
+        var targetGridPosition = LevelGrid.Instance.GetGridPosition(targetPosition);
+        ExplodeAt(targetGridPosition, damageRadius);
 
         // AUDIO
         PlayExplosionSound(targetPosition);
@@ -661,27 +668,29 @@ public class GrenadeProjectile : NetworkBehaviour
         Destroy(gameObject);
     }
 
-    /*
-        private IEnumerator SpawnVFXAt(string sceneName, Vector3 pos, double explodeAtServerTime)
-        {
-            float wait = Mathf.Max(0f, (float)(explodeAtServerTime - NetworkTime.time));
-            if (wait > 0f) yield return new WaitForSeconds(wait);
+    [Server]
+    private IEnumerator ServerExplodeAt(double explodeAtServerTime)
+    {
+        var targetGridPosition = LevelGrid.Instance.GetGridPosition(targetPosition);
+        
+        // Odota tarkkaan serverkellon mukaan
+        float wait = Mathf.Max(0f, (float)(explodeAtServerTime - NetworkTime.time));
+        if (wait > 0f) yield return new WaitForSeconds(wait);
 
-            // AUDIO
-            PlayExplosionSound(pos);
+        if (_damageDone) yield break;
+        _damageDone = true;
+        if (isExploded) yield break;
+        isExploded = true;
 
-            // Vain visuaali — ei peli-impactia clienteillä
-            OnAnyGranadeExploded?.Invoke(this, EventArgs.Empty);
-            SpawnRouter.SpawnLocal(
-                grenadeExplodeVFXPrefab.gameObject,
-                pos + Vector3.up * 1f,
-                Quaternion.identity,
-                source: null,
-                sceneName: sceneName
-            );
-        }
+        ExplodeAt(targetGridPosition, damageRadius);
+        
+        // Piilota itse kranaatti kaikilta
+        SetSoftHiddenLocal(true);
+        RpcSetSoftHidden(true);
 
-    */
+        // Server voi nyt siivota objektin pienen viiveen jälkeen
+        StartCoroutine(DestroyAfter(0.30f));
+    }
 
     private IEnumerator SpawnVFXAt(string sceneName, Vector3 pos, double explodeAtServerTime)
     {
@@ -767,37 +776,6 @@ public class GrenadeProjectile : NetworkBehaviour
         // Ajasta paikallinen VFX täsmälleen samaan aikaan serverin kellossa
         StartCoroutine(SpawnVFXAt(sceneName, pos, explodeAtServerTime));
     }
-
-    [Server]
-    private IEnumerator ServerExplodeAt(double explodeAtServerTime)
-    {
-        // Odota tarkkaan serverkellon mukaan
-        float wait = Mathf.Max(0f, (float)(explodeAtServerTime - NetworkTime.time));
-        if (wait > 0f) yield return new WaitForSeconds(wait);
-
-        if (_damageDone) yield break;
-        _damageDone = true;
-        if (isExploded) yield break;
-        isExploded = true;
-
-        // DAMAGE vain serverillä (autoritäärinen peli-impact)
-        Collider[] hits = Physics.OverlapSphere(targetPosition, damageRadius);
-        foreach (var c in hits)
-        {
-            if (c.TryGetComponent<Unit>(out var u))
-                NetworkSync.ApplyDamageToUnit(u, damage, targetPosition, this.GetActorId());
-            if (c.TryGetComponent<DestructibleObject>(out var d))
-                NetworkSync.ApplyDamageToObject(d, damage, targetPosition, this.GetActorId());
-        }
-
-        // Piilota itse kranaatti kaikilta
-        SetSoftHiddenLocal(true);
-        RpcSetSoftHidden(true);
-
-        // Server voi nyt siivota objektin pienen viiveen jälkeen
-        StartCoroutine(DestroyAfter(0.30f));
-    }
-
 
     private IEnumerator DestroyAfter(float seconds)
     {

@@ -186,6 +186,27 @@ public class LevelGrid : MonoBehaviour
         return gridObject.GetUnit();
     }
 
+    // Tuhoutuvat objektit.
+    public void AddDestructibleAtGridPosition(DestructibleObject @object, GridPosition gridPosition)
+    {
+        GridObject gridObject = GetGridSystem(gridPosition.floor).GetGridObject(gridPosition);
+        if (gridObject == null) return;
+        gridObject.AddDestructible(@object);
+    }
+
+    public void RemoveDestructibleAtGridPosition(DestructibleObject @object, GridPosition gridPosition)
+    {
+        GridObject gridObject = GetGridSystem(gridPosition.floor).GetGridObject(gridPosition);
+        if (gridObject == null) return;
+        gridObject.RemoveDestructible(@object);
+    }
+
+    public List<DestructibleObject> GetDestructibleListAtGridPosition(GridPosition gridPosition)
+    {
+        GridObject gridObject = GetGridSystem(gridPosition.floor).GetGridObject(gridPosition);
+        return gridObject != null ? gridObject.GetDestructibleList() : null;
+    }
+
     public void ClearAllOccupancy()
     {
         if (gridSystemList == null) return;
@@ -234,5 +255,25 @@ public class LevelGrid : MonoBehaviour
             var gp = GetGridPosition(u.transform.position);
             AddUnitAtGridPosition(gp, u);
         }
+    }
+
+    public void GetOverlappingTiles(UnityEngine.Bounds b, int floor, List<GridPosition> result)
+    {
+        result.Clear();
+        // Muunna AABB:n kulmat gridiksi
+        var minGP = GetGridPosition(new Vector3(b.min.x, 0f, b.min.z));
+        var maxGP = GetGridPosition(new Vector3(b.max.x, 0f, b.max.z));
+
+        int x0 = Mathf.Min(minGP.x, maxGP.x);
+        int x1 = Mathf.Max(minGP.x, maxGP.x);
+        int z0 = Mathf.Min(minGP.z, maxGP.z);
+        int z1 = Mathf.Max(minGP.z, maxGP.z);
+
+        for (int z = z0; z <= z1; z++)
+            for (int x = x0; x <= x1; x++)
+            {
+                var gp = new GridPosition(x, z, floor);
+                if (IsValidGridPosition(gp)) result.Add(gp);
+            }
     }
 }

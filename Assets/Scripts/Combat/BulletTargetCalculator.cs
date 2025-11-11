@@ -1,5 +1,10 @@
 using UnityEngine;
 
+/// <summary>
+/// Vastaa luotien visuaalisesta lentoradasta. Ei vaikutusta siihen osutaanko kohteeseen vai ei.
+/// Visuaalinen ilme pyrkii vastaamaan ammunnan todellista luonnetta. Esim. Kriittinen huti lentää oikeastikkin minne sattuu ja
+/// kriittinen osuma osuu Unittia kasvoihin jne.
+/// </summary>
 public static class BulletTargetCalculator
 {
     [System.Serializable]
@@ -93,11 +98,11 @@ public static class BulletTargetCalculator
     private static Vector3 CalculateGraze(Vector3 basePos, HitZoneConfig cfg)
     {
         bool hitLimb = Random.value > 0.5f;
-        
+
         float height;
         if (hitLimb)
         {
-            height = Random.value > 0.5f 
+            height = Random.value > 0.5f
                 ? Random.Range(cfg.grazeHeightMin, cfg.hitHeightMin)
                 : Random.Range(cfg.hitHeightMax, cfg.grazeHeightMax);
         }
@@ -115,7 +120,7 @@ public static class BulletTargetCalculator
     private static Vector3 CalculateCloseMiss(Vector3 basePos, Unit shootingUnit, HitZoneConfig cfg)
     {
         Vector3 direction = Vector3.right;
-        
+
         if (shootingUnit != null)
         {
             Vector3 toTarget = basePos - shootingUnit.GetWorldPosition();
@@ -133,7 +138,7 @@ public static class BulletTargetCalculator
         }
 
         float offset = Random.Range(cfg.closeHorizontalOffset * 0.7f, cfg.closeHorizontalOffset);
-        float height = Random.Range(cfg.hitHeightMin, cfg.hitHeightMax) + 
+        float height = Random.Range(cfg.hitHeightMin, cfg.hitHeightMax) +
                       Random.Range(-cfg.closeVerticalSpread, cfg.closeVerticalSpread);
 
         return basePos + direction * offset + Vector3.up * height;
