@@ -1,22 +1,51 @@
 using UnityEngine;
 
-public enum EffectArea { Melee, Close, Medium }
-public enum ThrowTier { CritMiss, Miss, Hit, Bullseye }
-public enum GrenadeType  {Frag, flash, Smoke}
+public enum GrenadeType { Frag, Flash, Smoke }
 
-[CreateAssetMenu(menuName = "RogueShooter/Grenade")]
+[CreateAssetMenu(menuName = "RogueShooter/Grenade Definition")]
 public class GrenadeDefinition : ScriptableObject
 {
-    [Header("Base damage")]
-    public int baseDamage = 300;
-    public float pressureFactor = 0.2f; // Effects only Unit cover skill and light covers and objects.
+    [Header("General")]
+    public GrenadeType grenadeType = GrenadeType.Frag;
+    public string grenadeName = "Fragmentation Grenade";
+    
+    [Header("Projectile Prefab")]
+    [Tooltip("Prefabi joka sisältää BaseGrenadeProjectile-tyyppisen komponentin")]
+    public GameObject projectilePrefab;
+    
+    [Header("Visual Effects")]
+    public Transform explosionVFXPrefab;
+    
+    [Header("Audio")]
+    public AudioClip[] explosionSounds;
+    [Range(0f, 1f)] public float explosionVolume = 1f;
+    public float explosionMaxHearingDistance = 80f;
+    public AnimationCurve explosionVolumeRolloff = AnimationCurve.Linear(0, 1, 1, 0.2f);
+    
+    [Header("Timer")]
+    [Tooltip("Montako actionia/käännöstä ennen räjähdystä")]
+    public int timer = 2;
 
-    [Header("Base hit chance baseline by band (% before skill) Overall must be 100%")]
-    public int critMiss = 10;
-    public int miss = 20;
-    public int hit = 60;
-    public int Bullseye = 10;
+    [Tooltip("Jos true, käyttää action-pohjaista ajastinta, muuten turn-pohjaista")]
+    public bool actionBasedTimer = true;
+    
+    [Tooltip("Räjähtää heti heittämisen jälkeen. Ohittaa muut timerit")]
+    public bool InstantTimer = true;
+    
+    [Header("Explosion Timing")]
+    [Tooltip("Pieni hajonta räjähdyksen ajankohtaan")]
+    public float explosionJitterMin = 0.02f;
+    public float explosionJitterMax = 0.08f;
+    
 
-    [Header("Timer(turns before explotion)")]
-    public int timer = 1;
+    [Header("Frag-Specific Settings")]
+    [Tooltip("Vahinko räjähdyskeskipisteessä")]
+    public int baseDamage = 100;
+    
+    [Tooltip("Vaikuttaa vain yksikön suojaustaitoon ja kevyisiin esteisiin")]
+    public float pressureFactor = 0.2f;
+    
+    [Tooltip("Vahinkoalue world-yksiköissä")]
+    public float damageRadius = 4f;
 }
+

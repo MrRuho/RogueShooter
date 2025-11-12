@@ -25,7 +25,7 @@ public static class OfflineGameSimulator
             parent: null,
             beforeReturn: go =>
             {
-                if (go.TryGetComponent<GrenadeProjectile>(out var gp))
+                if (go.TryGetComponent<BaseGrenadeProjectile>(out var gp))
                     gp.ownerTeamId = 0;
                     gp.Setup(targetPos, maxRangeWU);
             });

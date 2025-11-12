@@ -299,7 +299,7 @@ public class ShootAction : BaseAction
     {
         return "Shoot";
     }
-
+    
     public List<GridPosition> GetValidActionGridPositionList(GridPosition unitGridPosition)
     {
         var res = new List<GridPosition>();
@@ -430,7 +430,7 @@ public class ShootAction : BaseAction
             if (u != null)
             {
                 // ÄLÄ ehdota kohteeksi jos on kuollut/piilotettu/dying
-                if (unit.IsDead() || unit.IsHidden() || unit.IsDying()) continue;
+                if (u.IsDead() || u.IsHidden() || u.IsDying()) continue;
                 return u == target;
             }
 

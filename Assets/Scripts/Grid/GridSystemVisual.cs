@@ -232,11 +232,32 @@ public class GridSystemVisual : MonoBehaviour
                 gridVisualType = GridVisualType.Yellow;
                 break;
 
-            case MeleeAction:
-                gridVisualType = GridVisualType.Red;
-                ShowAndMark(BuildRangeSquare(selectedUnit.GetGridPosition(), 1), GridVisualType.RedSoft);
-                break;
+            case MeleeAction melee:
+                {
+                    gridVisualType = GridVisualType.Red;
 
+                    var origin = selectedUnit.GetGridPosition();
+                    int range = melee.GetMeleeDistance();
+                    var cfg = LoSConfig.Instance;
+
+                    _tmpList.Clear();
+                    foreach (var gp in BuildRangeSquare(origin, range)) // Chebyshev: sisältää kulmat
+                    {
+                        if (gp == origin) continue;
+                        if (!LevelGrid.Instance.IsValidGridPosition(gp)) continue;
+
+                        // Suodata korkeus-tietoisella LoS:llä, sama kuin shoot-softissa
+                        if (!RaycastVisibility.HasLineOfSightRaycastHeightAware(
+                                origin, gp, cfg.losBlockersMask, cfg.eyeHeight, cfg.samplesPerCell, cfg.insetWU))
+                            continue;
+
+                        _tmpList.Add(gp);
+                    }
+
+                    ShowAndMark(_tmpList, GridVisualType.RedSoft);
+                    break;
+                }
+                
             case InteractAction:
                 gridVisualType = GridVisualType.Yellow;
                 break;

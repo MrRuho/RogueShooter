@@ -119,6 +119,7 @@ MonoBehaviour:
   basePulseSpeed: 10
   turnsUntilExplosion: 2
   finalPulseSpeedMultiplier: 7
+  pulseStartOffsetRange: 0.5
   audioSource: {fileID: 0}
   beepSound: {fileID: 0}
   basePitch: 1
@@ -161,11 +162,11 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3101730896889347960}
-  - component: {fileID: 8325894434035461216}
   - component: {fileID: 5695312915198751386}
   - component: {fileID: 8641355737707481325}
   - component: {fileID: -5832321910042178392}
   - component: {fileID: 3331423518669773530}
+  - component: {fileID: -5151226417795341784}
   m_Layer: 0
   m_Name: GrenadeProjectile
   m_TagString: Untagged
@@ -190,132 +191,6 @@ Transform:
   - {fileID: 8060593150967014903}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &8325894434035461216
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7374537704562805240}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9201e717439c3c54f9d8a77c4851c8b6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  syncDirection: 0
-  syncMode: 0
-  syncInterval: 0
-  useDeterministicDeflectionOffline: 1
-  deflectionMask:
-    serializedVersion: 2
-    m_Bits: 2944
-  floorBounceDistanceRangeWU: {x: 0.1, y: 0.35}
-  minFloorBounceDistanceRangeWU: {x: 0.01, y: 0.15}
-  floorBounceRandomYawRangeDeg: {x: 0, y: 35}
-  maxBounces: 2
-  minSegmentDuration: 0.25
-  maxSegmentDuration: 0.55
-  apexBounceScale: 0.2
-  maxBounceApexWU: 0.2
-  apexEvalDistanceFloorWU: 4
-  minBounceSeparation: 0.06
-  pushOffWU: 0.02
-  floorOnlyMinNormalY: 0.7
-  floorBounceYawTowardGoalDeg: 0
-  minSpeedScaleAtApex: 0.8
-  apexSlowExponent: 4
-  bounceSpeedScale: 0.75
-  useApexSlowdown: 1
-  useDistanceScaledSpeed: 1
-  speedAtOneTile: 2
-  speedPerTile: 2.5
-  speedMinClamp: 1.5
-  speedMaxClamp: 14
-  tileSizeWU: 2
-  explosionSounds:
-  - {fileID: 8300000, guid: bda79490fb9557a4ba41ec6400a0a8e4, type: 3}
-  - {fileID: 8300000, guid: a18ba5982dd786e4299ea89aaa07baf9, type: 3}
-  - {fileID: 8300000, guid: d4e674b69147d4d439cce28eb2804a4d, type: 3}
-  - {fileID: 8300000, guid: 7047c4c6c82e09a46bcec6c095cb4ed0, type: 3}
-  explosionVolume: 1
-  explosionMaxHearingDistance: 80
-  explosionVolumeRolloff:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 1
-      inSlope: 0
-      outSlope: -0.8
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    - serializedVersion: 3
-      time: 1
-      value: 0.2
-      inSlope: -0.8
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  actorUnitNetId: 0
-  ownerPlayerNetId: 0
-  ownerTeamId: -1
-  grenadeExplodeVFXPrefab: {fileID: 4642304544289128, guid: 3798030c2f7dd8a469e24dfa3223de79, type: 3}
-  damageRadius: 3
-  damage: 100
-  throwArcConfig: {fileID: 11400000, guid: e78a46321444076439f37ddbcf71575b, type: 2}
-  ceilingMask:
-    serializedVersion: 2
-    m_Bits: 4096
-  floorMask:
-    serializedVersion: 2
-    m_Bits: 2304
-  ceilingClearance: 0.08
-  fallbackMaxThrowRangeWU: 12
-  horizontalSpeed: 2
-  arcYAnimationCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0.00060642813
-      value: 0.6035503
-      inSlope: 2.1373346
-      outSlope: 2.1373346
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0.01469309
-    - serializedVersion: 3
-      time: 0.8673398
-      value: 0.3453545
-      inSlope: -2.4785273
-      outSlope: -2.4785273
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.03700753
-      outWeight: 0.09115063
-    - serializedVersion: 3
-      time: 1
-      value: 0
-      inSlope: -2.6033013
-      outSlope: -2.6033013
-      tangentMode: 34
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0
-    m_PreInfinity: 2
-    m_PostInfinity: 0
-    m_RotationOrder: 4
-  explosionJitterMin: 0.1
-  explosionJitterMax: 1
-  actionBasedTimer: 1
-  timer: 3
 --- !u!114 &5695312915198751386
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -480,6 +355,68 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &-5151226417795341784
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7374537704562805240}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 88ae6460d4228674cbf867bfee3d25ab, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FragGrenadeProjectile
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  grenadeDefinition: {fileID: 11400000, guid: d5f8694d1e8a78241a0a94618ffcf4fd, type: 2}
+  throwArcConfig: {fileID: 11400000, guid: e78a46321444076439f37ddbcf71575b, type: 2}
+  ceilingMask:
+    serializedVersion: 2
+    m_Bits: 4096
+  floorMask:
+    serializedVersion: 2
+    m_Bits: 2048
+  ceilingClearance: 0.08
+  fallbackMaxThrowRangeWU: 12
+  horizontalSpeed: 10
+  useDeterministicDeflectionOffline: 1
+  deflectionMask:
+    serializedVersion: 2
+    m_Bits: 2944
+  floorBounceDistanceRangeWU: {x: 0.1, y: 0.35}
+  minFloorBounceDistanceRangeWU: {x: 0.01, y: 0.15}
+  floorBounceRandomYawRangeDeg: {x: 0, y: 35}
+  maxBounces: 2
+  minSegmentDuration: 0.25
+  maxSegmentDuration: 0.55
+  bounceSpeedScale: 0.75
+  apexBounceScale: 0.2
+  maxBounceApexWU: 0.2
+  apexEvalDistanceFloorWU: 4
+  minBounceSeparation: 0.06
+  pushOffWU: 0.02
+  floorOnlyMinNormalY: 0.7
+  floorBounceYawTowardGoalDeg: 0
+  minSpeedScaleAtApex: 0.8
+  apexSlowExponent: 4
+  useApexSlowdown: 1
+  useDistanceScaledSpeed: 1
+  speedAtOneTile: 2
+  speedPerTile: 2.5
+  speedMinClamp: 1.5
+  speedMaxClamp: 14
+  tileSizeWU: 2
+  arcYAnimationCurve:
+    serializedVersion: 2
+    m_Curve: []
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  actorUnitNetId: 0
+  ownerPlayerNetId: 0
+  ownerTeamId: -1
 --- !u!1001 &3712377068640779720
 PrefabInstance:
   m_ObjectHideFlags: 0

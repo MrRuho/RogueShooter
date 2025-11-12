@@ -253,7 +253,7 @@ public class GrenadeProjectile : NetworkBehaviour
         // VISUAALI: server käskee, clientit tekevät
         if (NetworkServer.active) 
         {
-            RpcBeaconTick();  
+            RpcBeaconTick();
         } else if (!NetworkClient.active) 
         {
             // offline

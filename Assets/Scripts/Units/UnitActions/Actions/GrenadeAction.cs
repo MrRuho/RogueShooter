@@ -68,13 +68,13 @@ public class GrenadeAction : BaseAction
             arcPreview.SetCellSize(cellSizeWU);
         }
     }
-    void OnEnable()  => GrenadeProjectile.OnAnyGranadeExploded += OnGrenadeEnded;
+    void OnEnable()  => BaseGrenadeProjectile.OnAnyGranadeExploded += OnGrenadeEnded;
 
 
 
     private void OnDisable()
     {
-        GrenadeProjectile.OnAnyGranadeExploded -= OnGrenadeEnded;
+        BaseGrenadeProjectile.OnAnyGranadeExploded -= OnGrenadeEnded;
         if (arcPreview != null)
         {
             arcPreview.Hide();

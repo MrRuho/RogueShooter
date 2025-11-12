@@ -90,7 +90,7 @@ public class NetworkSyncAgent : NetworkBehaviour
                 var unit = actorNi.GetComponent<Unit>();
                 int teamId = unit ? unit.GetTeamID() : -1;
 
-                if (go.TryGetComponent<GrenadeProjectile>(out var gp))
+                if (go.TryGetComponent<BaseGrenadeProjectile>(out var gp))
                 {
                     gp.actorUnitNetId = actorNetId;
                     gp.ownerTeamId = teamId;

@@ -71,41 +71,50 @@ public class MeleeAction : BaseAction
         return "Melee";
     }
 
+    public int GetMeleeDistance()
+    {
+        return maxMeleedDistance;
+    }
+
     public override List<GridPosition> GetValidGridPositionList()
     {
         var valid = new List<GridPosition>();
+        var lg = LevelGrid.Instance;
         GridPosition origin = unit.GetGridPosition();
+
+        var cfg = LoSConfig.Instance; // losBlockersMask, eyeHeight, samplesPerCell, insetWU
 
         for (int dx = -maxMeleedDistance; dx <= maxMeleedDistance; dx++)
         {
             for (int dz = -maxMeleedDistance; dz <= maxMeleedDistance; dz++)
             {
-                if (dx == 0 && dz == 0) continue; // ei itseään
+                if (dx == 0 && dz == 0) continue;
 
                 var gp = origin + new GridPosition(dx, dz, 0);
+                if (!lg.IsValidGridPosition(gp)) continue;
 
-                // 1) RAJAT ENSIN -> estää out-of-range -virheen
-                if (!LevelGrid.Instance.IsValidGridPosition(gp)) continue;
-
-                // Manhattan -> sulkee diagonaalit
-                // if (Mathf.Abs(dx) + Mathf.Abs(dz) > maxMeleedDistance) continue;
-
-                // Chebyshev -> sallii diagonaalit
+                // Chebyshev (diagonaalit sallittu) – pidä tämä jos haluat lyönnin myös vinottain
                 if (Mathf.Max(Mathf.Abs(dx), Mathf.Abs(dz)) > maxMeleedDistance) continue;
 
-                // 2) onko ruudussa ketään?
-                if (!LevelGrid.Instance.HasAnyUnitOnGridPosition(gp)) continue;
+                if (!lg.HasAnyUnitOnGridPosition(gp)) continue;
 
-                var target = LevelGrid.Instance.GetUnitAtGridPosition(gp);
-                if (target == null || target == unit) continue;           // varmistus
-                if (target.IsEnemy() == unit.IsEnemy()) continue;         // ei omia
+                var target = lg.GetUnitAtGridPosition(gp);
+                if (target == null || target == unit) continue;
+                if (target.IsEnemy() == unit.IsEnemy()) continue;
+
+                // UUSI: LoS tarkistus – käyttää samaa maskia ja eyeHeightia kuin Shoot
+                bool clear = RaycastVisibility.HasLineOfSightRaycast(
+                    origin, gp, cfg.losBlockersMask, cfg.eyeHeight, cfg.samplesPerCell, cfg.insetWU
+                );
+
+                if (!clear) continue;   // korkea seinä välissä => ei kelpaa
 
                 valid.Add(gp);
             }
         }
         return valid;
     }
-
+    
     public override void TakeAction(GridPosition gridPosition, Action onActionComplete)
     {
         targetUnit = LevelGrid.Instance.GetUnitAtGridPosition(gridPosition);

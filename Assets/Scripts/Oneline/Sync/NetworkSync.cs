@@ -108,7 +108,7 @@ public static class NetworkSync
                     var unit = src ? src.GetComponent<Unit>() : null;
                     int teamId = unit ? unit.GetTeamID() : -1;
 
-                    if (go.TryGetComponent<GrenadeProjectile>(out var gp)) {
+                    if (go.TryGetComponent<BaseGrenadeProjectile>(out var gp)) {
                         gp.actorUnitNetId = actorNetId;
                         gp.ownerTeamId = teamId;
                         gp.Setup(targetPos, maxRangeWU);
