@@ -266,7 +266,7 @@ public class GrenadeProjectile : NetworkBehaviour
 
         if (NetworkServer.active) 
         {
-            RpcBeaconArmNow();                  // <<< TEE TÄMÄ
+            RpcBeaconArmNow();
             ServerArmExplosion();
 
         } else if (!NetworkClient.active) 

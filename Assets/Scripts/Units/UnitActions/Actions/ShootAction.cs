@@ -231,8 +231,6 @@ public class ShootAction : BaseAction
 
         var result = ShootingResolver.Resolve(unit, targetUnit, weapon, isOverwatchShot);
 
-      //  var result = ShootingResolver.Resolve(unit, targetUnit, weapon);
-
         OnAnyShoot?.Invoke(this, new OnShootEventArgs
         {
             targetUnit = targetUnit,
@@ -310,13 +308,19 @@ public class ShootAction : BaseAction
         var cfg = LoSConfig.Instance;
         foreach (var enemy in EnumerateEnemyCandidatesInRange(unitGridPosition, r))
         {
+
             var gp = enemy.GetGridPosition();
             if (!RaycastVisibility.HasLineOfSightRaycastHeightAware(
-                unitGridPosition, gp,
-                cfg.losBlockersMask, cfg.eyeHeight, cfg.samplesPerCell, cfg.insetWU))
+            unitGridPosition, gp,
+            cfg.losBlockersMask, cfg.eyeHeight, cfg.samplesPerCell, cfg.insetWU))
+            continue;
+
+            // UUSI: tulilinja (blokkaa myös Units-layerin)
+            if (!HasLineOfFireTo(enemy))
                 continue;
 
             res.Add(gp);
+
         }
         return res;
     }
@@ -324,15 +328,19 @@ public class ShootAction : BaseAction
     private IEnumerable<Unit> EnumerateEnemyCandidatesInRange(GridPosition origin, int range)
     {
         bool shooterIsEnemy = unit.IsEnemy();
-        foreach (var u in UnitManager.Instance.GetAllUnitList())
+        foreach (var unit in UnitManager.Instance.GetAllUnitList())
         {
-            if (u == null) continue;
-            if (u.IsEnemy() == shooterIsEnemy) continue;
-            var gp = u.GetGridPosition();
+            if (unit == null) continue;
+            if (unit.IsEnemy() == shooterIsEnemy) continue;
+
+            // ÄLÄ ehdota kohteeksi jos on kuollut/piilotettu/dying
+            if (unit.IsDead() || unit.IsHidden() || unit.IsDying()) continue;
+
+            var gp = unit.GetGridPosition();
             if (gp.floor != origin.floor) continue;
             int cost = SircleCalculator.Sircle(gp.x - origin.x, gp.z - origin.z);
             if (cost > 10 * range) continue;
-            yield return u;
+            yield return unit;
         }
     }
 
@@ -379,5 +387,57 @@ public class ShootAction : BaseAction
     public int GetTargetCountAtPosition(GridPosition gridPosition)
     {
         return GetValidActionGridPositionList(gridPosition).Count;
+    }
+
+    private bool HasLineOfFireTo(Unit target)
+    {
+        var lg  = LevelGrid.Instance;
+        var cfg = LoSConfig.Instance;
+
+        // Silmien/aseen lähtöpiste
+        Vector3 eyeW = lg.GetWorldPosition(unit.GetGridPosition()) + Vector3.up * cfg.eyeHeight;
+
+        // Mihin tähdätään (voit käyttää omaa target.GetAimWorldPosition())
+        Vector3 aimW = target.transform.position + Vector3.up * cfg.eyeHeight;
+
+        Vector3 dir  = aimW - eyeW;
+        float   dist = dir.magnitude;
+        if (dist <= 0.001f) return true;
+        dir /= dist;
+
+        // LoF = seinät/esteet + Units blokkaavat
+        int shootMask = (cfg.losBlockersMask | LayerMask.GetMask("Units"))
+                & ~LayerMask.GetMask("Ragdoll");   // ⟵ ei blokkaa
+
+        // Pieni lähtösiirto ettei osuta omaan kapseliin heti nollamatkalla
+        const float EPS = 0.02f;
+        Vector3 start = eyeW + dir * EPS;
+        float   maxD  = Mathf.Max(0f, dist - EPS);
+
+        // Käytetään RaycastAll ja luetaan N*ensimmäinen* merkityksellinen osuma
+        var hits = Physics.RaycastAll(start, dir, maxD, shootMask, QueryTriggerInteraction.Collide);
+        if (hits == null || hits.Length == 0) return true; // tyhjää → saa ampua
+
+        System.Array.Sort(hits, (a, b) => a.distance.CompareTo(b.distance));
+
+        foreach (var h in hits)
+        {
+            // Ohita ampujan omat osumat
+            if (h.collider && h.collider.transform.root == unit.transform) continue;
+
+            // Jos osuma on Unit, tarkista onko se target
+            var u = h.collider.GetComponentInParent<Unit>();
+            if (u != null)
+            {
+                // ÄLÄ ehdota kohteeksi jos on kuollut/piilotettu/dying
+                if (unit.IsDead() || unit.IsHidden() || unit.IsDying()) continue;
+                return u == target;
+            }
+
+            // Muuten: seinä/este → blokki
+            return false;
+        }
+
+        return true;
     }
 }

@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Weapon_RK-47
   m_EditorClassIdentifier: Assembly-CSharp::WeaponDefinition
   normalShooting:
-    turnSpeed: 300
+    turnSpeed: 400
     minAimTime: 0.3
     aimingStateTime: 0.5
     cooloffStateTime: 0.3

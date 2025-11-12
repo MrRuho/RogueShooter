@@ -265,8 +265,13 @@ public class Unit : NetworkBehaviour
 
     private void HealthSystem_OnDead(object sender, System.EventArgs e)
     {
-
+        
         OnAnyUnitDead?.Invoke(this, EventArgs.Empty);
+        if (NetworkServer.active)
+        {
+            RpcBroadcastUnitDead();  // Laukaise event myös clienteilla!
+        }
+
         if (!NetworkServer.active)
         {
             // OFFLINE: suoraan tuho
@@ -277,8 +282,16 @@ public class Unit : NetworkBehaviour
         // Piilota jotta client ehtii kopioida omaan ragdolliin tiedot
         isHidden = true;
         SetSoftHiddenLocal(true);
-        StartCoroutine(DestroyAfter(1.30f));
+        StartCoroutine(DestroyAfter(0.30f));
     }
+
+    [ClientRpc]
+    private void RpcBroadcastUnitDead()
+    {
+        // Clientilla: laukaise event
+        OnAnyUnitDead?.Invoke(this, EventArgs.Empty);
+    }
+    
 
     private IEnumerator DestroyAfter(float seconds)
     {

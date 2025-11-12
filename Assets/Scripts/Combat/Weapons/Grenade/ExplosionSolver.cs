@@ -11,7 +11,9 @@ public static class ExplosionSolver
     // LOS-parametrit
     public static float LoSHeight    = 1.0f;  // säteen / pienen pallon korkeus maailmassa
     public static float LoSRayRadius = 0.00f; // 0 = Linecast, >0 = SphereCast (esim. 0.15f)
-    public static QueryTriggerInteraction TriggerMode = QueryTriggerInteraction.Ignore;
+
+    //public static QueryTriggerInteraction TriggerMode = QueryTriggerInteraction.Ignore;
+    public static QueryTriggerInteraction TriggerMode = QueryTriggerInteraction.Collide;
 
     // Obstacle-maskin voi yliajaa ajossa: ExplosionSolver.SetObstacleLayerMask(LayerMask.GetMask("Obstacle"));
     static int _obstacleMask = -1;

@@ -167,7 +167,7 @@ GameObject:
   - component: {fileID: -5832321910042178392}
   - component: {fileID: 3331423518669773530}
   m_Layer: 0
-  m_Name: GranadeProjectile
+  m_Name: GrenadeProjectile
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -405,7 +405,7 @@ AudioSource:
   Priority: 128
   DopplerLevel: 1
   MinDistance: 1
-  MaxDistance: 50
+  MaxDistance: 200
   Pan2D: 0
   rolloffMode: 0
   BypassEffects: 0

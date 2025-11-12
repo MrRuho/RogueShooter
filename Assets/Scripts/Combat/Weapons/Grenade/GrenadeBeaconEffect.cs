@@ -15,6 +15,10 @@ public class GrenadeBeaconEffect : MonoBehaviour
     [SerializeField] private int turnsUntilExplosion = 2;
     [SerializeField] private float finalPulseSpeedMultiplier = 5f;
 
+    [Header("Pulse Variation")]
+    [Tooltip("Satunnainen vaihtelu pulssin aloituksessa (sekunteina)")]
+    [SerializeField] private float pulseStartOffsetRange = 0.5f;
+
     [Header("Audio Settings")]
     [SerializeField] private AudioSource audioSource;
     [SerializeField] private AudioClip beepSound;
@@ -26,6 +30,7 @@ public class GrenadeBeaconEffect : MonoBehaviour
     private bool isArmed = false;
     private float currentPulseSpeed;
     private float currentPitch;
+    private float pulseTimeOffset;
 
     void Awake()
     {
@@ -58,6 +63,8 @@ public class GrenadeBeaconEffect : MonoBehaviour
         currentTurnsRemaining = turnsUntilExplosion;
         currentPulseSpeed = basePulseSpeed;
         currentPitch = basePitch;
+        
+        pulseTimeOffset = Random.Range(0f, pulseStartOffsetRange);
     }
 
     void Update()
@@ -100,7 +107,7 @@ public class GrenadeBeaconEffect : MonoBehaviour
     
     private void UpdateLightPulse()
     {
-        float pulseValue = (Mathf.Sin(Time.time * currentPulseSpeed) + 1f) * 0.5f;
+        float pulseValue = (Mathf.Sin((Time.time + pulseTimeOffset) * currentPulseSpeed) + 1f) * 0.5f;
 
         beaconLight.intensity = Mathf.Lerp(minIntensity, maxIntensity, pulseValue);
         beaconLight.range = Mathf.Lerp(minRange, maxRange, pulseValue);
@@ -131,7 +138,6 @@ public class GrenadeBeaconEffect : MonoBehaviour
         UpdatePulseParameters();
     }
 
-    // Soita yksi beep (RPC:tä varten)
     public void PlayBeepOnce()
     {
         PlayBeep();

@@ -83,6 +83,7 @@ public class GridSystemVisual : MonoBehaviour
         UnitActionSystem.Instance.OnSelectedActionChanged += UnitActionSystem_OnSelectedActionChanged;
         UnitActionSystem.Instance.OnBusyChanged += UnitActionSystem_OnBusyChanged;
         LevelGrid.Instance.onAnyUnitMoveGridPosition += LevelGrid_onAnyUnitMoveGridPosition;
+        Unit.OnAnyUnitDead += HandleAnyUnitDead;
 
         if (TeamVisionService.Instance != null)
             TeamVisionService.Instance.OnTeamVisionChanged += HandleTeamVisionChanged;
@@ -102,6 +103,8 @@ public class GridSystemVisual : MonoBehaviour
         UnitActionSystem.Instance.OnSelectedActionChanged -= UnitActionSystem_OnSelectedActionChanged;
         UnitActionSystem.Instance.OnBusyChanged -= UnitActionSystem_OnBusyChanged;
         LevelGrid.Instance.onAnyUnitMoveGridPosition -= LevelGrid_onAnyUnitMoveGridPosition;
+        Unit.OnAnyUnitDead -= HandleAnyUnitDead;
+
 
         if (TeamVisionService.Instance != null)
             TeamVisionService.Instance.OnTeamVisionChanged -= HandleTeamVisionChanged;
@@ -379,9 +382,6 @@ public class GridSystemVisual : MonoBehaviour
         }
     }
     
-  //  [Header("Enemy Overwatch Display")]
-  //  [SerializeField] private float enemyOverwatchVisibilityDuration = 3f;
-
     private readonly Dictionary<Unit, Coroutine> _owTimers = new();
 
     public void AddPersistentOverwatch(Unit u, List<GridPosition> tiles)
@@ -454,8 +454,32 @@ public class GridSystemVisual : MonoBehaviour
                 StopCoroutine(kv.Value);
         }
         _owTimers.Clear();
-        
+
         _owPersistent.Clear();
         if (_isReady) UpdateGridVisuals();
     }
+
+    private void HandleAnyUnitDead(object sender, EventArgs e)
+    {
+        if (!_isReady) return;
+        StartCoroutine(Co_RefreshShootVisualsNextFrame());
+    }
+
+    private System.Collections.IEnumerator Co_RefreshShootVisualsNextFrame()
+    {
+        // Anna clientin siivota Unit-listat/colliderit
+        yield return null; 
+
+        var unitActionSystem = UnitActionSystem.Instance;
+        var selected = unitActionSystem != null ? unitActionSystem.GetSelectedAction() : null;
+
+        // 1) FORCE: tyhjennä nykyinen ruudukko ennen uutta laskentaa
+        HideAllGridPositions();
+
+        if (selected is ShootAction)
+        {
+            UpdateGridVisuals();
+        }
+    }
+
 }

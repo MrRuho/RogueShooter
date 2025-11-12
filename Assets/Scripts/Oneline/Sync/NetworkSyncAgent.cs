@@ -388,7 +388,6 @@ public class NetworkSyncAgent : NetworkBehaviour
         StatusCoordinator.Instance.CheckOverwatchStep(unit, gridPos);
     }
 
-
     [ClientRpc]
     public void RpcRebuildTeamVision(uint[] unitNetIds, bool endPhase)
     {

@@ -28,7 +28,7 @@ public class GrenadeAction : BaseAction
 
 
     // (Prefabi-viite saa jäädä, mutta tätä tiedostoa ei käytetä spawniin)
-    [SerializeField] private Transform grenadeProjectilePrefab;
+   // [SerializeField] private Transform grenadeProjectilePrefab;
 
     [SerializeField] private LayerMask mousePlaneMask;   // vain MousePlane-kerrokset
     [SerializeField] private float mousePlaneHalfThickness = 0.05f; // pystysuunnan puolipaksuus
@@ -45,10 +45,10 @@ public class GrenadeAction : BaseAction
     // private bool _wasActive;  // reunan tunnistus
     private bool _wasSelected;
     
-    [SerializeField] private float throwRangeWU = 12f;          // max heittoetäisyys (WU)
-    [SerializeField] private LayerMask mouseMask;               // esim. "MousePlane" | "Ground"
-    [SerializeField] private bool clampOutsideRange = false;    // jos true, kaari clampataan rajalle
-    private bool _lastInRange;
+  //  [SerializeField] private float throwRangeWU = 12f;          // max heittoetäisyys (WU)
+ //   [SerializeField] private LayerMask mouseMask;               // esim. "MousePlane" | "Ground"
+  //  [SerializeField] private bool clampOutsideRange = false;    // jos true, kaari clampataan rajalle
+  //  private bool _lastInRange;
 
     protected override void Awake()
     {
