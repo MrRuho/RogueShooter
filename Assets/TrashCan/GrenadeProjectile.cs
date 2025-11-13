@@ -7,6 +7,7 @@ using System.Collections.Generic;
 
 public class GrenadeProjectile : NetworkBehaviour
 {
+    /*
    // ====================== DETERMINISTIC DEFLECTION (OFFLINE) ======================
     [Header("Deflection: Toggle & Mask")]
     [Tooltip("Kytkee deterministisen kimpoilun päälle vain offline-tilassa.")]
@@ -800,5 +801,6 @@ public class GrenadeProjectile : NetworkBehaviour
             r.enabled = !hidden;
         }
     }
+    */
 
 }

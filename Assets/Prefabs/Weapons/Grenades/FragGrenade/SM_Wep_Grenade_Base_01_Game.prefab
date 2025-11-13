@@ -184,7 +184,7 @@ GameObject:
   - component: {fileID: 3375544}
   - component: {fileID: 2364120}
   m_Layer: 0
-  m_Name: SM_Wep_Grenade_Base_01
+  m_Name: SM_Wep_Grenade_Base_01_Game
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

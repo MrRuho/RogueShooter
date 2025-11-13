@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Mirror;
 using UnityEngine;
 
 /// <summary>
@@ -210,7 +211,9 @@ public class TeamVisionService : MonoBehaviour
         /// <param name="gp">Grid position to query.</param>
         public bool IsVisible(GridPosition gp) => _counts.ContainsKey(gp);
     }
-
+    
+    // Jos endPhase true niin päivittää näkymän välittömästi.
+    /*
     public void RebuildTeamVisionLocal(int teamId, bool endPhase)
     {
         var list = UnitManager.Instance?.GetAllUnitList();
@@ -240,6 +243,39 @@ public class TeamVisionService : MonoBehaviour
             }
 
             vision.ApplyAndPublishDirectionalVision(facing, angle);
+        }
+    }
+    */
+    public void RebuildTeamVisionLocal(int teamId, bool endPhase)
+    {
+
+        var list = UnitManager.Instance?.GetAllUnitList();
+        if (list == null) return;
+
+        foreach (var unit in list)
+        {
+
+            if (!unit) continue;
+            int unitTeam = unit.GetTeamID();
+            if (unitTeam != teamId) continue;
+            if (unit.IsDead() || unit.IsDying()) continue;
+            var vision = unit.GetComponent<UnitVision>();
+            if (vision == null || !vision.IsInitialized) continue;   
+            vision.UpdateVisionNow();
+            
+            int actionpoints = unit.GetActionPoints();
+            Vector3 facing = unit.transform.forward;
+            float angle = endPhase ? vision.VisionPenaltyWhenUsingAP(actionpoints) : 360f;
+
+            if (endPhase && unit.TryGetComponent<OverwatchAction>(out var ow) && ow.IsOverwatch())
+            {
+                angle = vision.VisionPenaltyWhenUsingAP(0);
+                var dir = ow.TargetWorld - unit.transform.position; dir.y = 0f;
+                if (dir.sqrMagnitude > 1e-4f) facing = dir.normalized;
+            }
+
+            vision.ApplyAndPublishDirectionalVision(facing, angle);
+
         }
     }
 }

@@ -197,11 +197,15 @@ public class Unit : NetworkBehaviour
         ActionPointUsed?.Invoke(unit, EventArgs.Empty);
     }
 
+    public void RaisOnAnyActionPointsChanged()
+    {
+        OnAnyActionPointsChanged?.Invoke(this, EventArgs.Empty);
+    }
+
     private void SpendActionPoints(int amount)
     {
         actionPoints -= amount;
         var team = Team;
-       // Debug.Log("[Unit] Tiimi: " + Team + "Unitilla actionpisteitä nyt: " + actionPoints);
 
         // Nosta eventti vain authoritative-puolella:
         if (NetMode.ServerOrOff)
@@ -214,17 +218,19 @@ public class Unit : NetworkBehaviour
 
         NetworkSync.BroadcastActionPoints(this, actionPoints);
     }
-    
-   
-
+ 
     public int GetActionPoints()
     {
         return actionPoints;
     }
 
+    public void ResetActionPoints()
+    {
+        actionPoints = 0;
+    }
+
     public int GetReactionPoints()
     {
-      //  if (reactionPoins <= 0) { Debug.Log("[Unit] Tiimi: " + Team + "Unit ei voi ragoida. Reaktiopisteitä: " + reactionPoins); }
         return reactionPoins;
     }
     
@@ -235,6 +241,11 @@ public class Unit : NetworkBehaviour
         {
             reactionPoins -= 1; 
         }
+    }
+
+    public void ResetReactionPoints()
+    {
+        reactionPoins = 0;
     }
 
     /// <summary>
@@ -379,14 +390,12 @@ public class Unit : NetworkBehaviour
 
     public bool HasMoved() => Cover ? Cover.HasMoved() : false;
 
-    // public void SetPersonalCover(int v) { if (Cover) Cover.SetPersonalCover(v); }
     public void SetPersonalCover(int v)
     {
         if (IsDying() || IsDead()) return;
         if (Cover) Cover.SetPersonalCover(v);
     }
 
-    //public void SetCoverBonus() { if (Cover) Cover.ServerApplyCoverBonus(); }
     public void SetCoverBonus() 
     { 
         if (IsDying() || IsDead()) return;
@@ -525,26 +534,7 @@ public class Unit : NetworkBehaviour
 
     }
 
-    // <<< Kuolemaketjun alku (server) >>>
-    /*
-    [Server]
-    private void HandleDying_ServerFirst(object sender, System.EventArgs e)
-    {
-        if (!isServer) return; 
-        if (_deathHandled) return;
-        _deathHandled = true;
-
-        // a) Peilaa jäädytys clientille heti:
-        RpcFreezeClientSide();
-
-        // b) Katkaise serverin liike deterministisesti + snap (tyhjentää clientin interp-puskurit)
-        DeathStopper.TryHalt(this);
-
-        // c) Sammuta serverillä (nykyinen teidän metodi)
-        FreezeBeforeDespawn();
-    }
-    */
-    
+    // <<< Kuolemaketjun alku (server) >>>    
     private void HandleDying_ServerFirst(object sender, System.EventArgs e)
     {
         if (_deathHandled) return;

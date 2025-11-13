@@ -48,4 +48,27 @@ public static class OfflineGameSimulator
                 }
             });
     }
+
+    public static void ApllyStunDamageToUnit(Unit unit)
+    {
+        if (unit == null || unit.IsDying() || unit.IsDead()) return;
+
+        int coverAfterHit = unit.GetPersonalCover() / 2;
+        unit.SetPersonalCover(coverAfterHit);
+        unit.ResetReactionPoints();
+        unit.ResetActionPoints();
+        unit.RaisOnAnyActionPointsChanged();
+
+        // Aseta Unittien vision coneksi
+      //  var vision = unit.GetComponent<UnitVision>();
+     //  vision.VisionPenaltyWhenUsingAP(0);    
+     //   vision.UpdateVisionNow();
+
+        int teamID = unit.GetTeamID();
+        TeamVisionService.Instance.RebuildTeamVisionLocal(teamID, true);
+
+        //Päivitä UI ajantasalle.
+        
+    }
+
 }

@@ -252,7 +252,6 @@ MonoBehaviour:
   grenadeRadius: 0.12
   arcLift: 0.02
   heightClearance: 0.05
-  grenadeProjectilePrefab: {fileID: 3101730896889347960, guid: ef01bfdfadc18044882f4cc7063f4be7, type: 3}
   mousePlaneMask:
     serializedVersion: 2
     m_Bits: 64
@@ -356,7 +355,7 @@ MonoBehaviour:
   animator: {fileID: 386233639072471366}
   netAnim: {fileID: 1008889384909675835}
   bulletProjectilePrefab: {fileID: 7196073207834334459, guid: d74275857cb5cf14fa64a0672eca7fc7, type: 3}
-  granadeProjectilePrefab: {fileID: 7374537704562805240, guid: ef01bfdfadc18044882f4cc7063f4be7, type: 3}
+  granadeProjectilePrefab: {fileID: 7374537704562805240, guid: 279c299589321174b8a85cdbade3fe11, type: 3}
   shootPointTransform: {fileID: 2890156147936391665}
   rightHandTransform: {fileID: 6472893649395618760}
   muzzleFlashPrefab: {fileID: 1198663731479534, guid: aa321ef2210525e468eab005bac847f5, type: 3}

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Mirror;
 using UnityEngine;
 using static GridSystemVisual;
 
@@ -122,25 +123,17 @@ public class UnitVision : MonoBehaviour
         if (_healthSystem != null && (_healthSystem.IsDying() || _healthSystem.IsDead())) return;
 
         bool publish = ShouldPublishVisionLocally();
+        
 
-        if (!_initialized)
-        {
-            Debug.LogWarning($"[UnitVision UPDATE SKIP] {name} - not initialized");
-            return;
-        }
-        if (visionSkill == null)
-        {
-            Debug.LogWarning($"[UnitVision UPDATE SKIP] {name} - no visionSkill");
-            return;
-        }
+
+        if (!_initialized) return;
+        if (visionSkill == null) return;
+        
 
         var levelGrid = LevelGrid.Instance;
         var loSConfig = LoSConfig.Instance;
-        if (levelGrid == null || loSConfig == null)
-        {
-            Debug.LogWarning($"[UnitVision UPDATE SKIP] {name} - missing services: LG={levelGrid != null}, CFG={loSConfig != null}");
-            return;
-        }
+        if (levelGrid == null || loSConfig == null) return;
+        
 
         var wp = _tr != null ? _tr.position : transform.position;
         var origin = levelGrid.GetGridPosition(wp);
@@ -168,33 +161,44 @@ public class UnitVision : MonoBehaviour
         }
 
         if (vis != null) _lastVisibleTiles = vis;
-
+        
         if (publish)
         {
             var teamVision = TeamVisionService.Instance;
             if (teamVision != null)
+            {
                 teamVision.ReplaceUnitVision(teamId, _unitKey, _lastVisibleTiles);
+            }
         }
     }
 
+    /// <summary>
+    /// Kun tämä on true, UnitVision saa julkaista tiimin visionin,
+    /// vaikka ei olisi oma vuoro (mutta silti vain omistetut unitit).
+    /// Käytetään vain lyhyissä "server pakottaa vision uusiksi" -jaksoissa.
+    /// </summary>
+    public static bool ForceServerVisionPush { get; set; }
+
     private bool ShouldPublishVisionLocally()
     {
+ 
         if (NetworkSync.IsOffline) return true;
-
         if (!NetworkSync.IsClient) return false;
+        
 
-        if (GameModeManager.SelectedMode == GameMode.Versus)
-        {
-            if (!PlayerLocalTurnGate.LocalPlayerTurn) return false;
+        var ni = NetworkSync.FindIdentity(this.GetActorId());
+        bool isOwned = NetworkSync.IsOwnedHere(ni);
+        
+        if (!isOwned) return false;
+        if (GameModeManager.SelectedMode != GameMode.Versus) return true;
+        
 
-            var ni = NetworkSync.FindIdentity(this.GetActorId());
-            return NetworkSync.IsOwnedHere(ni);
-        }
+        bool localTurn = PlayerLocalTurnGate.LocalPlayerTurn;
+        bool force = ForceServerVisionPush;
+        
+        if (!localTurn && !force) return false;
 
-        {
-            var ni = NetworkSync.FindIdentity(this.GetActorId());
-            return NetworkSync.IsOwnedHere(ni);
-        }
+        return true;
     }
     
     public HashSet<GridPosition> GetUnitVisionGrids()
@@ -322,10 +326,13 @@ public class UnitVision : MonoBehaviour
 
     public void ApplyAndPublishDirectionalVision(Vector3 facingWorld, float coneAngleDeg)
     {
+   
         var tiles = GetConeVisibleTiles(facingWorld, coneAngleDeg);
+        
         if (tiles == null) return;
-
+         
         _lastVisibleTiles = new HashSet<GridPosition>(tiles);
         TeamVisionService.Instance.ReplaceUnitVision(teamId, _unitKey, _lastVisibleTiles);
     }
+
 }

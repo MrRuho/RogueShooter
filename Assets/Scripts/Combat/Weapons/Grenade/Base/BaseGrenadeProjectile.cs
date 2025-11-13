@@ -95,6 +95,8 @@ public abstract class BaseGrenadeProjectile : NetworkBehaviour
     protected bool _subscribed;
     protected int timer;
     protected int turnBasedTimer;
+    protected bool instantTimer;
+    protected bool hasLanded;
     
     protected virtual void Awake()
     {
@@ -111,6 +113,7 @@ public abstract class BaseGrenadeProjectile : NetworkBehaviour
         {
             timer = grenadeDefinition.timer;
             turnBasedTimer = grenadeDefinition.timer;
+            instantTimer = grenadeDefinition.instantTimer;
             
             if (beaconEffect != null)
                 beaconEffect.SetTurnsUntilExplosion(timer);
@@ -128,6 +131,7 @@ public abstract class BaseGrenadeProjectile : NetworkBehaviour
         targetPosition = targetWorld;
         _explosionScheduled = false;
         isExploded = false;
+        hasLanded = false;
         
         RecomputeDerived();
         
@@ -153,6 +157,27 @@ public abstract class BaseGrenadeProjectile : NetworkBehaviour
             if (grenadeDefinition.actionBasedTimer && GameModeManager.SelectedMode == GameMode.CoOp)
                 turnBasedTimer += 1;
         }
+    }
+
+    // Räjähtää heti heittämisen jälkeen.
+    protected void InstantExplosion()
+    {
+        if (_explosionScheduled || isExploded )
+            return;
+
+        _explosionScheduled = true;
+
+        if (NetworkServer.active)
+        {
+            RpcBeaconArmNow();
+            ServerArmExplosion();
+        }
+        else if (!NetworkClient.active)
+        {
+            beaconEffect?.TriggerFinalCountdown();
+            StartCoroutine(LocalExplodeAfterJitter());
+        }
+
     }
     
     protected virtual void Unit_ActionPointsUsed(object sender, EventArgs e)
@@ -332,6 +357,11 @@ public abstract class BaseGrenadeProjectile : NetworkBehaviour
             _endPos = landed;
             
             enabled = false;
+
+            if(instantTimer)
+            {
+                InstantExplosion();
+            }
         }
     }
     

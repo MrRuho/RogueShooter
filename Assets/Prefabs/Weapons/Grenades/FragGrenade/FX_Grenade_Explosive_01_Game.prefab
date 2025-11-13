@@ -14815,7 +14815,7 @@ GameObject:
   - component: {fileID: 198880425136568428}
   - component: {fileID: 199080232139317452}
   m_Layer: 0
-  m_Name: FX_Grenade_Explosive_01
+  m_Name: FX_Grenade_Explosive_01_Game
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

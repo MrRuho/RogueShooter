@@ -30,7 +30,7 @@ public class GrenadeDefinition : ScriptableObject
     public bool actionBasedTimer = true;
     
     [Tooltip("Räjähtää heti heittämisen jälkeen. Ohittaa muut timerit")]
-    public bool InstantTimer = true;
+    public bool instantTimer = true;
     
     [Header("Explosion Timing")]
     [Tooltip("Pieni hajonta räjähdyksen ajankohtaan")]

@@ -160,6 +160,44 @@ public static class NetworkSync
         unit.GetComponent<HealthSystem>().Damage(amount, hitPosition);        
     }
 
+    public static void ApplyStunDamageToUnit(Unit unit, uint actorNetId)
+    {
+        if (unit == null || unit.IsDying() || unit.IsDead()) return;
+
+        if (NetworkServer.active) // Online: server or host
+        {
+            int coverAfterHit = unit.GetPersonalCover() / 2;
+            unit.SetPersonalCover(coverAfterHit);
+            unit.ResetReactionPoints();
+            unit.ResetActionPoints();
+            unit.RaisOnAnyActionPointsChanged();
+            
+            int teamID = unit.GetTeamID();
+
+            BroadcastActionPoints(unit, 0);
+            UpdateCoverUI(unit);
+            
+            var agent = UnityEngine.Object.FindFirstObjectByType<NetworkSyncAgent>();
+            if (agent != null)
+            {
+                agent.RpcApplyStunVisionUpdate(teamID);
+            }
+            
+            return;
+        }
+
+        if(NetworkClient.active)
+        {
+            var ni = unit.GetComponent<NetworkIdentity>();
+            if (ni && NetworkSyncAgent.Local != null)
+            {
+                if (unit == null || unit.IsDying() || unit.IsDead()) return;
+                NetworkSyncAgent.Local.CmdApplyStunDamage(actorNetId, ni.netId);
+                return;
+            }
+        }
+    }
+
     public static void ApplyDamageToObject(DestructibleObject target, int amount, Vector3 hitPosition, uint actorNetId)
     {
         if (target == null) return;

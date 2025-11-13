@@ -18,69 +18,11 @@ public abstract class BaseAction : NetworkBehaviour
     protected bool isActive;
     protected Action onActionComplete;
 
-    //private HealthSystem ownerHealth;
-
     protected virtual void Awake()
     {
-        /*
-        if (ownerHealth == null)
-            ownerHealth = GetComponentInParent<HealthSystem>();
-        */
-
         unit = GetComponent<Unit>();
     }
     
-    void OnEnable()
-    {    
-        /*
-        if (ownerHealth == null) ownerHealth = GetComponentInParent<HealthSystem>();
-        if (ownerHealth != null)
-        {
-            ownerHealth.OnDying += HandleUnitDying;
-            // DEBUG
-            Debug.Log($"[BaseAction:{GetType().Name}] Subscribed OnDying for {unit?.name}");
-        }
-        else
-        {
-            Debug.LogWarning($"[BaseAction:{GetType().Name}] ownerHealth == null on {gameObject.name}");
-        }
-        */   
-    }
-
-    void OnDisable()
-    {
-        /*
-        if (ownerHealth != null)
-            ownerHealth.OnDying -= HandleUnitDying;
-        */
-
-    }
-
-    /*
-    private void HandleUnitDying(object sender, EventArgs e)
-    {
-        ForceCompleteNow();
-    }
-
-    // DODO Testaa toimiiko tämä AI.n jumiutumisessa.
-
-    protected virtual void ForceCompleteNow()
-    {
-
-        if (!isActive) return;
-        isActive = false;
-        Debug.Log("[BaseAction] Set isActive: " + isActive);
-        Action callback = onActionComplete;
-        Debug.Log("[BaseAction] onActionComplete: " + onActionComplete);
-        Debug.Log("[BaseAction] Action callback: " + callback);
-        onActionComplete = null;
-        Debug.Log("[BaseAction] onActionComplete: " + onActionComplete);
-        StopAllCoroutines();
-        Debug.Log("[BaseAction] StopAllCorroutines");
-
-        OnAnyActionCompleted?.Invoke(this, EventArgs.Empty);
-    }
-    */
     public bool IsActionActive()
     {
         return isActive;

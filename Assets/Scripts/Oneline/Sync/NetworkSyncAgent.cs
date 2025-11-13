@@ -68,7 +68,6 @@ public class NetworkSyncAgent : NetworkBehaviour
     public void CmdSpawnGrenade(uint actorNetId, Vector3 clientSuggestedTarget)
     {
         if (!NetworkServer.active) return;
-        if (grenadePrefab == null) { Debug.LogWarning("[NetSyncAgent] GrenadePrefab missing"); return; }
         if (actorNetId == 0 || !RightOwner(actorNetId)) return;
 
         if (!NetworkServer.spawned.TryGetValue(actorNetId, out var actorNi) || actorNi == null) return;
@@ -76,11 +75,18 @@ public class NetworkSyncAgent : NetworkBehaviour
         var ua = actorNi.GetComponent<UnitAnimator>();
         if (!ua || !ua.ThrowPoint) return;
 
+        GameObject actualGrenadePrefab = ua.GrenadePrefab;
+        if (actualGrenadePrefab == null)
+        {
+            Debug.LogWarning($"[NetSyncAgent] Unit {actorNi.name} has no grenade prefab set in UnitAnimator!");
+            return;
+        }
+
         Vector3 origin = ua.ThrowPoint.position;
         Vector3 target = clientSuggestedTarget;
 
         SpawnRouter.SpawnNetworkServer(
-            grenadePrefab, origin, Quaternion.identity,
+            actualGrenadePrefab, origin, Quaternion.identity,
             source: actorNi.transform,
             sceneName: null,
             parent: null,
@@ -159,6 +165,47 @@ public class NetworkSyncAgent : NetworkBehaviour
         // 2) Broadcast UI (kuten ennenkin)
         ServerBroadcastHp(unit, hs.GetHealth(), hs.GetHealthMax());
     }
+
+    [Command(requiresAuthority = true)]
+    public void CmdApplyStunDamage(uint actorNetId, uint targetNetId)
+    {
+
+        if (!NetworkServer.spawned.TryGetValue(targetNetId, out var targetNi) || targetNi == null) return;
+        if (!RightOwner(actorNetId)) return;
+        if (!targetNi.TryGetComponent<Unit>(out var unit)) return;
+        if (unit == null || unit.IsDying() || unit.IsDead()) return;
+        
+
+        int coverBefore = unit.GetPersonalCover();
+        int teamID = unit.GetTeamID();  
+        int coverAfterHit = coverBefore / 2;
+
+        unit.SetPersonalCover(coverAfterHit);
+        unit.ResetReactionPoints();
+        unit.ResetActionPoints();
+        unit.RaisOnAnyActionPointsChanged();
+        
+        NetworkSync.BroadcastActionPoints(unit, 0);
+        NetworkSync.UpdateCoverUI(unit);
+
+        RpcApplyStunVisionUpdate(teamID);
+    }
+
+    [ClientRpc]
+    public void RpcApplyStunVisionUpdate(int teamId)
+    {
+        StartCoroutine(Co_DelayedVisionUpdate(teamId));
+    }
+
+    private System.Collections.IEnumerator Co_DelayedVisionUpdate(int teamId)
+    {
+        yield return null; 
+        UnitVision.ForceServerVisionPush = true;
+        yield return null;    
+        TeamVisionService.Instance.RebuildTeamVisionLocal(teamId, true);
+        UnitVision.ForceServerVisionPush = false;
+    }
+
 
     [Command(requiresAuthority = true)]
     public void CmdApplyDamageToObject(uint actorNetId, uint targetNetId, int amount, Vector3 hitPosition)
@@ -309,6 +356,7 @@ public class NetworkSyncAgent : NetworkBehaviour
         var cs = ni.GetComponent<CoverSkill>();
         if (cs != null) cs.ServerRegenCoverOnMove(distance);
     }
+
     [Command]
     public void CmdResetCurrentCoverBonus(uint unitNetId)
     {
