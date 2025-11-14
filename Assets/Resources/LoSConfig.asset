@@ -15,6 +15,6 @@ MonoBehaviour:
   losBlockersMask:
     serializedVersion: 2
     m_Bits: 768
-  eyeHeight: 1.9
+  eyeHeight: 2
   samplesPerCell: 1
   insetWU: 0.3

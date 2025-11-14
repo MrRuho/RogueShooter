@@ -5,6 +5,11 @@ using UnityEngine;
 
 public class GrenadeAction : BaseAction
 {
+    [Header("Grenade settings")]
+    [SerializeField] private GrenadeDefinition grenadeDefinition;
+    public GrenadeDefinition Definition => grenadeDefinition;
+    public GridPosition? CurrentTargetGrid { get; private set; }
+
     [Header("Preview")]
     [SerializeField] private GrenadeArcPreview arcPreview; // LineRenderer + GrenadeArcPreview
     [SerializeField] private float cellSizeWU = 2f;        // esim. LevelGrid.Instance.CellSize
@@ -80,9 +85,9 @@ public class GrenadeAction : BaseAction
             arcPreview.Hide();
         }
         _lastHover = null;
-        //   _wasActive = false;
+        CurrentTargetGrid = null;  // ← LISÄTTY
     }
-
+/*
     private void Update()
     {
         // 0) Onko tämä action tällä hetkellä valittuna?
@@ -117,6 +122,7 @@ public class GrenadeAction : BaseAction
         {
             arcPreview.Hide();
             _lastHover = null;
+            
         }
         _wasSelected = isSelected;
 
@@ -155,6 +161,106 @@ public class GrenadeAction : BaseAction
         // 3) Piirrä kaari
         Vector3 targetW = lg.GetWorldPosition(gp);
         arcPreview?.ShowArcTo(targetW);
+
+        // 4) Piirrä vaikutusalue
+        CurrentTargetGrid = gp;
+        GridSystemVisual.Instance?.UpdateGridVisuals();  
+    }
+*/
+    private void Update()
+    {
+        bool isSelected =
+            UnitActionSystem.Instance != null &&
+            UnitActionSystem.Instance.GetSelectedAction() == this;
+
+        if (isSelected && !_wasSelected)
+        {
+            if (arcPreview == null)
+                arcPreview = FindFirstObjectByType<GrenadeArcPreview>(FindObjectsInactive.Exclude);
+
+            if (throwPoint == null)
+            {
+                var anim = GetComponentInChildren<UnitAnimator>(true);
+                if (anim != null && anim.GetrightHandTransform() != null)
+                    throwPoint = anim.GetrightHandTransform();
+            }
+
+            if (arcPreview != null)
+            {
+                arcPreview.SetOrigin(throwPoint != null ? throwPoint : transform);
+                arcPreview.SetCellSize(cellSizeWU);
+            }
+
+            _lastHover = null;
+        }
+        else if (!isSelected && _wasSelected)
+        {
+            arcPreview?.Hide();
+            _lastHover = null;
+            CurrentTargetGrid = null;  // ← LISÄTTY
+            GridSystemVisual.Instance?.UpdateGridVisuals();  // ← LISÄTTY: päivitä grid
+        }
+        _wasSelected = isSelected;
+
+        if (!isSelected)
+        {
+            if (CurrentTargetGrid.HasValue)  // ← LISÄTTY: jos oli vielä target, tyhjennä
+            {
+                CurrentTargetGrid = null;
+                GridSystemVisual.Instance?.UpdateGridVisuals();
+            }
+            return;
+        }
+
+        Vector3 hitW = MouseWorld.GetPositionOnlyHitVisible();
+        if (hitW == Vector3.zero)
+        {
+            arcPreview?.Hide();
+            _lastHover = null;
+            if (CurrentTargetGrid.HasValue)  // ← MUUTETTU: päivitä vain jos muuttui
+            {
+                CurrentTargetGrid = null;
+                GridSystemVisual.Instance?.UpdateGridVisuals();
+            }
+            return;
+        }
+
+        var lg = LevelGrid.Instance;
+        GridPosition gp = lg.GetGridPosition(hitW);
+
+        if (!lg.IsValidGridPosition(gp))
+        {
+            arcPreview?.Hide();
+            _lastHover = null;
+            if (CurrentTargetGrid.HasValue)  // ← MUUTETTU
+            {
+                CurrentTargetGrid = null;
+                GridSystemVisual.Instance?.UpdateGridVisuals();
+            }
+            return;
+        }
+
+        var valid = GetValidGridPositionList();
+        if (valid == null || !valid.Contains(gp))
+        {
+            arcPreview?.Hide();
+            _lastHover = null;
+            if (CurrentTargetGrid.HasValue)  // ← MUUTETTU
+            {
+                CurrentTargetGrid = null;
+                GridSystemVisual.Instance?.UpdateGridVisuals();
+            }
+            return;
+        }
+
+        if (_lastHover.HasValue && _lastHover.Value == gp) return;
+        _lastHover = gp;
+
+        Vector3 targetW = lg.GetWorldPosition(gp);
+        arcPreview?.ShowArcTo(targetW);
+
+        CurrentTargetGrid = gp;
+        GridSystemVisual.Instance?.UpdateGridVisuals();
     }
 
 
@@ -162,7 +268,19 @@ public class GrenadeAction : BaseAction
 
     private void OnGrenadeEnded(object sender, EventArgs e)
     {
-        GetValidGridPositionList();            // teillä jo oleva metodi
+        StartCoroutine(Co_RefreshGrenadeVisualsNextFrame());
+    }
+
+    private IEnumerator Co_RefreshGrenadeVisualsNextFrame()
+    {
+        // Odota 1–2 framea että räjähdys on ehtinyt:
+        // - tuhota esteet
+        // - spawnata ragdollit
+        // - siivota colliderit
+        // yield return null;
+        yield return null;
+
+        GetValidGridPositionList();
         GridSystemVisual.Instance.UpdateGridVisuals();
     }
 

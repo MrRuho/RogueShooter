@@ -90,7 +90,7 @@ Light:
   m_BounceIntensity: 1
   m_ColorTemperature: 6570
   m_UseColorTemperature: 0
-  m_BoundingSphereOverride: {x: 3.3752e-41, y: 2.524355e-29, z: 0, w: 3e-45}
+  m_BoundingSphereOverride: {x: 5.63e-43, y: 8e-44, z: 0, w: 4.3e-44}
   m_UseBoundingSphereOverride: 0
   m_UseViewFrustumForShadowCasterCull: 1
   m_ForceVisible: 0
@@ -140,8 +140,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 219f92172d7a3134eade2f49b0a8c3d6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LightFlash
-  fullBrightnessTime: 0.1
-  fadeOutTime: 0.1
+  fullBrightnessTime: 0.03
+  fadeOutTime: 0.03
   fadeOutCurve:
     serializedVersion: 2
     m_Curve:

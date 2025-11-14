@@ -164,8 +164,14 @@ public static class NetworkSync
     {
         if (unit == null || unit.IsDying() || unit.IsDead()) return;
 
-        if (NetworkServer.active) // Online: server or host
+        if (NetworkServer.active)
         {
+            var statusCtrl = unit.GetComponent<UnitStatusController>();
+            if (statusCtrl != null)
+            {
+                statusCtrl.AddOrUpdate(UnitStatusType.Stunned, new StunnedPayload());
+            }
+
             int coverAfterHit = unit.GetPersonalCover() / 2;
             unit.SetPersonalCover(coverAfterHit);
             unit.ResetReactionPoints();
@@ -180,6 +186,11 @@ public static class NetworkSync
             var agent = UnityEngine.Object.FindFirstObjectByType<NetworkSyncAgent>();
             if (agent != null)
             {
+                var ni = unit.GetComponent<NetworkIdentity>();
+                if (ni != null)
+                {
+                    agent.RpcSetUnitStunned(ni.netId, true);
+                }
                 agent.RpcApplyStunVisionUpdate(teamID);
             }
             

@@ -167,6 +167,7 @@ public class GridSystemVisual : MonoBehaviour
         }
     }
 
+    /*
     public void UpdateGridVisuals()
     {
         if (!_isReady || gridSystemVisualSingleArray == null) return;
@@ -228,8 +229,18 @@ public class GridSystemVisual : MonoBehaviour
                     break;
                 }
 
-            case GrenadeAction:
+            case GrenadeAction grenadeAction:
                 gridVisualType = GridVisualType.Yellow;
+                if (grenadeAction.Definition != null && grenadeAction.CurrentTargetGrid.HasValue)
+                {
+                    var center = grenadeAction.CurrentTargetGrid.Value;
+                    var area   = GrenadeAreaSolver.ComputeArea(center, grenadeAction.Definition);
+
+                    foreach (var gp in area)
+                        _lastActionCells.Add(gp);
+
+                    ShowGridPositionList(new List<GridPosition>(area), GridVisualType.Red);
+                }
                 break;
 
             case MeleeAction melee:
@@ -262,9 +273,130 @@ public class GridSystemVisual : MonoBehaviour
                 gridVisualType = GridVisualType.Yellow;
                 break;
         }
-
+        
         ShowAndMark(selectedAction.GetValidGridPositionList(), gridVisualType);
+
     }
+    */
+    public void UpdateGridVisuals()
+    {
+        if (!_isReady || gridSystemVisualSingleArray == null) return;
+
+        HideAllGridPositions();
+        RedrawPersistentOverwatch();
+        _lastActionCells.Clear();
+
+        if (teamVisionEnabled && TeamVisionService.Instance != null)
+        {
+            if (invertTeamVision)
+            {
+                DrawTeamVisionOverlayInverted();
+            }
+            else
+            {
+                DrawTeamVisionOverlay();
+            }
+        }
+
+        Unit selectedUnit = UnitActionSystem.Instance.GetSelectedUnit();
+        if (selectedUnit == null) return;
+
+        BaseAction selectedAction = UnitActionSystem.Instance.GetSelectedAction();
+
+        GridVisualType gridVisualType;
+
+        switch (selectedAction)
+        {
+            default:
+            case MoveAction:
+                gridVisualType = GridVisualType.white;
+                break;
+
+            case OverwatchAction:
+                selectedAction.GetUnit().GetComponent<UnitVision>().ShowUnitPersonalVision();
+                gridVisualType = GridVisualType.white;
+                break;
+
+            case ShootAction shoot:
+                {
+                    gridVisualType = GridVisualType.Red;
+
+                    var origin = selectedUnit.GetGridPosition();
+                    int range = shoot.GetMaxShootDistance();
+
+                    var cfg = LoSConfig.Instance;
+                    var visible = RaycastVisibility.ComputeVisibleTilesRaycast(
+                        origin, range,
+                        cfg.losBlockersMask, cfg.eyeHeight, cfg.samplesPerCell, cfg.insetWU
+                    );
+                    visible.RemoveWhere(gp => !RaycastVisibility.HasLineOfSightRaycastHeightAware(
+                        origin, gp, cfg.losBlockersMask, cfg.eyeHeight, cfg.samplesPerCell, cfg.insetWU));
+
+                    _tmpList.Clear();
+                    _tmpList.AddRange(visible);
+                    ShowAndMark(_tmpList, GridVisualType.RedSoft);
+                    break;
+                }
+
+            case GrenadeAction grenadeAction:
+                gridVisualType = GridVisualType.Yellow;
+                break;
+
+            case MeleeAction melee:
+                {
+                    gridVisualType = GridVisualType.Red;
+
+                    var origin = selectedUnit.GetGridPosition();
+                    int range = melee.GetMeleeDistance();
+                    var cfg = LoSConfig.Instance;
+
+                    _tmpList.Clear();
+                    foreach (var gp in BuildRangeSquare(origin, range))
+                    {
+                        if (gp == origin) continue;
+                        if (!LevelGrid.Instance.IsValidGridPosition(gp)) continue;
+
+                        if (!RaycastVisibility.HasLineOfSightRaycastHeightAware(
+                                origin, gp, cfg.losBlockersMask, cfg.eyeHeight, cfg.samplesPerCell, cfg.insetWU))
+                            continue;
+
+                        _tmpList.Add(gp);
+                    }
+
+                    ShowAndMark(_tmpList, GridVisualType.RedSoft);
+                    break;
+                }
+                
+            case InteractAction:
+                gridVisualType = GridVisualType.Yellow;
+                break;
+        }
+
+        var valid = selectedAction.GetValidGridPositionList();
+        
+        if (valid != null)
+        {
+            ShowGridPositionList(valid, gridVisualType);
+        }
+
+        switch (selectedAction)
+        {
+            case GrenadeAction grenadeAction:
+                if (grenadeAction.Definition != null && grenadeAction.CurrentTargetGrid.HasValue)
+                {
+                    var center = grenadeAction.CurrentTargetGrid.Value;
+                    var area   = GrenadeAreaSolver.ComputeArea(center, grenadeAction.Definition);
+
+                    var list = new List<GridPosition>(area);
+                    foreach (var gp in area)
+                        _lastActionCells.Add(gp);
+
+                    ShowGridPositionList(list, GridVisualType.Red);
+                }
+                break;
+        }
+    }
+
 
     private void UnitActionSystem_OnSelectedActionChanged(object sender, EventArgs e)
         => UpdateGridVisuals();

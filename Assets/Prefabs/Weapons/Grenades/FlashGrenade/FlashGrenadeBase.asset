@@ -20,7 +20,7 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 917de2391ffefbc409dde687b6ad2898, type: 3}
   - {fileID: 8300000, guid: 152d253da124c104fa950948090f9cd9, type: 3}
   explosionVolume: 1
-  explosionMaxHearingDistance: 50
+  explosionMaxHearingDistance: 200
   explosionVolumeRolloff:
     serializedVersion: 2
     m_Curve:
@@ -47,7 +47,7 @@ MonoBehaviour:
     m_RotationOrder: 4
   timer: 0
   actionBasedTimer: 1
-  InstantTimer: 0
+  instantTimer: 1
   explosionJitterMin: 0.3
   explosionJitterMax: 0.5
   baseDamage: 0

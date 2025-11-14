@@ -129,6 +129,13 @@ public class TurnSystem : MonoBehaviour
 
                 //Resetoi Overwach shootaction bool asetus.
                 unit.GetComponent<ShootAction>().ResetOverwatchShotState();
+
+                //resetoi stunned status
+                if (unit.TryGetComponent<UnitStatusController>(out var status) &&
+                status.Has(UnitStatusType.Stunned))
+                {
+                    status.Remove(UnitStatusType.Stunned);
+                }
             }
         }
 
@@ -150,7 +157,8 @@ public class TurnSystem : MonoBehaviour
         yield return null;
 
         if (NetworkSync.IsOffline)
-            TeamVisionService.Instance.RebuildTeamVisionLocal(teamID, false);
+            TeamVisionService.Instance.RebuildTeamVisionLocal(teamID);
+            //TeamVisionService.Instance.RebuildTeamVisionLocal(teamID, false);
         else if (Mirror.NetworkServer.active && NetworkSyncAgent.Local != null)
             NetworkSyncAgent.Local.ServerPushTeamVision(teamID, endPhase: false);
 
@@ -205,6 +213,13 @@ public class TurnSystem : MonoBehaviour
                 if (ba != null) ba.ResetChostActions();
                 
                 unit.GetComponent<ShootAction>().ResetOverwatchShotState();
+
+                //resetoi stunned status
+                if (unit.TryGetComponent<UnitStatusController>(out var status) &&
+                status.Has(UnitStatusType.Stunned))
+                {
+                    status.Remove(UnitStatusType.Stunned);
+                }
             }
         }
 
@@ -218,7 +233,9 @@ public class TurnSystem : MonoBehaviour
 
         int myTeam = (startTurnTeam == Team.Player) ? 0 : 1;
         if (TeamVisionService.Instance != null)
-            TeamVisionService.Instance.RebuildTeamVisionLocal(myTeam, endPhase:false);
+            TeamVisionService.Instance.RebuildTeamVisionLocal(myTeam);
+           // TeamVisionService.Instance.RebuildTeamVisionLocal(myTeam, endPhase:false);
+
     }
 
 
@@ -261,8 +278,9 @@ public class TurnSystem : MonoBehaviour
         int teamId = (endTurnTeam == Team.Player) ? 0 : 1;
 
         if (NetworkSync.IsOffline)
-            TeamVisionService.Instance.RebuildTeamVisionLocal(teamId, true);
-        // RebuildTeamVisionLocal(teamId, endPhase: true);
+            TeamVisionService.Instance.RebuildTeamVisionLocal(teamId);
+           // TeamVisionService.Instance.RebuildTeamVisionLocal(teamId, true);
+
         else if (Mirror.NetworkServer.active && NetworkSyncAgent.Local != null)
             NetworkSyncAgent.Local.ServerPushTeamVision(teamId, endPhase: true);
 
@@ -279,7 +297,6 @@ public class TurnSystem : MonoBehaviour
             }
         }
 
-        Debug.Log($"[TurnSystem] Calling UnitTurnEndStatus, ServerActive={Mirror.NetworkServer.active}");
         StatusCoordinator.Instance.UnitTurnEndStatus(units);
     }
 

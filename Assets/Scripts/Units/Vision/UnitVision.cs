@@ -18,6 +18,7 @@ public class UnitVision : MonoBehaviour
     private Unit _unit;
     private Transform _tr;
     private HashSet<GridPosition> _lastVisibleTiles = new();
+    private HashSet<GridPosition> vision360 = new();
     private int _unitKey;
     private bool _initialized = false;
     private int _currentTeamId = 0;
@@ -66,6 +67,7 @@ public class UnitVision : MonoBehaviour
             TeamVisionService.Instance.RemoveUnitVision(teamId, _unitKey);
         }
         _lastVisibleTiles.Clear();
+        vision360.Clear();
     }
 
     private System.Collections.IEnumerator Co_AutoInitLocal()
@@ -123,17 +125,15 @@ public class UnitVision : MonoBehaviour
         if (_healthSystem != null && (_healthSystem.IsDying() || _healthSystem.IsDead())) return;
 
         bool publish = ShouldPublishVisionLocally();
-        
-
 
         if (!_initialized) return;
         if (visionSkill == null) return;
-        
+
 
         var levelGrid = LevelGrid.Instance;
         var loSConfig = LoSConfig.Instance;
         if (levelGrid == null || loSConfig == null) return;
-        
+
 
         var wp = _tr != null ? _tr.position : transform.position;
         var origin = levelGrid.GetGridPosition(wp);
@@ -161,7 +161,14 @@ public class UnitVision : MonoBehaviour
         }
 
         if (vis != null) _lastVisibleTiles = vis;
-        
+
+        // --- 360° perusnäkö (vain LOS + range) ---
+        vision360 = vis;
+        vision360.Add(_unit.GetGridPosition());
+
+        // --- "Julkaistu" tämänhetkinen näkö (normaalisti koko 360) ---
+        _lastVisibleTiles = new HashSet<GridPosition>(vision360);
+
         if (publish)
         {
             var teamVision = TeamVisionService.Instance;
@@ -239,7 +246,8 @@ public class UnitVision : MonoBehaviour
 
     public List<GridPosition> GetConeVisibleTiles(Vector3 facingWorld, float coneAngleDeg)
     {
-        var visible = GetUnitVisionGrids();
+       // var visible = GetUnitVisionGrids();
+        var visible = vision360;  // << tärkein muutos
         var levelGrid = LevelGrid.Instance;
         var res = new List<GridPosition>();
         if (visible == null || visible.Count == 0 || levelGrid == null) return res;
@@ -328,11 +336,18 @@ public class UnitVision : MonoBehaviour
     {
    
         var tiles = GetConeVisibleTiles(facingWorld, coneAngleDeg);
-        
+
         if (tiles == null) return;
          
         _lastVisibleTiles = new HashSet<GridPosition>(tiles);
         TeamVisionService.Instance.ReplaceUnitVision(teamId, _unitKey, _lastVisibleTiles);
     }
 
+    public List<GridPosition> GetVision360Tiles()
+    {
+        if (vision360 == null || vision360.Count == 0)
+            return new List<GridPosition>();
+
+        return new List<GridPosition>(vision360);
+    }
 }

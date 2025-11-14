@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum UnitStatusType { Overwatch /*, Stunned, Wounded, Suppressed, ...*/ }
+public enum UnitStatusType { Overwatch , Stunned /*, Wounded, Suppressed, ...*/ }
 
 public interface IStatusPayload { }
 
@@ -12,6 +12,8 @@ public struct OverwatchPayload : IStatusPayload {
     public float coneAngleDeg;    // esim. 80
     public int   rangeTiles;      // esim. 8
 }
+
+public struct StunnedPayload : IStatusPayload { }
 
 public class UnitStatusController : MonoBehaviour {
     

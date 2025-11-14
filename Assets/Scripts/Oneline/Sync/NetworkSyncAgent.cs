@@ -166,6 +166,7 @@ public class NetworkSyncAgent : NetworkBehaviour
         ServerBroadcastHp(unit, hs.GetHealth(), hs.GetHealthMax());
     }
 
+    /*
     [Command(requiresAuthority = true)]
     public void CmdApplyStunDamage(uint actorNetId, uint targetNetId)
     {
@@ -190,6 +191,57 @@ public class NetworkSyncAgent : NetworkBehaviour
 
         RpcApplyStunVisionUpdate(teamID);
     }
+    */
+
+    [Command(requiresAuthority = true)]
+    public void CmdApplyStunDamage(uint actorNetId, uint targetNetId)
+    {
+        if (!NetworkServer.spawned.TryGetValue(targetNetId, out var targetNi) || targetNi == null) return;
+        if (!RightOwner(actorNetId)) return;
+        if (!targetNi.TryGetComponent<Unit>(out var unit)) return;
+        if (unit == null || unit.IsDying() || unit.IsDead()) return;
+        
+        var statusCtrl = unit.GetComponent<UnitStatusController>();
+        if (statusCtrl != null)
+        {
+            statusCtrl.AddOrUpdate(UnitStatusType.Stunned, new StunnedPayload());
+        }
+
+        int coverBefore = unit.GetPersonalCover();
+        int teamID = unit.GetTeamID();  
+        int coverAfterHit = coverBefore / 2;
+
+        unit.SetPersonalCover(coverAfterHit);
+        unit.ResetReactionPoints();
+        unit.ResetActionPoints();
+        unit.RaisOnAnyActionPointsChanged();
+        
+        NetworkSync.BroadcastActionPoints(unit, 0);
+        NetworkSync.UpdateCoverUI(unit);
+
+        RpcSetUnitStunned(targetNetId, true);
+        RpcApplyStunVisionUpdate(teamID);
+    }
+
+    [ClientRpc]
+    public void RpcSetUnitStunned(uint unitNetId, bool stunned)
+    {
+        if (!NetworkClient.spawned.TryGetValue(unitNetId, out var ni) || ni == null) return;
+        if (!ni.TryGetComponent<Unit>(out var unit)) return;
+        
+        var statusCtrl = unit.GetComponent<UnitStatusController>();
+        if (statusCtrl != null)
+        {
+            if (stunned)
+            {
+                statusCtrl.AddOrUpdate(UnitStatusType.Stunned, new StunnedPayload());
+            }
+            else
+            {
+                statusCtrl.Remove(UnitStatusType.Stunned);
+            }
+        }
+    }
 
     [ClientRpc]
     public void RpcApplyStunVisionUpdate(int teamId)
@@ -202,7 +254,7 @@ public class NetworkSyncAgent : NetworkBehaviour
         yield return null; 
         UnitVision.ForceServerVisionPush = true;
         yield return null;    
-        TeamVisionService.Instance.RebuildTeamVisionLocal(teamId, true);
+        TeamVisionService.Instance.RebuildTeamVisionLocal(teamId, midTurnUpdate: true);
         UnitVision.ForceServerVisionPush = false;
     }
 

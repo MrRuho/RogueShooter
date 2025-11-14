@@ -234,6 +234,7 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
+  grenadeDefinition: {fileID: 11400000, guid: a2391023dcf7a2843ab8be7d57622672, type: 2}
   arcPreview: {fileID: 0}
   cellSizeWU: 2
   throwPoint: {fileID: 0}

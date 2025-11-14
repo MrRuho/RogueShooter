@@ -49,9 +49,15 @@ public static class OfflineGameSimulator
             });
     }
 
-    public static void ApllyStunDamageToUnit(Unit unit)
+    public static void ApplyStunDamageToUnit(Unit unit)
     {
         if (unit == null || unit.IsDying() || unit.IsDead()) return;
+
+        var statusCtrl = unit.GetComponent<UnitStatusController>();
+        if (statusCtrl != null)
+        {
+            statusCtrl.AddOrUpdate(UnitStatusType.Stunned, new StunnedPayload());
+        }
 
         int coverAfterHit = unit.GetPersonalCover() / 2;
         unit.SetPersonalCover(coverAfterHit);
@@ -59,16 +65,14 @@ public static class OfflineGameSimulator
         unit.ResetActionPoints();
         unit.RaisOnAnyActionPointsChanged();
 
-        // Aseta Unittien vision coneksi
-      //  var vision = unit.GetComponent<UnitVision>();
-     //  vision.VisionPenaltyWhenUsingAP(0);    
-     //   vision.UpdateVisionNow();
+        var vision = unit.GetComponent<UnitVision>();
+        if (vision != null)
+        {
+            vision.UpdateVisionNow();
+        }
 
         int teamID = unit.GetTeamID();
-        TeamVisionService.Instance.RebuildTeamVisionLocal(teamID, true);
-
-        //Päivitä UI ajantasalle.
-        
+        TeamVisionService.Instance.RebuildTeamVisionLocal(teamID, midTurnUpdate: true);
     }
 
 }

@@ -212,70 +212,63 @@ public class TeamVisionService : MonoBehaviour
         public bool IsVisible(GridPosition gp) => _counts.ContainsKey(gp);
     }
     
-    // Jos endPhase true niin päivittää näkymän välittömästi.
-    /*
-    public void RebuildTeamVisionLocal(int teamId, bool endPhase)
+    public void RebuildTeamVisionLocal(int teamId, bool midTurnUpdate = false)
     {
         var list = UnitManager.Instance?.GetAllUnitList();
         if (list == null) return;
 
+        int currentTurnTeamId = -1;
+        if (midTurnUpdate && TurnSystem.Instance != null)
+        {
+            currentTurnTeamId =TeamsID.CurrentTurnTeamId();
+        }
+
         foreach (var unit in list)
         {
             if (!unit) continue;
-            if (unit.GetTeamID() != teamId) continue;
+            int unitTeam = unit.GetTeamID();
+            if (unitTeam != teamId) continue;
             if (unit.IsDead() || unit.IsDying()) continue;
 
             var vision = unit.GetComponent<UnitVision>();
             if (vision == null || !vision.IsInitialized) continue;
 
-            // Aina päivitä tuore 360° cache ensin
             vision.UpdateVisionNow();
-            int actionpoints = unit.GetActionPoints();
+
+            var statusCtrl = unit.GetComponent<UnitStatusController>();
+            bool isStunned = statusCtrl != null && statusCtrl.Has(UnitStatusType.Stunned);
+
             Vector3 facing = unit.transform.forward;
-            float angle = endPhase ? vision.VisionPenaltyWhenUsingAP(actionpoints) : 360f;
+            float angle;
 
-            if (endPhase && unit.TryGetComponent<OverwatchAction>(out var ow) && ow.IsOverwatch())
+            bool isCurrentTurnTeam = unitTeam == currentTurnTeamId;
+
+            if (midTurnUpdate && isCurrentTurnTeam)
             {
-                angle = vision.VisionPenaltyWhenUsingAP(0);
-                var dir = ow.TargetWorld - unit.transform.position; dir.y = 0f;
-                if (dir.sqrMagnitude > 1e-4f) facing = dir.normalized;
+                if (isStunned)
+                {
+                    angle = vision.VisionPenaltyWhenUsingAP(0);
+                }
+                else
+                {
+                    angle = 360f;
+                }
+            }
+            else
+            {
+                int actionpoints = unit.GetActionPoints();
+                angle = vision.VisionPenaltyWhenUsingAP(actionpoints);
 
+                if (unit.TryGetComponent<OverwatchAction>(out var ow) && ow.IsOverwatch())
+                {
+                    angle = vision.VisionPenaltyWhenUsingAP(0);
+                    var dir = ow.TargetWorld - unit.transform.position; 
+                    dir.y = 0f;
+                    if (dir.sqrMagnitude > 1e-4f) facing = dir.normalized;
+                }
             }
 
             vision.ApplyAndPublishDirectionalVision(facing, angle);
-        }
-    }
-    */
-    public void RebuildTeamVisionLocal(int teamId, bool endPhase)
-    {
-
-        var list = UnitManager.Instance?.GetAllUnitList();
-        if (list == null) return;
-
-        foreach (var unit in list)
-        {
-
-            if (!unit) continue;
-            int unitTeam = unit.GetTeamID();
-            if (unitTeam != teamId) continue;
-            if (unit.IsDead() || unit.IsDying()) continue;
-            var vision = unit.GetComponent<UnitVision>();
-            if (vision == null || !vision.IsInitialized) continue;   
-            vision.UpdateVisionNow();
-            
-            int actionpoints = unit.GetActionPoints();
-            Vector3 facing = unit.transform.forward;
-            float angle = endPhase ? vision.VisionPenaltyWhenUsingAP(actionpoints) : 360f;
-
-            if (endPhase && unit.TryGetComponent<OverwatchAction>(out var ow) && ow.IsOverwatch())
-            {
-                angle = vision.VisionPenaltyWhenUsingAP(0);
-                var dir = ow.TargetWorld - unit.transform.position; dir.y = 0f;
-                if (dir.sqrMagnitude > 1e-4f) facing = dir.normalized;
-            }
-
-            vision.ApplyAndPublishDirectionalVision(facing, angle);
-
         }
     }
 }
